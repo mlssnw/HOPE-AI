@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="HOPE — assistente pessoal com memória persistente opcional e integração segura com IA.">
+  <title>HOPE — Personal Engine</title>
+  <link rel="stylesheet" href="/static/styles/main.css">
+  <script type="module" src="/static/js/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#prompt">Ir para a mensagem</a>
+  <div class="ambient" aria-hidden="true"></div>
+
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand" aria-label="HOPE, Holistic Operational Personal Engine">
+        <span class="brand-name">H·O·P·E</span>
+        <span class="brand-subtitle">Holistic Operational Personal Engine</span>
+      </div>
+      <div class="system-strip" aria-label="Estado dos serviços">
+        <span class="system-time" id="clock">00:00:00</span>
+        <span class="status" id="claude-status"><i></i>Claude</span>
+        <span class="status" id="vault-status"><i></i>Vault</span>
+        <span class="status" id="web-status"><i></i>Web</span>
+        <span class="status" id="memory-status"><i></i>Memória</span>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="core-panel" id="memory-globe-shell" aria-labelledby="core-title">
+        <div class="globe-head">
+          <div>
+            <p class="eyebrow">MEMORY GLOBE / V6 · FASE 3</p>
+            <h1 id="core-title">Memória viva</h1>
+          </div>
+          <div class="globe-readout">
+            <strong id="globe-count">0 memórias · 0 entidades</strong>
+            <span id="globe-data-status" role="status">Preparando o núcleo…</span>
+          </div>
+        </div>
+
+        <div class="globe-toolbar" aria-label="Controles do Memory Globe">
+          <form class="globe-search" id="globe-search-form" role="search">
+            <label class="sr-only" for="globe-search">Buscar nas memórias</label>
+            <input id="globe-search" type="search" maxlength="500" placeholder="Buscar memória ou relação…">
+            <button type="submit">Buscar</button>
+          </form>
+          <div class="globe-actions">
+            <button type="button" id="globe-refresh" title="Sincronizar grafo">Sincronizar</button>
+            <button type="button" id="globe-reset" title="Redefinir câmera">Centralizar</button>
+            <button type="button" id="globe-expand" aria-pressed="false">Expandir</button>
+          </div>
+        </div>
+
+        <div class="globe-stage">
+          <canvas id="memory-globe" tabindex="0" role="img"
+            aria-label="Memory Globe sem memórias carregadas. Arraste para girar, use a roda para aproximar e clique em um nó para inspecionar."></canvas>
+          <div class="core-signature" aria-hidden="true"><strong>HOPE</strong><span>CORE ORB</span></div>
+          <div class="globe-tooltip" id="globe-tooltip" hidden></div>
+          <div class="globe-empty" id="globe-empty" hidden>
+            <strong>Nenhuma memória persistente ainda</strong>
+            <span>Quando dados forem salvos, os nós aparecerão aqui.</span>
+          </div>
+          <div class="globe-hint">Arraste para orbitar · Shift + arraste para mover · roda para zoom</div>
+        </div>
+
+        <div class="globe-footer">
+          <div class="view-switcher" aria-label="Nível de navegação">
+            <button type="button" data-globe-view="orbital" aria-pressed="true">Orbital</button>
+            <button type="button" data-globe-view="cluster" aria-pressed="false">Clusters</button>
+            <button type="button" data-globe-view="memory" aria-pressed="false">Memória</button>
+          </div>
+          <label class="quality-control">Qualidade
+            <select id="globe-quality">
+              <option value="low">Low</option><option value="medium">Medium</option>
+              <option value="high" selected>High</option><option value="ultra">Ultra</option>
+            </select>
+          </label>
+          <div class="globe-legend" aria-label="Legenda"><span class="fact">Fato</span><span class="event">Evento</span><span class="inference">Inferência</span><span class="entity">Entidade</span></div>
+        </div>
+
+        <aside class="memory-inspector" id="memory-inspector" aria-live="polite" hidden>
+          <div class="inspector-head">
+            <div><span id="memory-inspector-kind">MEMÓRIA</span><h2 id="memory-inspector-title">Detalhes</h2></div>
+            <button type="button" id="memory-inspector-close" aria-label="Fechar detalhes">×</button>
+          </div>
+          <p id="memory-inspector-body"></p>
+          <small id="memory-inspector-meta"></small>
+          <div class="inspector-actions"><button type="button" id="memory-focus">Focar</button><button type="button" id="memory-ask">Perguntar sobre isso</button></div>
+          <div class="related-block"><strong>Relacionados</strong><div id="memory-related"></div></div>
+        </aside>
+      </section>
+
+      <section class="conversation" aria-labelledby="conversation-title">
+        <div class="conversation-head">
+          <div>
+            <p class="eyebrow">SESSÃO ATUAL</p>
+            <h2 id="conversation-title">Conversa</h2>
+          </div>
+          <button class="text-button" id="clear-history" type="button">Limpar histórico</button>
+        </div>
+
+        <div class="messages" id="messages" role="log" aria-live="polite" aria-relevant="additions">
+          <div class="empty-state" id="empty-state">
+            <span class="signal" aria-hidden="true"></span>
+            <p>Pronta quando você estiver.</p>
+            <small>Faça uma pergunta ou ative uma fonte de contexto abaixo.</small>
+          </div>
+        </div>
+
+        <div class="sources" id="sources" hidden>
+          <p class="sources-title">Fontes consultadas</p>
+          <ul id="sources-list"></ul>
+        </div>
+
+        <form class="composer" id="chat-form">
+          <label class="sr-only" for="prompt">Mensagem para a HOPE</label>
+          <textarea id="prompt" name="prompt" rows="2" maxlength="8000"
+            placeholder="Escreva sua mensagem…" aria-describedby="composer-help"></textarea>
+          <div class="composer-bar">
+            <div class="context-controls" aria-label="Fontes e preferências">
+              <label class="toggle-pill"><input id="use-web" type="checkbox"><span>Web</span></label>
+              <label class="toggle-pill"><input id="use-vault" type="checkbox"><span>Obsidian</span></label>
+              <label class="toggle-pill"><input id="persist-memory" type="checkbox"><span>Memória</span></label>
+              <button class="icon-button" id="voice-toggle" type="button" aria-label="Ativar leitura em voz" aria-pressed="false">◖))</button>
+              <button class="icon-button" id="mic-button" type="button" aria-label="Ditado por voz" aria-pressed="false">●</button>
+            </div>
+            <div class="send-controls">
+              <span id="composer-help">Enter envia · Shift+Enter quebra a linha</span>
+              <button class="cancel-button" id="cancel-button" type="button" hidden>Cancelar</button>
+              <button class="send-button" id="send-button" type="submit"><span>Enviar</span><b aria-hidden="true">↗</b></button>
+            </div>
+          </div>
+        </form>
+        <p class="live-status" id="live-status" role="status" aria-live="assertive"></p>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

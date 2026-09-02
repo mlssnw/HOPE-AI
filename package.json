@@ -1,0 +1,8 @@
+{
+  "name": "hope-ai-frontend-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:frontend": "node --test tests/frontend/*.test.mjs"
+  }
+}
