@@ -139,6 +139,16 @@ def create_app(
     app.include_router(realtime_router)
 
     if FRONTEND_DIR.exists():
+        app.mount(
+            "/styles",
+            StaticFiles(directory=FRONTEND_DIR / "styles"),
+            name="frontend-styles",
+        )
+        app.mount(
+            "/js",
+            StaticFiles(directory=FRONTEND_DIR / "js"),
+            name="frontend-scripts",
+        )
         app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")
 
     @app.get("/", include_in_schema=False)

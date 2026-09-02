@@ -36,6 +36,22 @@ async def test_index_has_strict_security_headers() -> None:
         assert "object-src 'none'" in response.headers["content-security-policy"]
         assert response.headers["x-content-type-options"] == "nosniff"
         assert "HOPE" in response.text
+        assert 'href="./styles/main.css"' in response.text
+        assert 'src="./js/app.js"' in response.text
+
+
+@pytest.mark.asyncio
+async def test_frontend_assets_are_served_with_browser_mime_types() -> None:
+    async with AsyncClient(transport=transport(), base_url="http://test") as client:
+        stylesheet = await client.get("/styles/main.css")
+        script = await client.get("/js/app.js")
+
+    assert stylesheet.status_code == 200
+    assert stylesheet.headers["content-type"].startswith("text/css")
+    assert script.status_code == 200
+    assert script.headers["content-type"].startswith(
+        ("text/javascript", "application/javascript")
+    )
 
 
 @pytest.mark.asyncio
