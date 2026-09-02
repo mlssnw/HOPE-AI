@@ -1,6 +1,7 @@
 import { ApiError, getMemoryExplanation, getMemoryGraph, retrieveMemories } from "./api-client.js";
 import { getOrCreateUserId } from "./storage.js";
-import { layoutGraph, relatedNodes, RING_ORDER, visibleScene } from "./memory-globe-core.js";
+import { applyGraphEvent, layoutGraph, normalizeGraph, relatedNodes, RING_ORDER, visibleScene } from "./memory-globe-core.js";
+import { HopeRealtimeClient } from "./realtime.js";
 
 const QUALITY = {
   low: { particles: 90, nodes: 400, segments: 48 },
@@ -93,6 +94,7 @@ export class MemoryGlobeRenderer {
     this.program = createProgram(this.gl); this.layout = layoutGraph({});
     this.mode = "orbital"; this.quality = "high"; this.selectedId = null;
     this.highlightedIds = new Set(); this.hoveredId = null; this.drag = null;
+    this.graphSnapshot = normalizeGraph({}); this.transitions = new Map(); this.aiState = "idle";
     this.camera = { yaw: -.35, pitch: -.13, zoom: 5.8, panX: 0, panY: 0 };
     this.reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
     this.lastTime = 0; this.projected = []; this.particles = particleCloud(QUALITY.high.particles);
@@ -146,7 +148,24 @@ export class MemoryGlobeRenderer {
     this.ratio = ratio; this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
   }
 
-  setGraph(graph) { this.layout = layoutGraph(graph); }
+  setGraph(graph) { this.graphSnapshot = normalizeGraph(graph); this.layout = layoutGraph(this.graphSnapshot); this.transitions.clear(); }
+  applyGraphMutation(graph, event) {
+    this.graphSnapshot = normalizeGraph(graph);
+    const now = performance.now(); const memoryId = event?.payload?.memory_id || event?.payload?.node?.id;
+    if (event?.type === "MEMORY_DELETED" && memoryId && this.layout.nodeMap.has(memoryId)) {
+      this.transitions.set(memoryId, { kind: "delete", startedAt: now, duration: 460 });
+      setTimeout(() => {
+        const transition = this.transitions.get(memoryId);
+        if (transition?.kind === "delete") this.transitions.delete(memoryId);
+        this.layout = layoutGraph(this.graphSnapshot);
+      }, 480);
+      return;
+    }
+    this.layout = layoutGraph(this.graphSnapshot);
+    if (event?.type === "MEMORY_CREATED" && memoryId) this.transitions.set(memoryId, { kind: "birth", startedAt: now, duration: 720 });
+    if (event?.type === "MEMORY_UPDATED" && memoryId) this.transitions.set(memoryId, { kind: "update", startedAt: now, duration: 520 });
+  }
+  setAiState(state) { this.aiState = ["thinking", "error"].includes(state) ? state : "idle"; }
   setMode(mode) { this.mode = ["orbital", "cluster", "memory"].includes(mode) ? mode : "orbital"; }
   setSelected(id) { this.selectedId = id || null; if (!id && this.mode === "memory") this.mode = "orbital"; }
   setHighlights(ids) { this.highlightedIds = new Set(ids || []); }
@@ -223,7 +242,18 @@ export class MemoryGlobeRenderer {
     const maxNodes = QUALITY[this.quality].nodes;
     const nodes = [...scene.nodes].sort((a, b) => b.importance - a.importance).slice(0, maxNodes).map(node => {
       const selected = node.id === this.selectedId; const hovered = node.id === this.hoveredId;
-      return { ...node, size: node.size * (selected ? 1.65 : hovered ? 1.28 : 1), shape: node.source === "entity" ? 1 : 0, color: selected ? [1, .98, .78, 1] : node.color };
+      const transition = this.transitions.get(node.id); let scale = 1; let positionScale = 1;
+      if (transition) {
+        const progress = Math.max(0, Math.min(1, (time - transition.startedAt) / transition.duration));
+        if (transition.kind === "birth") { scale = progress; positionScale = 1 - ((1 - progress) ** 3); }
+        if (transition.kind === "delete") { scale = 1 - progress; positionScale = 1 - progress; }
+        if (transition.kind === "update") scale = 1 + Math.sin(progress * Math.PI) * .48;
+        if (progress >= 1 && transition.kind !== "delete") this.transitions.delete(node.id);
+      }
+      const color = selected ? [1, .98, .78, 1] : [...node.color]; color[3] *= Math.max(.04, scale);
+      return { ...node, x: node.x * positionScale, y: node.y * positionScale, z: node.z * positionScale,
+        size: node.size * (selected ? 1.65 : hovered ? 1.28 : 1) * Math.max(.04, scale),
+        shape: node.source === "entity" ? 1 : 0, color };
     });
     const visibleIds = new Set(nodes.map(node => node.id));
     const lines = [];
@@ -234,9 +264,11 @@ export class MemoryGlobeRenderer {
     });
     this.drawItems(lines, gl.LINES);
     this.drawItems(this.particles, gl.POINTS, true);
-    const pulse = this.reducedMotion ? 1 : 1 + Math.sin(time * .0022) * .09;
+    const activity = this.aiState === "thinking" ? 1.24 : this.aiState === "error" ? .88 : 1;
+    const pulse = (this.reducedMotion ? 1 : 1 + Math.sin(time * (this.aiState === "thinking" ? .006 : .0022)) * .09) * activity;
+    const coreColor = this.aiState === "error" ? [1, .22, .17, .96] : [1, .76, .24, .96];
     this.drawItems([{ x: 0, y: 0, z: 0, size: 154 * pulse, color: [1, .54, .08, .10], shape: 2 }], gl.POINTS, true);
-    this.drawItems([{ x: 0, y: 0, z: 0, size: 88 * pulse, color: [1, .76, .24, .96], shape: 2 }], gl.POINTS, true);
+    this.drawItems([{ x: 0, y: 0, z: 0, size: 88 * pulse, color: coreColor, shape: 2 }], gl.POINTS, true);
     this.drawItems(nodes, gl.POINTS, true);
     this.projected = nodes.map(node => ({ node, screen: this.project(node) })).sort((a, b) => a.screen.depth - b.screen.depth);
     this.frame = requestAnimationFrame(next => this.draw(next));
@@ -249,7 +281,8 @@ function countLabel(count, singular, plural) { return `${count} ${count === 1 ? 
 export class MemoryGlobeController {
   constructor() {
     this.canvas = document.querySelector("#memory-globe"); if (!this.canvas) return;
-    this.userId = getOrCreateUserId(); this.abortController = null; this.layout = layoutGraph({});
+    this.userId = getOrCreateUserId(); this.abortController = null; this.graph = normalizeGraph({}); this.layout = layoutGraph({});
+    this.fallbackTimer = null; this.hasConnected = false; this.realtimeState = "idle";
     this.elements = {
       shell: document.querySelector("#memory-globe-shell"), status: document.querySelector("#globe-data-status"),
       count: document.querySelector("#globe-count"), empty: document.querySelector("#globe-empty"),
@@ -265,7 +298,14 @@ export class MemoryGlobeController {
         onHover: (node, event) => this.hover(node, event), onSelect: node => this.select(node),
       });
     } catch (error) { this.unavailable(error.message); return; }
-    this.bind(); this.load();
+    this.bind();
+    this.realtime = new HopeRealtimeClient({
+      userId: this.userId,
+      onEvent: event => this.handleRealtimeEvent(event),
+      onState: state => this.handleRealtimeState(state),
+    });
+    this.load().finally(() => this.realtime.start());
+    addEventListener("beforeunload", () => this.realtime.stop(), { once: true });
   }
 
   bind() {
@@ -299,17 +339,16 @@ export class MemoryGlobeController {
     setText(this.elements.status, "Sincronizando memória…"); this.elements.empty.hidden = true;
     try {
       const graph = await getMemoryGraph(this.userId, this.abortController.signal);
-      this.layout = layoutGraph(graph); this.renderer.setGraph(graph);
-      const memoryCount = countLabel(this.layout.memories.length, "memória", "memórias");
-      const entityCount = countLabel(this.layout.entities.length, "entidade", "entidades");
-      setText(this.elements.count, `${memoryCount} · ${entityCount}`);
+      this.graph = normalizeGraph(graph); this.layout = layoutGraph(this.graph); this.renderer.setGraph(this.graph);
+      this.updateReadout();
       setText(this.elements.status, this.layout.memories.length ? "Grafo sincronizado" : "Memória vazia");
       this.elements.empty.hidden = this.layout.memories.length > 0;
       this.elements.empty.dataset.state = "empty";
       setText(this.elements.empty.querySelector("strong"), "Nenhuma memória persistente ainda");
       setText(this.elements.empty.querySelector("span"), "Quando dados forem salvos, os nós aparecerão aqui.");
-      this.elements.memoryStatus.dataset.state = "online"; this.elements.memoryStatus.title = "Memória conectada";
-      this.canvas.setAttribute("aria-label", `Memory Globe com ${memoryCount} e ${entityCount}.`);
+      if (!["disconnected", "reconnecting"].includes(this.realtimeState)) {
+        this.elements.memoryStatus.dataset.state = "online"; this.elements.memoryStatus.title = "Memória conectada";
+      }
     } catch (error) {
       const unavailable = error instanceof ApiError && error.status === 503;
       this.elements.empty.hidden = false; this.elements.empty.dataset.state = "offline";
@@ -317,6 +356,46 @@ export class MemoryGlobeController {
       setText(this.elements.empty.querySelector("span"), unavailable ? "Configure DATABASE_URL e aplique as migrações para ativar os nós reais." : "Tente sincronizar novamente.");
       setText(this.elements.status, unavailable ? "Banco desconectado" : "Falha de sincronização");
       this.elements.memoryStatus.dataset.state = "offline"; this.elements.memoryStatus.title = "Memória indisponível";
+    }
+  }
+
+  updateReadout() {
+    const memoryCount = countLabel(this.layout.memories.length, "memória", "memórias");
+    const entityCount = countLabel(this.layout.entities.length, "entidade", "entidades");
+    setText(this.elements.count, `${memoryCount} · ${entityCount}`);
+    this.canvas.setAttribute("aria-label", `Memory Globe com ${memoryCount} e ${entityCount}.`);
+  }
+
+  handleRealtimeEvent(event) {
+    if (event.type === "AI_STATE_CHANGED") {
+      this.renderer.setAiState(event.payload?.state);
+      setText(this.elements.status, event.payload?.state === "thinking" ? "HOPE processando…" : "Tempo real conectado");
+      return;
+    }
+    const nextGraph = applyGraphEvent(this.graph, event);
+    this.graph = nextGraph; this.layout = layoutGraph(nextGraph);
+    this.renderer.applyGraphMutation(nextGraph, event);
+    if (event.type === "MEMORY_DELETED" && this.renderer.selectedId === event.payload?.memory_id) this.clearSelection();
+    this.updateReadout(); this.elements.empty.hidden = this.layout.memories.length > 0;
+    setText(this.elements.status, "Atualização em tempo real");
+  }
+
+  handleRealtimeState({ state }) {
+    this.realtimeState = state;
+    if (state === "connected") {
+      const reconnect = this.hasConnected; this.hasConnected = true;
+      clearInterval(this.fallbackTimer); this.fallbackTimer = null;
+      this.elements.memoryStatus.dataset.state = "online";
+      this.elements.memoryStatus.title = "Memória em tempo real conectada";
+      setText(this.elements.status, "Tempo real conectado");
+      if (reconnect) this.load();
+      return;
+    }
+    if (["disconnected", "reconnecting"].includes(state)) {
+      this.elements.memoryStatus.dataset.state = "degraded";
+      this.elements.memoryStatus.title = "Tempo real desconectado; sincronização HTTP ativa";
+      setText(this.elements.status, "Tempo real desconectado · HTTP disponível");
+      if (!this.fallbackTimer) this.fallbackTimer = setInterval(() => this.load(), 30000);
     }
   }
 

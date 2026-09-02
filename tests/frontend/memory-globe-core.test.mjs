@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { layoutGraph, normalizeGraph, relatedNodes, visibleScene } from "../../frontend/js/memory-globe-core.js";
+import { applyGraphEvent, layoutGraph, normalizeGraph, relatedNodes, visibleScene } from "../../frontend/js/memory-globe-core.js";
 
 const graph = {
   nodes: [
@@ -42,4 +42,44 @@ test("busca filtra a cena sem inventar resultados", () => {
   const filtered = visibleScene(layout, "orbital", null, new Set(["m2"]));
   assert.deepEqual(filtered.nodes.map(node => node.id), ["m2"]);
   assert.equal(filtered.connections.length, 0);
+});
+
+test("eventos de memória e relação atualizam o grafo incrementalmente", () => {
+  const created = applyGraphEvent(graph, {
+    type: "MEMORY_CREATED",
+    payload: {
+      node: { id: "m3", content: "Nova memória", memory_type: "general", kind: "fact", category: "contextual", importance: .5 },
+      edges: [],
+      entities: [],
+      entity_links: [],
+    },
+  });
+  assert.deepEqual(created.nodes.map(node => node.id), ["m1", "m2", "m3"]);
+
+  const updated = applyGraphEvent(created, {
+    type: "MEMORY_UPDATED",
+    payload: { node: { ...created.nodes[0], content: "Preferência atualizada" }, edges: [], entities: [], entity_links: [] },
+  });
+  assert.equal(updated.nodes.find(node => node.id === "m1").content, "Preferência atualizada");
+
+  const related = applyGraphEvent(updated, {
+    type: "MEMORY_RELATION_CREATED",
+    payload: { edge: { id: "r2", source_memory_id: "m1", target_memory_id: "m3", relation_type: "related_to", weight: .8 } },
+  });
+  assert.equal(related.edges.some(edge => edge.id === "r2"), true);
+
+  const unrelated = applyGraphEvent(related, {
+    type: "MEMORY_RELATION_DELETED",
+    payload: { relation_id: "r2" },
+  });
+  assert.equal(unrelated.edges.some(edge => edge.id === "r2"), false);
+
+  const deleted = applyGraphEvent(unrelated, {
+    type: "MEMORY_DELETED",
+    payload: { memory_id: "m3" },
+  });
+  assert.equal(deleted.nodes.some(node => node.id === "m3"), false);
+  assert.equal(deleted.edges.some(edge => edge.source_memory_id === "m3" || edge.target_memory_id === "m3"), false);
+
+  assert.deepEqual(applyGraphEvent(deleted, { type: "AI_STATE_CHANGED", payload: { state: "thinking" } }), deleted);
 });

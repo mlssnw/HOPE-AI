@@ -42,9 +42,12 @@ export async function getMemoryExplanation(userId, memoryId, signal) {
   return response.json();
 }
 
-export async function sendChat(payload, signal) {
+export async function sendChat(payload, signal, userId) {
   const response = await fetch("/api/chat", {
-    method: "POST", signal, headers: { "Content-Type": "application/json", Accept: "application/json" },
+    method: "POST", signal, headers: {
+      "Content-Type": "application/json", Accept: "application/json",
+      ...(userId ? { "X-Hope-User-Id": userId } : {}),
+    },
     body: JSON.stringify(payload),
   });
   if (!response.ok) throw new ApiError(await parseError(response), response.status);

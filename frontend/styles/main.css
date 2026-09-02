@@ -48,6 +48,7 @@ button:focus-visible, textarea:focus-visible, input:focus-visible + span {
 .status { display: inline-flex; align-items: center; gap: 7px; }
 .status i { width: 6px; height: 6px; border-radius: 50%; background: #596a6a; box-shadow: none; }
 .status[data-state="online"] i { background: var(--mint); box-shadow: 0 0 9px var(--mint); }
+.status[data-state="degraded"] i { background: #ffad38; box-shadow: 0 0 8px rgba(255,173,56,.72); }
 .status[data-state="offline"] i { background: var(--danger); box-shadow: 0 0 8px rgba(255,135,150,.7); }
 
 .workspace { max-width: 1520px; min-height: calc(100vh - 112px); margin: 0 auto; display: grid; grid-template-columns: minmax(560px, 1.45fr) minmax(420px, .9fr); gap: 20px; }

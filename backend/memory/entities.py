@@ -175,3 +175,12 @@ class EntityRepository:
     async def links(self, user_id: uuid.UUID) -> list[MemoryEntityRecord]:
         statement = select(MemoryEntityRecord).where(MemoryEntityRecord.user_id == user_id)
         return list((await self.session.scalars(statement)).all())
+
+    async def links_for_memory(
+        self, user_id: uuid.UUID, memory_id: uuid.UUID
+    ) -> list[MemoryEntityRecord]:
+        statement = select(MemoryEntityRecord).where(
+            MemoryEntityRecord.user_id == user_id,
+            MemoryEntityRecord.memory_id == memory_id,
+        )
+        return list((await self.session.scalars(statement)).all())

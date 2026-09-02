@@ -18,6 +18,7 @@ from .schemas import (
     MemoryEventView,
     MemoryExplanation,
     MemoryGraph,
+    MemoryRelationView,
     MemorySearchHit,
     MemorySourceView,
     MemoryUpdate,
@@ -230,6 +231,34 @@ class MemoryManager:
                 target_memory_id=target_memory_id,
                 relation_type=relation_type,
                 weight=weight,
+            )
+
+    async def delete_relation(
+        self,
+        user_id: uuid.UUID,
+        memory_id: uuid.UUID,
+        relation_id: uuid.UUID,
+    ) -> MemoryRelationView | None:
+        async with self.database.session() as session:
+            relation = await MemoryRepository(session).delete_relation(
+                user_id, memory_id, relation_id
+            )
+            return MemoryRelationView.model_validate(relation) if relation else None
+
+    async def graph_fragment(
+        self, user_id: uuid.UUID, memory_id: uuid.UUID
+    ) -> MemoryGraph | None:
+        async with self.database.session() as session:
+            repository = MemoryRepository(session)
+            memory = await repository.get(user_id, memory_id)
+            if memory is None:
+                return None
+            entity_repository = EntityRepository(session)
+            return MemoryGraph(
+                nodes=[memory],
+                edges=await repository.relations_for(user_id, memory_id),
+                entities=await entity_repository.for_memory(user_id, memory_id),
+                entity_links=await entity_repository.links_for_memory(user_id, memory_id),
             )
 
     async def graph(self, user_id: uuid.UUID, *, limit: int = 200) -> MemoryGraph:

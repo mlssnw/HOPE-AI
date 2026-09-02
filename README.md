@@ -2,7 +2,17 @@
 
 **Holistic Operational Personal Engine** — assistente pessoal com Memory Globe WebGL, backend FastAPI, Claude, busca web, voz e memória persistente cloud-ready.
 
-> Status: em desenvolvimento · Versão 6.0 / Fase 3 · Licença MIT
+> Status: em desenvolvimento · Versão 6.0 / Fase 4 · Licença MIT
+
+## O que mudou na Fase 4
+
+- EventBus interno desacoplado do transporte e isolado por usuário.
+- WebSocket `/ws/hope` com ping/pong, detecção de desconexão e reconexão automática.
+- Eventos incrementais para criação, atualização e exclusão de memórias e relações, além do estado da IA.
+- Memory Globe atualizado sem recarregar a cena inteira, com animações de entrada, alteração e saída.
+- Sincronização HTTP automática e botão de atualização continuam disponíveis quando o tempo real cai.
+
+O protocolo, a estratégia de recuperação e as decisões de implementação estão em [docs/phase-4.md](docs/phase-4.md).
 
 ## O que mudou na Fase 3
 
@@ -55,7 +65,8 @@ O antigo `H.O.P.E_4.html` foi substituído pela aplicação modular em `frontend
 Navegador
   └─ frontend/ (HTML, CSS e JavaScript sem segredos)
        ├─ Memory Globe (WebGL + layout determinístico)
-       └─ /api/* no mesmo endereço
+       ├─ /api/* no mesmo endereço
+       └─ /ws/hope (eventos incrementais)
             └─ backend/ (FastAPI)
                  ├─ Anthropic / Claude
                  ├─ Tavily
@@ -160,7 +171,11 @@ As rotas de memória disponíveis são:
 - `GET`, `PATCH` e `DELETE /api/memories/{id}`
 - `GET /api/memories/{id}/explanation`
 - `POST /api/memories/{id}/relations`
+- `DELETE /api/memories/{id}/relations/{relation_id}`
 - `GET /api/memories/graph`
+
+O canal `GET /ws/hope?user_id=<uuid>` publica eventos em tempo real. O UUID tem
+o mesmo caráter transitório de `X-Hope-User-Id` e não substitui autenticação.
 
 Durante a migração, envie um UUID em `X-Hope-User-Id`. Esse cabeçalho permite
 testar isolamento de dados, mas não substitui autenticação real e não deve ser
@@ -212,7 +227,8 @@ npm run test:frontend
 ```
 
 Eles cobrem validação da API, CSP, respostas inválidas, rate limit, prompt injection,
-protocolos perigosos, HTML/SVG inerte e integridade do layout do Memory Globe.
+protocolos perigosos, HTML/SVG inerte, integridade do Memory Globe e o ciclo de
+eventos e reconexão da Fase 4.
 
 ## Estrutura
 
@@ -220,6 +236,7 @@ protocolos perigosos, HTML/SVG inerte e integridade do layout do Memory Globe.
 backend/api/      rotas HTTP de memória
 backend/database/ modelos SQLAlchemy e sessões assíncronas
 backend/memory/   domínio, embeddings, repositório e gerenciador
+backend/realtime/ EventBus, conexões e protocolo WebSocket
 backend/          FastAPI, validação e integrações existentes
 frontend/         interface, chat, voz e Memory Globe WebGL
 migrations/       evolução versionada do PostgreSQL/pgvector
@@ -235,8 +252,8 @@ tests/            testes Python e Node
 - A interface ainda usa o histórico local; a integração do chat com a nova memória vem depois.
 - `X-Hope-User-Id` é uma identidade transitória, não autenticação.
 - O embedding local é adequado a desenvolvimento, não à qualidade semântica de produção.
-- A atualização do Memory Globe ainda ocorre por sincronização HTTP, sem eventos em tempo real.
 - A resposta ainda não usa streaming de tokens.
+- O EventBus é local ao processo; múltiplas réplicas exigirão um broker compartilhado.
 
 ## Solução de problemas
 
@@ -256,6 +273,7 @@ tests/            testes Python e Node
 - [x] CRUD, busca vetorial, consolidação e relações de memória.
 - [x] Classificação, recuperação híbrida, proveniência e entidades.
 - [x] Memory Globe WebGL alimentado pelo grafo real.
+- [x] Eventos em tempo real e atualização incremental do Memory Globe.
 - [ ] Autenticação e autorização reais.
 - [ ] Integrar a memória persistente ao pipeline de chat.
 - [ ] Streaming de respostas.

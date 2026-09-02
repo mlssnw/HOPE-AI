@@ -1,10 +1,11 @@
 import { ApiError, getHealth, requestSpeech, sendChat } from "./api-client.js";
-import { clearHistory, loadHistory, loadPreferences, saveHistory, savePreferences } from "./storage.js";
+import { clearHistory, getOrCreateUserId, loadHistory, loadPreferences, saveHistory, savePreferences } from "./storage.js";
 import { addMessage, announce, elements, resetMessages, setBusy, setServiceStatus, showSources } from "./ui.js";
 import { VoiceInput } from "./voice.js";
 
 export class ChatController {
   constructor() {
+    this.userId = getOrCreateUserId();
     this.preferences = loadPreferences();
     this.history = loadHistory(this.preferences.persist);
     this.abortController = null; this.audio = null; this.audioUrl = null;
@@ -87,7 +88,7 @@ export class ChatController {
     this.abortController = controller; setBusy(true); announce("Processando com segurança…");
     try {
       const result = await sendChat({ message, history: previousHistory,
-        use_web: elements.web.checked, use_vault: elements.vault.checked }, controller.signal);
+        use_web: elements.web.checked, use_vault: elements.vault.checked }, controller.signal, this.userId);
       addMessage("assistant", result.reply); showSources(result.sources);
       this.history.push({ role: "assistant", content: result.reply }); this.savePreferences();
       announce("Resposta concluída.");

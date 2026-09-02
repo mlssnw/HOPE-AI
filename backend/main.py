@@ -14,6 +14,8 @@ from .memory.embeddings import LocalHashEmbeddingProvider
 from .memory.manager import MemoryManager
 from .memory.service import MemoryService
 from .models import ChatRequest, ChatResponse, HealthResponse, ServiceStatus, TtsRequest
+from .realtime import ConnectionManager, EventBus, EventType, HopeEvent
+from .realtime.router import router as realtime_router
 from .services import ExternalServiceError, HopeServices
 
 FRONTEND_DIR = PROJECT_ROOT / "frontend"
@@ -24,6 +26,8 @@ def create_app(
     memory_manager: MemoryManager | None = None,
 ) -> FastAPI:
     settings = Settings.from_env()
+    event_bus = EventBus()
+    connection_manager = ConnectionManager()
     database = None
     owns_database = False
     if memory_manager is None and settings.database_url:
@@ -44,7 +48,7 @@ def create_app(
 
     app = FastAPI(
         title="HOPE-AI API",
-        version="6.0.0-phase.3",
+        version="6.0.0-phase.4",
         docs_url=None,
         redoc_url=None,
         openapi_url=None,
@@ -54,6 +58,8 @@ def create_app(
     app.state.database = database or getattr(memory_manager, "database", None)
     app.state.memory_manager = memory_manager
     app.state.memory_service = MemoryService(memory_manager) if memory_manager else None
+    app.state.event_bus = event_bus
+    app.state.connection_manager = connection_manager
 
     @app.middleware("http")
     async def security_headers(request: Request, call_next):  # type: ignore[no-untyped-def]
@@ -88,8 +94,41 @@ def create_app(
         return result.model_copy(update={"database": database_status})
 
     @app.post("/api/chat", response_model=ChatResponse)
-    async def chat(payload: ChatRequest) -> ChatResponse:
-        return await app.state.services.chat(payload)
+    async def chat(payload: ChatRequest, request: Request) -> ChatResponse:
+        raw_user_id = request.headers.get("X-Hope-User-Id", "")
+        try:
+            user_id = uuid.UUID(raw_user_id)
+        except ValueError:
+            user_id = None
+        if user_id is not None:
+            await event_bus.publish(
+                HopeEvent(
+                    type=EventType.AI_STATE_CHANGED,
+                    user_id=user_id,
+                    payload={"state": "thinking"},
+                )
+            )
+        try:
+            result = await app.state.services.chat(payload)
+        except Exception:
+            if user_id is not None:
+                await event_bus.publish(
+                    HopeEvent(
+                        type=EventType.AI_STATE_CHANGED,
+                        user_id=user_id,
+                        payload={"state": "error"},
+                    )
+                )
+            raise
+        if user_id is not None:
+            await event_bus.publish(
+                HopeEvent(
+                    type=EventType.AI_STATE_CHANGED,
+                    user_id=user_id,
+                    payload={"state": "idle"},
+                )
+            )
+        return result
 
     @app.post("/api/tts")
     async def tts(payload: TtsRequest) -> Response:
@@ -97,6 +136,7 @@ def create_app(
         return Response(content=audio, media_type=media_type)
 
     app.include_router(memory_router)
+    app.include_router(realtime_router)
 
     if FRONTEND_DIR.exists():
         app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")

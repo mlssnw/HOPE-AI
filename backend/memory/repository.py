@@ -225,6 +225,27 @@ class MemoryRepository:
         )
         return list((await self.session.scalars(statement)).all())
 
+    async def delete_relation(
+        self,
+        user_id: uuid.UUID,
+        memory_id: uuid.UUID,
+        relation_id: uuid.UUID,
+    ) -> MemoryRelationRecord | None:
+        statement = select(MemoryRelationRecord).where(
+            MemoryRelationRecord.id == relation_id,
+            MemoryRelationRecord.user_id == user_id,
+            or_(
+                MemoryRelationRecord.source_memory_id == memory_id,
+                MemoryRelationRecord.target_memory_id == memory_id,
+            ),
+        )
+        relation = (await self.session.scalars(statement)).first()
+        if relation is None:
+            return None
+        await self.session.delete(relation)
+        await self.session.flush()
+        return relation
+
     async def clear_semantic_relations(
         self, user_id: uuid.UUID, source_memory_id: uuid.UUID
     ) -> None:
