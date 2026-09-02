@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from contextlib import asynccontextmanager
 from typing import AsyncIterator
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
@@ -10,11 +11,25 @@ from .base import Base
 
 
 def normalize_database_url(url: str) -> str:
+    normalized = url
     if url.startswith("postgres://"):
-        return "postgresql+asyncpg://" + url.removeprefix("postgres://")
-    if url.startswith("postgresql://"):
-        return "postgresql+asyncpg://" + url.removeprefix("postgresql://")
-    return url
+        normalized = "postgresql+asyncpg://" + url.removeprefix("postgres://")
+    elif url.startswith("postgresql://"):
+        normalized = "postgresql+asyncpg://" + url.removeprefix("postgresql://")
+    if not normalized.startswith("postgresql+asyncpg://"):
+        return normalized
+
+    parts = urlsplit(normalized)
+    query = parse_qsl(parts.query, keep_blank_values=True)
+    has_asyncpg_ssl = any(key == "ssl" for key, _ in query)
+    translated_query = [
+        ("ssl", value) if key == "sslmode" and not has_asyncpg_ssl else (key, value)
+        for key, value in query
+        if key != "sslmode" or not has_asyncpg_ssl
+    ]
+    return urlunsplit(
+        (parts.scheme, parts.netloc, parts.path, urlencode(translated_query), parts.fragment)
+    )
 
 
 class Database:

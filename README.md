@@ -124,6 +124,16 @@ Crie a extensão e o schema pela migração versionada:
 python -m alembic upgrade head
 ```
 
+Valide uma instância PostgreSQL/pgvector real com dados temporários removidos ao
+final:
+
+```bash
+python scripts/preflight_database.py --exercise-crud
+```
+
+URLs de provedores gerenciados com `sslmode=require` são convertidas para o
+formato SSL aceito pelo driver assíncrono.
+
 O usuário do banco precisa ter permissão para `CREATE EXTENSION` na primeira
 execução, ou a extensão `vector` deve ser habilitada previamente pelo provedor.
 
