@@ -7,7 +7,19 @@ from typing import Any, Literal
 from pydantic import AliasChoices, BaseModel, ConfigDict, Field, field_validator
 
 MemoryType = Literal[
-    "preference", "fact", "goal", "task", "relationship", "episode", "decision", "knowledge"
+    "preference",
+    "fact",
+    "goal",
+    "task",
+    "relationship",
+    "episode",
+    "decision",
+    "project",
+    "person",
+    "system",
+    "knowledge",
+    "temporal",
+    "context",
 ]
 MemoryKind = Literal["fact", "event", "inference"]
 RelationType = Literal[

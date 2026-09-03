@@ -8,7 +8,8 @@ export const RING_LABELS = {
 const TYPE_TO_RING = {
   preference: "identity", relationship: "identity", episode: "temporal", task: "temporal",
   knowledge: "knowledge", fact: "knowledge", goal: "context", decision: "context",
-  integration: "applications",
+  project: "context", person: "identity", system: "applications", temporal: "temporal",
+  context: "context", integration: "applications",
 };
 
 const COLORS = {
@@ -20,6 +21,19 @@ export const REALTIME_EVENT_TYPES = new Set([
   "MEMORY_CREATED", "MEMORY_UPDATED", "MEMORY_DELETED",
   "MEMORY_RELATION_CREATED", "MEMORY_RELATION_DELETED", "AI_STATE_CHANGED",
 ]);
+
+export function normalizeAiState(state) {
+  return ["thinking", "searching", "speaking", "error"].includes(state) ? state : "idle";
+}
+
+export function aiStateLabel(state) {
+  return {
+    thinking: "HOPE processando…",
+    searching: "Consultando memórias…",
+    speaking: "HOPE falando…",
+    error: "Falha temporária",
+  }[state] || "Tempo real conectado";
+}
 
 export function hashUnit(value) {
   let hash = 2166136261;

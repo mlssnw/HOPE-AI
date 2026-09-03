@@ -20,12 +20,24 @@ class MemoryClassifier:
     """Classificação determinística e substituível por um classificador de IA."""
 
     TYPE_PATTERNS = (
-        ("decision", r"\b(decidi|decidimos|decisão|fica definido|vamos usar)\b"),
+        (
+            "decision",
+            r"\b(decidi|decidimos|decisão|fica definido|vamos usar|quero que|"
+            r"será (?:o|a) .{0,30}principal)\b",
+        ),
         ("preference", r"\b(prefiro|gosto|não gosto|favorit[oa]|minha preferência)\b"),
         ("goal", r"\b(meta|objetivo|quero alcançar|pretendo|planejo)\b"),
         ("task", r"\b(preciso|devo|tarefa|prazo|lembre[- ]?me|até \w+-feira)\b"),
+        ("person", r"\b(meu nome é|minha profissão|eu moro|eu trabalho)\b"),
         ("relationship", r"\b(mãe|pai|irmã|irmão|amig[oa]|colega|cliente|equipe)\b"),
         ("episode", r"\b(ontem|hoje|aconteceu|viajei|reunião|encontrei|conversei)\b"),
+        ("project", r"\b(meu projeto|projeto\s+[A-ZÁÉÍÓÚÂÊÔÃÕÇ\w.-]+)\b"),
+        (
+            "system",
+            r"\b(banco principal|sistema (?:usa|utiliza)|arquitetura (?:usa|utiliza)|"
+            r"configuração principal)\b",
+        ),
+        ("temporal", r"\b(amanhã|próxima semana|próximo mês|em \d{1,2}/\d{1,2})\b"),
     )
     INFERENCE_PATTERN = re.compile(
         r"\b(acho que|talvez|parece que|provavelmente|possivelmente|deduzo|suponho)\b"
@@ -59,10 +71,17 @@ class MemoryClassifier:
             "relationship": 0.7,
             "episode": 0.55,
             "decision": 0.82,
+            "project": 0.72,
+            "person": 0.76,
+            "system": 0.76,
             "knowledge": 0.42,
+            "temporal": 0.68,
+            "context": 0.55,
         }[memory_type]
         if self.IMPORTANT_PATTERN.search(text):
             importance += 0.14
+        if kind == "inference":
+            importance += 0.08
         if re.search(r"\b\d{1,2}([:/-]\d{1,2})?\b", text):
             importance += 0.05
         if len(content) >= 80:
@@ -75,7 +94,12 @@ class MemoryClassifier:
             "task": "temporal",
             "episode": "temporal",
             "decision": "context",
+            "project": "context",
+            "person": "identity",
+            "system": "applications",
             "knowledge": "knowledge",
+            "temporal": "temporal",
+            "context": "context",
         }[memory_type]
         tags = self._tags(content, memory_type, kind)
         summary = self._truncate(content, 280)

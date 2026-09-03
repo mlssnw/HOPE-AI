@@ -2,7 +2,19 @@
 
 **Holistic Operational Personal Engine** — assistente pessoal com Memory Globe WebGL, backend FastAPI, Claude, busca web, voz e memória persistente cloud-ready.
 
-> Status: em desenvolvimento · Versão 6.0 / Fase 4 · Licença MIT
+> Status: em desenvolvimento · Versão 6.0 / Fase 5 · Licença MIT
+
+## O que mudou na Fase 5
+
+- O chat consulta memórias persistentes relevantes antes de chamar Claude.
+- O novo Orchestrator coordena contexto, personalidade, estados da IA e persistência.
+- Decisões, preferências, fatos relevantes, eventos e inferências podem virar memória; duplicatas são consolidadas.
+- Correções e pedidos claros de esquecimento alteram o banco e o Memory Globe em tempo real.
+- A personalidade original da HOPE e o system prompt estruturado ficam isolados em `backend/ai/`.
+- Memórias, Tavily e Obsidian são sempre tratados como dados não confiáveis, nunca como instruções.
+- Respostas podem emitir `FOCUS_MEMORIES` para focar o globo sem recarregar o grafo.
+
+Veja a arquitetura, os fluxos e as limitações em [docs/phase-5.md](docs/phase-5.md).
 
 ## O que mudou na Fase 4
 
@@ -68,6 +80,7 @@ Navegador
        ├─ /api/* no mesmo endereço
        └─ /ws/hope (eventos incrementais)
             └─ backend/ (FastAPI)
+                 ├─ AI Orchestrator + personalidade + contexto seguro
                  ├─ Anthropic / Claude
                  ├─ Tavily
                  ├─ ElevenLabs
@@ -224,7 +237,7 @@ Antes de publicar a aplicação em uma rede, adicione autenticação. A configur
 
 ## Testes
 
-Os testes usam respostas simuladas e não chamam APIs pagas.
+Os testes automatizados usam respostas simuladas e não chamam APIs pagas.
 
 ```bash
 python -m pytest -q
@@ -232,13 +245,15 @@ npm run test:frontend
 ```
 
 Eles cobrem validação da API, CSP, respostas inválidas, rate limit, prompt injection,
-protocolos perigosos, HTML/SVG inerte, integridade do Memory Globe e o ciclo de
-eventos e reconexão da Fase 4.
+recuperação e consolidação de memória, correção/esquecimento, degradação do banco,
+protocolos perigosos, HTML/SVG inerte, integridade do Memory Globe, `ui_events` e o
+ciclo de eventos e reconexão.
 
 ## Estrutura
 
 ```text
 backend/api/      rotas HTTP de memória
+backend/ai/       Orchestrator, personalidade, prompts e contexto seguro
 backend/database/ modelos SQLAlchemy e sessões assíncronas
 backend/memory/   domínio, embeddings, repositório e gerenciador
 backend/realtime/ EventBus, conexões e protocolo WebSocket
@@ -254,7 +269,7 @@ tests/            testes Python e Node
 
 - Web Speech API não existe em todos os navegadores.
 - A recuperação do Obsidian é textual, sem embeddings.
-- A interface ainda usa o histórico local; a integração do chat com a nova memória vem depois.
+- O histórico da conversa atual continua local e é diferente da memória persistente.
 - `X-Hope-User-Id` é uma identidade transitória, não autenticação.
 - O embedding local é adequado a desenvolvimento, não à qualidade semântica de produção.
 - A resposta ainda não usa streaming de tokens.
@@ -280,8 +295,8 @@ tests/            testes Python e Node
 - [x] Classificação, recuperação híbrida, proveniência e entidades.
 - [x] Memory Globe WebGL alimentado pelo grafo real.
 - [x] Eventos em tempo real e atualização incremental do Memory Globe.
+- [x] Chat consciente de memória e personalidade arquitetural da HOPE.
 - [ ] Autenticação e autorização reais.
-- [ ] Integrar a memória persistente ao pipeline de chat.
 - [ ] Streaming de respostas.
 - [ ] Reranking semântico opcional para notas.
 - [ ] Armazenamento local criptografado.

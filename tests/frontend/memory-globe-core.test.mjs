@@ -1,7 +1,16 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { applyGraphEvent, layoutGraph, normalizeGraph, relatedNodes, visibleScene } from "../../frontend/js/memory-globe-core.js";
+import { aiStateLabel, applyGraphEvent, layoutGraph, normalizeAiState, normalizeGraph, relatedNodes, visibleScene } from "../../frontend/js/memory-globe-core.js";
+
+test("estados operacionais do chat têm fallback seguro", () => {
+  assert.equal(normalizeAiState("searching"), "searching");
+  assert.equal(normalizeAiState("speaking"), "speaking");
+  assert.equal(normalizeAiState("unknown"), "idle");
+  assert.equal(aiStateLabel("thinking"), "HOPE processando…");
+  assert.equal(aiStateLabel("searching"), "Consultando memórias…");
+  assert.equal(aiStateLabel("idle"), "Tempo real conectado");
+});
 
 const graph = {
   nodes: [

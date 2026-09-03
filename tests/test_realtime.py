@@ -153,6 +153,7 @@ async def test_chat_publishes_ai_state_for_same_user() -> None:
             )
         assert response.status_code == 200
         assert (await subscription.get()).payload["state"] == "thinking"
+        assert (await subscription.get()).payload["state"] == "searching"
         assert (await subscription.get()).payload["state"] == "idle"
     finally:
         await app.state.event_bus.unsubscribe(subscription)

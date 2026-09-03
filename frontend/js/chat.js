@@ -1,6 +1,7 @@
 import { ApiError, getHealth, requestSpeech, sendChat } from "./api-client.js";
 import { clearHistory, getOrCreateUserId, loadHistory, loadPreferences, saveHistory, savePreferences } from "./storage.js";
 import { addMessage, announce, elements, resetMessages, setBusy, setServiceStatus, showSources } from "./ui.js";
+import { dispatchUiEvents } from "./ui-events.js";
 import { VoiceInput } from "./voice.js";
 
 export class ChatController {
@@ -69,7 +70,7 @@ export class ChatController {
 
   async speak(text) {
     try {
-      const controller = new AbortController(); const blob = await requestSpeech(text, controller.signal);
+      const controller = new AbortController(); const blob = await requestSpeech(text, controller.signal, this.userId);
       if (this.audioUrl) URL.revokeObjectURL(this.audioUrl);
       this.audioUrl = URL.createObjectURL(blob); this.audio = new Audio(this.audioUrl);
       await this.audio.play();
@@ -90,6 +91,7 @@ export class ChatController {
       const result = await sendChat({ message, history: previousHistory,
         use_web: elements.web.checked, use_vault: elements.vault.checked }, controller.signal, this.userId);
       addMessage("assistant", result.reply); showSources(result.sources);
+      dispatchUiEvents(result.ui_events);
       this.history.push({ role: "assistant", content: result.reply }); this.savePreferences();
       announce("Resposta concluída.");
       if (elements.voice.getAttribute("aria-pressed") === "true") this.speak(result.reply);

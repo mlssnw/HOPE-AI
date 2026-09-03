@@ -1,6 +1,6 @@
 import { ApiError, getMemoryExplanation, getMemoryGraph, retrieveMemories } from "./api-client.js";
 import { getOrCreateUserId } from "./storage.js";
-import { applyGraphEvent, layoutGraph, normalizeGraph, relatedNodes, RING_ORDER, visibleScene } from "./memory-globe-core.js";
+import { aiStateLabel, applyGraphEvent, layoutGraph, normalizeAiState, normalizeGraph, relatedNodes, RING_ORDER, visibleScene } from "./memory-globe-core.js";
 import { HopeRealtimeClient } from "./realtime.js";
 
 const QUALITY = {
@@ -165,7 +165,7 @@ export class MemoryGlobeRenderer {
     if (event?.type === "MEMORY_CREATED" && memoryId) this.transitions.set(memoryId, { kind: "birth", startedAt: now, duration: 720 });
     if (event?.type === "MEMORY_UPDATED" && memoryId) this.transitions.set(memoryId, { kind: "update", startedAt: now, duration: 520 });
   }
-  setAiState(state) { this.aiState = ["thinking", "error"].includes(state) ? state : "idle"; }
+  setAiState(state) { this.aiState = normalizeAiState(state); }
   setMode(mode) { this.mode = ["orbital", "cluster", "memory"].includes(mode) ? mode : "orbital"; }
   setSelected(id) { this.selectedId = id || null; if (!id && this.mode === "memory") this.mode = "orbital"; }
   setHighlights(ids) { this.highlightedIds = new Set(ids || []); }
@@ -264,8 +264,9 @@ export class MemoryGlobeRenderer {
     });
     this.drawItems(lines, gl.LINES);
     this.drawItems(this.particles, gl.POINTS, true);
-    const activity = this.aiState === "thinking" ? 1.24 : this.aiState === "error" ? .88 : 1;
-    const pulse = (this.reducedMotion ? 1 : 1 + Math.sin(time * (this.aiState === "thinking" ? .006 : .0022)) * .09) * activity;
+    const activity = this.aiState === "thinking" ? 1.24 : this.aiState === "searching" ? 1.18 : this.aiState === "speaking" ? 1.12 : this.aiState === "error" ? .88 : 1;
+    const active = ["thinking", "searching", "speaking"].includes(this.aiState);
+    const pulse = (this.reducedMotion ? 1 : 1 + Math.sin(time * (active ? .006 : .0022)) * .09) * activity;
     const coreColor = this.aiState === "error" ? [1, .22, .17, .96] : [1, .76, .24, .96];
     this.drawItems([{ x: 0, y: 0, z: 0, size: 154 * pulse, color: [1, .54, .08, .10], shape: 2 }], gl.POINTS, true);
     this.drawItems([{ x: 0, y: 0, z: 0, size: 88 * pulse, color: coreColor, shape: 2 }], gl.POINTS, true);
@@ -332,6 +333,7 @@ export class MemoryGlobeController {
       setTimeout(() => this.renderer.resize(), 80);
     });
     document.addEventListener("keydown", event => { if (event.key === "Escape" && this.elements.shell.classList.contains("expanded")) this.elements.expand.click(); });
+    addEventListener("hope:ui-event", event => this.handleUiEvent(event.detail));
   }
 
   async load() {
@@ -369,7 +371,7 @@ export class MemoryGlobeController {
   handleRealtimeEvent(event) {
     if (event.type === "AI_STATE_CHANGED") {
       this.renderer.setAiState(event.payload?.state);
-      setText(this.elements.status, event.payload?.state === "thinking" ? "HOPE processando…" : "Tempo real conectado");
+      setText(this.elements.status, aiStateLabel(event.payload?.state));
       return;
     }
     const nextGraph = applyGraphEvent(this.graph, event);
@@ -378,6 +380,15 @@ export class MemoryGlobeController {
     if (event.type === "MEMORY_DELETED" && this.renderer.selectedId === event.payload?.memory_id) this.clearSelection();
     this.updateReadout(); this.elements.empty.hidden = this.layout.memories.length > 0;
     setText(this.elements.status, "Atualização em tempo real");
+  }
+
+  handleUiEvent(event) {
+    if (event?.type !== "FOCUS_MEMORIES" || !Array.isArray(event.ids)) return;
+    const ids = event.ids.filter(id => this.layout.nodeMap.has(id));
+    if (!ids.length) return;
+    this.renderer.setHighlights(ids); this.renderer.setMode("orbital");
+    this.renderer.focusOn(ids[0]); this.updateModeButtons("orbital");
+    setText(this.elements.status, countLabel(ids.length, "memória em foco", "memórias em foco"));
   }
 
   handleRealtimeState({ state }) {

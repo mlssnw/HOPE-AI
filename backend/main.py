@@ -7,6 +7,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 
+from .ai import HopeOrchestrator
 from .api.memory import router as memory_router
 from .config import PROJECT_ROOT, Settings
 from .database.session import Database
@@ -48,7 +49,7 @@ def create_app(
 
     app = FastAPI(
         title="HOPE-AI API",
-        version="6.0.0-phase.4",
+        version="6.0.0-phase.5",
         docs_url=None,
         redoc_url=None,
         openapi_url=None,
@@ -60,6 +61,12 @@ def create_app(
     app.state.memory_service = MemoryService(memory_manager) if memory_manager else None
     app.state.event_bus = event_bus
     app.state.connection_manager = connection_manager
+    app.state.ai_orchestrator = HopeOrchestrator(
+        app.state.services,
+        memory_manager,
+        app.state.memory_service,
+        event_bus,
+    )
 
     @app.middleware("http")
     async def security_headers(request: Request, call_next):  # type: ignore[no-untyped-def]
@@ -100,17 +107,28 @@ def create_app(
             user_id = uuid.UUID(raw_user_id)
         except ValueError:
             user_id = None
+        return await app.state.ai_orchestrator.chat(payload, user_id)
+
+    @app.post("/api/tts")
+    async def tts(payload: TtsRequest, request: Request) -> Response:
+        try:
+            user_id = uuid.UUID(request.headers.get("X-Hope-User-Id", ""))
+        except ValueError:
+            user_id = None
         if user_id is not None:
             await event_bus.publish(
                 HopeEvent(
                     type=EventType.AI_STATE_CHANGED,
                     user_id=user_id,
-                    payload={"state": "thinking"},
+                    payload={"state": "speaking"},
                 )
             )
+        failed = False
         try:
-            result = await app.state.services.chat(payload)
+            audio, media_type = await app.state.services.synthesize_speech(payload.text)
+            return Response(content=audio, media_type=media_type)
         except Exception:
+            failed = True
             if user_id is not None:
                 await event_bus.publish(
                     HopeEvent(
@@ -120,20 +138,15 @@ def create_app(
                     )
                 )
             raise
-        if user_id is not None:
-            await event_bus.publish(
-                HopeEvent(
-                    type=EventType.AI_STATE_CHANGED,
-                    user_id=user_id,
-                    payload={"state": "idle"},
+        finally:
+            if user_id is not None:
+                await event_bus.publish(
+                    HopeEvent(
+                        type=EventType.AI_STATE_CHANGED,
+                        user_id=user_id,
+                        payload={"state": "idle", "recovered_from_error": failed},
+                    )
                 )
-            )
-        return result
-
-    @app.post("/api/tts")
-    async def tts(payload: TtsRequest) -> Response:
-        audio, media_type = await app.state.services.synthesize_speech(payload.text)
-        return Response(content=audio, media_type=media_type)
 
     app.include_router(memory_router)
     app.include_router(realtime_router)

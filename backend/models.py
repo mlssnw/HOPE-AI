@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Literal
+from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
@@ -41,6 +41,12 @@ class Source(BaseModel):
 class ChatResponse(BaseModel):
     reply: str
     sources: list[Source] = Field(default_factory=list)
+    memories_used: list[str] = Field(default_factory=list)
+    entities_used: list[str] = Field(default_factory=list)
+    relations_used: list[str] = Field(default_factory=list)
+    tools_used: list[str] = Field(default_factory=list)
+    ui_events: list[dict[str, Any]] = Field(default_factory=list)
+    memory_available: bool = True
 
 
 class TtsRequest(BaseModel):

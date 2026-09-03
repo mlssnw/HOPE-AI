@@ -55,12 +55,17 @@ export async function sendChat(payload, signal, userId) {
   if (!body || typeof body.reply !== "string" || !Array.isArray(body.sources)) {
     throw new ApiError("O servidor retornou uma resposta inesperada.");
   }
+  body.ui_events = Array.isArray(body.ui_events) ? body.ui_events : [];
+  body.memories_used = Array.isArray(body.memories_used) ? body.memories_used : [];
   return body;
 }
 
-export async function requestSpeech(text, signal) {
+export async function requestSpeech(text, signal, userId) {
   const response = await fetch("/api/tts", {
-    method: "POST", signal, headers: { "Content-Type": "application/json" },
+    method: "POST", signal, headers: {
+      "Content-Type": "application/json",
+      ...(userId ? { "X-Hope-User-Id": userId } : {}),
+    },
     body: JSON.stringify({ text: text.slice(0, 5000) }),
   });
   if (!response.ok) throw new ApiError(await parseError(response), response.status);
