@@ -11,7 +11,7 @@ from .ai import HopeOrchestrator
 from .api.memory import router as memory_router
 from .config import PROJECT_ROOT, Settings
 from .database.session import Database
-from .memory.embeddings import LocalHashEmbeddingProvider
+from .memory.embeddings import create_embedding_provider
 from .memory.manager import MemoryManager
 from .memory.service import MemoryService
 from .models import ChatRequest, ChatResponse, HealthResponse, ServiceStatus, TtsRequest
@@ -32,10 +32,21 @@ def create_app(
     database = None
     owns_database = False
     if memory_manager is None and settings.database_url:
-        database = Database(settings.database_url, echo=settings.database_echo)
+        database = Database(
+            settings.database_url,
+            echo=settings.database_echo,
+            pool_size=settings.db_pool_size,
+            max_overflow=settings.db_max_overflow,
+            pool_timeout=settings.db_pool_timeout,
+            pool_recycle=settings.db_pool_recycle,
+        )
         memory_manager = MemoryManager(
             database,
-            LocalHashEmbeddingProvider(settings.embedding_dimensions),
+            create_embedding_provider(
+                settings.embedding_provider,
+                settings.embedding_dimensions,
+                settings.app_environment,
+            ),
             min_importance=settings.memory_min_importance,
             duplicate_similarity=settings.memory_duplicate_similarity,
         )

@@ -14,7 +14,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from backend.config import Settings  # noqa: E402
 from backend.database.session import Database  # noqa: E402
-from backend.memory.embeddings import LocalHashEmbeddingProvider  # noqa: E402
+from backend.memory.embeddings import create_embedding_provider  # noqa: E402
 from backend.memory.manager import MemoryManager  # noqa: E402
 from backend.memory.schemas import MemoryCreate, MemoryUpdate  # noqa: E402
 
@@ -31,7 +31,33 @@ EXPECTED_TABLES = {
     "messages",
     "users",
 }
-EXPECTED_CONSTRAINTS = {"uq_memory_entity_role", "uq_memory_relation"}
+EXPECTED_HEAD = "20260903_0003"
+EXPECTED_CONSTRAINTS = {
+    "ck_entity_relations_no_self_relation",
+    "ck_entity_relations_weight_range",
+    "ck_memories_access_count_nonnegative",
+    "ck_memories_confidence_range",
+    "ck_memories_content_not_blank",
+    "ck_memories_emotional_weight_range",
+    "ck_memories_importance_range",
+    "ck_memories_mention_count_nonnegative",
+    "ck_memory_entities_confidence_range",
+    "ck_memory_relations_no_self_relation",
+    "ck_memory_relations_weight_range",
+    "fk_entity_relations_user_source",
+    "fk_entity_relations_user_target",
+    "fk_memory_entities_user_entity",
+    "fk_memory_entities_user_memory",
+    "fk_memory_events_user_memory",
+    "fk_memory_relations_user_source",
+    "fk_memory_relations_user_target",
+    "fk_memory_sources_user_memory",
+    "uq_entities_user_id_id",
+    "uq_entities_user_normalized_type",
+    "uq_memories_user_id_id",
+    "uq_memory_entity_role",
+    "uq_memory_relation",
+}
 EXPECTED_INDEXES = {
     "ix_entities_user_id",
     "ix_entities_user_name",
@@ -108,7 +134,7 @@ async def inspect_schema(database: Database) -> dict[str, object]:
     missing_tables = EXPECTED_TABLES - tables
     missing_constraints = EXPECTED_CONSTRAINTS - constraints
     missing_indexes = EXPECTED_INDEXES - indexes
-    if revision != "20260902_0002":
+    if revision != EXPECTED_HEAD:
         raise RuntimeError(f"Revisão inesperada: {revision}")
     if extension is None:
         raise RuntimeError("Extensão vector não está instalada.")
@@ -118,7 +144,7 @@ async def inspect_schema(database: Database) -> dict[str, object]:
         raise RuntimeError(f"Constraints ausentes: {sorted(missing_constraints)}")
     if missing_indexes:
         raise RuntimeError(f"Índices ausentes: {sorted(missing_indexes)}")
-    if foreign_keys < 12:
+    if foreign_keys < 25:
         raise RuntimeError(f"Quantidade inesperada de foreign keys: {foreign_keys}")
     return {
         "revision": revision,
@@ -131,8 +157,12 @@ async def inspect_schema(database: Database) -> dict[str, object]:
     }
 
 
-async def exercise_memory_manager(database: Database, dimensions: int) -> None:
-    manager = MemoryManager(database, LocalHashEmbeddingProvider(dimensions))
+async def exercise_memory_manager(
+    database: Database, dimensions: int, provider_name: str, environment: str
+) -> None:
+    manager = MemoryManager(
+        database, create_embedding_provider(provider_name, dimensions, environment)
+    )
     user_id = uuid.uuid4()
     first_id: uuid.UUID | None = None
     second_id: uuid.UUID | None = None
@@ -198,7 +228,14 @@ async def main(exercise_crud: bool) -> None:
     settings = Settings.from_env()
     if not settings.database_url:
         raise RuntimeError("DATABASE_URL não está configurada.")
-    database = Database(settings.database_url, echo=False)
+    database = Database(
+        settings.database_url,
+        echo=False,
+        pool_size=settings.db_pool_size,
+        max_overflow=settings.db_max_overflow,
+        pool_timeout=settings.db_pool_timeout,
+        pool_recycle=settings.db_pool_recycle,
+    )
     try:
         result = await inspect_schema(database)
         print(f"revision={result['revision']}")
@@ -209,7 +246,12 @@ async def main(exercise_crud: bool) -> None:
         print(f"foreign_keys={result['foreign_keys']}")
         print(f"data_rows={sum(result['row_counts'].values())}")
         if exercise_crud:
-            await exercise_memory_manager(database, settings.embedding_dimensions)
+            await exercise_memory_manager(
+                database,
+                settings.embedding_dimensions,
+                settings.embedding_provider,
+                settings.app_environment,
+            )
             after = await inspect_schema(database)
             if sum(after["row_counts"].values()) != sum(result["row_counts"].values()):
                 raise RuntimeError("O preflight deixou dados temporários no banco.")

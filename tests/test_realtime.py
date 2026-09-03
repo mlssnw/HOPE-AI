@@ -5,6 +5,7 @@ import uuid
 
 import pytest
 from fastapi.testclient import TestClient
+from starlette.websockets import WebSocketDisconnect
 from httpx import ASGITransport, AsyncClient
 
 from backend.database.session import Database
@@ -167,3 +168,17 @@ def test_websocket_connects_and_answers_ping() -> None:
             assert websocket.receive_json()["type"] == "CONNECTED"
             websocket.send_json({"type": "PING", "payload": {}})
             assert websocket.receive_json()["type"] == "PONG"
+
+
+def test_websocket_rejects_malformed_json_with_policy_close() -> None:
+    app = create_app(FakeServices())  # type: ignore[arg-type]
+    user_id = uuid.uuid4()
+    with TestClient(app) as client:
+        with client.websocket_connect(f"/ws/hope?user_id={user_id}") as websocket:
+            assert websocket.receive_json()["type"] == "CONNECTED"
+            websocket.send_text("{invalid-json")
+            with pytest.raises(WebSocketDisconnect) as caught:
+                websocket.receive_json()
+
+    assert caught.value.code == 1008
+    assert caught.value.reason == "payload JSON inválido"

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import time
 import uuid
 from datetime import datetime, timezone
@@ -65,7 +66,14 @@ async def hope_websocket(websocket: WebSocket) -> None:
                 continue
 
             if receive_task in done:
-                message = receive_task.result()
+                try:
+                    message = receive_task.result()
+                except (json.JSONDecodeError, ValueError, TypeError):
+                    await websocket.close(code=1008, reason="payload JSON inválido")
+                    break
+                if not isinstance(message, dict):
+                    await websocket.close(code=1008, reason="payload deve ser um objeto JSON")
+                    break
                 last_seen = time.monotonic()
                 if message.get("type") == "PING":
                     await connections.send(

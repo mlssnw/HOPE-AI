@@ -6,9 +6,11 @@ import uuid
 from dataclasses import dataclass
 
 from sqlalchemy import delete, select
+from sqlalchemy.dialects.postgresql import insert as postgresql_insert
+from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..database.models import EntityRecord, MemoryEntityRecord, MemoryRecord
+from ..database.models import EntityRecord, MemoryEntityRecord, MemoryRecord, utc_now
 
 
 def normalize_entity_name(value: str) -> str:
@@ -84,6 +86,34 @@ class EntityRepository:
 
     async def upsert(self, user_id: uuid.UUID, candidate: EntityCandidate) -> EntityRecord:
         normalized = normalize_entity_name(candidate.name)
+        if not normalized:
+            raise ValueError("O nome normalizado da entidade não pode ser vazio.")
+
+        values = {
+            "id": uuid.uuid4(),
+            "user_id": user_id,
+            "name": candidate.name,
+            "normalized_name": normalized,
+            "entity_type": candidate.entity_type,
+            "attributes": {},
+            "created_at": utc_now(),
+            "updated_at": utc_now(),
+        }
+        dialect = self.session.get_bind().dialect.name
+        if dialect == "postgresql":
+            insert_statement = postgresql_insert(EntityRecord).values(**values)
+        elif dialect == "sqlite":
+            insert_statement = sqlite_insert(EntityRecord).values(**values)
+        else:
+            raise RuntimeError(
+                f"Upsert atômico de entidades não está disponível para o dialeto {dialect!r}."
+            )
+        await self.session.execute(
+            insert_statement.on_conflict_do_nothing(
+                index_elements=["user_id", "normalized_name", "entity_type"]
+            )
+        )
+
         statement = select(EntityRecord).where(
             EntityRecord.user_id == user_id,
             EntityRecord.normalized_name == normalized,
@@ -91,15 +121,9 @@ class EntityRepository:
         )
         entity = (await self.session.scalars(statement)).first()
         if entity is None:
-            entity = EntityRecord(
-                user_id=user_id,
-                name=candidate.name,
-                normalized_name=normalized,
-                entity_type=candidate.entity_type,
-                attributes={},
+            raise RuntimeError(
+                "O upsert atômico terminou sem uma entidade canônica disponível."
             )
-            self.session.add(entity)
-            await self.session.flush()
         return entity
 
     async def replace_memory_entities(

@@ -4,6 +4,7 @@ import asyncio
 from datetime import datetime, timezone
 
 from backend.main import create_app
+from backend.memory.classifier import MemoryClassifier
 from backend.models import ChatResponse, HealthResponse, ServiceStatus, Source
 from backend.services import ExternalServiceError
 
@@ -59,6 +60,7 @@ MEMORIES = [
 
 class BrowserMockMemoryManager:
     database = None
+    classifier = MemoryClassifier()
 
     async def graph(self, user_id, *, limit=200):  # type: ignore[no-untyped-def]
         return {

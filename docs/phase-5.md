@@ -99,11 +99,24 @@ A suíte cobre:
 
 ## Limitações e questões conhecidas
 
-- `LocalHashEmbeddingProvider` existe para desenvolvimento e testes. Ele não representa semântica de qualidade de produção. Um provider real poderá ser configurado em fase futura sem alterar o contrato `EmbeddingProvider`.
+- `LocalHashEmbeddingProvider` existe para desenvolvimento e testes e agora é recusado explicitamente em ambientes `production`, `prod` e `staging`. A escolha e avaliação de um provider semântico real continuam pendentes.
 - A classificação de candidatos ainda é determinística; mensagens complexas podem exigir confirmação ou ser ignoradas.
 - O pós-processamento de memória é executado logo após a resposta do modelo dentro da mesma solicitação. Isso mantém rastreabilidade e consistência, mas ainda não oferece uma fila durável.
 - O EventBus continua local ao processo.
 - Autenticação real, STT ElevenLabs, HOPE Bridge, automações, Tool Registry completo e deploy público estão fora desta fase.
+
+## Hardening pós-auditoria
+
+A correção dos blockers de Database Audit preserva o escopo funcional da Fase 5:
+
+- o índice HNSW passou a integrar o metadata SQLAlchemy, evitando uma proposta indevida de remoção pelo Alembic;
+- a migration `20260903_0003` adiciona unicidade de entidade, checks e FKs compostas por usuário sem remover as entidades órfãs existentes;
+- o upsert de entidades usa `ON CONFLICT DO NOTHING` de forma atômica no PostgreSQL e no SQLite de testes;
+- `DATABASE_URL` ficou reservado ao runtime e `DATABASE_ADMIN_URL` pode ser usado somente por migrations;
+- o pool tornou-se configurável com orçamento conservador e parâmetros SQL ocultos;
+- a configuração impede que o embedding local seja usado silenciosamente como semântica de produção.
+
+O banco real não foi alterado por esta correção. Criação da role restrita, aplicação da migration, `alembic check` limpo no schema atualizado e avaliação vetorial real exigem ambiente descartável/clone, aprovação operacional e o procedimento de `docs/database-security.md`.
 
 ## Próxima fase
 

@@ -4,11 +4,20 @@ import uuid
 
 import pytest
 from httpx import ASGITransport, AsyncClient
+from sqlalchemy import func, select, text
+from sqlalchemy.exc import IntegrityError
 
+from backend.database.models import (
+    EntityRecord,
+    MemoryRecord,
+    MemoryRelationRecord,
+    UserRecord,
+)
 from backend.database.session import Database
 from backend.main import create_app
 from backend.memory.classifier import MemoryClassifier
 from backend.memory.embeddings import LocalHashEmbeddingProvider
+from backend.memory.entities import EntityCandidate, EntityRepository
 from backend.memory.manager import MemoryManager
 from backend.memory.schemas import MemoryCreate, MemoryUpdate
 from backend.models import ChatResponse, HealthResponse, ServiceStatus
@@ -267,5 +276,99 @@ async def test_similar_memories_receive_automatic_relation() -> None:
         assert second.consolidated is False
         graph = await manager.graph(user_id)
         assert any(edge.relation_type == "semantic_related" for edge in graph.edges)
+    finally:
+        await database.dispose()
+
+
+@pytest.mark.asyncio
+async def test_entity_upsert_is_idempotent_for_normalized_identity() -> None:
+    database, _ = await make_manager()
+    user_id = uuid.uuid4()
+    try:
+        async with database.session() as session:
+            session.add(UserRecord(id=user_id, display_name=None))
+        async with database.session() as session:
+            repository = EntityRepository(session)
+            first = await repository.upsert(
+                user_id, EntityCandidate("São Paulo", "place", 0.9)
+            )
+            repeated = await repository.upsert(
+                user_id, EntityCandidate("SAO   PAULO", "place", 0.8)
+            )
+            count = await session.scalar(
+                select(func.count()).select_from(EntityRecord).where(
+                    EntityRecord.user_id == user_id,
+                    EntityRecord.normalized_name == "sao paulo",
+                    EntityRecord.entity_type == "place",
+                )
+            )
+
+            assert repeated.id == first.id
+            assert count == 1
+    finally:
+        await database.dispose()
+
+
+@pytest.mark.asyncio
+async def test_database_rejects_cross_user_relations() -> None:
+    database, _ = await make_manager()
+    first_user = uuid.uuid4()
+    second_user = uuid.uuid4()
+    first_memory = uuid.uuid4()
+    second_memory = uuid.uuid4()
+    try:
+        async with database.engine.connect() as connection:
+            await connection.execute(text("PRAGMA foreign_keys = ON"))
+            await connection.commit()
+        async with database.session() as session:
+            session.add_all(
+                [
+                    UserRecord(id=first_user, display_name=None),
+                    UserRecord(id=second_user, display_name=None),
+                ]
+            )
+        async with database.session() as session:
+            session.add_all(
+                [
+                    MemoryRecord(id=first_memory, user_id=first_user, content="Memória A"),
+                    MemoryRecord(id=second_memory, user_id=second_user, content="Memória B"),
+                ]
+            )
+
+        with pytest.raises(IntegrityError):
+            async with database.session() as session:
+                session.add(
+                    MemoryRelationRecord(
+                        user_id=first_user,
+                        source_memory_id=first_memory,
+                        target_memory_id=second_memory,
+                        relation_type="related_to",
+                    )
+                )
+    finally:
+        await database.dispose()
+
+
+@pytest.mark.asyncio
+async def test_database_rejects_invalid_memory_values() -> None:
+    database, _ = await make_manager()
+    user_id = uuid.uuid4()
+    try:
+        async with database.engine.connect() as connection:
+            await connection.execute(text("PRAGMA foreign_keys = ON"))
+            await connection.commit()
+        async with database.session() as session:
+            session.add(UserRecord(id=user_id, display_name=None))
+
+        with pytest.raises(IntegrityError):
+            async with database.session() as session:
+                session.add(
+                    MemoryRecord(
+                        user_id=user_id,
+                        content="   ",
+                        importance=1.1,
+                        confidence=1.0,
+                    )
+                )
     finally:
         await database.dispose()

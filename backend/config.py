@@ -55,7 +55,14 @@ def _embedding_dimensions() -> int:
 @dataclass(frozen=True)
 class Settings:
     database_url: str
+    database_admin_url: str
     database_echo: bool
+    db_pool_size: int
+    db_max_overflow: int
+    db_pool_timeout: int
+    db_pool_recycle: int
+    app_environment: str
+    embedding_provider: str
     embedding_dimensions: int
     memory_min_importance: float
     memory_duplicate_similarity: float
@@ -79,7 +86,14 @@ class Settings:
         load_env_file()
         return cls(
             database_url=os.getenv("DATABASE_URL", "").strip(),
+            database_admin_url=os.getenv("DATABASE_ADMIN_URL", "").strip(),
             database_echo=_as_bool(os.getenv("DATABASE_ECHO"), False),
+            db_pool_size=_as_int("DB_POOL_SIZE", 3, 1, 20),
+            db_max_overflow=_as_int("DB_MAX_OVERFLOW", 1, 0, 20),
+            db_pool_timeout=_as_int("DB_POOL_TIMEOUT", 30, 1, 120),
+            db_pool_recycle=_as_int("DB_POOL_RECYCLE", 900, 60, 86400),
+            app_environment=os.getenv("APP_ENVIRONMENT", "development").strip().lower(),
+            embedding_provider=os.getenv("EMBEDDING_PROVIDER", "local-hash").strip().lower(),
             embedding_dimensions=_embedding_dimensions(),
             memory_min_importance=_as_float("MEMORY_MIN_IMPORTANCE", 0.45, 0.0, 1.0),
             memory_duplicate_similarity=_as_float(
@@ -106,7 +120,10 @@ class Settings:
     @classmethod
     def for_tests(cls, **overrides: object) -> "Settings":
         values: dict[str, object] = dict(
-            database_url="", database_echo=False, embedding_dimensions=1536,
+            database_url="", database_admin_url="", database_echo=False,
+            db_pool_size=3, db_max_overflow=1, db_pool_timeout=30,
+            db_pool_recycle=900, app_environment="test",
+            embedding_provider="local-hash", embedding_dimensions=1536,
             memory_min_importance=0.45, memory_duplicate_similarity=0.92,
             anthropic_api_key="test-anthropic", anthropic_workspace_id="",
             anthropic_model="test-model",
@@ -118,3 +135,8 @@ class Settings:
         )
         values.update(overrides)
         return cls(**values)  # type: ignore[arg-type]
+
+    @property
+    def migration_database_url(self) -> str:
+        """Usa credencial administrativa somente no processo de migration."""
+        return self.database_admin_url or self.database_url

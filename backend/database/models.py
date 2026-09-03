@@ -5,10 +5,12 @@ from datetime import datetime, timezone
 from typing import Any
 
 from sqlalchemy import (
+    CheckConstraint,
     JSON,
     DateTime,
     Float,
     ForeignKey,
+    ForeignKeyConstraint,
     Index,
     Integer,
     String,
@@ -42,6 +44,26 @@ class MemoryRecord(Base):
         Index("ix_memories_user_type", "user_id", "memory_type"),
         Index("ix_memories_user_kind", "user_id", "kind"),
         Index("ix_memories_user_created", "user_id", "created_at"),
+        Index(
+            "ix_memories_embedding_hnsw",
+            "embedding",
+            postgresql_using="hnsw",
+            postgresql_ops={"embedding": "vector_cosine_ops"},
+        ),
+        UniqueConstraint("user_id", "id", name="uq_memories_user_id_id"),
+        CheckConstraint("length(trim(content)) > 0", name="ck_memories_content_not_blank"),
+        CheckConstraint(
+            "importance >= 0 AND importance <= 1", name="ck_memories_importance_range"
+        ),
+        CheckConstraint(
+            "confidence >= 0 AND confidence <= 1", name="ck_memories_confidence_range"
+        ),
+        CheckConstraint(
+            "emotional_weight >= -1 AND emotional_weight <= 1",
+            name="ck_memories_emotional_weight_range",
+        ),
+        CheckConstraint("access_count >= 0", name="ck_memories_access_count_nonnegative"),
+        CheckConstraint("mention_count >= 0", name="ck_memories_mention_count_nonnegative"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
@@ -85,6 +107,23 @@ class MemoryRelationRecord(Base):
             "relation_type",
             name="uq_memory_relation",
         ),
+        ForeignKeyConstraint(
+            ["user_id", "source_memory_id"],
+            ["memories.user_id", "memories.id"],
+            name="fk_memory_relations_user_source",
+            ondelete="CASCADE",
+        ),
+        ForeignKeyConstraint(
+            ["user_id", "target_memory_id"],
+            ["memories.user_id", "memories.id"],
+            name="fk_memory_relations_user_target",
+            ondelete="CASCADE",
+        ),
+        CheckConstraint("weight >= 0 AND weight <= 1", name="ck_memory_relations_weight_range"),
+        CheckConstraint(
+            "source_memory_id <> target_memory_id",
+            name="ck_memory_relations_no_self_relation",
+        ),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
@@ -107,6 +146,13 @@ class EntityRecord(Base):
     __table_args__ = (
         Index("ix_entities_user_name", "user_id", "name"),
         Index("ix_entities_user_normalized", "user_id", "normalized_name", "entity_type"),
+        UniqueConstraint("user_id", "id", name="uq_entities_user_id_id"),
+        UniqueConstraint(
+            "user_id",
+            "normalized_name",
+            "entity_type",
+            name="uq_entities_user_normalized_type",
+        ),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
@@ -125,6 +171,25 @@ class EntityRecord(Base):
 
 class EntityRelationRecord(Base):
     __tablename__ = "entity_relations"
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["user_id", "source_entity_id"],
+            ["entities.user_id", "entities.id"],
+            name="fk_entity_relations_user_source",
+            ondelete="CASCADE",
+        ),
+        ForeignKeyConstraint(
+            ["user_id", "target_entity_id"],
+            ["entities.user_id", "entities.id"],
+            name="fk_entity_relations_user_target",
+            ondelete="CASCADE",
+        ),
+        CheckConstraint("weight >= 0 AND weight <= 1", name="ck_entity_relations_weight_range"),
+        CheckConstraint(
+            "source_entity_id <> target_entity_id",
+            name="ck_entity_relations_no_self_relation",
+        ),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
     user_id: Mapped[uuid.UUID] = mapped_column(
@@ -171,7 +236,14 @@ class MessageRecord(Base):
 
 class MemoryEventRecord(Base):
     __tablename__ = "memory_events"
-    __table_args__ = (Index("ix_memory_events_user_created", "user_id", "created_at"),)
+    __table_args__ = (
+        Index("ix_memory_events_user_created", "user_id", "created_at"),
+        ForeignKeyConstraint(
+            ["user_id", "memory_id"],
+            ["memories.user_id", "memories.id"],
+            name="fk_memory_events_user_memory",
+        ),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
     user_id: Mapped[uuid.UUID] = mapped_column(
@@ -187,7 +259,15 @@ class MemoryEventRecord(Base):
 
 class MemorySourceRecord(Base):
     __tablename__ = "memory_sources"
-    __table_args__ = (Index("ix_memory_sources_memory", "user_id", "memory_id"),)
+    __table_args__ = (
+        Index("ix_memory_sources_memory", "user_id", "memory_id"),
+        ForeignKeyConstraint(
+            ["user_id", "memory_id"],
+            ["memories.user_id", "memories.id"],
+            name="fk_memory_sources_user_memory",
+            ondelete="CASCADE",
+        ),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
     user_id: Mapped[uuid.UUID] = mapped_column(
@@ -208,6 +288,22 @@ class MemoryEntityRecord(Base):
         Index("ix_memory_entities_memory", "user_id", "memory_id"),
         Index("ix_memory_entities_entity", "user_id", "entity_id"),
         UniqueConstraint("memory_id", "entity_id", "role", name="uq_memory_entity_role"),
+        ForeignKeyConstraint(
+            ["user_id", "memory_id"],
+            ["memories.user_id", "memories.id"],
+            name="fk_memory_entities_user_memory",
+            ondelete="CASCADE",
+        ),
+        ForeignKeyConstraint(
+            ["user_id", "entity_id"],
+            ["entities.user_id", "entities.id"],
+            name="fk_memory_entities_user_entity",
+            ondelete="CASCADE",
+        ),
+        CheckConstraint(
+            "confidence >= 0 AND confidence <= 1",
+            name="ck_memory_entities_confidence_range",
+        ),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)

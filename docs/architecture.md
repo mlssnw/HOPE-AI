@@ -1,6 +1,6 @@
 # Arquitetura do HOPE AI
 
-Este documento registra o estado arquitetural observado no working tree em 2 de setembro de 2026. Ele complementa o histórico de `docs/phase-1.md` a `docs/phase-5.md` e separa explicitamente implementação atual de visão futura.
+Este documento registra o estado arquitetural observado no working tree em 3 de setembro de 2026. Ele complementa o histórico de `docs/phase-1.md` a `docs/phase-5.md` e separa explicitamente implementação atual de visão futura.
 
 Legenda:
 
@@ -157,12 +157,16 @@ Entidades mapeadas atualmente:
 - fontes de memória;
 - vínculos entre memória e entidade.
 
-Há índices por usuário, tipo, natureza e criação, além de índice HNSW com distância cosseno para embeddings no PostgreSQL. As sessões fazem commit automático no sucesso e rollback em exceções.
+Há índices por usuário, tipo, natureza e criação, além de índice HNSW com distância cosseno para embeddings no PostgreSQL. O HNSW está declarado tanto na migration quanto no metadata SQLAlchemy para impedir deriva de autogeração. As sessões fazem commit automático no sucesso e rollback em exceções.
+
+A migration de hardening adiciona FKs compostas com `user_id`, checks de domínio e unicidade normalizada de entidades. Isso impede relações cruzadas entre usuários no banco e torna o upsert PostgreSQL de entidades atômico. O runtime aceita uma role restrita em `DATABASE_URL`; Alembic pode usar `DATABASE_ADMIN_URL` separadamente. O pool é configurável e usa padrões conservadores de 3 conexões mais 1 overflow por worker, timeout de 30 segundos e recycle de 900 segundos. Parâmetros SQL permanecem ocultos nos logs.
 
 Limitações atuais:
 
 - **PARTIAL:** o banco é necessário para memória persistente, mas não para o chat básico.
 - **PARTIAL:** conversas e mensagens estão modeladas, porém não integradas ao fluxo ativo do chat.
+- **PARTIAL:** as FKs compostas protegem integridade de escrita, mas RLS depende de autenticação real e permanece adiado para a exposição pública.
+- **PARTIAL:** a separação de roles está suportada pelo código; sua criação e ativação no PostgreSQL gerenciado são ações operacionais ainda não executadas.
 - **PLANNED:** armazenamento externo formal para binários e grandes arquivos.
 
 ### Migrations — IMPLEMENTED
@@ -171,8 +175,9 @@ Alembic é a fonte de evolução do schema:
 
 - `20260902_0001_memory_foundation.py`: extensão vector, usuários, memórias, relações, entidades, conversas, mensagens e eventos; cria índice HNSW.
 - `20260902_0002_memory_intelligence.py`: natureza, título, resumo, categoria, tags, peso emocional, reforço, proveniência e vínculos de entidades.
+- `20260903_0003_database_hardening.py`: unicidade de entidades, checks de domínio e FKs compostas para isolamento estrutural por usuário.
 
-A aplicação não cria schema automaticamente em produção. `create_schema_for_tests` existe explicitamente para testes. A migration inicial exige pgvector habilitado ou permissão para `CREATE EXTENSION`.
+A aplicação não cria schema automaticamente em produção. `create_schema_for_tests` existe explicitamente para testes. A migration inicial exige pgvector habilitado ou permissão para `CREATE EXTENSION`. A role de runtime e a role de migration têm configuração separada; o procedimento operacional está em `docs/database-security.md`.
 
 ### Realtime — IMPLEMENTED localmente
 

@@ -38,6 +38,24 @@ class LocalHashEmbeddingProvider(EmbeddingProvider):
         return [value / norm for value in vector] if norm else vector
 
 
+def create_embedding_provider(
+    provider_name: str, dimensions: int, environment: str
+) -> EmbeddingProvider:
+    """Cria o provider configurado sem permitir semântica fictícia em produção."""
+    normalized_provider = provider_name.strip().lower()
+    normalized_environment = environment.strip().lower()
+    if normalized_provider != "local-hash":
+        raise ValueError(
+            f"EMBEDDING_PROVIDER {provider_name!r} não possui adapter configurado."
+        )
+    if normalized_environment in {"production", "prod", "staging"}:
+        raise RuntimeError(
+            "LocalHashEmbeddingProvider é exclusivo de desenvolvimento e testes; "
+            "configure um provider semântico antes de implantar."
+        )
+    return LocalHashEmbeddingProvider(dimensions)
+
+
 class EmbeddingService:
     """Valida o contrato para impedir vetores incompatíveis com o schema."""
 

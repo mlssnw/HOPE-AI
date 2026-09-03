@@ -17,8 +17,9 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 settings = Settings.from_env()
-if settings.database_url:
-    config.set_main_option("sqlalchemy.url", normalize_database_url(settings.database_url))
+if settings.migration_database_url:
+    migration_url = normalize_database_url(settings.migration_database_url)
+    config.set_main_option("sqlalchemy.url", migration_url.replace("%", "%%"))
 
 target_metadata = Base.metadata
 
