@@ -90,7 +90,9 @@ class Settings:
             anthropic_model=os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-6").strip(),
             tavily_api_key=os.getenv("TAVILY_API_KEY", "").strip(),
             elevenlabs_api_key=os.getenv("ELEVENLABS_API_KEY", "").strip(),
-            elevenlabs_voice_id=os.getenv("ELEVENLABS_VOICE_ID", "OYTbF65OHHFELVut7v2H").strip(),
+            elevenlabs_voice_id=os.getenv(
+                "ELEVENLABS_VOICE_ID", "EXAVITQu4vr4xnSDxMaL"
+            ).strip(),
             obsidian_api_key=os.getenv("OBSIDIAN_API_KEY", "").strip(),
             obsidian_base_url=os.getenv("OBSIDIAN_BASE_URL", "http://127.0.0.1:27123").strip().rstrip("/"),
             obsidian_verify_tls=_as_bool(os.getenv("OBSIDIAN_VERIFY_TLS"), True),
