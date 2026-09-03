@@ -305,3 +305,8 @@ tests/            testes Python e Node
 ## Licença
 
 [MIT](LICENSE)
+
+## Documentação operacional
+
+- [Instruções compartilhadas para Works](AGENTS.md)
+- [Arquitetura atual e arquitetura-alvo](docs/architecture.md)
