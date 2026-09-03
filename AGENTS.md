@@ -233,3 +233,14 @@ Registre resultados reais, comandos relevantes, limitações e commit. Não marq
 8. Validar proporcionalmente ao risco.
 9. Atualizar documentação afetada.
 10. Revisar diff, commitar apenas o próprio trabalho e parar no limite da fase.
+
+## Multi-Work Handoff
+
+- O painel oficial de handoff é [`docs/handoff.md`](docs/handoff.md); todo Work deve lê-lo antes de começar.
+- Relatórios atuais ficam em `docs/reviews/` e os modelos oficiais em `docs/templates/`.
+- Cada papel deve atualizar somente os arquivos atribuídos a ele pelas regras de [`docs/reviews/README.md`](docs/reviews/README.md).
+- Toda revisão deve identificar o commit exato analisado; referência apenas à fase não é suficiente.
+- Development pode marcar trabalho como `READY_FOR_REVIEW`, mas não pode aprovar definitivamente a própria fase.
+- Nenhum Work deve sobrescrever, reinterpretar ou alterar o relatório de outro papel.
+- Evite dois Works de escrita simultâneos no mesmo branch quando puderem tocar os mesmos arquivos.
+- Git, Markdown e commits são o canal oficial de comunicação; automação desse fluxo exige uma fase futura explicitamente autorizada.
