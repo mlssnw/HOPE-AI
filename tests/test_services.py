@@ -42,6 +42,28 @@ async def test_invalid_claude_schema_is_handled() -> None:
 
 
 @pytest.mark.asyncio
+async def test_chat_sends_workspace_only_when_configured() -> None:
+    captured_headers: list[httpx.Headers] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        captured_headers.append(request.headers)
+        return httpx.Response(
+            200, json={"content": [{"type": "text", "text": "ok"}]}
+        )
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+        without_workspace = HopeServices(Settings.for_tests(), client)
+        await without_workspace.chat(ChatRequest(message="Olá"))
+        with_workspace = HopeServices(
+            Settings.for_tests(anthropic_workspace_id="wrkspc_test"), client
+        )
+        await with_workspace.chat(ChatRequest(message="Olá"))
+
+    assert "anthropic-workspace-id" not in captured_headers[0]
+    assert captured_headers[1]["anthropic-workspace-id"] == "wrkspc_test"
+
+
+@pytest.mark.asyncio
 async def test_rate_limit_becomes_safe_public_error() -> None:
     transport = httpx.MockTransport(lambda request: httpx.Response(429, json={"secret": "internal"}))
     async with httpx.AsyncClient(transport=transport) as client:

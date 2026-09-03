@@ -123,6 +123,11 @@ cp .env.example .env
 
 Abra `.env` e preencha apenas as integrações que pretende utilizar. Nunca coloque chaves em `frontend/`.
 
+Chaves Anthropic vinculadas a múltiplos workspaces também exigem
+`ANTHROPIC_WORKSPACE_ID=wrkspc_...`. O identificador aparece em **Settings →
+Workspaces** no Claude Console. Chaves restritas a um único workspace podem deixar
+essa variável vazia.
+
 Para ativar memória persistente, configure uma conexão assíncrona:
 
 ```dotenv
@@ -257,7 +262,8 @@ tests/            testes Python e Node
 
 ## Solução de problemas
 
-- **Claude indisponível:** confirme `ANTHROPIC_API_KEY` e reinicie o servidor.
+- **Claude indisponível:** confirme `ANTHROPIC_API_KEY`; para chaves vinculadas à
+  identidade, configure também `ANTHROPIC_WORKSPACE_ID`, e reinicie o servidor.
 - **Vault vermelho:** abra o Obsidian e confira plugin, porta, chave e TLS.
 - **Web ou voz desativados:** configure a chave correspondente.
 - **Microfone desativado:** use um navegador com Web Speech API e permita o acesso ao microfone.

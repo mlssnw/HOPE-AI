@@ -60,6 +60,7 @@ class Settings:
     memory_min_importance: float
     memory_duplicate_similarity: float
     anthropic_api_key: str
+    anthropic_workspace_id: str
     anthropic_model: str
     tavily_api_key: str
     elevenlabs_api_key: str
@@ -85,6 +86,7 @@ class Settings:
                 "MEMORY_DUPLICATE_SIMILARITY", 0.92, 0.5, 1.0
             ),
             anthropic_api_key=os.getenv("ANTHROPIC_API_KEY", "").strip(),
+            anthropic_workspace_id=os.getenv("ANTHROPIC_WORKSPACE_ID", "").strip(),
             anthropic_model=os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-6").strip(),
             tavily_api_key=os.getenv("TAVILY_API_KEY", "").strip(),
             elevenlabs_api_key=os.getenv("ELEVENLABS_API_KEY", "").strip(),
@@ -104,7 +106,8 @@ class Settings:
         values: dict[str, object] = dict(
             database_url="", database_echo=False, embedding_dimensions=1536,
             memory_min_importance=0.45, memory_duplicate_similarity=0.92,
-            anthropic_api_key="test-anthropic", anthropic_model="test-model",
+            anthropic_api_key="test-anthropic", anthropic_workspace_id="",
+            anthropic_model="test-model",
             tavily_api_key="test-tavily", elevenlabs_api_key="test-elevenlabs",
             elevenlabs_voice_id="test-voice", obsidian_api_key="test-obsidian",
             obsidian_base_url="http://127.0.0.1:27123", obsidian_verify_tls=True,

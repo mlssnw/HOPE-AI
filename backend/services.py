@@ -187,10 +187,18 @@ class HopeServices:
         if sources:
             content += "\n\n<external_context format=\"json\">\n" + self._context(sources) + "\n</external_context>"
         messages.append({"role": "user", "content": content})
+        anthropic_headers = {
+            "Content-Type": "application/json",
+            "x-api-key": self.settings.anthropic_api_key,
+            "anthropic-version": "2023-06-01",
+        }
+        if self.settings.anthropic_workspace_id:
+            anthropic_headers["anthropic-workspace-id"] = (
+                self.settings.anthropic_workspace_id
+            )
         response = await self._request(
             "POST", "https://api.anthropic.com/v1/messages",
-            headers={"Content-Type": "application/json", "x-api-key": self.settings.anthropic_api_key,
-                     "anthropic-version": "2023-06-01"},
+            headers=anthropic_headers,
             json={"model": self.settings.anthropic_model, "max_tokens": 1400,
                   "system": SYSTEM_PROMPT, "messages": messages},
         )
