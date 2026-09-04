@@ -26,23 +26,23 @@ Required Reviews:
 
 ## Current Functional Commit
 
-- Commit: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
+- Commit: `19e573893aba09da990256da05e7dab5af165ce1`
 - Phase: 5
 - Created by: DEV
 - Status: READY_FOR_REVIEW
-- Base delivery: `becb27df8848d9ed738c85d068760bb7d0848bc9`
-- Notes: `adfc728` declara correções para `QA-001`, `QA-002` e hardening de banco. Isso só se torna oficialmente verificado quando os reviewers responsáveis persistirem novas revisões contra este hash.
+- Base delivery: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
+- Notes: `19e5738` declara correções para `SEC-006` e `SEC-007`; `adfc728` permanece na linhagem com as correções declaradas de `QA-001`, `QA-002` e hardening de banco. Nenhuma delas é oficialmente verificada até os reviewers responsáveis persistirem resultados contra o Functional Commit vigente.
 
 ## Review Matrix
 
 | Work | Required | Status | Commit |
 |---|---|---|---|
-| DEV | YES | READY_FOR_REVIEW | `adfc728aaaf96c679dd9d1df38c56edda8bc95de` |
-| QA | YES | WAITING_FOR_REVIEW | `adfc728aaaf96c679dd9d1df38c56edda8bc95de` |
-| DATABASE | YES | WAITING_FOR_REVIEW | `adfc728aaaf96c679dd9d1df38c56edda8bc95de` |
-| SECURITY | YES | REJECTED | `adfc728aaaf96c679dd9d1df38c56edda8bc95de` |
-| UI/UX | YES | WAITING_FOR_REVIEW | `adfc728aaaf96c679dd9d1df38c56edda8bc95de` |
-| PLANNER | YES | APPROVED_WITH_WARNINGS | `adfc728aaaf96c679dd9d1df38c56edda8bc95de` |
+| DEV | YES | READY_FOR_REVIEW | `19e573893aba09da990256da05e7dab5af165ce1` |
+| QA | YES | WAITING_FOR_REVIEW | `19e573893aba09da990256da05e7dab5af165ce1` |
+| DATABASE | YES | WAITING_FOR_REVIEW | `19e573893aba09da990256da05e7dab5af165ce1` |
+| SECURITY | YES | WAITING_FOR_REVIEW | `19e573893aba09da990256da05e7dab5af165ce1` |
+| UI/UX | YES | WAITING_FOR_REVIEW | `19e573893aba09da990256da05e7dab5af165ce1` |
+| PLANNER | YES | WAITING_FOR_REVIEW | `19e573893aba09da990256da05e7dab5af165ce1` |
 
 ## Development
 
@@ -58,7 +58,7 @@ Required Reviews:
 ## QA
 
 - Coordination status: WAITING_FOR_REVIEW
-- Current target: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
+- Current target: `19e573893aba09da990256da05e7dab5af165ce1`
 - Last official result: REJECTED
 - Last commit reviewed: `becb27df8848d9ed738c85d068760bb7d0848bc9`
 - Previous blockers: `QA-001` e `QA-002`; DEV declarou correção, mas QA ainda não persistiu re-review do Functional Commit vigente
@@ -68,18 +68,19 @@ Required Reviews:
 ## Database Audit
 
 - Coordination status: WAITING_FOR_REVIEW
-- Current target: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
+- Current target: `19e573893aba09da990256da05e7dab5af165ce1`
 - Last official result: REJECTED
 - Last development commit covered: `becb27df8848d9ed738c85d068760bb7d0848bc9`
-- Previous blockers: `DB-001` a `DB-004`; DEV entregou mudanças relacionadas, mas DATABASE ainda não persistiu re-review contra o Functional Commit vigente
+- Previous blockers: `DB-001` a `DB-004`; DEV entregou hardening relacionado em `adfc728`, e `19e5738` não altera schema, migration ou persistência, mas DATABASE ainda precisa persistir o review herdado contra o Functional Commit vigente
 - Operational boundary: `0003`, role restrita, TLS `verify-full` e avaliação vetorial real continuam dependentes de ambiente seguro e autorização
 - Report: [`database-audit-latest.md`](reviews/database-audit-latest.md)
 
 ## Security Review
 
-- Coordination status: REJECTED
-- Commit reviewed: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
-- Official result: REJECTED para deploy público
+- Coordination status: WAITING_FOR_REVIEW
+- Current target: `19e573893aba09da990256da05e7dab5af165ce1`
+- Last commit reviewed: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
+- Last official result: REJECTED para deploy público
 - Deploy blockers: `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-006`, `SEC-007`, `SEC-008` e `SEC-012`
 - Scope warning: várias correções exigiriam autenticação, autorização e controles operacionais ainda planejados; governança não pode convertê-las automaticamente em implementação da fase 5
 - Report: [`security-review-latest.md`](reviews/security-review-latest.md)
@@ -87,7 +88,7 @@ Required Reviews:
 ## UI/UX
 
 - Coordination status: WAITING_FOR_REVIEW
-- Current target: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
+- Current target: `19e573893aba09da990256da05e7dab5af165ce1`
 - Last official result: NOT_STARTED
 - Required review: fidelidade de chat, estados do Core Orb, foco do Memory Globe, responsividade e acessibilidade da fase 5
 - Report: [`uiux-latest.md`](reviews/uiux-latest.md)
@@ -108,18 +109,17 @@ Required Reviews:
 
 - Autonomy level: 2.5
 - Status: APPROVED
-- Operational conclusion: o PLANNER persistiu a classificação técnica; `SEC-006` e `SEC-007` exigem correção da feature antes de qualquer rodada final de reviews, enquanto o deploy público permanece bloqueado separadamente
-- Routing: LEVEL 1 — DEV, para corrigir somente os feature blockers autorizados e criar um novo Functional Commit
+- Operational conclusion: DEV entregou `19e5738` para `SEC-006` e `SEC-007`; QA, DATABASE, SECURITY e UI/UX podem revisar em paralelo o mesmo Functional Commit, cada um em seu arquivo próprio, enquanto PLANNER aguarda a consolidação
+- Routing: LEVEL 1 — QA, DATABASE, SECURITY e UI/UX em paralelo, sem escrita concorrente no handoff
 - Boundary: nenhum veredito técnico foi alterado e nenhum blocker foi considerado resolvido apenas pela declaração do DEV
 
 ## Current Blockers
 
 ### Feature Blockers
 
-- `SEC-006`: o controle visual de memória não impede persistência nem recuperação server-side. Estado: CHANGES_REQUESTED para DEV.
-- `SEC-007`: a exclusão de memória não possui confirmação forte nem recuperação. Estado: CHANGES_REQUESTED para DEV.
-- `QA-001` e `QA-002`: DEV declarou correção, mas QA ainda não confirmou no Functional Commit vigente. Estado: PENDING_REVIEW.
-- `DB-001` a `DB-004`: DEV entregou hardening relacionado, mas DATABASE ainda não confirmou o Functional Commit vigente. Estado: PENDING_REVIEW.
+- `SEC-006` e `SEC-007`: DEV declarou correção em `19e5738`, mas SECURITY, QA e UI/UX ainda não confirmaram o Functional Commit vigente. Estado: PENDING_REVIEW.
+- `QA-001` e `QA-002`: DEV declarou correção na linhagem anterior, mas QA ainda não confirmou no Functional Commit vigente. Estado: PENDING_REVIEW.
+- `DB-001` a `DB-004`: DEV entregou hardening relacionado em `adfc728`, sem nova alteração de banco em `19e5738`, mas DATABASE ainda não confirmou o Functional Commit vigente. Estado: PENDING_REVIEW.
 - UI/UX pós-implementação ainda não foi persistido para o Functional Commit vigente. Estado: WAITING_FOR_REVIEW.
 
 ### Production Blockers
@@ -138,21 +138,26 @@ Required Reviews:
 
 ## Next Action
 
-- Role: DEV
-- Status: NOT_STARTED
-- Task: corrigir somente `SEC-006` e `SEC-007` no escopo da Fase 5 e criar um novo Functional Commit; não implementar os blockers exclusivos de produção
-- Target commit: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
+- Role: QA + DATABASE + SECURITY + UI/UX
+- Status: WAITING_FOR_REVIEW
+- Task: executar em paralelo os reviews obrigatórios de `19e5738`, sem alterar código e gravando cada resultado somente no arquivo `latest` do próprio papel; DATABASE limita o escopo ao hardening herdado de `adfc728` e confirma que a diferença posterior não altera banco
+- Target commit: `19e573893aba09da990256da05e7dab5af165ce1`
 - Required inputs:
   - [`AGENTS.md`](../AGENTS.md)
   - [`docs/phase-5.md`](phase-5.md)
+  - [`docs/reviews/qa-latest.md`](reviews/qa-latest.md)
+  - [`docs/reviews/database-audit-latest.md`](reviews/database-audit-latest.md)
   - [`docs/reviews/security-review-latest.md`](reviews/security-review-latest.md)
   - [`docs/reviews/architecture-latest.md`](reviews/architecture-latest.md)
+  - [`docs/reviews/uiux-latest.md`](reviews/uiux-latest.md)
   - [`docs/design/`](design/)
 - Expected output:
-  - novo Functional Commit com as duas correções, testes proporcionais e documentação da Fase 5 atualizada
-  - handoff de Development marcado `READY_FOR_REVIEW` com o novo hash
-  - análise de impacto para re-review de QA, SECURITY e UI/UX; DATABASE somente se persistência ou schema forem alterados
-- Blocking dependencies: nenhuma decisão adicional; QA, DATABASE, SECURITY e UI/UX devem aguardar o novo Functional Commit para evitar review imediatamente obsoleto
+  - QA valida a regressão completa, incluindo `QA-001`, `QA-002`, consentimento de memória e confirmação destrutiva
+  - SECURITY revalida `SEC-006` e `SEC-007` e preserva separadamente o parecer de Production Readiness
+  - UI/UX valida separação dos controles, diálogo, alvo, consequência, foco, teclado e acessibilidade
+  - DATABASE persiste o review pendente do hardening herdado, sem executar mutation ou operação real não autorizada
+  - cada reviewer registra o hash exato em seu `latest`; COORDINATOR consolida o handoff somente após os resultados
+- Blocking dependencies: nenhuma; os quatro reviewers possuem ownership distinto e podem operar em paralelo no mesmo hash sem alterar código
 - Escalation: NONE
 
 ## Recent History
@@ -164,3 +169,4 @@ Required Reviews:
 - 2026-09-04 — Governança formalizou PLANNER/UI/UX, Functional Commit, Review Matrix e coordenação por impacto; nenhum resultado técnico foi alterado.
 - 2026-09-04 — COORDINATOR formalizou autonomia 2.5 e separou Feature Status de Production Readiness; o conflito de enquadramento foi roteado ao PLANNER, sem escalar prematuramente ao usuário.
 - 2026-09-04 — PLANNER classificou `SEC-006` e `SEC-007` como feature blockers e os demais blockers indicados como restrições de produção; COORDINATOR roteou a próxima ação ao DEV.
+- 2026-09-04 — DEV entregou `19e5738` com correções declaradas para `SEC-006` e `SEC-007`; COORDINATOR abriu a rodada paralela de QA, DATABASE, SECURITY e UI/UX no novo Functional Commit.
