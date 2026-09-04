@@ -114,9 +114,11 @@ O `HopeOrchestrator` coordena o chat atual:
 - **PLANNED:** streaming de resposta.
 - **PLANNED:** fila durável para tarefas pós-resposta.
 
-### Personalidade — IMPLEMENTED
+### Personalidade — IMPLEMENTED com evolução de especificação
 
-`backend/ai/personality.py` define configuração, identidade e estados expressivos; `prompts.py` gera o system prompt em seções. A HOPE é descrita como original, inteligente, técnica, elegante, perspicaz e assertiva, com discordância fundamentada e humor contido. Segurança, verdade e precisão têm precedência sobre estilo.
+`backend/ai/personality.py` define configuração, identidade e estados expressivos; `prompts.py` gera o system prompt em seções. A implementação atual descreve a HOPE como original, inteligente, técnica, elegante, perspicaz e assertiva, com discordância fundamentada e humor contido. Segurança, verdade e precisão têm precedência sobre estilo.
+
+A especificação-alvo aprovada em `ARCH-2026-09-04-001` acrescenta pragmatismo, franqueza, lealdade sem controle, coragem, foco em resolução e irreverência moderada. As referências culturais do usuário são apenas fontes de traços gerais: identidade, falas, bordões, histórias, frases famosas e maneirismos específicos não podem ser copiados. Essa evolução documental não afirma que todos os novos traços já foram implementados ou validados no prompt atual.
 
 Os estados expressivos são sinalização operacional, não alegação de consciência ou emoção humana.
 
@@ -256,6 +258,8 @@ Validação visual de browser e banco PostgreSQL real continuam tarefas ambienta
 ## TARGET ARCHITECTURE
 
 Os itens desta seção são direção futura e não devem ser interpretados como autorização para iniciar uma nova fase.
+
+A especificação detalhada de plataforma, personalidade, Learning, Experience Memory, Agents, Skills, Tools, Permissions, Coding, Model Router, imagens, multimodalidade, avaliação, observabilidade, custos, limites de autonomia e roadmap está em [`docs/future-architecture.md`](future-architecture.md). O princípio estrutural é adicionar capacidades em camadas pequenas e reversíveis: identidade e consentimento precedem execução; permissões precedem agentes; experiências precedem aprendizado avançado.
 
 ### Operação cloud-first contínua — PLANNED
 

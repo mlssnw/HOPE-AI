@@ -93,10 +93,14 @@ Required Reviews:
 
 ## Planner
 
-- Status: BLOCKED
-- Current decision: a fase não pode avançar enquanto um reviewer obrigatório estiver `REJECTED`
-- Required decision: classificar, com base nos critérios da fase 5 e sem substituir SECURITY, quais findings impedem a feature local/controlada e quais impedem somente produção pública
-- Constraint: se a decisão aceitar risco HIGH/CRITICAL, autorizar produção ou ampliar a fase, PLANNER deve escalar ao usuário
+- Status: APPROVED_WITH_WARNINGS
+- Decision ID: `ARCH-2026-09-04-001`
+- Decision: adotar arquitetura-alvo evolutiva em camadas e manter separação explícita entre Feature Status e Production Readiness
+- Phase 5 feature blockers: `SEC-006` (opt-out visual não controla memória server-side) e `SEC-007` (exclusão sem confirmação forte/recuperação)
+- Production blockers: `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-008` e `SEC-012`; permanecem abertos e o deploy público continua bloqueado
+- Boundary: a classificação não altera o `REJECTED` de Security, não aceita risco HIGH/CRITICAL, não autoriza produção e não inicia a Fase 6
+- Architecture record: [`docs/reviews/architecture-latest.md`](reviews/architecture-latest.md) e [`docs/future-architecture.md`](future-architecture.md)
+- Coordinator handoff: rotear operacionalmente `SEC-006` e `SEC-007` ao DEV, preservar reviews pendentes e recalcular o alvo caso surja novo Functional Commit
 
 ## Coordinator
 
