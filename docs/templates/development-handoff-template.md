@@ -3,7 +3,7 @@
 - Status: READY_FOR_REVIEW
 - Phase:
 - Branch:
-- Commit:
+- Functional commit:
 - Date:
 
 ## Scope
@@ -38,6 +38,7 @@
 - [ ] QA
 - [ ] Database Audit
 - [ ] Security
-- [ ] Architecture
+- [ ] UI/UX
+- [ ] Planner
 
 ## Notes for Reviewers

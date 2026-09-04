@@ -234,13 +234,17 @@ Registre resultados reais, comandos relevantes, limitações e commit. Não marq
 9. Atualizar documentação afetada.
 10. Revisar diff, commitar apenas o próprio trabalho e parar no limite da fase.
 
-## Multi-Work Handoff
+## Team Coordination
 
-- O painel oficial de handoff é [`docs/handoff.md`](docs/handoff.md); todo Work deve lê-lo antes de começar.
-- Relatórios atuais ficam em `docs/reviews/` e os modelos oficiais em `docs/templates/`.
-- Cada papel deve atualizar somente os arquivos atribuídos a ele pelas regras de [`docs/reviews/README.md`](docs/reviews/README.md).
-- Toda revisão deve identificar o commit exato analisado; referência apenas à fase não é suficiente.
-- Development pode marcar trabalho como `READY_FOR_REVIEW`, mas não pode aprovar definitivamente a própria fase.
-- Nenhum Work deve sobrescrever, reinterpretar ou alterar o relatório de outro papel.
-- Evite dois Works de escrita simultâneos no mesmo branch quando puderem tocar os mesmos arquivos.
-- Git, Markdown e commits são o canal oficial de comunicação; automação desse fluxo exige uma fase futura explicitamente autorizada.
+- O painel oficial é [`docs/handoff.md`](docs/handoff.md); todo Work deve lê-lo antes de começar.
+- O fluxo, os status, a Review Matrix e o ownership estão em [`docs/reviews/README.md`](docs/reviews/README.md).
+- Especificações visuais pertencem a [`docs/design/`](docs/design/README.md); templates oficiais ficam em [`docs/templates/`](docs/templates/phase-coordination-template.md).
+- PLANNER coordena escopo, reviews obrigatórios, consolidação e Next Action; não substitui nenhum reviewer técnico.
+- UI/UX especifica a experiência antes do DEV e revisa fidelidade depois, sem alterar código por padrão.
+- Toda implementação e revisão deve citar o Functional Commit exato. Commits apenas documentais não mudam essa identidade.
+- DEV entrega `READY_FOR_REVIEW`, mas nunca aprova definitivamente a própria fase.
+- Cada papel escreve somente nos arquivos que possui; nenhum Work sobrescreve relatório de outro.
+- Um resultado só é oficial quando está persistido no arquivo `latest` do papel e refletido em sua seção do handoff.
+- Review obrigatório `REJECTED` leva a fase para `CHANGES_REQUESTED`; novo Functional Commit exige re-review apenas das áreas afetadas.
+- Reviewers podem trabalhar em paralelo somente sobre o mesmo Functional Commit, sem modificar código e com arquivos próprios distintos.
+- Evite qualquer escrita concorrente no mesmo arquivo ou escopo funcional. Git, Markdown e commits são o canal oficial.

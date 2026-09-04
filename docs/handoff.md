@@ -1,92 +1,138 @@
 # HOPE AI — Handoff
 
-Este é o painel central de colaboração entre Works. Leia também [`AGENTS.md`](../AGENTS.md), [`architecture.md`](architecture.md), a [documentação da fase atual](phase-5.md) e o [manual de reviews](reviews/README.md) antes de agir.
+Painel central de coordenação. Todo Work deve ler [`AGENTS.md`](../AGENTS.md), [`architecture.md`](architecture.md), a [fase vigente](phase-5.md), o [manual de reviews](reviews/README.md) e os relatórios `latest` aplicáveis antes de agir.
 
-## Current State
+Commits exclusivamente documentais não substituem o Functional Commit. Resultados técnicos permanecem nos arquivos próprios de cada reviewer.
 
-- Current phase: 5
-- Current branch: `main`
-- Current development commit: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
-- Last approved commit: NOT_RECORDED
-- Working tree expected: alterações preexistentes dos reviewers em `docs/reviews/` permanecem fora do commit de Development e devem ser preservadas
-- Database environment: auditado em modo read-only no head `20260902_0002`; migration `20260903_0003` criada, mas não aplicada no PostgreSQL real
+## Current Phase
+
+- Phase: 5
+- Phase status: CHANGES_REQUESTED
+- Branch: `main`
 - Application version: 6.0 / Phase 5
+- Scope: chat consciente de memória, personalidade HOPE e hardening pós-auditoria da fase 5
+- Last approved commit: NOT_RECORDED
+- Working tree expected: preservar as alterações preexistentes dos reviewers em `docs/reviews/`; nenhum Work de governança deve incorporá-las ou reescrevê-las
+- Database environment: o último Database Audit foi read-only no head `20260902_0002`; a migration `20260903_0003` existe no código, mas não foi aplicada no PostgreSQL real
 
-Context: `adfc728` corrige os blockers de QA e endurece schema, configuração e operação após o Database Audit, sem alterar o banco gerenciado nem iniciar nova fase.
+Required Reviews:
 
-## Workflow Status
+- QA: YES — mudança funcional significativa
+- DATABASE: YES — memória, persistência, schema, migration, índices e pgvector foram afetados
+- SECURITY: YES — memória, WebSocket, voz, APIs externas, dados pessoais e configuração cloud são afetados
+- UI/UX: YES — chat, estados visuais, Core Orb e foco do Memory Globe foram afetados na fase
 
-### Development
+## Current Functional Commit
+
+- Commit: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
+- Phase: 5
+- Created by: DEV
+- Status: READY_FOR_REVIEW
+- Base delivery: `becb27df8848d9ed738c85d068760bb7d0848bc9`
+- Notes: `adfc728` declara correções para `QA-001`, `QA-002` e hardening de banco. Isso só se torna oficialmente verificado quando os reviewers responsáveis persistirem novas revisões contra este hash.
+
+## Review Matrix
+
+| Work | Required | Status | Commit |
+|---|---|---|---|
+| DEV | YES | READY_FOR_REVIEW | `adfc728aaaf96c679dd9d1df38c56edda8bc95de` |
+| QA | YES | WAITING_FOR_REVIEW | `adfc728aaaf96c679dd9d1df38c56edda8bc95de` |
+| DATABASE | YES | WAITING_FOR_REVIEW | `adfc728aaaf96c679dd9d1df38c56edda8bc95de` |
+| SECURITY | YES | REJECTED | `adfc728aaaf96c679dd9d1df38c56edda8bc95de` |
+| UI/UX | YES | WAITING_FOR_REVIEW | `adfc728aaaf96c679dd9d1df38c56edda8bc95de` |
+| PLANNER | YES | WAITING_FOR_APPROVAL | `adfc728aaaf96c679dd9d1df38c56edda8bc95de` |
+
+## Development
 
 - Status: READY_FOR_REVIEW
-- Commit: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
-- Owner role: Development
-- Notes: `QA-001` e `QA-002` foram corrigidos; HNSW foi alinhado ao metadata; migration `20260903_0003`, FKs compostas, checks, upsert atômico, credenciais separadas, pool conservador e bloqueio do LocalHash em ambientes implantados foram entregues. Suítes: 41 Python e 16 frontend aprovados; browser aprovado sem erros de console. `alembic heads` e SQL offline aprovados. O `alembic check` no banco real informa corretamente que o alvo ainda está em `0002`; nenhuma migration ou mudança de role foi aplicada. Development não emite aprovação final.
+- Functional commit: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
+- Delivered: correções declaradas de QA, migration `0003`, FKs compostas, checks, upsert atômico, separação de credenciais, pool conservador e bloqueio de LocalHash em ambientes implantados
+- Validation reported by DEV: 41 testes Python, 16 frontend, browser sem erros de console, `alembic heads` e SQL offline
+- Boundary: migration, nova role e mudanças operacionais não foram aplicadas ao banco real
+- Rule: DEV não pode marcar a fase como `APPROVED`
 
-### QA
+## QA
 
-- Status: NOT_STARTED
-- Commit reviewed: —
-- Recommendation: —
-- Blockers: nenhum registrado; revisão pendente
+- Coordination status: WAITING_FOR_REVIEW
+- Current target: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
+- Last official result: REJECTED
+- Last commit reviewed: `becb27df8848d9ed738c85d068760bb7d0848bc9`
+- Previous blockers: `QA-001` e `QA-002`; DEV declarou correção, mas QA ainda não persistiu re-review do Functional Commit vigente
+- Warning carried: `QA-003` sobre atraso do Core Orb após cancelamento
+- Report: [`qa-latest.md`](reviews/qa-latest.md)
 
-### Database Audit
+## Database Audit
 
-- Status: NOT_STARTED
-- Commit reviewed: —
-- Recommendation: —
-- Blockers: nenhum registrado; aplicabilidade e revisão pendentes
+- Coordination status: WAITING_FOR_REVIEW
+- Current target: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
+- Last official result: REJECTED
+- Last development commit covered: `becb27df8848d9ed738c85d068760bb7d0848bc9`
+- Previous blockers: `DB-001` a `DB-004`; DEV entregou mudanças relacionadas, mas DATABASE ainda não persistiu re-review contra o Functional Commit vigente
+- Operational boundary: `0003`, role restrita, TLS `verify-full` e avaliação vetorial real continuam dependentes de ambiente seguro e autorização
+- Report: [`database-audit-latest.md`](reviews/database-audit-latest.md)
 
-### Security Review
+## Security Review
 
-- Status: NOT_STARTED
-- Commit reviewed: —
-- Recommendation: —
-- Blockers: nenhum registrado; aplicabilidade e revisão pendentes
+- Coordination status: REJECTED
+- Commit reviewed: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
+- Official result: REJECTED para deploy público
+- Deploy blockers: `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-006`, `SEC-007`, `SEC-008` e `SEC-012`
+- Scope warning: várias correções exigiriam autenticação, autorização e controles operacionais ainda planejados; governança não pode convertê-las automaticamente em implementação da fase 5
+- Report: [`security-review-latest.md`](reviews/security-review-latest.md)
 
-### Architecture
+## UI/UX
 
-- Status: NOT_STARTED
-- Decision required: confirmar critérios de aprovação e próxima fase somente após as revisões aplicáveis
-- Notes: nenhuma decisão arquitetural nova está autorizada por este handoff
+- Coordination status: WAITING_FOR_REVIEW
+- Current target: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
+- Last official result: NOT_STARTED
+- Required review: fidelidade de chat, estados do Core Orb, foco do Memory Globe, responsividade e acessibilidade da fase 5
+- Report: [`uiux-latest.md`](reviews/uiux-latest.md)
+- Design source: [`docs/design/`](design/README.md)
+
+## Planner
+
+- Status: WAITING_FOR_APPROVAL
+- Current decision: a fase não pode avançar enquanto um reviewer obrigatório estiver `REJECTED`
+- Required coordination: separar blockers de aceite da fase 5 de blockers exclusivos para deploy público, sem aprovar tecnicamente no lugar de SECURITY
+- Constraint: não iniciar autenticação, autorização, deploy ou outra fase sem decisão explícita do usuário
 
 ## Current Blockers
 
-- Nenhum BLOCKER formalmente registrado. Isso não equivale a aprovação: QA, Database Audit e Security Review ainda não começaram.
+- Security Review rejeitou o Functional Commit vigente para deploy público com `SEC-001` a `SEC-008` e `SEC-012` marcados como bloqueantes.
+- O escopo de correção desses findings pode ultrapassar a fase 5; falta decisão do usuário sobre o critério de aceite: operação local/controlada ou prontidão para deploy público.
+- QA e DATABASE ainda não persistiram re-review do Functional Commit vigente. Seus resultados anteriores permanecem válidos historicamente, mas não aprovam `adfc728`.
+- UI/UX ainda não persistiu revisão da experiência visual da fase 5.
 
 ## Warnings
 
-- A fase 5 ainda não possui aprovação formal registrada no sistema de reviews.
-- Autenticação real permanece planejada; `X-Hope-User-Id` e o `user_id` do WebSocket são identidades transitórias controladas pelo cliente.
-- O branch local contém commits ainda não enviados a `origin/main`; confira novamente a divergência antes de cada handoff.
-
-## Approved Decisions
-
-- Git, Markdown, commits exatos e papéis definidos são o canal oficial de comunicação entre Works.
-- Development constrói e entrega; QA, Database Audit e Security Review avaliam; Architecture consolida decisões; o usuário mantém a decisão final.
-- Relatórios de papéis diferentes não devem ser sobrescritos uns pelos outros.
-
-## History
-
-- 2026-09-03 — Sistema inicial de handoff criado. Fase 5 apontada para revisão no commit `becb27d`; todas as revisões formais começaram como `NOT_STARTED`.
+- `QA-003` permanece um warning não verificado no novo Functional Commit.
+- Warnings de Database e Security permanecem nos relatórios dos respectivos papéis e não devem ser tratados como resolvidos.
+- Autenticação real continua planejada; identidade fornecida pelo cliente não é autenticação.
+- Commits locais ainda não enviados a `origin/main` exigem nova verificação antes de cada revisão.
+- Warnings aceitos para avanço devem ser copiados para [`docs/backlog.md`](backlog.md), sem removê-los do relatório original.
 
 ## Next Action
 
-- Role: QA, seguido por Database Audit e Security Review
-- Task: revisar novamente os blockers contra o novo commit; Database Audit deve validar `0003` em banco descartável/clone antes de qualquer produção e registrar separadamente os itens que ainda dependem de operação/provider
+- Role: PLANNER
+- Status: WAITING_FOR_APPROVAL
+- Task: obter do usuário a decisão explícita sobre se a aprovação da fase 5 exige prontidão para deploy público ou somente operação local/controlada; depois definir blockers de fase, re-reviews obrigatórios e o próximo papel sem alterar código
 - Target commit: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
-- Inputs:
-
-- [`AGENTS.md`](../AGENTS.md)
-- [`docs/handoff.md`](handoff.md)
-- [`docs/architecture.md`](architecture.md)
-- [`docs/phase-5.md`](phase-5.md)
-- [`docs/reviews/qa-latest.md`](reviews/qa-latest.md)
-- [`docs/reviews/database-audit-latest.md`](reviews/database-audit-latest.md)
-- [`docs/database-security.md`](database-security.md)
-
+- Required inputs:
+  - [`docs/phase-5.md`](phase-5.md)
+  - [`docs/reviews/qa-latest.md`](reviews/qa-latest.md)
+  - [`docs/reviews/database-audit-latest.md`](reviews/database-audit-latest.md)
+  - [`docs/reviews/security-review-latest.md`](reviews/security-review-latest.md)
+  - [`docs/reviews/uiux-latest.md`](reviews/uiux-latest.md)
 - Expected output:
+  - decisão de escopo persistida por PLANNER em `architecture-latest.md` ou ADR
+  - Review Matrix atualizada para o mesmo Functional Commit
+  - uma única próxima ação atribuída a DEV ou aos reviewers aplicáveis
+- Blocking dependencies: decisão explícita do usuário; re-reviews oficiais de QA, DATABASE e UI/UX conforme o escopo decidido
 
-- QA atualiza somente `docs/reviews/qa-latest.md` com decisão sobre `QA-001` e `QA-002`
-- Database Audit atualiza somente `docs/reviews/database-audit-latest.md`, incluindo `alembic check` após aplicar `0003` em ambiente seguro e status explícito de DB-001 a DB-004
-- Security Review atualiza somente `docs/reviews/security-review-latest.md` para a separação de roles, logs, isolamento e WebSocket
+## Recent History
+
+- 2026-09-03 — Sistema inicial de handoff criado; fase 5 apontada para revisão no commit `becb27d`.
+- 2026-09-03 — QA e Database Audit registraram `REJECTED` contra a entrega anterior.
+- 2026-09-03 — DEV criou `adfc728` com correções e hardening; `8dd90b7` solicitou re-review.
+- 2026-09-03 — Security Review registrou `REJECTED` para deploy público contra `adfc728`.
+- 2026-09-04 — Governança formalizou PLANNER/UI/UX, Functional Commit, Review Matrix e coordenação por impacto; nenhum resultado técnico foi alterado.
