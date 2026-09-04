@@ -32,8 +32,45 @@ Este documento permite que um novo Work opere sem depender de chats antigos. O [
 - **QA** tenta quebrar o comportamento por testes, regressões, browser, API, realtime e fluxos negativos.
 - **DATABASE** protege PostgreSQL, pgvector, schema, migrations, integridade, índices, performance e qualidade dos dados.
 - **SECURITY** revisa secrets, autenticação, autorização, WebSocket, XSS, prompt injection, memory poisoning, banco, integrações e deploy blockers.
+- **COORDINATOR** lê o estado persistido, normaliza status, valida alinhamento de commits, roteia o próximo Work e escala decisões; não implementa, não revisa tecnicamente e não substitui PLANNER.
 
 O usuário mantém a decisão final sobre ações sensíveis, mudanças importantes e avanço de fase.
+
+## Autonomy Level 2.5
+
+COORDINATOR segue o loop:
+
+```text
+READ
+  → NORMALIZE STATUS
+  → VALIDATE COMMIT ALIGNMENT
+  → CHECK BLOCKERS
+  → CHECK REQUIRED REVIEWS
+  → CHECK OWNERSHIP
+  → DETERMINE NEXT ACTION
+  → UPDATE WORKFLOW DOCS
+  → REPORT
+```
+
+Pode agir sem pedir autorização para:
+
+- escolher o próximo Work pelo fluxo já aprovado;
+- atualizar estados operacionais, Review Matrix, blockers, warnings e Next Action;
+- detectar review pendente, `REJECTED`, commit antigo ou handoff não persistido;
+- devolver a fase ao DEV quando blockers já pertencem claramente ao escopo;
+- decidir re-reviews quando o impacto é óbvio;
+- marcar `N/A` quando PLANNER já definiu `Required: NO`;
+- serializar escrita e impedir conflito de ownership.
+
+Não pode aplicar migration, alterar banco/credenciais/privilégios, aceitar risco HIGH/CRITICAL, fazer deploy, excluir dados, mudar provider/orçamento/arquitetura, ampliar autonomia, permitir self-modification, corrigir código ou aprovar qualquer domínio técnico.
+
+## Escalation Model
+
+- **LEVEL 1 — OPERATIONAL:** COORDINATOR resolve. Exemplos: review pendente, commit desalinhado, `latest` não persistido, reviewer obrigatório ainda não iniciou ou roteamento de `REJECTED` para DEV quando o escopo já está decidido.
+- **LEVEL 2 — TECHNICAL DECISION:** encaminhar ao PLANNER. Exemplos: conflito DATABASE versus SECURITY, duas arquiteturas viáveis, warning sem fase definida, dúvida de impacto ou nova capacidade.
+- **LEVEL 3 — SENSITIVE / OWNER DECISION:** escalar ao usuário. Exemplos: banco/migration real, credencial ou privilégio, deploy/exposição pública, custos, exclusão, irreversibilidade, aceitação de risco HIGH/CRITICAL, autonomia ou novas permissões.
+
+Não escale tarefas operacionais triviais. Não conceda autorização em nome do usuário.
 
 ## Functional Commit como identidade
 
@@ -67,6 +104,8 @@ Use somente:
 - `SUPERSEDED`: resultado ou alvo substituído por versão posterior explicitamente indicada.
 
 Não invente sinônimos para campos de status.
+
+`PENDING_REVIEW`, `NOT_PERSISTED` e `BLOCKED_FOR_DECISION` podem aparecer como anotações ou motivos, nunca como valores da Review Matrix. Use respectivamente `WAITING_FOR_REVIEW`, o status oficial ainda persistido, e `BLOCKED`.
 
 ## Required Reviews
 
@@ -117,6 +156,8 @@ DEV
   → READY_FOR_REVIEW e para de escrever
 QA + DATABASE + SECURITY + UI/UX Review, conforme Required
   → revisam o mesmo Functional Commit
+COORDINATOR
+  → normaliza status, verifica blockers e roteia
 PLANNER
   → consolida resultados sem substituir reviewers
 Todos os required reviews aprovados e nenhum BLOCKER
@@ -132,10 +173,10 @@ Uma fase aprovada só avança após escopo e autorização explícitos para a pr
 Se qualquer reviewer obrigatório emitir `REJECTED`:
 
 1. Phase status torna-se `CHANGES_REQUESTED`.
-2. PLANNER consolida os IDs dos blockers e define uma única Next Action principal.
+2. COORDINATOR consolida os IDs sem reinterpretá-los e define uma única Next Action principal para DEV quando o escopo já está autorizado.
 3. DEV corrige somente blockers autorizados.
 4. DEV cria um **novo Functional Commit**.
-5. PLANNER faz análise de impacto.
+5. COORDINATOR faz análise de impacto óbvia; dúvida técnica é encaminhada ao PLANNER.
 6. Áreas tocadas voltam para `WAITING_FOR_REVIEW`.
 7. Reviewers aplicáveis revisam o novo hash.
 8. PLANNER consolida novamente.
@@ -146,6 +187,8 @@ DEV → REVIEW → REJECTED → DEV FIX → NEW FUNCTIONAL COMMIT
 ```
 
 O loop se repete até `APPROVED` ou até o trabalho ficar `BLOCKED`/`WAITING_FOR_APPROVAL`.
+
+Se os blockers exigirem nova capacidade, mudança arquitetural ou decisão sensível, COORDINATOR não envia implementação automática: encaminha ao PLANNER ou usuário conforme o nível de escalada.
 
 ## Re-review por impacto
 
@@ -172,6 +215,15 @@ Uma fase só pode ser `APPROVED` quando:
 
 DEV sozinho nunca aprova a fase. PLANNER não aprova banco, segurança, UI/UX ou qualidade no lugar do reviewer responsável.
 
+## Feature Approval e Production Readiness
+
+Registre separadamente:
+
+- **Feature Status:** atendimento ao escopo e critérios da fase.
+- **Production Readiness:** segurança e operação necessárias para exposição pública.
+
+Uma feature pode ser aprovada para ambiente local/controlado enquanto a produção permanece `BLOCKED`. Blockers gerais de autenticação, infraestrutura ou deploy não ampliam automaticamente o escopo da fase. COORDINATOR apenas reflete o que os reviewers disseram; se o relatório não separar claramente os dois e isso mudar a decisão, encaminha ao PLANNER. Aceitar risco HIGH/CRITICAL ou autorizar produção sempre exige o usuário.
+
 ## APPROVED_WITH_WARNINGS
 
 Significa que não há BLOCKER e a funcionalidade pode avançar, mas riscos ou melhorias continuam documentados. Warnings não são tratados como resolvidos: quando aceitos para avanço, PLANNER os registra em [`docs/backlog.md`](../backlog.md) com origem e fase recomendada.
@@ -194,6 +246,7 @@ BLOCKER é separado da severidade. `Severity: MEDIUM` e `Blocking: YES` é váli
 - **SECURITY:** `docs/reviews/security-review-latest.md` e seção Security Review do handoff.
 - **UI/UX:** `docs/reviews/uiux-latest.md`, `docs/design/*` e seção UI/UX do handoff.
 - **PLANNER:** `docs/reviews/architecture-latest.md`, planejamento, Review Matrix, Current Phase, seção Planner e Next Action quando coordenação for necessária.
+- **COORDINATOR:** Current Phase, Current Functional Commit, Review Matrix, Current Blockers, Warnings, Next Action e Recent History operacional no handoff.
 
 Nenhum Work sobrescreve relatório `latest`, evidência ou recomendação de outro papel. Correção funcional gera novo commit e revisão; não reescrita do achado.
 
@@ -206,6 +259,8 @@ Resultado dito somente no chat não conclui handoff. Uma revisão só é oficial
 3. atualizou a seção correspondente no handoff.
 
 Se QA concluiu no chat, mas `qa-latest.md` continua `NOT_STARTED`, o resultado oficial continua `NOT_STARTED`.
+
+COORDINATOR deve então registrar a pendência operacional e direcionar a Next Action ao reviewer para persistir o resultado, sem tentar reconstruí-lo a partir do chat.
 
 ## UI/UX em dois momentos
 
@@ -235,7 +290,7 @@ Após o Functional Commit, QA, DATABASE, SECURITY e UI/UX Review podem trabalhar
 - todos leem o mesmo hash;
 - cada um escreve exclusivamente no arquivo que possui;
 - nenhum altera código funcional;
-- atualizações do handoff são serializadas ou consolidadas por PLANNER.
+- atualizações do handoff são serializadas ou consolidadas por COORDINATOR.
 
 Leituras paralelas são seguras; escrita paralela exige ownership inequivocamente distinto.
 
@@ -253,13 +308,17 @@ Expected output:
 Blocking dependencies:
 ```
 
-Se o alvo mudar, pare e atualize o hash. BLOCKER normalmente direciona a DEV; falta de autorização direciona a PLANNER com `WAITING_FOR_APPROVAL`.
+Se o alvo mudar, pare e atualize o hash. BLOCKER de escopo já decidido normalmente direciona a DEV. Conflito técnico direciona a PLANNER. Autoridade sensível direciona ao usuário com `WAITING_FOR_APPROVAL`.
 
 ## Histórico
 
 `docs/handoff.md` mantém somente estado atual e histórico resumido. Relatórios detalhados permanecem em `docs/reviews/`; decisões duradouras ficam em `architecture-latest.md` ou ADRs. Não transforme o painel em log gigantesco.
 
 ## Comandos curtos por Work
+
+### COORDINATOR
+
+> Leia AGENTS.md, docs/handoff.md, todos os latest reviews, docs/backlog.md e a documentação aplicável. Normalize o estado, valide o Functional Commit, determine uma única Next Action e escale somente quando necessário.
 
 ### PLANNER
 

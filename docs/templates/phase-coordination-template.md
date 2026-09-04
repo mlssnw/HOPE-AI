@@ -2,7 +2,10 @@
 
 - Phase:
 - Planner:
+- Coordinator:
 - Status: NOT_STARTED
+- Feature status: NOT_STARTED
+- Production readiness: NOT_STARTED
 - Functional scope:
 
 ## Required Reviews
@@ -35,6 +38,10 @@
 
 ## Blockers
 
+### Feature Blockers
+
+### Production Blockers
+
 ## Warnings
 
 ## Next Action
@@ -46,6 +53,7 @@
 - Required inputs:
 - Expected output:
 - Blocking dependencies:
+- Escalation: NONE / PLANNER / USER
 
 ## Approval
 

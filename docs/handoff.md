@@ -8,6 +8,8 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 
 - Phase: 5
 - Phase status: CHANGES_REQUESTED
+- Feature status: CHANGES_REQUESTED — reviews obrigatórios ainda não aprovam o Functional Commit vigente
+- Production readiness: BLOCKED — Security rejeitou deploy público
 - Branch: `main`
 - Application version: 6.0 / Phase 5
 - Scope: chat consciente de memória, personalidade HOPE e hardening pós-auditoria da fase 5
@@ -40,7 +42,7 @@ Required Reviews:
 | DATABASE | YES | WAITING_FOR_REVIEW | `adfc728aaaf96c679dd9d1df38c56edda8bc95de` |
 | SECURITY | YES | REJECTED | `adfc728aaaf96c679dd9d1df38c56edda8bc95de` |
 | UI/UX | YES | WAITING_FOR_REVIEW | `adfc728aaaf96c679dd9d1df38c56edda8bc95de` |
-| PLANNER | YES | WAITING_FOR_APPROVAL | `adfc728aaaf96c679dd9d1df38c56edda8bc95de` |
+| PLANNER | YES | BLOCKED | `adfc728aaaf96c679dd9d1df38c56edda8bc95de` |
 
 ## Development
 
@@ -91,17 +93,33 @@ Required Reviews:
 
 ## Planner
 
-- Status: WAITING_FOR_APPROVAL
+- Status: BLOCKED
 - Current decision: a fase não pode avançar enquanto um reviewer obrigatório estiver `REJECTED`
-- Required coordination: separar blockers de aceite da fase 5 de blockers exclusivos para deploy público, sem aprovar tecnicamente no lugar de SECURITY
-- Constraint: não iniciar autenticação, autorização, deploy ou outra fase sem decisão explícita do usuário
+- Required decision: classificar, com base nos critérios da fase 5 e sem substituir SECURITY, quais findings impedem a feature local/controlada e quais impedem somente produção pública
+- Constraint: se a decisão aceitar risco HIGH/CRITICAL, autorizar produção ou ampliar a fase, PLANNER deve escalar ao usuário
+
+## Coordinator
+
+- Autonomy level: 2.5
+- Status: BLOCKED
+- Operational conclusion: Functional Commit está alinhado; QA, DATABASE e UI/UX ainda precisam revisar esse hash; Security possui resultado oficial `REJECTED` para deploy público
+- Routing: LEVEL 2 — PLANNER, porque a separação entre blocker de feature e blocker de produção afeta critérios de aceite e roadmap
+- Boundary: nenhum veredito técnico foi alterado e nenhum blocker foi considerado resolvido apenas pela declaração do DEV
 
 ## Current Blockers
 
-- Security Review rejeitou o Functional Commit vigente para deploy público com `SEC-001` a `SEC-008` e `SEC-012` marcados como bloqueantes.
-- O escopo de correção desses findings pode ultrapassar a fase 5; falta decisão do usuário sobre o critério de aceite: operação local/controlada ou prontidão para deploy público.
-- QA e DATABASE ainda não persistiram re-review do Functional Commit vigente. Seus resultados anteriores permanecem válidos historicamente, mas não aprovam `adfc728`.
-- UI/UX ainda não persistiu revisão da experiência visual da fase 5.
+### Feature Blockers
+
+- Security é review obrigatório e permanece oficialmente `REJECTED`; o relatório não emite veredito separado de aprovação da feature local/controlada. Estado: BLOCKED_FOR_DECISION pelo PLANNER.
+- `QA-001` e `QA-002`: DEV declarou correção, mas QA ainda não confirmou no Functional Commit vigente. Estado: PENDING_REVIEW.
+- `DB-001` a `DB-004`: DEV entregou hardening relacionado, mas DATABASE ainda não confirmou o Functional Commit vigente. Estado: PENDING_REVIEW.
+- UI/UX pós-implementação ainda não foi persistido para o Functional Commit vigente. Estado: WAITING_FOR_REVIEW.
+
+### Production Blockers
+
+- Security marcou `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-006`, `SEC-007`, `SEC-008` e `SEC-012` como blockers de deploy público.
+- Migration `0003`, role restrita, TLS `verify-full` e controles operacionais não foram aplicados/validados no ambiente real.
+- Nenhuma ação de produção está autorizada por este handoff.
 
 ## Warnings
 
@@ -114,8 +132,8 @@ Required Reviews:
 ## Next Action
 
 - Role: PLANNER
-- Status: WAITING_FOR_APPROVAL
-- Task: obter do usuário a decisão explícita sobre se a aprovação da fase 5 exige prontidão para deploy público ou somente operação local/controlada; depois definir blockers de fase, re-reviews obrigatórios e o próximo papel sem alterar código
+- Status: BLOCKED
+- Task: resolver o enquadramento técnico entre Feature Status e Production Readiness para a fase 5; definir quais findings de Security são blockers da feature e quais pertencem ao roadmap/deploy, sem alterar o veredito de Security
 - Target commit: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
 - Required inputs:
   - [`docs/phase-5.md`](phase-5.md)
@@ -124,10 +142,11 @@ Required Reviews:
   - [`docs/reviews/security-review-latest.md`](reviews/security-review-latest.md)
   - [`docs/reviews/uiux-latest.md`](reviews/uiux-latest.md)
 - Expected output:
-  - decisão de escopo persistida por PLANNER em `architecture-latest.md` ou ADR
+  - decisão de escopo persistida por PLANNER em `architecture-latest.md` ou ADR, com critérios de aceite da feature e de produção separados
   - Review Matrix atualizada para o mesmo Functional Commit
   - uma única próxima ação atribuída a DEV ou aos reviewers aplicáveis
-- Blocking dependencies: decisão explícita do usuário; re-reviews oficiais de QA, DATABASE e UI/UX conforme o escopo decidido
+- Blocking dependencies: decisão técnica do PLANNER; escalar ao usuário somente se houver aceitação de risco HIGH/CRITICAL, produção pública, nova fase ou outra decisão sensível
+- Escalation: PLANNER
 
 ## Recent History
 
@@ -136,3 +155,4 @@ Required Reviews:
 - 2026-09-03 — DEV criou `adfc728` com correções e hardening; `8dd90b7` solicitou re-review.
 - 2026-09-03 — Security Review registrou `REJECTED` para deploy público contra `adfc728`.
 - 2026-09-04 — Governança formalizou PLANNER/UI/UX, Functional Commit, Review Matrix e coordenação por impacto; nenhum resultado técnico foi alterado.
+- 2026-09-04 — COORDINATOR formalizou autonomia 2.5 e separou Feature Status de Production Readiness; o conflito de enquadramento foi roteado ao PLANNER, sem escalar prematuramente ao usuário.

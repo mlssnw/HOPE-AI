@@ -239,6 +239,9 @@ Registre resultados reais, comandos relevantes, limitações e commit. Não marq
 - O painel oficial é [`docs/handoff.md`](docs/handoff.md); todo Work deve lê-lo antes de começar.
 - O fluxo, os status, a Review Matrix e o ownership estão em [`docs/reviews/README.md`](docs/reviews/README.md).
 - Especificações visuais pertencem a [`docs/design/`](docs/design/README.md); templates oficiais ficam em [`docs/templates/`](docs/templates/phase-coordination-template.md).
+- COORDINATOR opera com autonomia 2.5: lê, classifica, roteia, atualiza status operacionais e escala; nunca implementa, revisa tecnicamente ou concede aprovação de domínio.
+- COORDINATOR pode atualizar Current Phase, Current Functional Commit, Review Matrix, blockers, warnings, Next Action e histórico operacional sem alterar relatórios técnicos.
+- Questões operacionais são resolvidas pelo COORDINATOR; decisões técnicas vão ao PLANNER; produção, dados reais, credenciais, permissões, custos e aceitação de risco HIGH/CRITICAL vão ao usuário.
 - PLANNER coordena escopo, reviews obrigatórios, consolidação e Next Action; não substitui nenhum reviewer técnico.
 - UI/UX especifica a experiência antes do DEV e revisa fidelidade depois, sem alterar código por padrão.
 - Toda implementação e revisão deve citar o Functional Commit exato. Commits apenas documentais não mudam essa identidade.
@@ -248,3 +251,4 @@ Registre resultados reais, comandos relevantes, limitações e commit. Não marq
 - Review obrigatório `REJECTED` leva a fase para `CHANGES_REQUESTED`; novo Functional Commit exige re-review apenas das áreas afetadas.
 - Reviewers podem trabalhar em paralelo somente sobre o mesmo Functional Commit, sem modificar código e com arquivos próprios distintos.
 - Evite qualquer escrita concorrente no mesmo arquivo ou escopo funcional. Git, Markdown e commits são o canal oficial.
+- Separe sempre `Feature Status` de `Production Readiness`; blockers gerais de produção não ampliam automaticamente o escopo da fase.
