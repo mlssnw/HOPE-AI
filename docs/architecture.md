@@ -97,14 +97,15 @@ A documentação OpenAPI automática está desabilitada. O backend usa modelos P
 O `HopeOrchestrator` coordena o chat atual:
 
 1. publica estado `thinking` e, quando aplicável, `searching`;
-2. interpreta comandos claros de correção ou esquecimento;
-3. recupera contexto limitado de memória, entidades e relações;
-4. constrói system prompt com personalidade e regras de segurança;
-5. coleta Tavily/Obsidian quando solicitados;
-6. chama o modelo;
-7. classifica e tenta persistir conteúdo relevante do usuário;
-8. publica eventos incrementais e retorna metadados de rastreabilidade;
-9. retorna ao estado `idle`, ou publica `error` antes da recuperação.
+2. aplica o consentimento `memory_enabled` da requisição antes de qualquer acesso à memória;
+3. interpreta comandos claros de correção ou esquecimento;
+4. recupera contexto limitado de memória, entidades e relações somente quando autorizado;
+5. constrói system prompt com personalidade e regras de segurança;
+6. coleta Tavily/Obsidian quando solicitados;
+7. chama o modelo;
+8. classifica e tenta persistir conteúdo relevante do usuário somente quando autorizado;
+9. publica eventos incrementais e retorna metadados de rastreabilidade;
+10. retorna ao estado `idle`, ou publica `error` antes da recuperação.
 
 `backend/services.py` contém o adapter HTTP para a API Messages da Anthropic. O modelo é configurável por `ANTHROPIC_MODEL`; o padrão do exemplo é Claude Sonnet 4.6. O contexto de memória e fontes externas é serializado como JSON e delimitado como dado não confiável.
 
@@ -136,13 +137,15 @@ O domínio em `backend/memory/` está separado em componentes:
 - `EntityExtractor` e `EntityRepository`: extração baseada em regras e vínculos;
 - `MemoryService`: entrada de alto nível para captura automática.
 
-O sistema diferencia fatos, eventos e inferências; limita inferências a confiança máxima de 0,75; registra fontes; consolida duplicatas; atualiza embedding, entidades e relações em correções; e remove relações por cascata no esquecimento.
+O sistema diferencia fatos, eventos e inferências; limita inferências a confiança máxima de 0,75; registra fontes; consolida duplicatas; atualiza embedding, entidades e relações em correções; e remove relações por cascata no esquecimento. No chat, recuperação e captura são opt-in e bloqueadas no servidor quando `memory_enabled=false`. Pedidos textuais de esquecimento apenas identificam o alvo e retornam um contrato de confirmação; a exclusão ocorre pela API somente quando o cliente confirma o mesmo UUID da rota em `X-Hope-Confirm-Memory-Id`.
 
 Limitações atuais:
 
 - **PARTIAL:** classificação e extração de entidades são baseadas em regras e podem ignorar ou classificar incorretamente mensagens complexas.
 - **PARTIAL:** `LocalHashEmbeddingProvider` é determinístico e adequado a desenvolvimento/testes, não a busca semântica de produção.
 - **PARTIAL:** captura pós-resposta acontece dentro da requisição, sem fila durável.
+- **PARTIAL:** o consentimento de memória é aplicado por requisição e persistido apenas como preferência local; sua vinculação a uma identidade autenticada depende da autenticação planejada.
+- **PARTIAL:** exclusão é protegida por confirmação explícita vinculada ao alvo, mas soft delete, recuperação e auditoria autenticada permanecem planejados para produção.
 
 ### Database — IMPLEMENTED, opcional em desenvolvimento
 
@@ -231,6 +234,8 @@ Defesas implementadas:
 - timeouts, limites, validação de resposta e mensagens públicas para integrações;
 - contexto externo e memória tratados como dados não confiáveis;
 - consultas de memória filtradas por UUID de usuário.
+- opt-in explícito no chat, com recuperação e captura bloqueadas no servidor quando desativado;
+- confirmação destrutiva vinculada ao UUID exato antes de excluir memória pela API.
 
 Lacunas críticas antes de exposição pública:
 

@@ -88,7 +88,11 @@
           </div>
           <p id="memory-inspector-body"></p>
           <small id="memory-inspector-meta"></small>
-          <div class="inspector-actions"><button type="button" id="memory-focus">Focar</button><button type="button" id="memory-ask">Perguntar sobre isso</button></div>
+          <div class="inspector-actions">
+            <button type="button" id="memory-focus">Focar</button>
+            <button type="button" id="memory-ask">Perguntar sobre isso</button>
+            <button class="danger-button" type="button" id="memory-forget">Esquecer</button>
+          </div>
           <div class="related-block"><strong>Relacionados</strong><div id="memory-related"></div></div>
         </aside>
       </section>
@@ -119,11 +123,15 @@
           <label class="sr-only" for="prompt">Mensagem para a HOPE</label>
           <textarea id="prompt" name="prompt" rows="2" maxlength="8000"
             placeholder="Escreva sua mensagem…" aria-describedby="composer-help"></textarea>
+          <p class="memory-consent-note" id="memory-consent-help">
+            “Memória no chat” permite recuperar e salvar dados persistentes; trechos relevantes podem ser enviados ao provedor de IA.
+          </p>
           <div class="composer-bar">
             <div class="context-controls" aria-label="Fontes e preferências">
               <label class="toggle-pill"><input id="use-web" type="checkbox"><span>Web</span></label>
               <label class="toggle-pill"><input id="use-vault" type="checkbox"><span>Obsidian</span></label>
-              <label class="toggle-pill"><input id="persist-memory" type="checkbox"><span>Memória</span></label>
+              <label class="toggle-pill"><input id="memory-enabled" type="checkbox" aria-describedby="memory-consent-help"><span>Memória no chat</span></label>
+              <label class="toggle-pill"><input id="persist-history" type="checkbox"><span>Histórico local</span></label>
               <button class="icon-button" id="voice-toggle" type="button" aria-label="Ativar leitura em voz" aria-pressed="false">◖))</button>
               <button class="icon-button" id="mic-button" type="button" aria-label="Ditado por voz" aria-pressed="false">●</button>
             </div>
@@ -138,5 +146,19 @@
       </section>
     </main>
   </div>
+
+  <dialog class="confirmation-dialog" id="memory-delete-dialog" aria-labelledby="memory-delete-title" aria-describedby="memory-delete-consequence">
+    <form method="dialog">
+      <p class="eyebrow">AÇÃO DESTRUTIVA</p>
+      <h2 id="memory-delete-title">Esquecer esta memória?</h2>
+      <p class="confirmation-target" id="memory-delete-target"></p>
+      <p id="memory-delete-consequence">A memória e suas relações serão removidas permanentemente.</p>
+      <p class="confirmation-error" id="memory-delete-error" role="alert" hidden></p>
+      <div class="confirmation-actions">
+        <button type="button" id="memory-delete-cancel">Cancelar</button>
+        <button class="danger-button" type="button" id="memory-delete-confirm">Esquecer memória</button>
+      </div>
+    </form>
+  </dialog>
 </body>
 </html>

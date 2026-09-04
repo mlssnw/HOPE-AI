@@ -1,4 +1,5 @@
-import { ApiError, getMemoryExplanation, getMemoryGraph, retrieveMemories } from "./api-client.js";
+import { ApiError, deleteMemory, getMemoryExplanation, getMemoryGraph, retrieveMemories } from "./api-client.js";
+import { normalizeMemoryDeleteConfirmation } from "./memory-confirmation.js";
 import { getOrCreateUserId } from "./storage.js";
 import { aiStateLabel, applyGraphEvent, layoutGraph, normalizeAiState, normalizeGraph, relatedNodes, RING_ORDER, visibleScene } from "./memory-globe-core.js";
 import { HopeRealtimeClient } from "./realtime.js";
@@ -284,6 +285,7 @@ export class MemoryGlobeController {
     this.canvas = document.querySelector("#memory-globe"); if (!this.canvas) return;
     this.userId = getOrCreateUserId(); this.abortController = null; this.graph = normalizeGraph({}); this.layout = layoutGraph({});
     this.fallbackTimer = null; this.hasConnected = false; this.realtimeState = "idle";
+    this.pendingDeletion = null; this.deleteReturnFocus = null;
     this.elements = {
       shell: document.querySelector("#memory-globe-shell"), status: document.querySelector("#globe-data-status"),
       count: document.querySelector("#globe-count"), empty: document.querySelector("#globe-empty"),
@@ -293,6 +295,10 @@ export class MemoryGlobeController {
       related: document.querySelector("#memory-related"), search: document.querySelector("#globe-search-form"),
       query: document.querySelector("#globe-search"), expand: document.querySelector("#globe-expand"),
       quality: document.querySelector("#globe-quality"), memoryStatus: document.querySelector("#memory-status"),
+      forget: document.querySelector("#memory-forget"), deleteDialog: document.querySelector("#memory-delete-dialog"),
+      deleteTarget: document.querySelector("#memory-delete-target"), deleteConsequence: document.querySelector("#memory-delete-consequence"),
+      deleteError: document.querySelector("#memory-delete-error"), deleteCancel: document.querySelector("#memory-delete-cancel"),
+      deleteConfirm: document.querySelector("#memory-delete-confirm"),
     };
     try {
       this.renderer = new MemoryGlobeRenderer(this.canvas, {
@@ -318,6 +324,18 @@ export class MemoryGlobeController {
       const selected = this.layout.nodeMap.get(this.renderer.selectedId); if (!selected || selected.source !== "memory") return;
       const prompt = document.querySelector("#prompt"); prompt.value = `Explique o contexto e as relações desta memória: ${selected.data.title || selected.data.content}`; prompt.focus();
     });
+    this.elements.forget?.addEventListener("click", () => {
+      const selected = this.layout.nodeMap.get(this.renderer.selectedId);
+      if (selected?.source === "memory") this.openDeleteConfirmation({
+        memory_id: selected.id,
+        label: selected.data.title || selected.data.content,
+      }, this.elements.forget);
+    });
+    this.elements.deleteCancel?.addEventListener("click", () => this.closeDeleteConfirmation());
+    this.elements.deleteConfirm?.addEventListener("click", () => this.confirmDeletion());
+    this.elements.deleteDialog?.addEventListener("cancel", event => {
+      event.preventDefault(); this.closeDeleteConfirmation();
+    });
     document.querySelectorAll("[data-globe-view]").forEach(button => button.addEventListener("click", () => {
       const mode = button.dataset.globeView;
       if (mode === "memory" && !this.renderer.selectedId) return setText(this.elements.status, "Selecione uma memória primeiro");
@@ -334,6 +352,44 @@ export class MemoryGlobeController {
     });
     document.addEventListener("keydown", event => { if (event.key === "Escape" && this.elements.shell.classList.contains("expanded")) this.elements.expand.click(); });
     addEventListener("hope:ui-event", event => this.handleUiEvent(event.detail));
+    addEventListener("hope:confirm-memory-delete", event => this.openDeleteConfirmation(event.detail));
+  }
+
+  openDeleteConfirmation(value, returnFocus = document.querySelector("#prompt")) {
+    const confirmation = normalizeMemoryDeleteConfirmation(value);
+    if (!confirmation || !this.elements.deleteDialog) return;
+    this.pendingDeletion = confirmation; this.deleteReturnFocus = returnFocus;
+    setText(this.elements.deleteTarget, `Alvo: ${confirmation.label}`);
+    setText(this.elements.deleteConsequence, confirmation.consequence);
+    this.elements.deleteError.hidden = true; this.elements.deleteConfirm.disabled = false;
+    this.elements.deleteCancel.disabled = false;
+    if (!this.elements.deleteDialog.open) this.elements.deleteDialog.showModal();
+    this.elements.deleteCancel.focus();
+  }
+
+  closeDeleteConfirmation() {
+    if (this.elements.deleteDialog?.open) this.elements.deleteDialog.close();
+    const returnFocus = this.deleteReturnFocus;
+    this.pendingDeletion = null; this.deleteReturnFocus = null;
+    returnFocus?.focus();
+  }
+
+  async confirmDeletion() {
+    const confirmation = this.pendingDeletion;
+    if (!confirmation || this.elements.deleteConfirm.disabled) return;
+    this.elements.deleteConfirm.disabled = true; this.elements.deleteCancel.disabled = true;
+    this.elements.deleteError.hidden = true;
+    try {
+      await deleteMemory(this.userId, confirmation.memory_id);
+      this.handleRealtimeEvent({ type: "MEMORY_DELETED", payload: { memory_id: confirmation.memory_id } });
+      this.closeDeleteConfirmation();
+      setText(this.elements.status, "Memória esquecida e relações removidas");
+    } catch (error) {
+      setText(this.elements.deleteError, error instanceof ApiError ? error.message : "Não foi possível esquecer a memória.");
+      this.elements.deleteError.hidden = false;
+      this.elements.deleteConfirm.disabled = false; this.elements.deleteCancel.disabled = false;
+      this.elements.deleteCancel.focus();
+    }
   }
 
   async load() {
@@ -435,6 +491,7 @@ export class MemoryGlobeController {
     setText(this.elements.inspectorKind, node.source === "entity" ? `ENTIDADE · ${node.data.entity_type}` : `${node.data.kind} · ${node.data.memory_type}`);
     setText(this.elements.inspectorBody, node.source === "entity" ? "Cluster semântico ligado às memórias abaixo." : node.data.content);
     setText(this.elements.inspectorMeta, node.source === "entity" ? "" : `Importância ${Math.round(node.data.importance * 100)}% · confiança ${Math.round(node.data.confidence * 100)}% · ${node.data.mention_count} menções`);
+    this.elements.forget.hidden = node.source !== "memory";
     this.renderRelated(node.id);
     if (node.source === "memory") {
       try {

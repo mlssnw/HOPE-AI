@@ -2,7 +2,7 @@
 
 ## Resultado
 
-A rota `/api/chat` agora usa o cérebro persistente da HOPE sem substituir o fluxo já existente de Claude, Tavily, Obsidian e histórico local. A conversa continua disponível quando o banco falha, mas a resposta sinaliza internamente `memory_available=false` e não afirma ter recuperado lembranças.
+A rota `/api/chat` usa o cérebro persistente da HOPE somente com consentimento explícito, sem substituir o fluxo já existente de Claude, Tavily, Obsidian e histórico local. A conversa continua disponível com a memória desativada ou quando o banco falha; nesses casos, não recupera nem captura lembranças.
 
 ## Arquitetura
 
@@ -10,6 +10,9 @@ A rota `/api/chat` agora usa o cérebro persistente da HOPE sem substituir o flu
 POST /api/chat
   → HopeOrchestrator
       → AI_STATE_CHANGED: thinking
+      → memory_enabled?
+          → false: sem recuperação e sem captura
+          → true: continua o fluxo de memória
       → intenção de memória
       → AI_STATE_CHANGED: searching
       → MemoryContextBuilder
@@ -71,13 +74,17 @@ Após a resposta, mensagens declarativas relevantes passam pelo classificador e 
 
 Novos tipos de memória incluem `project`, `person`, `system`, `temporal` e `context`, além dos tipos anteriores. Inferências permanecem com confiança máxima de 0,75.
 
-Pedidos claros de esquecimento removem a memória e suas relações. Correções com novo conteúdo atualizam embedding, classificação, entidades e relações. Quando a referência não identifica uma única memória com segurança, a HOPE pede esclarecimento e não altera o banco.
+Pedidos claros de esquecimento não removem dados imediatamente. O Orchestrator identifica uma única memória com segurança e retorna `memory_delete_confirmation` com ID, rótulo e consequência. O frontend abre um diálogo modal com o alvo explícito; a API só aceita `DELETE` quando `X-Hope-Confirm-Memory-Id` corresponde ao UUID da rota. Sem confirmação ou com alvo divergente, responde `428` e não altera o banco. Correções com novo conteúdo continuam atualizando embedding, classificação, entidades e relações. Quando a referência é ambígua, a HOPE pede esclarecimento e não altera o banco.
 
 As operações de criação, fonte, entidades e relações usam a mesma sessão transacional do `MemoryManager`. Eventos de criação, atualização, remoção e relações reutilizam o publicador comum usado pela API de memória.
 
 ## Frontend e UI events
 
 A resposta do chat aceita `ui_events` opcionais. `FOCUS_MEMORIES` é validado por allowlist, elimina IDs duplicados e foca os nós existentes no Memory Globe sem reconstruir ou recarregar o grafo. Eventos desconhecidos são ignorados.
+
+O compositor separa “Memória no chat” de “Histórico local”. A primeira opção inicia desligada e controla o campo `memory_enabled` enviado ao servidor; uma preferência antiga de histórico não é migrada silenciosamente para consentimento de memória persistente. A interface informa que dados podem ser recuperados, salvos e enviados ao provedor de IA. O histórico local mantém seu próprio opt-in.
+
+O Memory Globe oferece “Esquecer” apenas para nós de memória. O diálogo destrutivo mostra o alvo e a consequência, inicia o foco em “Cancelar”, aceita Escape para cancelar e mantém o modal aberto até a API confirmar sucesso. Depois da exclusão, o nó e suas relações saem incrementalmente; o evento realtime continua idempotente.
 
 O Core Orb representa `thinking`, `searching`, `speaking`, `error` e `idle`. Se WebSocket cair, o fallback HTTP da Fase 4 continua ativo.
 
@@ -91,6 +98,10 @@ A suíte cobre:
 - inferência com confiança reduzida;
 - consolidação de duplicatas;
 - esquecimento claro e proteção contra ambiguidade;
+- opt-out bloqueando recuperação, captura e comandos de memória no servidor;
+- consentimento antigo de histórico sem ativar memória persistente;
+- exclusão sem confirmação, confirmação de alvo divergente e exclusão confirmada;
+- normalização do contrato de confirmação no frontend;
 - banco indisponível sem derrubar o chat;
 - ordem `thinking → searching → idle`;
 - workspace Anthropic e ausência de segredos;
@@ -103,7 +114,24 @@ A suíte cobre:
 - A classificação de candidatos ainda é determinística; mensagens complexas podem exigir confirmação ou ser ignoradas.
 - O pós-processamento de memória é executado logo após a resposta do modelo dentro da mesma solicitação. Isso mantém rastreabilidade e consistência, mas ainda não oferece uma fila durável.
 - O EventBus continua local ao processo.
+- O consentimento é aplicado por requisição e salvo localmente na interface. Vinculá-lo a uma identidade autenticada depende da autenticação, que continua sendo blocker exclusivo de produção.
+- A exclusão confirmada permanece física. Soft delete, recuperação e auditoria autenticada não foram incluídos porque exigem decisões de persistência e controles de produção fora desta correção.
 - Autenticação real, STT ElevenLabs, HOPE Bridge, automações, Tool Registry completo e deploy público estão fora desta fase.
+
+## Correções SEC-006 e SEC-007
+
+- `SEC-006`: `memory_enabled=false` é o padrão fail-safe do contrato. O Orchestrator não chama `MemoryContextBuilder`, não publica `searching`, não injeta contexto, não registra `memory_retriever` e não captura candidatos. Comandos de correção/esquecimento também são recusados até o opt-in.
+- `SEC-007`: o chat deixou de executar exclusão por interpretação textual. A confirmação é estruturada e vinculada ao UUID; a API rejeita ausência ou divergência com HTTP `428`. O diálogo segue os contratos de acessibilidade e ação destrutiva de `docs/design/`.
+- Nenhum schema, migration, provider, autenticação, rate limit, TLS, role de banco ou configuração de produção foi alterado.
+
+Validação desta correção:
+
+- Python: `42 passed`;
+- frontend: `19 passed`;
+- sintaxe: `compileall` e `node --check` sem falhas;
+- navegador: CSS e módulos servidos com HTTP 200, WebGL renderizado, WebSocket conectado, diálogo e foco por teclado validados, envio por Enter funcionando e zero erros/warnings no console.
+
+Impacto para re-review: QA, Security e UI/UX devem revisar o novo Functional Commit. Database não precisa rever esta diferença específica porque não houve alteração de schema, migration ou persistência; seu review pendente sobre o hardening anterior continua separado.
 
 ## Hardening pós-auditoria
 

@@ -127,8 +127,22 @@ async def test_memory_api_publishes_incremental_lifecycle_events() -> None:
             )
             assert relation_deleted.payload["relation_id"] == relation_id
 
-            deleted_memory = await client.delete(
+            unconfirmed_delete = await client.delete(
                 f"/api/memories/{second_id}", headers=headers
+            )
+            assert unconfirmed_delete.status_code == 428
+            assert await app.state.memory_manager.get(user_id, uuid.UUID(second_id)) is not None
+
+            wrong_target = await client.delete(
+                f"/api/memories/{second_id}",
+                headers={**headers, "X-Hope-Confirm-Memory-Id": first_id},
+            )
+            assert wrong_target.status_code == 428
+            assert subscription.queue.empty()
+
+            deleted_memory = await client.delete(
+                f"/api/memories/{second_id}",
+                headers={**headers, "X-Hope-Confirm-Memory-Id": second_id},
             )
             assert deleted_memory.status_code == 204
             memory_deleted = await next_event(subscription, EventType.MEMORY_DELETED)
@@ -150,7 +164,7 @@ async def test_chat_publishes_ai_state_for_same_user() -> None:
             response = await client.post(
                 "/api/chat",
                 headers={"X-Hope-User-Id": str(user_id)},
-                json={"message": "Olá", "history": []},
+                json={"message": "Olá", "history": [], "memory_enabled": True},
             )
         assert response.status_code == 200
         assert (await subscription.get()).payload["state"] == "thinking"

@@ -2,6 +2,7 @@ import { ApiError, getHealth, requestSpeech, sendChat } from "./api-client.js";
 import { clearHistory, getOrCreateUserId, loadHistory, loadPreferences, saveHistory, savePreferences } from "./storage.js";
 import { addMessage, announce, elements, resetMessages, setBusy, setServiceStatus, showSources } from "./ui.js";
 import { dispatchUiEvents } from "./ui-events.js";
+import { dispatchMemoryDeleteConfirmation } from "./memory-confirmation.js";
 import { VoiceInput } from "./voice.js";
 
 export class ChatController {
@@ -11,6 +12,7 @@ export class ChatController {
     this.history = loadHistory(this.preferences.persist);
     this.abortController = null; this.audio = null; this.audioUrl = null;
     elements.persist.checked = this.preferences.persist;
+    elements.memory.checked = this.preferences.memoryEnabled;
     elements.web.checked = this.preferences.useWeb;
     elements.vault.checked = this.preferences.useVault;
     elements.voice.setAttribute("aria-pressed", String(this.preferences.voice));
@@ -32,7 +34,7 @@ export class ChatController {
       elements.voice.setAttribute("aria-pressed", String(enabled)); this.savePreferences();
       announce(enabled ? "Leitura em voz ativada." : "Leitura em voz desativada.");
     });
-    for (const input of [elements.persist, elements.web, elements.vault]) {
+    for (const input of [elements.memory, elements.persist, elements.web, elements.vault]) {
       input.addEventListener("change", () => {
         this.savePreferences();
         if (input === elements.persist && !input.checked) saveHistory([], false);
@@ -46,7 +48,8 @@ export class ChatController {
 
   savePreferences() {
     this.preferences = { persist: elements.persist.checked, useWeb: elements.web.checked,
-      useVault: elements.vault.checked, voice: elements.voice.getAttribute("aria-pressed") === "true" };
+      useVault: elements.vault.checked, voice: elements.voice.getAttribute("aria-pressed") === "true",
+      memoryEnabled: elements.memory.checked };
     savePreferences(this.preferences); saveHistory(this.history, this.preferences.persist);
   }
 
@@ -89,9 +92,11 @@ export class ChatController {
     this.abortController = controller; setBusy(true); announce("Processando com segurança…");
     try {
       const result = await sendChat({ message, history: previousHistory,
-        use_web: elements.web.checked, use_vault: elements.vault.checked }, controller.signal, this.userId);
+        use_web: elements.web.checked, use_vault: elements.vault.checked,
+        memory_enabled: elements.memory.checked }, controller.signal, this.userId);
       addMessage("assistant", result.reply); showSources(result.sources);
       dispatchUiEvents(result.ui_events);
+      dispatchMemoryDeleteConfirmation(result.memory_delete_confirmation);
       this.history.push({ role: "assistant", content: result.reply }); this.savePreferences();
       announce("Resposta concluída.");
       if (elements.voice.getAttribute("aria-pressed") === "true") this.speak(result.reply);

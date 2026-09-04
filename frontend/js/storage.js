@@ -9,7 +9,8 @@ function read(key, fallback) {
 export function loadPreferences() {
   const value = read(PREFS_KEY, {});
   return { persist: Boolean(value.persist), useWeb: Boolean(value.useWeb),
-    useVault: Boolean(value.useVault), voice: Boolean(value.voice) };
+    useVault: Boolean(value.useVault), voice: Boolean(value.voice),
+    memoryEnabled: Boolean(value.memoryEnabled) };
 }
 
 export function savePreferences(value) { localStorage.setItem(PREFS_KEY, JSON.stringify(value)); }

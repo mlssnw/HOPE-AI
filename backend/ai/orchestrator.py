@@ -7,14 +7,13 @@ from typing import Any
 
 from ..memory.events import (
     publish_event,
-    publish_memory_delete,
     publish_memory_update,
     publish_write_result,
 )
 from ..memory.manager import MemoryManager
 from ..memory.schemas import MemoryUpdate
 from ..memory.service import MemoryService
-from ..models import ChatRequest, ChatResponse, Source
+from ..models import ChatRequest, ChatResponse, MemoryDeleteConfirmation, Source
 from ..realtime import EventBus, EventType
 from .context import (
     MemoryContextBuilder,
@@ -114,6 +113,8 @@ class HopeOrchestrator:
     async def _context(
         self, user_id: uuid.UUID | None, query: str, request: ChatRequest
     ) -> MemoryContext:
+        if not request.memory_enabled:
+            return MemoryContext(enabled=False)
         try:
             return await self.context_builder.build(user_id, query, request.history)
         except Exception:
@@ -156,18 +157,19 @@ class HopeOrchestrator:
                 memory_available=True,
             )
         memory_id = uuid.UUID(target.id)
-        before = await self.memory_manager.graph_fragment(user_id, memory_id)
         if command.action == "forget":
-            deleted = await self.memory_manager.delete(user_id, memory_id)
-            if not deleted:
-                return OrchestratorResult(
-                    message="Essa memória não existe mais.", memory_available=True
-                )
-            await publish_memory_delete(self.event_bus, user_id, memory_id, before)
+            label = (target.title or target.content).strip()
             return OrchestratorResult(
-                message="Certo. Removi essa memória e suas relações associadas.",
+                message=(
+                    "Encontrei a memória abaixo. Por segurança, só vou removê-la "
+                    "depois da sua confirmação explícita."
+                ),
                 memories_used=[target.id],
-                tools_used=["memory_retriever", "memory_manager.delete"],
+                tools_used=["memory_retriever"],
+                memory_delete_confirmation=MemoryDeleteConfirmation(
+                    memory_id=target.id,
+                    label=label[:160],
+                ),
             )
         if not command.replacement:
             return OrchestratorResult(
@@ -176,6 +178,7 @@ class HopeOrchestrator:
                 tools_used=["memory_retriever"],
             )
 
+        before = await self.memory_manager.graph_fragment(user_id, memory_id)
         classification = self.memory_manager.classifier.classify(command.replacement)
         updated = await self.memory_manager.update(
             user_id,
@@ -232,6 +235,8 @@ class HopeOrchestrator:
                 + serialize_memory_context(context)
                 + "\n</memory_context>"
             )
+        elif not context.enabled:
+            content += "\n\n<memory_status>disabled-by-user</memory_status>"
         elif not context.available:
             content += "\n\n<memory_status>unavailable</memory_status>"
         if sources:
@@ -254,6 +259,8 @@ class HopeOrchestrator:
     async def _capture(
         self, request: ChatRequest, user_id: uuid.UUID | None
     ) -> dict[str, object]:
+        if not request.memory_enabled:
+            return {"status": "disabled"}
         if self.memory_manager is None or self.memory_service is None or user_id is None:
             return {"status": "unavailable"}
         if analyze_memory_command(request.message) is not None:
@@ -288,8 +295,16 @@ class HopeOrchestrator:
         failed = False
         try:
             command = analyze_memory_command(request.message)
+            if command is not None and not request.memory_enabled:
+                return ChatResponse(
+                    reply=(
+                        "A memória no chat está desativada. Ative-a antes de consultar, "
+                        "corrigir ou esquecer dados persistentes."
+                    ),
+                    memory_enabled=False,
+                )
             query = reference_query(request, command)
-            if self.memory_manager is not None and user_id is not None:
+            if request.memory_enabled and self.memory_manager is not None and user_id is not None:
                 await self._state(user_id, "searching", expression=expression.value)
             context = await self._context(user_id, query, request)
             command_result = await self._handle_memory_command(command, user_id, context)
@@ -302,6 +317,8 @@ class HopeOrchestrator:
                     tools_used=command_result.tools_used,
                     ui_events=[event.model_dump() for event in command_result.ui_events],
                     memory_available=command_result.memory_available,
+                    memory_enabled=request.memory_enabled,
+                    memory_delete_confirmation=command_result.memory_delete_confirmation,
                 )
 
             prompt = build_system_prompt(self.personality, expression)
@@ -316,7 +333,12 @@ class HopeOrchestrator:
                 else []
             )
             tools = [*provider_tools]
-            if context.available and self.memory_manager is not None and user_id is not None:
+            if (
+                request.memory_enabled
+                and context.available
+                and self.memory_manager is not None
+                and user_id is not None
+            ):
                 tools.insert(0, "memory_retriever")
             result = OrchestratorResult(
                 message=reply,
@@ -338,6 +360,7 @@ class HopeOrchestrator:
                 tools_used=result.tools_used,
                 ui_events=[event.model_dump() for event in result.ui_events],
                 memory_available=result.memory_available,
+                memory_enabled=request.memory_enabled,
             )
         except Exception:
             failed = True

@@ -7,7 +7,8 @@ export const elements = {
   send: document.querySelector("#send-button"), cancel: document.querySelector("#cancel-button"),
   clear: document.querySelector("#clear-history"), mic: document.querySelector("#mic-button"),
   voice: document.querySelector("#voice-toggle"), web: document.querySelector("#use-web"),
-  vault: document.querySelector("#use-vault"), persist: document.querySelector("#persist-memory"),
+  vault: document.querySelector("#use-vault"), memory: document.querySelector("#memory-enabled"),
+  persist: document.querySelector("#persist-history"),
   live: document.querySelector("#live-status"), clock: document.querySelector("#clock"),
 };
 
@@ -29,7 +30,8 @@ export function resetMessages() {
 export function showSources(sources) { renderSources(elements.sources, elements.sourceList, sources); }
 export function setBusy(busy) {
   elements.send.disabled = busy; elements.prompt.disabled = busy; elements.cancel.hidden = !busy;
-  elements.web.disabled = busy; elements.vault.disabled = busy;
+  elements.web.disabled = busy; elements.vault.disabled = busy; elements.memory.disabled = busy;
+  elements.persist.disabled = busy;
 }
 export function announce(message, error = false) {
   elements.live.textContent = message; elements.live.classList.toggle("error", error);

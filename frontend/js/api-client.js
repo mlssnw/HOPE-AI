@@ -42,6 +42,16 @@ export async function getMemoryExplanation(userId, memoryId, signal) {
   return response.json();
 }
 
+export async function deleteMemory(userId, memoryId, signal) {
+  const response = await fetch(`/api/memories/${encodeURIComponent(memoryId)}`, {
+    method: "DELETE", signal, headers: {
+      ...memoryHeaders(userId),
+      "X-Hope-Confirm-Memory-Id": memoryId,
+    },
+  });
+  if (!response.ok) throw new ApiError(await parseError(response), response.status);
+}
+
 export async function sendChat(payload, signal, userId) {
   const response = await fetch("/api/chat", {
     method: "POST", signal, headers: {
@@ -57,6 +67,7 @@ export async function sendChat(payload, signal, userId) {
   }
   body.ui_events = Array.isArray(body.ui_events) ? body.ui_events : [];
   body.memories_used = Array.isArray(body.memories_used) ? body.memories_used : [];
+  body.memory_delete_confirmation = body.memory_delete_confirmation || null;
   return body;
 }
 

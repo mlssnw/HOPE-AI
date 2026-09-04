@@ -212,7 +212,18 @@ async def delete_memory(
     memory_id: uuid.UUID,
     request: Request,
     user_id: CurrentUser,
+    confirmed_memory_id: Annotated[
+        str | None, Header(alias="X-Hope-Confirm-Memory-Id")
+    ] = None,
 ) -> Response:
+    if confirmed_memory_id != str(memory_id):
+        raise HTTPException(
+            status_code=status.HTTP_428_PRECONDITION_REQUIRED,
+            detail=(
+                "Confirme explicitamente a memória alvo enviando seu ID exato em "
+                "X-Hope-Confirm-Memory-Id."
+            ),
+        )
     manager = manager_from(request)
     before = await manager.graph_fragment(user_id, memory_id)
     if not await manager.delete(user_id, memory_id):

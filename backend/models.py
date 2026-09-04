@@ -21,6 +21,7 @@ class ChatRequest(BaseModel):
     history: list[HistoryMessage] = Field(default_factory=list, max_length=50)
     use_web: bool = False
     use_vault: bool = False
+    memory_enabled: bool = False
 
     @field_validator("message")
     @classmethod
@@ -38,6 +39,12 @@ class Source(BaseModel):
     excerpt: str = ""
 
 
+class MemoryDeleteConfirmation(BaseModel):
+    memory_id: str
+    label: str
+    consequence: str = "A memória e suas relações serão removidas permanentemente."
+
+
 class ChatResponse(BaseModel):
     reply: str
     sources: list[Source] = Field(default_factory=list)
@@ -47,6 +54,8 @@ class ChatResponse(BaseModel):
     tools_used: list[str] = Field(default_factory=list)
     ui_events: list[dict[str, Any]] = Field(default_factory=list)
     memory_available: bool = True
+    memory_enabled: bool = False
+    memory_delete_confirmation: MemoryDeleteConfirmation | None = None
 
 
 class TtsRequest(BaseModel):

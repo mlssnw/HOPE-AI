@@ -29,3 +29,10 @@ test("identidade local de desenvolvimento é estável e válida", () => {
   assert.equal(first, second);
   assert.match(first, /^[0-9a-f-]{36}$/i);
 });
+
+test("consentimento antigo de histórico não ativa memória persistente", () => {
+  localStorage.setItem("hope.preferences.v1", JSON.stringify({ persist: true }));
+  const preferences = storage.loadPreferences();
+  assert.equal(preferences.persist, true);
+  assert.equal(preferences.memoryEnabled, false);
+});

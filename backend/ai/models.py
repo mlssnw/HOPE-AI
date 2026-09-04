@@ -5,7 +5,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
-from ..models import Source
+from ..models import MemoryDeleteConfirmation, Source
 
 
 class RetrievedMemoryContext(BaseModel):
@@ -49,6 +49,7 @@ class MemoryContext(BaseModel):
     user_preferences: list[RetrievedMemoryContext] = Field(default_factory=list)
     decisions: list[RetrievedMemoryContext] = Field(default_factory=list)
     confidence: float = Field(default=0.0, ge=0, le=1)
+    enabled: bool = True
     available: bool = True
     degraded_reason: str | None = None
 
@@ -67,4 +68,5 @@ class OrchestratorResult(BaseModel):
     tools_used: list[str] = Field(default_factory=list)
     ui_events: list[UiEvent] = Field(default_factory=list)
     memory_available: bool = True
+    memory_delete_confirmation: MemoryDeleteConfirmation | None = None
     metadata: dict[str, Any] = Field(default_factory=dict)

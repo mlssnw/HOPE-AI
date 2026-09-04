@@ -69,7 +69,7 @@ async def test_chat_retrieves_memory_and_keeps_it_untrusted() -> None:
             MemoryCreate(content="Prefiro chá de camomila antes de dormir."),
         )
         result = await orchestrator.chat(
-            ChatRequest(message="Qual banco principal a HOPE usa?"), user_id
+            ChatRequest(message="Qual banco principal a HOPE usa?", memory_enabled=True), user_id
         )
 
         assert decision.memory is not None
@@ -90,8 +90,8 @@ async def test_conversation_persists_decision_and_consolidates_duplicate() -> No
     user_id = uuid.uuid4()
     message = "Quero que PostgreSQL com pgvector seja o banco principal da HOPE."
     try:
-        await orchestrator.chat(ChatRequest(message=message), user_id)
-        await orchestrator.chat(ChatRequest(message=message), user_id)
+        await orchestrator.chat(ChatRequest(message=message, memory_enabled=True), user_id)
+        await orchestrator.chat(ChatRequest(message=message, memory_enabled=True), user_id)
         memories = await manager.list(user_id, limit=10, offset=0)
         assert len(memories) == 1
         assert memories[0].memory_type == "decision"
@@ -107,7 +107,7 @@ async def test_inference_is_persisted_with_lower_confidence() -> None:
     user_id = uuid.uuid4()
     try:
         await orchestrator.chat(
-            ChatRequest(message="Talvez a interface escura seja melhor para esta usuária."),
+            ChatRequest(message="Talvez a interface escura seja melhor para esta usuária.", memory_enabled=True),
             user_id,
         )
         memories = await manager.list(user_id, limit=10, offset=0)
@@ -119,7 +119,7 @@ async def test_inference_is_persisted_with_lower_confidence() -> None:
 
 
 @pytest.mark.asyncio
-async def test_clear_forget_command_deletes_memory_and_publishes_events() -> None:
+async def test_clear_forget_command_requires_target_bound_confirmation() -> None:
     database, manager, _, bus, orchestrator = await make_orchestrator()
     user_id = uuid.uuid4()
     try:
@@ -139,17 +139,20 @@ async def test_clear_forget_command_deletes_memory_and_publishes_events() -> Non
                     {"role": "user", "content": "Qual banco principal a HOPE usa?"},
                     {"role": "assistant", "content": "PostgreSQL com pgvector."},
                 ],
+                memory_enabled=True,
             ),
             user_id,
         )
-        assert "Removi" in result.reply
-        assert await manager.get(user_id, created.memory.id) is None
+        assert "confirmação explícita" in result.reply
+        assert result.memory_delete_confirmation is not None
+        assert result.memory_delete_confirmation.memory_id == str(created.memory.id)
+        assert await manager.get(user_id, created.memory.id) is not None
         events = [
             (await asyncio.wait_for(subscription.get(), timeout=1)).type.value
-            for _ in range(4)
+            for _ in range(3)
         ]
         assert events[:2] == ["AI_STATE_CHANGED", "AI_STATE_CHANGED"]
-        assert "MEMORY_DELETED" in events
+        assert "MEMORY_DELETED" not in events
     finally:
         await database.dispose()
 
@@ -162,7 +165,7 @@ async def test_ambiguous_correction_does_not_delete_or_rewrite() -> None:
         await manager.create(user_id, MemoryCreate(content="Prefiro café sem açúcar."))
         await manager.create(user_id, MemoryCreate(content="Prefiro chá sem açúcar."))
         result = await orchestrator.chat(
-            ChatRequest(message="Isso está errado."), user_id
+            ChatRequest(message="Isso está errado.", memory_enabled=True), user_id
         )
         assert "qual memória" in result.reply
         assert len(await manager.list(user_id, limit=10, offset=0)) == 2
@@ -190,6 +193,7 @@ async def test_clear_correction_updates_memory_content() -> None:
                     {"role": "user", "content": "Qual é o banco principal da HOPE?"},
                     {"role": "assistant", "content": "PostgreSQL."},
                 ],
+                memory_enabled=True,
             ),
             user_id,
         )
@@ -215,7 +219,9 @@ async def test_memory_failure_does_not_stop_chat() -> None:
         None,
         EventBus(),
     )
-    result = await orchestrator.chat(ChatRequest(message="Olá, HOPE."), uuid.uuid4())
+    result = await orchestrator.chat(
+        ChatRequest(message="Olá, HOPE.", memory_enabled=True), uuid.uuid4()
+    )
     assert result.reply.startswith("Consigo responder")
     assert result.memory_available is False
     assert "database secret" not in result.model_dump_json()
@@ -227,7 +233,9 @@ async def test_ai_states_follow_thinking_searching_idle_order() -> None:
     user_id = uuid.uuid4()
     subscription = await bus.subscribe(user_id)
     try:
-        await orchestrator.chat(ChatRequest(message="Olá, HOPE."), user_id)
+        await orchestrator.chat(
+            ChatRequest(message="Olá, HOPE.", memory_enabled=True), user_id
+        )
         states = [
             (await asyncio.wait_for(subscription.get(), timeout=1)).payload["state"]
             for _ in range(3)
@@ -249,11 +257,54 @@ async def test_ai_error_state_recovers_to_idle() -> None:
     services.complete = fail  # type: ignore[method-assign]
     try:
         with pytest.raises(RuntimeError, match="provider unavailable"):
-            await orchestrator.chat(ChatRequest(message="Responda agora."), user_id)
+            await orchestrator.chat(
+                ChatRequest(message="Responda agora.", memory_enabled=True), user_id
+            )
         states = [
             (await asyncio.wait_for(subscription.get(), timeout=1)).payload["state"]
             for _ in range(4)
         ]
         assert states == ["thinking", "searching", "error", "idle"]
+    finally:
+        await database.dispose()
+
+
+@pytest.mark.asyncio
+async def test_memory_opt_out_blocks_retrieval_capture_and_memory_commands() -> None:
+    database, manager, services, bus, orchestrator = await make_orchestrator()
+    user_id = uuid.uuid4()
+    subscription = await bus.subscribe(user_id)
+    try:
+        existing = await manager.create(
+            user_id, MemoryCreate(content="Prefiro respostas muito objetivas.")
+        )
+        result = await orchestrator.chat(
+            ChatRequest(
+                message="Quero que PostgreSQL seja a decisão principal deste projeto.",
+                memory_enabled=False,
+            ),
+            user_id,
+        )
+        memories = await manager.list(user_id, limit=10, offset=0)
+        assert existing.memory is not None
+        assert [memory.id for memory in memories] == [existing.memory.id]
+        assert result.memory_enabled is False
+        assert result.memories_used == []
+        assert "memory_retriever" not in result.tools_used
+        assert "<memory_context" not in services.messages[-1]["content"]
+        assert "<memory_status>disabled-by-user</memory_status>" in services.messages[-1]["content"]
+
+        command = await orchestrator.chat(
+            ChatRequest(message="Esqueça essa memória.", memory_enabled=False), user_id
+        )
+        assert "desativada" in command.reply
+        assert command.memory_delete_confirmation is None
+        assert await manager.get(user_id, existing.memory.id) is not None
+
+        event_types = []
+        while not subscription.queue.empty():
+            event_types.append(subscription.queue.get_nowait().type.value)
+        assert "MEMORY_DELETED" not in event_types
+        assert "MEMORY_CREATED" not in event_types
     finally:
         await database.dispose()
