@@ -120,6 +120,7 @@ A suíte cobre:
 
 ## Correções SEC-006 e SEC-007
 
+- Functional Commit: `19e573893aba09da990256da05e7dab5af165ce1`.
 - `SEC-006`: `memory_enabled=false` é o padrão fail-safe do contrato. O Orchestrator não chama `MemoryContextBuilder`, não publica `searching`, não injeta contexto, não registra `memory_retriever` e não captura candidatos. Comandos de correção/esquecimento também são recusados até o opt-in.
 - `SEC-007`: o chat deixou de executar exclusão por interpretação textual. A confirmação é estruturada e vinculada ao UUID; a API rejeita ausência ou divergência com HTTP `428`. O diálogo segue os contratos de acessibilidade e ação destrutiva de `docs/design/`.
 - Nenhum schema, migration, provider, autenticação, rate limit, TLS, role de banco ou configuração de produção foi alterado.

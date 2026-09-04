@@ -47,10 +47,12 @@ Required Reviews:
 ## Development
 
 - Status: READY_FOR_REVIEW
-- Functional commit: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
-- Delivered: correções declaradas de QA, migration `0003`, FKs compostas, checks, upsert atômico, separação de credenciais, pool conservador e bloqueio de LocalHash em ambientes implantados
-- Validation reported by DEV: 41 testes Python, 16 frontend, browser sem erros de console, `alembic heads` e SQL offline
-- Boundary: migration, nova role e mudanças operacionais não foram aplicadas ao banco real
+- Functional commit: `19e573893aba09da990256da05e7dab5af165ce1`
+- Target corrected: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
+- Delivered: `SEC-006` corrigido com opt-in fail-safe `memory_enabled`, bloqueio server-side de recuperação/captura/comandos quando desativado e separação do histórico local; `SEC-007` corrigido com confirmação estruturada, diálogo acessível vinculado ao alvo e precondição HTTP `428` para exclusões ausentes ou divergentes
+- Validation reported by DEV: 42 testes Python, 19 frontend, `compileall`, `node --check`, browser com WebGL e WebSocket ativos, assets HTTP 200, Enter funcional, diálogo/foco/Escape validados e zero erros ou warnings no console
+- Impact analysis: QA, SECURITY e UI/UX precisam revisar `19e573893aba09da990256da05e7dab5af165ce1`; DATABASE não é necessário para esta diferença porque schema, migrations e persistência não mudaram, sem cancelar o review de Database ainda pendente sobre o hardening anterior
+- Boundary: `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-008` e `SEC-012` continuam blockers exclusivos de produção; autenticação, soft delete, recuperação, auditoria, migrations e operações no banco real não foram implementados nem executados
 - Rule: DEV não pode marcar a fase como `APPROVED`
 
 ## QA
