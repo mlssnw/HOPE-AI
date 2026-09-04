@@ -42,7 +42,7 @@ Required Reviews:
 | DATABASE | YES | WAITING_FOR_REVIEW | `adfc728aaaf96c679dd9d1df38c56edda8bc95de` |
 | SECURITY | YES | REJECTED | `adfc728aaaf96c679dd9d1df38c56edda8bc95de` |
 | UI/UX | YES | WAITING_FOR_REVIEW | `adfc728aaaf96c679dd9d1df38c56edda8bc95de` |
-| PLANNER | YES | BLOCKED | `adfc728aaaf96c679dd9d1df38c56edda8bc95de` |
+| PLANNER | YES | APPROVED_WITH_WARNINGS | `adfc728aaaf96c679dd9d1df38c56edda8bc95de` |
 
 ## Development
 
@@ -105,23 +105,24 @@ Required Reviews:
 ## Coordinator
 
 - Autonomy level: 2.5
-- Status: BLOCKED
-- Operational conclusion: Functional Commit está alinhado; QA, DATABASE e UI/UX ainda precisam revisar esse hash; Security possui resultado oficial `REJECTED` para deploy público
-- Routing: LEVEL 2 — PLANNER, porque a separação entre blocker de feature e blocker de produção afeta critérios de aceite e roadmap
+- Status: APPROVED
+- Operational conclusion: o PLANNER persistiu a classificação técnica; `SEC-006` e `SEC-007` exigem correção da feature antes de qualquer rodada final de reviews, enquanto o deploy público permanece bloqueado separadamente
+- Routing: LEVEL 1 — DEV, para corrigir somente os feature blockers autorizados e criar um novo Functional Commit
 - Boundary: nenhum veredito técnico foi alterado e nenhum blocker foi considerado resolvido apenas pela declaração do DEV
 
 ## Current Blockers
 
 ### Feature Blockers
 
-- Security é review obrigatório e permanece oficialmente `REJECTED`; o relatório não emite veredito separado de aprovação da feature local/controlada. Estado: BLOCKED_FOR_DECISION pelo PLANNER.
+- `SEC-006`: o controle visual de memória não impede persistência nem recuperação server-side. Estado: CHANGES_REQUESTED para DEV.
+- `SEC-007`: a exclusão de memória não possui confirmação forte nem recuperação. Estado: CHANGES_REQUESTED para DEV.
 - `QA-001` e `QA-002`: DEV declarou correção, mas QA ainda não confirmou no Functional Commit vigente. Estado: PENDING_REVIEW.
 - `DB-001` a `DB-004`: DEV entregou hardening relacionado, mas DATABASE ainda não confirmou o Functional Commit vigente. Estado: PENDING_REVIEW.
 - UI/UX pós-implementação ainda não foi persistido para o Functional Commit vigente. Estado: WAITING_FOR_REVIEW.
 
 ### Production Blockers
 
-- Security marcou `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-006`, `SEC-007`, `SEC-008` e `SEC-012` como blockers de deploy público.
+- Conforme classificação do PLANNER, `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-008` e `SEC-012` permanecem blockers específicos de Production Readiness; o veredito `REJECTED` de Security não foi alterado.
 - Migration `0003`, role restrita, TLS `verify-full` e controles operacionais não foram aplicados/validados no ambiente real.
 - Nenhuma ação de produção está autorizada por este handoff.
 
@@ -135,22 +136,22 @@ Required Reviews:
 
 ## Next Action
 
-- Role: PLANNER
-- Status: BLOCKED
-- Task: resolver o enquadramento técnico entre Feature Status e Production Readiness para a fase 5; definir quais findings de Security são blockers da feature e quais pertencem ao roadmap/deploy, sem alterar o veredito de Security
+- Role: DEV
+- Status: NOT_STARTED
+- Task: corrigir somente `SEC-006` e `SEC-007` no escopo da Fase 5 e criar um novo Functional Commit; não implementar os blockers exclusivos de produção
 - Target commit: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
 - Required inputs:
+  - [`AGENTS.md`](../AGENTS.md)
   - [`docs/phase-5.md`](phase-5.md)
-  - [`docs/reviews/qa-latest.md`](reviews/qa-latest.md)
-  - [`docs/reviews/database-audit-latest.md`](reviews/database-audit-latest.md)
   - [`docs/reviews/security-review-latest.md`](reviews/security-review-latest.md)
-  - [`docs/reviews/uiux-latest.md`](reviews/uiux-latest.md)
+  - [`docs/reviews/architecture-latest.md`](reviews/architecture-latest.md)
+  - [`docs/design/`](design/)
 - Expected output:
-  - decisão de escopo persistida por PLANNER em `architecture-latest.md` ou ADR, com critérios de aceite da feature e de produção separados
-  - Review Matrix atualizada para o mesmo Functional Commit
-  - uma única próxima ação atribuída a DEV ou aos reviewers aplicáveis
-- Blocking dependencies: decisão técnica do PLANNER; escalar ao usuário somente se houver aceitação de risco HIGH/CRITICAL, produção pública, nova fase ou outra decisão sensível
-- Escalation: PLANNER
+  - novo Functional Commit com as duas correções, testes proporcionais e documentação da Fase 5 atualizada
+  - handoff de Development marcado `READY_FOR_REVIEW` com o novo hash
+  - análise de impacto para re-review de QA, SECURITY e UI/UX; DATABASE somente se persistência ou schema forem alterados
+- Blocking dependencies: nenhuma decisão adicional; QA, DATABASE, SECURITY e UI/UX devem aguardar o novo Functional Commit para evitar review imediatamente obsoleto
+- Escalation: NONE
 
 ## Recent History
 
@@ -160,3 +161,4 @@ Required Reviews:
 - 2026-09-03 — Security Review registrou `REJECTED` para deploy público contra `adfc728`.
 - 2026-09-04 — Governança formalizou PLANNER/UI/UX, Functional Commit, Review Matrix e coordenação por impacto; nenhum resultado técnico foi alterado.
 - 2026-09-04 — COORDINATOR formalizou autonomia 2.5 e separou Feature Status de Production Readiness; o conflito de enquadramento foi roteado ao PLANNER, sem escalar prematuramente ao usuário.
+- 2026-09-04 — PLANNER classificou `SEC-006` e `SEC-007` como feature blockers e os demais blockers indicados como restrições de produção; COORDINATOR roteou a próxima ação ao DEV.
