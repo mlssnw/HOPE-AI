@@ -29,14 +29,18 @@ Required Reviews:
 - Target: HOPE Main Dashboard
 - Type: OFFICIAL DESIGN DIRECTION
 - Decision declared by: UI/UX
-- Direction status: APPROVED BY UI/UX — PERSISTENCE PENDING
+- Direction status: APPROVED
+- Decision ID: `UIUX-VIS-2026-09-10-001`
+- Persistence status: COMPLETE — decisão, asset canônico, especificação e matriz de gaps foram versionados em `aa440f8`
 - Implementation status: PARTIAL — o frontend atual implementa partes do chat, Memory Globe, Core Orb, inspector e estados, mas a composição-alvo não comprova as demais capacidades mostradas
 - Scope: interface principal, Memory Globe, Core Orb, navegação, chat, sessão atual, Memory Inspector, controles, hierarquia visual, estados, identidade visual e apresentação pública
 - Source of truth order: `docs/design/` → `docs/reviews/uiux-latest.md` → dashboard visual aprovado → documentação histórica anterior
-- Persistence gap: `uiux-latest.md` continua `NOT_STARTED`, e os documentos de design ainda não identificam formalmente o dashboard aprovado nem sua referência persistente
+- Canonical reference: [`hope-dashboard-approved-2026-09-10.png`](design/assets/hope-dashboard-approved-2026-09-10.png)
+- Specification: [`official-dashboard.md`](design/official-dashboard.md)
+- Gap matrix: [`dashboard-gap-matrix.md`](design/dashboard-gap-matrix.md)
 - Rule: `VISUAL TARGET` não significa `IMPLEMENTED FEATURE`; áreas exibidas continuam classificadas pelo código e por `docs/architecture.md`
 - Public presentation: pode ser usado como hero, portfólio, apresentação ou LinkedIn somente como interface conceitual/alvo enquanto houver partes não implementadas
-- Implementation gate: nenhuma implementação visual nova começa por este registro; UI/UX deve primeiro persistir a decisão e os gaps nos arquivos próprios
+- Implementation gate: a persistência visual está concluída, mas nenhuma implementação do dashboard começa durante o loop corretivo atual sem novo roteamento após o fechamento dos blockers da Fase 5
 
 ## Current Functional Commit
 
@@ -51,12 +55,12 @@ Required Reviews:
 
 | Work | Required | Status | Commit |
 |---|---|---|---|
-| DEV | YES | READY_FOR_REVIEW | `19e573893aba09da990256da05e7dab5af165ce1` |
-| QA | YES | WAITING_FOR_REVIEW | `19e573893aba09da990256da05e7dab5af165ce1` |
-| DATABASE | YES | WAITING_FOR_REVIEW | `19e573893aba09da990256da05e7dab5af165ce1` |
-| SECURITY | YES | WAITING_FOR_REVIEW | `19e573893aba09da990256da05e7dab5af165ce1` |
+| DEV | YES | CHANGES_REQUESTED | `19e573893aba09da990256da05e7dab5af165ce1` |
+| QA | YES | REJECTED | `19e573893aba09da990256da05e7dab5af165ce1` |
+| DATABASE | YES | REJECTED | `19e573893aba09da990256da05e7dab5af165ce1` |
+| SECURITY | YES | APPROVED_WITH_WARNINGS | `19e573893aba09da990256da05e7dab5af165ce1` |
 | UI/UX | YES | WAITING_FOR_REVIEW | `19e573893aba09da990256da05e7dab5af165ce1` |
-| PLANNER | YES | WAITING_FOR_REVIEW | `19e573893aba09da990256da05e7dab5af165ce1` |
+| PLANNER | YES | BLOCKED | `19e573893aba09da990256da05e7dab5af165ce1` |
 
 ## Development
 
@@ -71,27 +75,33 @@ Required Reviews:
 
 ## QA
 
-- Coordination status: WAITING_FOR_REVIEW
+- Coordination status: REJECTED
 - Current target: `19e573893aba09da990256da05e7dab5af165ce1`
 - Last official result: REJECTED
-- Last commit reviewed: `becb27df8848d9ed738c85d068760bb7d0848bc9`
-- Previous blockers: `QA-001` e `QA-002`; DEV declarou correção, mas QA ainda não persistiu re-review do Functional Commit vigente
+- Commit reviewed: `19e573893aba09da990256da05e7dab5af165ce1`
+- Feature blocker: `QA-001` — o harness E2E oficial ainda devolve dicionários onde o `MemoryContextBuilder` exige objetos tipados, impedindo validar o fluxo memory-aware e a confirmação destrutiva no browser
+- Resolved: `QA-002` — JSON WebSocket malformado fecha com código 1008 sem traceback não tratado
 - Warning carried: `QA-003` sobre atraso do Core Orb após cancelamento
+- Review commit: `b05fa38a2625b1aefb0aa8510356ac242c2fc340`
 - Report: [`qa-latest.md`](reviews/qa-latest.md)
 
 ## Database Audit
 
-- Coordination status: WAITING_FOR_REVIEW
+- Coordination status: REJECTED
 - Current target: `19e573893aba09da990256da05e7dab5af165ce1`
 - Last official result: REJECTED
-- Last development commit covered: `becb27df8848d9ed738c85d068760bb7d0848bc9`
-- Previous blockers: `DB-001` a `DB-004`; DEV entregou hardening relacionado em `adfc728`, e `19e5738` não altera schema, migration ou persistência, mas DATABASE ainda precisa persistir o review herdado contra o Functional Commit vigente
-- Operational boundary: `0003`, role restrita, TLS `verify-full` e avaliação vetorial real continuam dependentes de ambiente seguro e autorização
+- Commit reviewed: `19e573893aba09da990256da05e7dab5af165ce1`
+- Base delivery covered: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
+- Feature blocker: `DB-005` — o runtime não verifica o migration head; sobre schema `0002`, o novo upsert de entidades falha porque depende da unique constraint criada apenas pela `0003`
+- Production blockers: `DB-001` role real de runtime não confirmada como restrita; `DB-003` hardening ainda não aplicado/validado no PostgreSQL real; `DB-004` busca vetorial sem provider e benchmark de produção
+- Resolved/mitigated in code: causa de `DB-002` corrigida no metadata; pool reduzido para 3+1; upsert atômico e FKs compostas implementados, todos condicionados à `0003`
+- Validation: 42 testes Python e 19 frontend passaram; head de código `20260903_0003`; SQL offline gerado; PostgreSQL real indisponível por DNS e nenhuma migration/mutação foi executada
+- Operational boundary: migration `0003`, role restrita, TLS `verify-full` e avaliação vetorial real continuam dependentes de ambiente seguro e autorização do usuário
 - Report: [`database-audit-latest.md`](reviews/database-audit-latest.md)
 
 ## Security Review
 
-- Coordination status: REVIEW_COMPLETE
+- Coordination status: APPROVED_WITH_WARNINGS
 - Current target: `19e573893aba09da990256da05e7dab5af165ce1`
 - Last commit reviewed: `19e573893aba09da990256da05e7dab5af165ce1`
 - Functional result: APPROVED_WITH_WARNINGS
@@ -105,8 +115,10 @@ Required Reviews:
 
 - Coordination status: WAITING_FOR_REVIEW
 - Current target: `19e573893aba09da990256da05e7dab5af165ce1`
-- Last official result: NOT_STARTED
-- Visual direction declared: APPROVED BY UI/UX — PERSISTENCE PENDING
+- Last official result: WAITING_FOR_REVIEW — fidelidade da implementação atual não foi aprovada por esta decisão
+- Visual direction: APPROVED
+- Decision ID: `UIUX-VIS-2026-09-10-001`
+- Persistence: COMPLETE em `aa440f8a4660d1bb1530d3d3b9a08aacd28c092e`
 - Visual target: HOPE Main Dashboard
 - Required review: fidelidade de chat, estados do Core Orb, foco do Memory Globe, responsividade e acessibilidade da fase 5
 - Report: [`uiux-latest.md`](reviews/uiux-latest.md)
@@ -127,27 +139,27 @@ Required Reviews:
 
 - Autonomy level: 2.5
 - Status: APPROVED
-- Operational conclusion: DEV entregou `19e5738` para `SEC-006` e `SEC-007`; QA, DATABASE, SECURITY e UI/UX podem revisar em paralelo o mesmo Functional Commit, cada um em seu arquivo próprio, enquanto PLANNER aguarda a consolidação
-- Routing: LEVEL 1 — QA, DATABASE, SECURITY e UI/UX em paralelo, sem escrita concorrente no handoff
+- Operational conclusion: QA e DATABASE rejeitaram `19e5738` por `QA-001` e `DB-005`; SECURITY aprovou o escopo funcional com ressalvas; UI/UX aprovou e persistiu o Target UI sem conceder aprovação de fidelidade à implementação atual
+- Routing: LEVEL 1 — DEV, para corrigir somente `QA-001` e `DB-005` em novo Functional Commit antes de nova rodada de reviews
 - Boundary: nenhum veredito técnico foi alterado e nenhum blocker foi considerado resolvido apenas pela declaração do DEV
 
 ## Current Blockers
 
 ### Feature Blockers
 
-- `QA-001` e `QA-002`: DEV declarou correção na linhagem anterior, mas QA ainda não confirmou no Functional Commit vigente. Estado: PENDING_REVIEW.
-- `DB-001` a `DB-004`: DEV entregou hardening relacionado em `adfc728`, sem nova alteração de banco em `19e5738`, mas DATABASE ainda não confirmou o Functional Commit vigente. Estado: PENDING_REVIEW.
-- UI/UX pós-implementação ainda não foi persistido para o Functional Commit vigente. Estado: WAITING_FOR_REVIEW.
+- `QA-001`: o harness E2E oficial não satisfaz o contrato tipado de recuperação e não consegue validar no browser o fluxo memory-aware nem a confirmação destrutiva. Estado: CHANGES_REQUESTED para DEV.
+- `DB-005`: o runtime pode iniciar sobre schema `0002`, mas o upsert de entidades exige a constraint única da migration `0003`; falta gate explícito de compatibilidade ou bloqueio seguro da memória. Estado: CHANGES_REQUESTED para DEV.
+- UI/UX pós-implementação continua `WAITING_FOR_REVIEW`; a aprovação do Target UI não equivale à aprovação da implementação atual.
 
 ### Production Blockers
 
-- Conforme classificação do PLANNER, `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-008` e `SEC-012` permanecem blockers específicos de Production Readiness; o veredito `REJECTED` de Security não foi alterado.
+- Conforme SECURITY e PLANNER, `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-008` e `SEC-012` permanecem blockers específicos de Production Readiness; a aprovação funcional com ressalvas não autoriza deploy público.
 - Migration `0003`, role restrita, TLS `verify-full` e controles operacionais não foram aplicados/validados no ambiente real.
 - Nenhuma ação de produção está autorizada por este handoff.
 
 ## Warnings
 
-- A aprovação da direção visual foi declarada pelo UI/UX, mas ainda não está persistida em `docs/reviews/uiux-latest.md` e `docs/design/`; COORDINATOR não pode completar esses arquivos em nome do owner.
+- A direção visual foi persistida e aprovada; `UIUX-001` a `UIUX-005` são gaps para implementação futura do dashboard e não ampliam automaticamente o escopo corretivo atual da Fase 5.
 - `QA-003` permanece um warning não verificado no novo Functional Commit.
 - Warnings de Database e Security permanecem nos relatórios dos respectivos papéis e não devem ser tratados como resolvidos.
 - Autenticação real continua planejada; identidade fornecida pelo cliente não é autenticação.
@@ -156,23 +168,24 @@ Required Reviews:
 
 ## Next Action
 
-- Role: UI/UX
-- Status: WAITING_FOR_REVIEW
-- Task: persistir a aprovação do HOPE Main Dashboard como direção visual oficial nos arquivos próprios, sem redesenhar ou implementar; separar a aprovação da direção do review pós-implementação da Fase 5
+- Role: DEV
+- Status: CHANGES_REQUESTED
+- Task: corrigir somente `QA-001` e `DB-005` em novo Functional Commit; restaurar o harness E2E memory-aware e adicionar proteção fail-safe contra runtime incompatível com o migration head, sem aplicar migration real, iniciar implementação do dashboard ou incorporar blockers exclusivos de produção
 - Target commit: `19e573893aba09da990256da05e7dab5af165ce1`
 - Required inputs:
   - [`AGENTS.md`](../AGENTS.md)
-  - [`docs/reviews/uiux-latest.md`](reviews/uiux-latest.md)
-  - [`docs/design/`](design/)
-  - dashboard visual aprovado fornecido no handoff atual
+  - [`docs/architecture.md`](architecture.md)
+  - [`docs/phase-5.md`](phase-5.md)
+  - [`docs/reviews/qa-latest.md`](reviews/qa-latest.md)
+  - [`docs/reviews/database-audit-latest.md`](reviews/database-audit-latest.md)
+  - [`docs/reviews/security-review-latest.md`](reviews/security-review-latest.md)
 - Expected output:
-  - `docs/reviews/uiux-latest.md` identifica a direção, o status e a referência visual sem confundir aprovação do target com aprovação da implementação
-  - `docs/design/README.md` registra o dashboard e a ordem de autoridade
-  - documentos visuais aplicáveis apontam a mesma direção sem apagar contratos anteriores compatíveis
-  - matriz `Area | Target Design | Current Implementation | Status | Evidence` baseada em evidência real
-  - referência visual persistida em localização versionável sob ownership do UI/UX
-- Blocking dependencies: UI/UX deve concluir a persistência antes de qualquer tarefa futura de implementação visual baseada no dashboard
-- Parallel work: QA, DATABASE e SECURITY podem continuar seus reviews funcionais de `19e5738` em arquivos próprios; nenhuma implementação de frontend deve começar
+  - novo Functional Commit isolado com correções e testes proporcionais para `QA-001` e `DB-005`
+  - harness oficial validando memória habilitada e confirmação destrutiva end-to-end
+  - runtime falhando de modo seguro ou desativando memória quando o schema estiver abaixo do head exigido, com teste do cenário `0002 + runtime novo`
+  - documentação da Fase 5 e seção Development atualizadas com o novo hash
+- Blocking dependencies: nenhuma decisão adicional; a solução não pode executar migration ou mutação em banco real
+- Parallel work: nenhuma implementação visual do dashboard; UI/UX, PLANNER e reviewers aguardam o novo Functional Commit
 - Escalation: NONE
 
 ## Recent History
@@ -186,3 +199,4 @@ Required Reviews:
 - 2026-09-04 — PLANNER classificou `SEC-006` e `SEC-007` como feature blockers e os demais blockers indicados como restrições de produção; COORDINATOR roteou a próxima ação ao DEV.
 - 2026-09-04 — DEV entregou `19e5738` com correções declaradas para `SEC-006` e `SEC-007`; COORDINATOR abriu a rodada paralela de QA, DATABASE, SECURITY e UI/UX no novo Functional Commit.
 - 2026-09-10 — UI/UX declarou o HOPE Main Dashboard como direção visual principal; COORDINATOR registrou `APPROVED BY UI/UX — PERSISTENCE PENDING` e roteou a formalização ao owner visual.
+- 2026-09-10 — QA rejeitou `19e5738` por `QA-001`; DATABASE rejeitou por `DB-005`; SECURITY aprovou a feature com ressalvas e UI/UX persistiu o Target UI. COORDINATOR roteou os dois blockers funcionais ao DEV.
