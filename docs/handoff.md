@@ -75,14 +75,17 @@ Required Reviews:
 
 ## QA
 
-- Coordination status: REJECTED
-- Current target: `19e573893aba09da990256da05e7dab5af165ce1`
-- Last official result: REJECTED
-- Commit reviewed: `19e573893aba09da990256da05e7dab5af165ce1`
-- Feature blocker: `QA-001` — o harness E2E oficial ainda devolve dicionários onde o `MemoryContextBuilder` exige objetos tipados, impedindo validar o fluxo memory-aware e a confirmação destrutiva no browser
-- Resolved: `QA-002` — JSON WebSocket malformado fecha com código 1008 sem traceback não tratado
-- Warning carried: `QA-003` sobre atraso do Core Orb após cancelamento
-- Review commit: `b05fa38a2625b1aefb0aa8510356ac242c2fc340`
+- Coordination status: APPROVED_WITH_WARNINGS
+- Current target: `88e194778b4399a6713f118470f9d861c553cd9e`
+- Last official result: APPROVED_WITH_WARNINGS
+- Commit reviewed: `88e194778b4399a6713f118470f9d861c553cd9e`
+- Baseline: `19e573893aba09da990256da05e7dab5af165ce1`
+- Feature blocker resolved: `QA-001` — o harness E2E usa modelos tipados, isola estado, recupera memória com opt-in e valida confirmação/exclusão vinculada ao UUID exato com remoção das relações
+- Open QA blockers: nenhum
+- Validation: 16 testes focados, 45 Python completos, 19 frontend e sintaxe Python/JavaScript passaram; browser, console, API e atualização realtime foram validados no harness descartável
+- Warning carried: `QA-003` — após cancelamento, o chat muda imediatamente, mas o Memory Globe pode permanecer em processamento por aproximadamente três segundos
+- Environment boundary: nenhum PostgreSQL/pgvector real, migration, provider pago, credencial ou dado real foi acessado; Production Readiness permanece sob os gates dos reviewers responsáveis
+- Review commit: `934b7f1696285182a6f8e4bc1dc9d535ab7d08eb`
 - Report: [`qa-latest.md`](reviews/qa-latest.md)
 
 ## Database Audit
