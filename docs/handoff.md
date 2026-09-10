@@ -65,12 +65,12 @@ Required Reviews:
 ## Development
 
 - Status: READY_FOR_REVIEW
-- Functional commit: `19e573893aba09da990256da05e7dab5af165ce1`
-- Target corrected: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
-- Delivered: `SEC-006` corrigido com opt-in fail-safe `memory_enabled`, bloqueio server-side de recuperação/captura/comandos quando desativado e separação do histórico local; `SEC-007` corrigido com confirmação estruturada, diálogo acessível vinculado ao alvo e precondição HTTP `428` para exclusões ausentes ou divergentes
-- Validation reported by DEV: 42 testes Python, 19 frontend, `compileall`, `node --check`, browser com WebGL e WebSocket ativos, assets HTTP 200, Enter funcional, diálogo/foco/Escape validados e zero erros ou warnings no console
-- Impact analysis: QA, SECURITY e UI/UX precisam revisar `19e573893aba09da990256da05e7dab5af165ce1`; DATABASE não é necessário para esta diferença porque schema, migrations e persistência não mudaram, sem cancelar o review de Database ainda pendente sobre o hardening anterior
-- Boundary: `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-008` e `SEC-012` continuam blockers exclusivos de produção; autenticação, soft delete, recuperação, auditoria, migrations e operações no banco real não foram implementados nem executados
+- Functional commit: `88e194778b4399a6713f118470f9d861c553cd9e`
+- Baseline corrected: `19e573893aba09da990256da05e7dab5af165ce1`
+- Delivered: `QA-001` corrigido com harness E2E tipado, estado isolado, recuperação funcional e fluxo completo de esquecimento vinculado ao UUID; `DB-005` corrigido com gate fail-safe de schema no startup, diagnóstico explícito e desativação segura da memória quando `alembic_version` não corresponde a `20260903_0003`, preservando o chat degradado
+- Validation reported by DEV: 12 testes focados, 45 testes Python completos, 19 frontend, `compileall`, `node --check`, navegador no harness com memória habilitada, recuperação e confirmação destrutiva completas, UUID exato e zero erros de console/página/rede; `git diff --check` sem erros
+- Impact analysis: QA e DATABASE precisam revisar `88e194778b4399a6713f118470f9d861c553cd9e`; SECURITY também precisa revisar porque o novo gate altera a fronteira de inicialização/ativação da memória; UI/UX não é impactado porque não houve alteração funcional de frontend
+- Boundary: nenhum PostgreSQL real, migration, provider pago, dado, role, credencial, TLS ou infraestrutura externa foi acessado ou alterado; `DB-001`, `DB-003`, `DB-004`, blockers exclusivos de produção e dashboard visual permanecem fora do escopo
 - Rule: DEV não pode marcar a fase como `APPROVED`
 
 ## QA

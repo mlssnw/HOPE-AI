@@ -147,6 +147,28 @@ A correção dos blockers de Database Audit preserva o escopo funcional da Fase 
 
 O banco real não foi alterado por esta correção. Criação da role restrita, aplicação da migration, `alembic check` limpo no schema atualizado e avaliação vetorial real exigem ambiente descartável/clone, aprovação operacional e o procedimento de `docs/database-security.md`.
 
+## Correções QA-001 e DB-005
+
+- Functional Commit: `88e194778b4399a6713f118470f9d861c553cd9e`.
+- Baseline corrigido: `19e573893aba09da990256da05e7dab5af165ce1`.
+- `QA-001`: o harness E2E passou a devolver `MemoryView`, `MemorySearchHit`, `MemoryExplanation`, `MemoryGraph` e demais objetos tipados esperados pelo domínio. Cada aplicação de teste recebe estado isolado e suporta recuperação, explicação, fragmento de grafo e remoção com relações.
+- `QA-001`: os testes cobrem chat com memória habilitada, recuperação da memória simulada, seleção inequívoca do alvo de esquecimento, confirmação vinculada ao UUID e respostas `428` tanto sem confirmação quanto com ID divergente.
+- `DB-005`: a inicialização consulta `alembic_version` em modo somente leitura e só ativa o subsistema de memória no head exigido `20260903_0003`. Schema ausente, inacessível, divergente ou ainda em `20260902_0002` desativa memória e expõe diagnóstico operacional antes de captura, correção ou upsert; o chat básico continua disponível em modo degradado.
+- `DB-005`: ambientes descartáveis que chamam explicitamente `create_schema_for_tests` continuam aceitos porque usam o metadata atual. Nenhuma migration é aplicada automaticamente.
+
+Validação executada nesta correção:
+
+- testes focados de harness e schema: `12 passed`;
+- suíte Python completa: `45 passed`, com apenas os warnings preexistentes de depreciação do `TestClient` e impossibilidade ambiental de gravar o cache do pytest;
+- suíte frontend completa: `19 passed`;
+- sintaxe: `compileall` no backend/testes e `node --check` em todos os módulos JavaScript, sem falhas;
+- navegador no harness descartável: interface carregada, memória habilitada, alvo “Arquitetura da HOPE” recuperado, diálogo destrutivo aberto, rota e header usando o UUID exato, remoção concluída e zero erros de console, página ou rede;
+- `git diff --check`: sem erros.
+
+Limitações ambientais e de escopo: a validação de banco usou SQLite descartável para reproduzir `0002 + runtime novo`; nenhum PostgreSQL real, provider pago, migration, dado, role, credencial, TLS ou infraestrutura externa foi acessado ou alterado. Os blockers exclusivos de produção e a implementação visual do dashboard permanecem fora desta entrega.
+
+Impacto para re-review: QA e Database devem revisar o Functional Commit. Security também deve revisar porque a correção altera a fronteira de inicialização/ativação da memória. Não houve alteração funcional de UI, portanto esta diferença não exige novo review de UI/UX.
+
 ## Próxima fase
 
 A Fase 6 não foi iniciada. Antes dela, a evolução natural é escolher explicitamente o provider de embedding de produção, medir qualidade de recuperação e definir rastreabilidade durável para tarefas pós-resposta.
