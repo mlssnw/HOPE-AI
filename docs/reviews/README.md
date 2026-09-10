@@ -343,7 +343,7 @@ Se o alvo mudar, pare e atualize o hash. BLOCKER de escopo já decidido normalme
 
 Regras obrigatórias:
 
-- preservar a ordem principal: branding, hero, última atualização, apresentação, recursos, status, roadmap, arquitetura resumida, setup, testes, segurança/privacidade, documentação, changelog e licença;
+- preservar a ordem principal: branding, hero, highlights, apresentação, propósito, última atualização, recursos implementados, status, roadmap, arquitetura resumida, setup, Quality & Testing, segurança/privacidade, documentação, changelog e licença;
 - tratar **HOPE** como nome próprio, sem pontos intermediários, expansão de sigla ou significado retroativo;
 - manter “Última atualização” curta, com quatro a oito bullets comprováveis e link para a fase vigente;
 - obter versão, fase, Functional Commit e status do código e dos documentos operacionais atuais, nunca de texto histórico;

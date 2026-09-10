@@ -4,7 +4,7 @@
 
 **Assistente pessoal experimental de Inteligência Artificial com memória persistente, contexto explicável e visualização das relações que importam.**
 
-![Status](https://img.shields.io/badge/status-ready%20for%20re--review-F2AE3D)
+![Status](https://img.shields.io/badge/status-em%20desenvolvimento-F2AE3D)
 ![Version](https://img.shields.io/badge/version-6.0.0--phase.5-FFF8E9)
 ![Phase](https://img.shields.io/badge/phase-5-63BFD4)
 ![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)
@@ -24,29 +24,28 @@
   <em>Target UI aprovado: Memory Globe, memória persistente, contexto ativo e interação com a HOPE. A implementação visual atual ainda é parcial.</em>
 </p>
 
+<p align="center">
+  <strong>Persistent Memory</strong> · <strong>Hybrid Retrieval</strong> · <strong>Real-Time Memory Globe</strong> · <strong>Memory-Aware Chat</strong>
+</p>
+
+## 🧠 O que é a HOPE?
+
+A HOPE é um assistente pessoal experimental de IA com memória persistente e recuperação contextual. O projeto explora como uma IA pode armazenar, relacionar, recuperar, corrigir e esquecer informações ao longo do tempo com controles explícitos do usuário.
+
+## Por que este projeto existe?
+
+Assistentes tradicionais dependem principalmente do contexto imediato da conversa. A HOPE nasceu para explorar uma abordagem em que memória, contexto, relações e histórico possam persistir e ser consultados de forma controlada ao longo do tempo.
+
 ## ✨ Última atualização — Fase 5
 
 - Memória persistente passou a exigir consentimento explícito antes de recuperar, capturar ou alterar lembranças.
 - Esquecimento agora exige confirmação associada ao UUID exato da memória; ausência ou divergência é rejeitada.
 - O chat continua disponível em modo degradado quando a memória ou o banco não estão disponíveis.
 - O runtime agora desativa a memória de forma segura quando o schema não corresponde à migration exigida.
-- O harness E2E cobre recuperação de memória e o fluxo destrutivo completo com estado isolado e contratos tipados.
-- As suítes atuais passam com **45 testes Python** e **19 testes de frontend**.
-- A direção visual do dashboard foi aprovada como Target UI; a fidelidade da implementação permanece pendente.
-
-> **Status:** correções entregues no Functional Commit `88e1947`; re-reviews independentes de QA, Database e Security pendentes. Deploy público bloqueado.
 
 [📖 Ver detalhes técnicos da Fase 5](docs/phase-5.md)
 
-## 🧠 O que é a HOPE?
-
-**HOPE** é o nome próprio de um projeto experimental de assistente pessoal de IA que combina conversa, memória persistente e contexto acumulado ao longo do tempo. Em vez de depender apenas do histórico imediato do chat, a aplicação pode recuperar, relacionar, explicar, corrigir e esquecer memórias com controles explícitos.
-
-A base atual é extensível e está evoluindo, por fases, para ferramentas, agentes, skills, multimodalidade e automação. Essas capacidades futuras estão documentadas como visão de arquitetura e **não são apresentadas como implementadas**.
-
-`Claude / LLM` · `Persistent Memory` · `Vector Search` · `FastAPI` · `PostgreSQL` · `pgvector` · `WebSocket` · `WebGL`
-
-## ⚙️ Principais recursos
+## ⚙️ Implementado atualmente
 
 | Área | Implementação atual |
 |---|---|
@@ -57,7 +56,7 @@ A base atual é extensível e está evoluindo, por fases, para ferramentas, agen
 | Busca | Recuperação híbrida de memória; Tavily e busca textual no Obsidian ficam disponíveis quando configurados. |
 | Voz | Ditado pela Web Speech API e TTS por ElevenLabs quando suportados e configurados. |
 | Integrações | Adapters para Anthropic, Tavily, ElevenLabs e Obsidian Local REST API; todos opcionais e protegidos pelo backend. |
-| Qualidade | 45 testes Python e 19 testes frontend no Functional Commit atual; re-review independente ainda pendente. |
+| Qualidade | 45 testes Python e 19 testes frontend cobrindo os principais contratos funcionais e cenários degradados. |
 | Segurança | Segredos no backend, CSP restrita, conteúdo externo tratado como não confiável, consentimento de memória e confirmação destrutiva. Autenticação e hardening de produção permanecem pendentes. |
 
 ## 🚦 Status do projeto
@@ -66,15 +65,14 @@ A base atual é extensível e está evoluindo, por fases, para ferramentas, agen
 |---|---|
 | Versão atual | `6.0.0-phase.5` |
 | Fase atual | Fase 5 — memory-aware chat e personalidade HOPE |
-| Functional Commit | `88e194778b4399a6713f118470f9d861c553cd9e` |
-| Estado funcional | `READY_FOR_REVIEW` — QA, Database e Security precisam revisar o novo hash |
-| Produção pública | `BLOCKED` — autenticação, autorização e outros controles operacionais ainda são obrigatórios |
+| Estado técnico | `READY_FOR_REVIEW` — validações independentes de QA, Database e Security estão em andamento |
+| Deploy público | Ainda não habilitado — autenticação, autorização e hardening de produção pendentes |
 
 A fundação local/controlada já conecta chat, memória persistente, PostgreSQL/pgvector, Memory Globe e eventos em tempo real. Isso não equivale a prontidão para produção pública.
 
-O projeto usa handoffs formais entre `DEV` · `QA` · `Database` · `Security` · `UI/UX` · `Planner`, com coordenação operacional separada. Consulte o [painel atual](docs/handoff.md) e o [manual de reviews](docs/reviews/README.md).
+O acompanhamento técnico detalhado permanece no [painel operacional](docs/handoff.md) e nos [reviews](docs/reviews/README.md).
 
-## 🗺️ Roadmap rápido
+## 🗺️ Em desenvolvimento / Roadmap
 
 - [x] Backend FastAPI protegendo credenciais e integrações.
 - [x] Fundação PostgreSQL + pgvector com migrations versionadas.
@@ -89,6 +87,7 @@ O projeto usa handoffs formais entre `DEV` · `QA` · `Database` · `Security` �
 - [ ] Provider semântico de produção e avaliação de qualidade vetorial.
 - [ ] Streaming de respostas e broker distribuído.
 - [ ] Tools, agents e skills governados por permissões.
+- [ ] LLM & Memory Evaluation: relevância, recuperação, consolidação, regressão de prompts e context leakage.
 - [ ] Multimodalidade, geração de imagens e automações.
 - [ ] Desktop/PWA e implantação cloud pública.
 
@@ -182,16 +181,25 @@ As rotas principais incluem:
 
 Durante o desenvolvimento, `X-Hope-User-Id` separa dados por UUID, mas **não é autenticação**. Configuração e contratos detalhados estão em [docs/architecture.md](docs/architecture.md) e [docs/phase-5.md](docs/phase-5.md).
 
-## Testes
+## Quality & Testing
 
-Os testes usam serviços simulados e não chamam APIs pagas:
+A HOPE trata qualidade como parte da arquitetura do produto:
+
+- **45 testes Python**;
+- **19 testes frontend**;
+- cenários de memória, consentimento, correção e esquecimento;
+- WebSocket, heartbeat, reconexão e eventos incrementais;
+- degradação segura quando banco, schema ou providers não estão disponíveis;
+- reviews especializados de QA, Database, Security e UI/UX.
+
+As suítes usam serviços simulados e não chamam APIs pagas:
 
 ```bash
 python -m pytest -q
 npm run test:frontend
 ```
 
-Eles cobrem APIs, CSP, renderização defensiva, memória, consolidação, consentimento, esquecimento, schema incompatível, WebSocket, eventos incrementais e Memory Globe.
+Resultados, blockers e evidências detalhadas ficam em [`docs/reviews/`](docs/reviews/README.md).
 
 ## Segurança e privacidade
 
