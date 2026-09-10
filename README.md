@@ -1,6 +1,6 @@
 <div align="center">
 
-# H·O·P·E — AI
+# HOPE AI
 
 **Assistente pessoal experimental de Inteligência Artificial com memória persistente, contexto explicável e visualização das relações que importam.**
 
@@ -40,7 +40,7 @@
 
 ## 🧠 O que é a HOPE?
 
-HOPE significa **Holistic Operational Personal Engine**. É um projeto experimental de assistente pessoal de IA que combina conversa, memória persistente e contexto acumulado ao longo do tempo. Em vez de depender apenas do histórico imediato do chat, a aplicação pode recuperar, relacionar, explicar, corrigir e esquecer memórias com controles explícitos.
+**HOPE** é o nome próprio de um projeto experimental de assistente pessoal de IA que combina conversa, memória persistente e contexto acumulado ao longo do tempo. Em vez de depender apenas do histórico imediato do chat, a aplicação pode recuperar, relacionar, explicar, corrigir e esquecer memórias com controles explícitos.
 
 A base atual é extensível e está evoluindo, por fases, para ferramentas, agentes, skills, multimodalidade e automação. Essas capacidades futuras estão documentadas como visão de arquitetura e **não são apresentadas como implementadas**.
 
