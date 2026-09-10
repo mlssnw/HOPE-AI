@@ -2,8 +2,6 @@
 
 # H·O·P·E — AI
 
-### Holistic Operational Personal Engine
-
 **Assistente pessoal experimental de Inteligência Artificial com memória persistente, contexto explicável e visualização das relações que importam.**
 
 ![Status](https://img.shields.io/badge/status-ready%20for%20re--review-F2AE3D)
