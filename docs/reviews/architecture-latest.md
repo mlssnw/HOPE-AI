@@ -1,128 +1,150 @@
 # Architecture Review — Latest
 
 - Status: APPROVED_WITH_WARNINGS
-- Decision ID: `ARCH-2026-09-04-001`
-- Date: 2026-09-04
-- Functional commit analyzed: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
-- Documentation base analyzed: `20a0d4497c72c9d74a34281cde5e7c5af55d8b42`
-- Scope: target architecture, roadmap and classification of Phase 5 feature versus production blockers
+- Decision ID: `ARCH-2026-09-10-002`
+- Date: 2026-09-10
+- Phase: 5
+- Functional commit analyzed: `88e194778b4399a6713f118470f9d861c553cd9e`
+- Repository HEAD analyzed: `046fbec105de6a19e3729aff3d9c4f9f74fc4be1`
+- Previous architectural decision: `ARCH-2026-09-04-001` — preserved; this decision extends it
+- Scope: consolidate Phase 5 reviews and define the required UI/UX review boundary
 
 ## Problem
 
-The project needs to evolve from memory-aware chat into an extensible personal AI platform without turning Agents, Skills, Learning, Coding, Images and Multimodality into one irreversible phase. The current handoff also requires a technical distinction between Phase 5 feature acceptance and public-production readiness.
+QA, Database and Security approved the Phase 5 Functional Commit with warnings, while UI/UX has approved a new dashboard as `TARGET UI` but has not reviewed implementation fidelity. The project must decide whether Phase 5 is blocked by the complete new dashboard, whether UI/UX is no longer applicable, or whether UI/UX should review only the experience actually changed by Phase 5.
 
 ## Current State
 
-- Phase 5 implements memory-aware chat, personality, persistent memory integration, realtime events and the Memory Globe.
-- Claude, ElevenLabs and Tavily/Obsidian integrations remain partly provider-specific.
-- There is no authentication boundary, generic PermissionManager, Tool Registry, Model Router, agent runtime, skill runtime or learning layer.
-- Security officially rejects public deployment of `adfc728`.
-- QA, Database and UI/UX re-reviews for the current Functional Commit remain operationally pending in the handoff.
-- The current memory toggle does not control server-side persistent memory (`SEC-006`), and natural-language deletion lacks a strong target-bound confirmation/recovery path (`SEC-007`). These affect the Phase 5 memory contract itself, not only deployment infrastructure.
+- Functional Commit `88e1947` is the current Phase 5 target.
+- QA: `APPROVED_WITH_WARNINGS`, no feature blocker.
+- Database: `APPROVED_WITH_WARNINGS`, no feature blocker; production validation remains blocked.
+- Security: `APPROVED_WITH_WARNINGS` for the feature and `REJECTED/BLOCKED` for public production.
+- UI/UX decision `UIUX-VIS-2026-09-10-001` approves the HOPE Main Dashboard as a future visual target.
+- The UI/UX report uses `19e5738` as its visual gap baseline and explicitly states that implementation fidelity has not been reviewed.
+- The dashboard specification and most of its P0 gaps were approved after the Phase 5 implementation scope had already been defined.
+- `88e1947` changes the test harness and schema activation gate relative to `19e5738`; it does not introduce a new frontend delta.
 
 ## Constraints
 
-- Preserve the current functional phase and do not claim future capabilities as implemented.
-- PostgreSQL + pgvector remain the primary data store; large media stays outside PostgreSQL.
-- Cloud-first and provider-agnostic boundaries must not force premature multi-provider complexity.
-- No permission escalation, production change, real migration, relevant cost commitment or HIGH/CRITICAL risk acceptance is authorized by this decision.
-- Coordinator owns routine Review Matrix/status/routing; Planner owns technical scope and roadmap.
+- Do not broaden Phase 5 retroactively into a dashboard redesign.
+- Do not mark UI/UX `N/A`: Phase 5 changed consent, destructive confirmation, Core Orb states and memory focus behavior.
+- Do not reinterpret or overwrite the UI/UX verdict.
+- Preserve the approved dashboard as the authoritative `TARGET UI` for a future visual implementation phase.
+- Do not authorize the next phase, frontend implementation or public production.
+- Keep Feature Status separate from Production Readiness.
 
 ## Options
 
-### Option A — Build a unified autonomy platform next
+### Option A — Require full dashboard fidelity inside Phase 5
 
-- Pros: reaches the long-term demo quickly; fewer intermediate integration contracts.
-- Cons: couples tools, permissions, agents, skills and learning before their boundaries are proven; creates a very large review surface.
-- Cost: high and front-loaded, with provider and infrastructure spend before demand is measured.
-- Complexity: very high.
-- Security impact: unacceptable privilege-escalation and prompt/tool-injection blast radius.
-- Database impact: many interdependent tables and migrations with difficult rollback.
-- Maintenance impact: high; failures would be hard to localize and contracts hard to replace.
+- Pros: closes the visual gap immediately; produces one visually unified release.
+- Cons: retroactively adds branding, layout, Core Orb, responsive and accessibility redesign to a memory/chat phase; invalidates the small-phase model.
+- Cost: high and unplanned.
+- Complexity: high; combines visual redesign with phase closure.
+- Security impact: risks regressing consent and destructive confirmation while restyling.
+- Database impact: none expected, but the longer phase delays database closure.
+- Maintenance impact: large frontend diff and broad regression surface.
 
-### Option B — Layered capability roadmap with safety gates
+### Option B — Change UI/UX to `Required: NO / N/A`
 
-- Pros: small reversible phases; identity and permission boundaries precede autonomy; each layer has measurable acceptance criteria.
-- Cons: more contracts and handoffs; visible autonomy arrives later.
-- Cost: incremental and controllable; paid providers are introduced only with budgets and evaluation.
-- Complexity: moderate per phase, cumulative over time.
-- Security impact: least privilege, confirmation and audit become architectural prerequisites.
-- Database impact: migrations are isolated by capability and independently reviewable.
-- Maintenance impact: clearer ownership and replaceable adapters; some interface/versioning overhead.
+- Pros: Phase 5 could be consolidated immediately from the three completed reviews.
+- Cons: skips independent review of visible consent, deletion confirmation, memory focus and Core Orb state changes.
+- Cost: low now, higher risk of UX defects escaping.
+- Complexity: low.
+- Security impact: weakens validation of security-critical user communication and confirmation.
+- Database impact: none.
+- Maintenance impact: creates a governance precedent for bypassing a previously required reviewer.
 
-### Option C — Keep adding provider-specific features to the Orchestrator
+### Option C — Keep UI/UX required with a Phase 5-specific review scope
 
-- Pros: lowest short-term implementation effort.
-- Cons: deepens coupling to current providers and turns the Orchestrator into a monolith.
-- Cost: low initially, high migration cost later.
-- Complexity: deceptively low now, high after multiple modalities and agents.
-- Security impact: inconsistent policies and duplicated authorization checks.
-- Database impact: ad hoc persistence models and provenance gaps.
-- Maintenance impact: high long-term regression risk.
+- Pros: reviews the actual Phase 5 experience without importing a later visual target; preserves both governance and phase boundaries.
+- Cons: requires one focused UI/UX review before final consolidation; dashboard gaps remain open.
+- Cost: low.
+- Complexity: low to moderate.
+- Security impact: validates consent and destructive confirmation presentation without accepting production risks.
+- Database impact: none; review is visual/interaction-only.
+- Maintenance impact: smallest additional review surface and clear baseline for a future dashboard phase.
 
 ## Recommendation
 
-Adopt Option B. Record the complete direction in [`docs/future-architecture.md`](../future-architecture.md), while keeping [`docs/architecture.md`](../architecture.md) as the source of current implemented state.
+Adopt Option C.
 
-For Phase 5:
+UI/UX remains `Required: YES` for Phase 5 and must review Functional Commit `88e194778b4399a6713f118470f9d861c553cd9e`. The review must be limited to Phase 5 behavior and non-regression constraints; it must not use full dashboard fidelity as an acceptance gate.
 
-- `SEC-006` and `SEC-007` are feature blockers because they contradict the user-facing memory/forgetting contract and the project rule for destructive actions.
-- `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-008` and `SEC-012` remain production-readiness blockers. This classification does not resolve them, change Security's `REJECTED` verdict or authorize deployment.
-- `SEC-009`, `SEC-010`, `SEC-011`, `SEC-013`, `SEC-014`, `SEC-015` and `SEC-016` remain warnings/roadmap inputs exactly as recorded by Security.
-- Phase 5 remains `CHANGES_REQUESTED` until the feature blockers are corrected and the required reviewers approve the applicable new Functional Commit.
+### Required UI/UX review scope for Phase 5
+
+1. “Memória no chat” is distinct from “Histórico local”, defaults safely and communicates retrieval, persistence and provider use.
+2. Memory opt-out remains understandable and does not visually imply that persistent memory is active.
+3. Forgetting shows an explicit target and consequence, places initial focus on Cancel, supports Escape and preserves focus/error recovery.
+4. `FOCUS_MEMORIES` focuses real nodes without misleading state or fabricated data.
+5. Core Orb operational states communicate real events and do not claim unsupported capabilities.
+6. Keyboard use, visible focus, reduced motion, contrast and responsive behavior are acceptable for the Phase 5 controls that changed.
+7. The interface does not present the approved dashboard, future navigation, metrics, Vision, Files or Automation as already implemented.
+
+### Explicitly outside the Phase 5 UI/UX acceptance gate
+
+- `UIUX-001` through `UIUX-005` as requirements for full dashboard implementation.
+- P0/P1/P2/P3 implementation from `dashboard-gap-matrix.md`.
+- New navigation destinations, fabricated metrics or planned capabilities.
+- Full visual convergence to `UIUX-VIS-2026-09-10-001`.
+
+Those gaps remain valid blockers for claiming that the dashboard target has been implemented. They belong to a dedicated future visual implementation phase, which requires explicit authorization and its own Functional Commit.
 
 ## Rationale
 
-Consent over persistent memory and safe forgetting are observable behavior of the Phase 5 feature. Authentication, public rate limiting, production database roles/TLS and deploy-grade audit are essential before public exposure, but retroactively absorbing the entire production platform into Phase 5 would destroy phase boundaries. The layered roadmap resolves both concerns without accepting the risks.
+Phase acceptance must use criteria known and authorized for that phase. A later target can establish future direction and non-regression constraints, but cannot silently expand the prior implementation scope. At the same time, Phase 5 introduced visible consent and destructive-action behavior, so UI/UX review remains materially applicable. A focused review is the only option that preserves both truths.
 
 ## Risks
 
-- The proposed roadmap may be mistaken for implementation authorization; every phase therefore remains proposed until explicitly approved.
-- Interfaces can be over-abstracted before a second provider exists; adapters should be introduced only at real seams.
-- Experience and preference learning can amplify poisoned or unrepresentative evidence.
-- Agent/skill execution can create privilege creep, cost loops and difficult-to-explain actions.
-- Persistent audit and experience data can become a privacy liability without minimization and retention policies.
+- UI/UX may accidentally review against the full dashboard rather than the scoped Phase 5 contract.
+- “Responsive behavior” could be interpreted as requiring the complete future mobile redesign; only changed Phase 5 controls are in scope.
+- The approved target may be mistaken for an implemented feature in public materials.
+- Accepted warnings may be forgotten unless tracked in the backlog.
+- Production blockers may be confused with feature warnings after Phase 5 closes.
 
 ## Acceptance Criteria
 
-- Current and target architecture remain clearly separated.
-- Official personality is original and prioritizes safety, truth, precision and the user's legitimate objective.
-- Tool, Skill, Agent, Memory, Preference, Experience and Procedure have non-overlapping definitions.
-- Permission decisions are explicit, least-privilege, scoped, expiring and auditable.
-- Sensitive actions require approval; agents cannot elevate themselves or self-approve.
-- Model routing considers capability, quality, cost, latency, privacy, availability and fallback.
-- Every proposed future phase specifies goal, scope, non-goals, dependencies, required reviews, acceptance criteria, risks and deferred work.
-- Phase 5 is not marked approved and public production remains blocked.
+- UI/UX reviews exactly `88e194778b4399a6713f118470f9d861c553cd9e`.
+- The report explicitly identifies the review as `PHASE 5 FUNCTIONAL UX REVIEW`, not dashboard fidelity review.
+- The seven in-scope items above receive evidence and a result.
+- `UIUX-001` through `UIUX-005` remain attached to future dashboard implementation, not Phase 5 closure.
+- No future capability is marked implemented.
+- If UI/UX returns `APPROVED` or `APPROVED_WITH_WARNINGS` and the other three reviews remain unchanged, Planner may consolidate Phase 5 Feature Status as `APPROVED_WITH_WARNINGS`.
+- Production Readiness remains `BLOCKED` regardless of Phase 5 feature approval.
 
 ## Implementation Phase
 
-Documentation decision only. The roadmap begins only after formal Phase 5 closure and explicit approval of each subsequent phase. The first proposed implementation phase is Phase 6 — Identity and Authorization.
+- Current action: UI/UX review only; no implementation.
+- Phase 5: remains `WAITING_FOR_REVIEW` until the scoped UI/UX result is persisted.
+- Dashboard implementation: future dedicated phase, number and scope not yet authorized.
+- Phase 6: not started by this decision.
 
 ## Deferred Items
 
-- Provider selection and monetary commitments.
-- Real database migration, runtime-role provisioning and TLS change.
-- Production deployment and public exposure.
-- Fine-tuning, core self-modification and autonomous security-policy changes.
-- Exact schemas/APIs for agents, skills, experience memory and multimodal storage.
+- Full HOPE Main Dashboard implementation and fidelity review.
+- `UIUX-001` through `UIUX-005` remediation.
+- Navigation destinations, real dashboard metrics and future capability surfaces.
+- Production blockers `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-008`, `SEC-012`, `DB-001`, `DB-003` and `DB-004`.
+- Real PostgreSQL migration/provider/deploy work.
 
 ## Required Reviews
 
-- This documentation decision: QA NO; DATABASE NO; SECURITY NO; UI/UX NO.
-- Each future phase: reviews are defined individually in the roadmap.
-- Phase 5 correction implied by `SEC-006`/`SEC-007`: QA YES; SECURITY YES; UI/UX YES; DATABASE YES only if persistence/schema is changed.
+- Current Phase 5 gate: UI/UX YES, focused scope above.
+- No new QA, Database or Security re-review is required because this decision changes documentation and review scope only.
+- A future dashboard implementation requires QA YES, Security YES, UI/UX YES and Database only if its functional diff affects persistence/data.
 
 ## Planner Decision
 
 - Status: APPROVED_WITH_WARNINGS
-- Decision: adopt the layered target architecture and classify Phase 5 feature blockers separately from production blockers.
-- Affected phases: Phase 5 closure and proposed Phases 6–20.
-- User approval required: NO for this documentation/roadmap decision; YES before any sensitive implementation, real migration, provider cost commitment or production action.
+- Decision: keep UI/UX required for Phase 5, scoped to the Phase 5 experience; defer complete dashboard fidelity to a future authorized phase.
+- Phase 5 consolidation: `WAITING_FOR_REVIEW` pending UI/UX only.
+- Affected phases: Phase 5 closure and a future dashboard implementation phase.
+- User approval required: NO for this review classification; YES before starting the future dashboard phase or any production action.
 
 ## Coordinator Handoff
 
-- Recommended Next Role: COORDINATOR
-- Task: persist operational routing without changing reviewer verdicts; route `SEC-006` and `SEC-007` to DEV as Phase 5 feature blockers and keep all production blockers visible.
-- Target commit/document: the documentation commit containing `ARCH-2026-09-04-001`, then the next DEV Functional Commit for any approved correction.
-- Dependencies: preserve pending QA/Database/UI/UX reviews and re-evaluate their target if DEV creates a new Functional Commit.
-- Escalation required: NO for routing; YES for production, real database operations, costs, permissions or acceptance of HIGH/CRITICAL risk.
+- Recommended Next Role: UI/UX
+- Task: perform and persist the scoped `PHASE 5 FUNCTIONAL UX REVIEW` against `88e1947`, without treating full dashboard fidelity as a Phase 5 gate.
+- Target commit/document: `88e194778b4399a6713f118470f9d861c553cd9e` and this decision.
+- Dependencies: QA, Database and Security results remain unchanged; preserve `UIUX-VIS-2026-09-10-001` as future target.
+- Escalation required: NO for the review; YES before dashboard implementation, next phase or production.
