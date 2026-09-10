@@ -91,12 +91,14 @@ Required Reviews:
 
 ## Security Review
 
-- Coordination status: WAITING_FOR_REVIEW
+- Coordination status: REVIEW_COMPLETE
 - Current target: `19e573893aba09da990256da05e7dab5af165ce1`
-- Last commit reviewed: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
-- Last official result: REJECTED para deploy público
-- Deploy blockers: `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-006`, `SEC-007`, `SEC-008` e `SEC-012`
-- Scope warning: várias correções exigiriam autenticação, autorização e controles operacionais ainda planejados; governança não pode convertê-las automaticamente em implementação da fase 5
+- Last commit reviewed: `19e573893aba09da990256da05e7dab5af165ce1`
+- Functional result: APPROVED_WITH_WARNINGS
+- Production readiness: REJECTED / BLOCKED
+- Resolved for Phase 5 scope: `SEC-006` e `SEC-007`
+- Deploy blockers: `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-008` e `SEC-012`
+- Scope warning: exclusão continua física e sem recuperação; autenticação, autorização, auditoria e controles operacionais permanecem planejados e obrigatórios antes de exposição pública
 - Report: [`security-review-latest.md`](reviews/security-review-latest.md)
 
 ## UI/UX
@@ -133,7 +135,6 @@ Required Reviews:
 
 ### Feature Blockers
 
-- `SEC-006` e `SEC-007`: DEV declarou correção em `19e5738`, mas SECURITY, QA e UI/UX ainda não confirmaram o Functional Commit vigente. Estado: PENDING_REVIEW.
 - `QA-001` e `QA-002`: DEV declarou correção na linhagem anterior, mas QA ainda não confirmou no Functional Commit vigente. Estado: PENDING_REVIEW.
 - `DB-001` a `DB-004`: DEV entregou hardening relacionado em `adfc728`, sem nova alteração de banco em `19e5738`, mas DATABASE ainda não confirmou o Functional Commit vigente. Estado: PENDING_REVIEW.
 - UI/UX pós-implementação ainda não foi persistido para o Functional Commit vigente. Estado: WAITING_FOR_REVIEW.
