@@ -337,6 +337,33 @@ Se o alvo mudar, pare e atualize o hash. BLOCKER de escopo já decidido normalme
 
 `docs/handoff.md` mantém somente estado atual e histórico resumido. Relatórios detalhados permanecem em `docs/reviews/`; decisões duradouras ficam em `architecture-latest.md` ou ADRs. Não transforme o painel em log gigantesco.
 
+## Governança do README público
+
+`README.md` é a apresentação pública do produto e a fonte resumida do estado atual. `CHANGELOG.md` preserva o histórico completo. Todo Work que altere documentação pública deve manter essa separação.
+
+Regras obrigatórias:
+
+- preservar a ordem principal: branding, hero, última atualização, apresentação, recursos, status, roadmap, arquitetura resumida, setup, testes, segurança/privacidade, documentação, changelog e licença;
+- tratar **HOPE** como nome próprio, sem pontos intermediários, expansão de sigla ou significado retroativo;
+- manter “Última atualização” curta, com quatro a oito bullets comprováveis e link para a fase vigente;
+- obter versão, fase, Functional Commit e status do código e dos documentos operacionais atuais, nunca de texto histórico;
+- diferenciar explicitamente `IMPLEMENTED`, `PARTIAL`, `PLANNED` e `PRODUCTION BLOCKED` quando a distinção afetar a interpretação pública;
+- agentes, tools, skills, multimodalidade e automação podem aparecer no roadmap, mas não como capacidades entregues antes de implementação e review;
+- identificar o dashboard aprovado como `Target UI` ou interface conceitual enquanto a implementação não obtiver revisão de fidelidade;
+- não mover novamente o histórico detalhado das fases para o topo do README; novas entradas históricas pertencem ao `CHANGELOG.md`;
+- não remover setup, testes, segurança, privacidade, limitações, documentação e licença sem substituição equivalente ou link estável;
+- validar links relativos, caminho da hero, badges, Markdown, ausência de secrets e `git diff` antes do commit;
+- usar commit documental separado e nunca misturar a atualização pública com código funcional ou relatórios técnicos de outro owner.
+
+Ownership operacional:
+
+- COORDINATOR mantém estrutura, status público e coerência entre README, changelog e handoff;
+- DEV atualiza claims funcionais somente como parte de uma entrega documentada, sem declarar aprovação própria;
+- reviewers registram vereditos nos arquivos `latest` e informam o COORDINATOR; não reescrevem o README durante o review;
+- UI/UX governa hero, identidade visual e classificação de Target UI; PLANNER resolve mudanças de posicionamento, roadmap ou escopo.
+
+Uma mudança de fase, versão, Functional Commit, review consolidado ou direção visual deve incluir atualização proporcional do README/CHANGELOG ou uma declaração explícita de que não há impacto público. O README nunca substitui `docs/handoff.md` nem os relatórios técnicos.
+
 ## Comandos curtos por Work
 
 ### COORDINATOR
