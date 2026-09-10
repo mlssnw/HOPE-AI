@@ -24,6 +24,20 @@ Required Reviews:
 - SECURITY: YES — memória, WebSocket, voz, APIs externas, dados pessoais e configuração cloud são afetados
 - UI/UX: YES — chat, estados visuais, Core Orb e foco do Memory Globe foram afetados na fase
 
+## Official Visual Direction
+
+- Target: HOPE Main Dashboard
+- Type: OFFICIAL DESIGN DIRECTION
+- Decision declared by: UI/UX
+- Direction status: APPROVED BY UI/UX — PERSISTENCE PENDING
+- Implementation status: PARTIAL — o frontend atual implementa partes do chat, Memory Globe, Core Orb, inspector e estados, mas a composição-alvo não comprova as demais capacidades mostradas
+- Scope: interface principal, Memory Globe, Core Orb, navegação, chat, sessão atual, Memory Inspector, controles, hierarquia visual, estados, identidade visual e apresentação pública
+- Source of truth order: `docs/design/` → `docs/reviews/uiux-latest.md` → dashboard visual aprovado → documentação histórica anterior
+- Persistence gap: `uiux-latest.md` continua `NOT_STARTED`, e os documentos de design ainda não identificam formalmente o dashboard aprovado nem sua referência persistente
+- Rule: `VISUAL TARGET` não significa `IMPLEMENTED FEATURE`; áreas exibidas continuam classificadas pelo código e por `docs/architecture.md`
+- Public presentation: pode ser usado como hero, portfólio, apresentação ou LinkedIn somente como interface conceitual/alvo enquanto houver partes não implementadas
+- Implementation gate: nenhuma implementação visual nova começa por este registro; UI/UX deve primeiro persistir a decisão e os gaps nos arquivos próprios
+
 ## Current Functional Commit
 
 - Commit: `19e573893aba09da990256da05e7dab5af165ce1`
@@ -90,6 +104,8 @@ Required Reviews:
 - Coordination status: WAITING_FOR_REVIEW
 - Current target: `19e573893aba09da990256da05e7dab5af165ce1`
 - Last official result: NOT_STARTED
+- Visual direction declared: APPROVED BY UI/UX — PERSISTENCE PENDING
+- Visual target: HOPE Main Dashboard
 - Required review: fidelidade de chat, estados do Core Orb, foco do Memory Globe, responsividade e acessibilidade da fase 5
 - Report: [`uiux-latest.md`](reviews/uiux-latest.md)
 - Design source: [`docs/design/`](design/README.md)
@@ -130,6 +146,7 @@ Required Reviews:
 
 ## Warnings
 
+- A aprovação da direção visual foi declarada pelo UI/UX, mas ainda não está persistida em `docs/reviews/uiux-latest.md` e `docs/design/`; COORDINATOR não pode completar esses arquivos em nome do owner.
 - `QA-003` permanece um warning não verificado no novo Functional Commit.
 - Warnings de Database e Security permanecem nos relatórios dos respectivos papéis e não devem ser tratados como resolvidos.
 - Autenticação real continua planejada; identidade fornecida pelo cliente não é autenticação.
@@ -138,26 +155,23 @@ Required Reviews:
 
 ## Next Action
 
-- Role: QA + DATABASE + SECURITY + UI/UX
+- Role: UI/UX
 - Status: WAITING_FOR_REVIEW
-- Task: executar em paralelo os reviews obrigatórios de `19e5738`, sem alterar código e gravando cada resultado somente no arquivo `latest` do próprio papel; DATABASE limita o escopo ao hardening herdado de `adfc728` e confirma que a diferença posterior não altera banco
+- Task: persistir a aprovação do HOPE Main Dashboard como direção visual oficial nos arquivos próprios, sem redesenhar ou implementar; separar a aprovação da direção do review pós-implementação da Fase 5
 - Target commit: `19e573893aba09da990256da05e7dab5af165ce1`
 - Required inputs:
   - [`AGENTS.md`](../AGENTS.md)
-  - [`docs/phase-5.md`](phase-5.md)
-  - [`docs/reviews/qa-latest.md`](reviews/qa-latest.md)
-  - [`docs/reviews/database-audit-latest.md`](reviews/database-audit-latest.md)
-  - [`docs/reviews/security-review-latest.md`](reviews/security-review-latest.md)
-  - [`docs/reviews/architecture-latest.md`](reviews/architecture-latest.md)
   - [`docs/reviews/uiux-latest.md`](reviews/uiux-latest.md)
   - [`docs/design/`](design/)
+  - dashboard visual aprovado fornecido no handoff atual
 - Expected output:
-  - QA valida a regressão completa, incluindo `QA-001`, `QA-002`, consentimento de memória e confirmação destrutiva
-  - SECURITY revalida `SEC-006` e `SEC-007` e preserva separadamente o parecer de Production Readiness
-  - UI/UX valida separação dos controles, diálogo, alvo, consequência, foco, teclado e acessibilidade
-  - DATABASE persiste o review pendente do hardening herdado, sem executar mutation ou operação real não autorizada
-  - cada reviewer registra o hash exato em seu `latest`; COORDINATOR consolida o handoff somente após os resultados
-- Blocking dependencies: nenhuma; os quatro reviewers possuem ownership distinto e podem operar em paralelo no mesmo hash sem alterar código
+  - `docs/reviews/uiux-latest.md` identifica a direção, o status e a referência visual sem confundir aprovação do target com aprovação da implementação
+  - `docs/design/README.md` registra o dashboard e a ordem de autoridade
+  - documentos visuais aplicáveis apontam a mesma direção sem apagar contratos anteriores compatíveis
+  - matriz `Area | Target Design | Current Implementation | Status | Evidence` baseada em evidência real
+  - referência visual persistida em localização versionável sob ownership do UI/UX
+- Blocking dependencies: UI/UX deve concluir a persistência antes de qualquer tarefa futura de implementação visual baseada no dashboard
+- Parallel work: QA, DATABASE e SECURITY podem continuar seus reviews funcionais de `19e5738` em arquivos próprios; nenhuma implementação de frontend deve começar
 - Escalation: NONE
 
 ## Recent History
@@ -170,3 +184,4 @@ Required Reviews:
 - 2026-09-04 — COORDINATOR formalizou autonomia 2.5 e separou Feature Status de Production Readiness; o conflito de enquadramento foi roteado ao PLANNER, sem escalar prematuramente ao usuário.
 - 2026-09-04 — PLANNER classificou `SEC-006` e `SEC-007` como feature blockers e os demais blockers indicados como restrições de produção; COORDINATOR roteou a próxima ação ao DEV.
 - 2026-09-04 — DEV entregou `19e5738` com correções declaradas para `SEC-006` e `SEC-007`; COORDINATOR abriu a rodada paralela de QA, DATABASE, SECURITY e UI/UX no novo Functional Commit.
+- 2026-09-10 — UI/UX declarou o HOPE Main Dashboard como direção visual principal; COORDINATOR registrou `APPROVED BY UI/UX — PERSISTENCE PENDING` e roteou a formalização ao owner visual.

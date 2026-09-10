@@ -17,6 +17,16 @@
 
 ## Pre-Implementation Requirements
 
+## Visual Direction
+
+- UI/UX required: YES / NO
+- Official target UI:
+- Direction status: NOT_STARTED / APPROVED / APPROVED_WITH_WARNINGS / REJECTED
+- Persistence status: COMPLETE / PENDING / N/A
+- Implementation status: IMPLEMENTED / PARTIAL / PLANNED / NOT_IMPLEMENTED
+- Source of truth:
+- Visual target is not implementation evidence: YES
+
 ## Acceptance Criteria
 
 ## Current Functional Commit

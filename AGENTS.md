@@ -252,3 +252,14 @@ Registre resultados reais, comandos relevantes, limitações e commit. Não marq
 - Reviewers podem trabalhar em paralelo somente sobre o mesmo Functional Commit, sem modificar código e com arquivos próprios distintos.
 - Evite qualquer escrita concorrente no mesmo arquivo ou escopo funcional. Git, Markdown e commits são o canal oficial.
 - Separe sempre `Feature Status` de `Production Readiness`; blockers gerais de produção não ampliam automaticamente o escopo da fase.
+
+## Official HOPE Dashboard
+
+- O dashboard principal aprovado pelo UI/UX é o alvo visual primário da aplicação HOPE. Para trabalho visual, a autoridade segue: `docs/design/`, `docs/reviews/uiux-latest.md`, dashboard aprovado e documentação histórica anterior.
+- Essa autoridade torna-se plenamente oficial após o UI/UX persistir a decisão em seus arquivos de ownership. Até lá, o handoff deve registrar `APPROVED BY UI/UX — PERSISTENCE PENDING`.
+- `VISUAL TARGET` não significa `IMPLEMENTED FEATURE`. Todo elemento mostrado no dashboard continua `IMPLEMENTED`, `PARTIAL`, `PLANNED` ou `NOT_IMPLEMENTED` conforme evidência real no código e na documentação arquitetural.
+- Antes de alterar frontend relevante, DEV deve ler `docs/design/README.md`, `docs/design/design-system.md`, `docs/design/visual-language.md`, `docs/design/layout.md`, `docs/design/memory-globe.md`, `docs/design/core-orb.md` e `docs/reviews/uiux-latest.md`. Limitação técnica retorna a UI/UX/PLANNER; DEV não improvisa outra identidade visual.
+- QA valida comportamento, regressões, controles, estados e responsividade básica; UI/UX é o único reviewer de fidelidade visual e atua antes da implementação como especificador e depois como reviewer.
+- PLANNER incorpora a direção em decisões que afetem superfícies visuais e devolve mudanças relevantes do dashboard ao UI/UX. SECURITY pode exigir proteções funcionais em fluxos sensíveis sem substituir a linguagem visual; conflitos vão a PLANNER + UI/UX e risco relevante vai ao usuário.
+- Toda fase com impacto visual significativo exige `UI/UX: YES` e segue `UI/UX spec → DEV implementation → QA → UI/UX visual review`.
+- O dashboard pode ser usado como apresentação pública somente quando identificado como interface conceitual/alvo enquanto contiver capacidades ainda não implementadas.

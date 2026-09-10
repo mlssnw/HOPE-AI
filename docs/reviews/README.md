@@ -274,6 +274,29 @@ UI/UX compara o Functional Commit com a especificação e registra `uiux-latest.
 
 UI/UX não mistura especificação e implementação sem autorização explícita e, por padrão, não altera código.
 
+## Official HOPE Dashboard
+
+O dashboard principal aprovado pelo UI/UX é o `TARGET UI` da interface primária da HOPE. Sua direção cobre tela principal, Memory Globe, Core Orb, navegação, chat, sessão atual, Memory Inspector, controles, hierarquia, estados, identidade visual e futuras peças de apresentação.
+
+Ordem de autoridade para implementação visual:
+
+1. `docs/design/`;
+2. `docs/reviews/uiux-latest.md`;
+3. dashboard visual aprovado;
+4. documentação histórica anterior.
+
+Uma declaração em chat ou handoff deve aparecer como `APPROVED BY UI/UX — PERSISTENCE PENDING` até que UI/UX registre a decisão, a referência visual e os critérios aplicáveis em seus arquivos próprios. COORDINATOR não escreve o parecer visual pelo UI/UX.
+
+- **DEV:** lê todas as referências visuais aplicáveis antes de editar o frontend, preserva identidade, hierarquia, interação e composição e devolve inviabilidades a UI/UX/PLANNER em vez de improvisar.
+- **QA:** valida funcionalidade visual, regressões, controles, estados e responsividade básica; não concede aprovação de fidelidade.
+- **UI/UX:** especifica antes, compara depois e conclui `APPROVED`, `APPROVED_WITH_WARNINGS` ou `REJECTED` quanto à fidelidade visual.
+- **PLANNER:** considera o dashboard em toda decisão de arquitetura visual e retorna ao UI/UX qualquer mudança relevante da direção.
+- **SECURITY:** pode exigir confirmação, consentimento e proteção visual adicional em fluxos sensíveis; conflito de implementação é resolvido por PLANNER + UI/UX e risco relevante pelo usuário.
+
+`TARGET UI` não comprova implementação. Áreas exibidas na composição permanecem `IMPLEMENTED`, `PARTIAL`, `PLANNED` ou `NOT_IMPLEMENTED` conforme o estado real. UI/UX deve manter uma matriz de lacunas baseada em evidência, sem inferir capacidades apenas pela imagem.
+
+O dashboard pode apoiar portfólio, hero image, apresentações e LinkedIn desde que seja identificado como interface conceitual/alvo quando mostrar partes ainda não implementadas.
+
 ## Concorrência e trabalho paralelo
 
 Evite Works de escrita concorrentes no mesmo branch.
