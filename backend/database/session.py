@@ -1,14 +1,25 @@
 from __future__ import annotations
 
 from contextlib import asynccontextmanager
+from dataclasses import dataclass
 from typing import AsyncIterator
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
-from sqlalchemy import text
+from sqlalchemy import inspect, text
 from sqlalchemy.engine import URL, make_url
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 
 from .base import Base
+
+REQUIRED_MEMORY_SCHEMA_REVISION = "20260903_0003"
+
+
+@dataclass(frozen=True)
+class SchemaCompatibility:
+    compatible: bool
+    required_revision: str
+    current_revisions: tuple[str, ...]
+    detail: str
 
 
 def normalize_database_url(url: str) -> str:
@@ -65,6 +76,7 @@ class Database:
         self.session_factory = async_sessionmaker(
             self.engine, expire_on_commit=False, class_=AsyncSession
         )
+        self._schema_created_for_tests = False
 
     @asynccontextmanager
     async def session(self) -> AsyncIterator[AsyncSession]:
@@ -88,6 +100,70 @@ class Database:
         """Somente para testes; produção deve usar Alembic."""
         async with self.engine.begin() as connection:
             await connection.run_sync(Base.metadata.create_all)
+        self._schema_created_for_tests = True
+
+    async def check_schema_compatibility(
+        self,
+        required_revision: str = REQUIRED_MEMORY_SCHEMA_REVISION,
+    ) -> SchemaCompatibility:
+        """Valida o contrato do runtime sem executar migrations ou alterar o banco."""
+        if self._schema_created_for_tests:
+            return SchemaCompatibility(
+                compatible=True,
+                required_revision=required_revision,
+                current_revisions=(required_revision,),
+                detail="Schema descartável criado pelo metadata atual para testes.",
+            )
+
+        try:
+            async with self.engine.connect() as connection:
+                has_version_table = await connection.run_sync(
+                    lambda sync_connection: inspect(sync_connection).has_table(
+                        "alembic_version"
+                    )
+                )
+                if not has_version_table:
+                    return SchemaCompatibility(
+                        compatible=False,
+                        required_revision=required_revision,
+                        current_revisions=(),
+                        detail=(
+                            "Memória desativada: a tabela alembic_version não existe; "
+                            f"o runtime exige a migration {required_revision}."
+                        ),
+                    )
+                result = await connection.execute(
+                    text("SELECT version_num FROM alembic_version")
+                )
+                revisions = tuple(sorted(str(value) for value in result.scalars().all()))
+        except Exception:
+            return SchemaCompatibility(
+                compatible=False,
+                required_revision=required_revision,
+                current_revisions=(),
+                detail=(
+                    "Memória desativada: não foi possível validar o schema do banco; "
+                    f"o runtime exige a migration {required_revision}."
+                ),
+            )
+
+        if revisions == (required_revision,):
+            return SchemaCompatibility(
+                compatible=True,
+                required_revision=required_revision,
+                current_revisions=revisions,
+                detail=f"Schema compatível com {required_revision}.",
+            )
+        observed = ", ".join(revisions) if revisions else "sem revisão registrada"
+        return SchemaCompatibility(
+            compatible=False,
+            required_revision=required_revision,
+            current_revisions=revisions,
+            detail=(
+                f"Memória desativada: schema em {observed}; "
+                f"o runtime exige exatamente {required_revision}."
+            ),
+        )
 
     async def dispose(self) -> None:
         await self.engine.dispose()

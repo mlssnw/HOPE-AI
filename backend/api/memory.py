@@ -53,9 +53,10 @@ CurrentUser = Annotated[uuid.UUID, Depends(current_user_id)]
 def manager_from(request: Request) -> MemoryManager:
     manager = getattr(request.app.state, "memory_manager", None)
     if manager is None:
+        schema_error = getattr(request.app.state, "memory_schema_error", None)
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Memória persistente indisponível: configure DATABASE_URL.",
+            detail=schema_error or "Memória persistente indisponível: configure DATABASE_URL.",
         )
     return manager
 

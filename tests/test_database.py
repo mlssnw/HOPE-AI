@@ -1,4 +1,7 @@
+import pytest
+from httpx import ASGITransport, AsyncClient
 from sqlalchemy import CheckConstraint, ForeignKeyConstraint, UniqueConstraint
+from sqlalchemy import text
 
 from backend.config import Settings
 from backend.database.models import (
@@ -7,11 +10,35 @@ from backend.database.models import (
     MemoryRecord,
     MemoryRelationRecord,
 )
-from backend.database.session import Database, normalize_database_url
+from backend.database.session import (
+    REQUIRED_MEMORY_SCHEMA_REVISION,
+    Database,
+    normalize_database_url,
+)
+from backend.main import create_app
 from backend.memory.embeddings import (
     LocalHashEmbeddingProvider,
     create_embedding_provider,
 )
+from backend.memory.manager import MemoryManager
+from backend.models import ChatResponse, HealthResponse, ServiceStatus
+
+
+class SchemaTestServices:
+    async def health(self) -> HealthResponse:
+        offline = ServiceStatus(configured=False)
+        return HealthResponse(
+            claude=offline,
+            tavily=offline,
+            elevenlabs=offline,
+            obsidian=offline,
+        )
+
+    async def chat(self, payload):  # type: ignore[no-untyped-def]
+        return ChatResponse(reply="Chat disponível em modo degradado.")
+
+    async def synthesize_speech(self, text: str) -> tuple[bytes, str]:
+        return b"", "audio/mpeg"
 
 
 def test_normalize_database_url_for_asyncpg_ssl() -> None:
@@ -143,3 +170,65 @@ def test_metadata_preserves_hnsw_and_database_integrity_contracts() -> None:
         "fk_memory_entities_user_memory",
         "fk_memory_entities_user_entity",
     }
+
+
+@pytest.mark.asyncio
+async def test_runtime_disables_memory_safely_when_schema_is_still_0002() -> None:
+    database = Database("sqlite+aiosqlite:///:memory:")
+    async with database.engine.begin() as connection:
+        await connection.execute(
+            text("CREATE TABLE alembic_version (version_num VARCHAR(32) NOT NULL)")
+        )
+        await connection.execute(
+            text("INSERT INTO alembic_version (version_num) VALUES ('20260902_0002')")
+        )
+    manager = MemoryManager(database, LocalHashEmbeddingProvider(1536))
+    app = create_app(SchemaTestServices(), manager)  # type: ignore[arg-type]
+
+    try:
+        async with app.router.lifespan_context(app):
+            assert app.state.memory_manager is None
+            assert "20260902_0002" in app.state.memory_schema_error
+            assert REQUIRED_MEMORY_SCHEMA_REVISION in app.state.memory_schema_error
+
+            async with AsyncClient(
+                transport=ASGITransport(app=app), base_url="http://test"
+            ) as client:
+                health = await client.get("/api/health")
+                chat = await client.post(
+                    "/api/chat",
+                    headers={"X-Hope-User-Id": "10000000-0000-4000-8000-000000000001"},
+                    json={
+                        "message": "Como está o projeto?",
+                        "history": [],
+                        "memory_enabled": True,
+                    },
+                )
+                memories = await client.get(
+                    "/api/memories",
+                    headers={"X-Hope-User-Id": "10000000-0000-4000-8000-000000000001"},
+                )
+
+            assert health.status_code == 200
+            assert health.json()["database"] == {"configured": True, "available": False}
+            assert chat.status_code == 200
+            assert chat.json()["reply"] == "Chat disponível em modo degradado."
+            assert chat.json()["memory_available"] is False
+            assert memories.status_code == 503
+            assert REQUIRED_MEMORY_SCHEMA_REVISION in memories.json()["detail"]
+    finally:
+        await database.dispose()
+
+
+@pytest.mark.asyncio
+async def test_current_disposable_schema_remains_compatible_with_runtime_gate() -> None:
+    database = Database("sqlite+aiosqlite:///:memory:")
+    try:
+        await database.create_schema_for_tests()
+
+        compatibility = await database.check_schema_compatibility()
+
+        assert compatibility.compatible is True
+        assert compatibility.current_revisions == (REQUIRED_MEMORY_SCHEMA_REVISION,)
+    finally:
+        await database.dispose()

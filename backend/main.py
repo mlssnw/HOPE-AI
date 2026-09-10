@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import uuid
 from contextlib import asynccontextmanager
 
@@ -20,6 +21,7 @@ from .realtime.router import router as realtime_router
 from .services import ExternalServiceError, HopeServices
 
 FRONTEND_DIR = PROJECT_ROOT / "frontend"
+logger = logging.getLogger(__name__)
 
 
 def create_app(
@@ -52,8 +54,18 @@ def create_app(
         )
         owns_database = True
 
+    configured_memory_manager = memory_manager
+
     @asynccontextmanager
     async def lifespan(_: FastAPI):
+        runtime_database = database or getattr(configured_memory_manager, "database", None)
+        if isinstance(runtime_database, Database):
+            compatibility = await runtime_database.check_schema_compatibility()
+            app.state.memory_schema_compatibility = compatibility
+            if not compatibility.compatible:
+                app.state.memory_schema_error = compatibility.detail
+                configure_memory(None)
+                logger.error("Persistência de memória desativada: %s", compatibility.detail)
         yield
         if owns_database and database is not None:
             await database.dispose()
@@ -68,16 +80,22 @@ def create_app(
     )
     app.state.services = services or HopeServices(settings)
     app.state.database = database or getattr(memory_manager, "database", None)
-    app.state.memory_manager = memory_manager
-    app.state.memory_service = MemoryService(memory_manager) if memory_manager else None
+    app.state.memory_schema_error = None
+    app.state.memory_schema_compatibility = None
     app.state.event_bus = event_bus
     app.state.connection_manager = connection_manager
-    app.state.ai_orchestrator = HopeOrchestrator(
-        app.state.services,
-        memory_manager,
-        app.state.memory_service,
-        event_bus,
-    )
+
+    def configure_memory(manager: MemoryManager | None) -> None:
+        app.state.memory_manager = manager
+        app.state.memory_service = MemoryService(manager) if manager else None
+        app.state.ai_orchestrator = HopeOrchestrator(
+            app.state.services,
+            manager,
+            app.state.memory_service,
+            event_bus,
+        )
+
+    configure_memory(memory_manager)
 
     @app.middleware("http")
     async def security_headers(request: Request, call_next):  # type: ignore[no-untyped-def]
@@ -103,10 +121,13 @@ def create_app(
     @app.get("/api/health", response_model=HealthResponse)
     async def health() -> HealthResponse:
         result = await app.state.services.health()
+        schema_compatible = app.state.memory_schema_error is None
         database_status = ServiceStatus(
             configured=app.state.database is not None,
             available=(
-                await app.state.database.ping() if app.state.database is not None else None
+                schema_compatible and await app.state.database.ping()
+                if app.state.database is not None
+                else None
             ),
         )
         return result.model_copy(update={"database": database_status})
