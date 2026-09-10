@@ -8,7 +8,7 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 
 - Phase: 5
 - Phase status: WAITING_FOR_REVIEW
-- Feature status: WAITING_FOR_REVIEW — QA, Database e Security aprovaram o Functional Commit com warnings; UI/UX e consolidação do PLANNER permanecem pendentes
+- Feature status: WAITING_FOR_REVIEW — QA, Database e Security aprovaram o Functional Commit com warnings; somente o review funcional focado de UI/UX permanece pendente
 - Production readiness: BLOCKED — Security rejeitou deploy público
 - Branch: `main`
 - Application version: 6.0 / Phase 5
@@ -60,7 +60,7 @@ Required Reviews:
 | DATABASE | YES | APPROVED_WITH_WARNINGS | `88e194778b4399a6713f118470f9d861c553cd9e` |
 | SECURITY | YES | APPROVED_WITH_WARNINGS | `88e194778b4399a6713f118470f9d861c553cd9e` |
 | UI/UX | YES | WAITING_FOR_REVIEW | `88e194778b4399a6713f118470f9d861c553cd9e` |
-| PLANNER | YES | BLOCKED | `88e194778b4399a6713f118470f9d861c553cd9e` |
+| PLANNER | YES | APPROVED_WITH_WARNINGS | `88e194778b4399a6713f118470f9d861c553cd9e` |
 
 ## Development
 
@@ -146,8 +146,8 @@ Required Reviews:
 
 - Autonomy level: 2.5
 - Status: APPROVED
-- Operational conclusion: QA, Database e Security re-revisaram `88e1947`, persistiram `APPROVED_WITH_WARNINGS` e encerraram `QA-001` e `DB-005` para o escopo funcional. UI/UX permanece requerido e sem review de fidelidade; seu relatório atual aprova o Target UI, mas condiciona a implementação P0 a novo roteamento.
-- Routing: LEVEL 2 — PLANNER, para consolidar os reviews atuais e decidir se o review UI/UX da Fase 5 deve avaliar somente o escopo visual já implementado ou se os gaps do Target UI pertencem a uma fase futura explicitamente autorizada
+- Operational conclusion: QA, Database, Security e Planner concluíram seus gates para `88e1947`. Pela decisão `ARCH-2026-09-10-002`, UI/UX permanece obrigatório somente para a experiência funcional da Fase 5; fidelidade completa ao Target UI e `UIUX-001` a `UIUX-005` pertencem a uma fase visual futura ainda não autorizada.
+- Routing: LEVEL 1 — UI/UX, para executar e persistir exclusivamente o `PHASE 5 FUNCTIONAL UX REVIEW` definido pelo Planner, sem exigir ou implementar o dashboard completo
 - Boundary: COORDINATOR atualizou somente Current Phase, Current Functional Commit, Review Matrix, blockers, warnings, Next Action e histórico; não concedeu aprovação técnica nem alterou seções ou relatórios de ownership dos reviewers
 
 ## Current Blockers
@@ -155,7 +155,7 @@ Required Reviews:
 ### Feature Blockers
 
 - Nenhum blocker funcional de QA, Database ou Security permanece aberto nos relatórios `latest` contra `88e1947`.
-- UI/UX permanece `WAITING_FOR_REVIEW`. O relatório visual vigente aponta para `19e5738`, aprova o Target UI, não concede aprovação de fidelidade e condiciona a implementação do P0 a novo roteamento. PLANNER deve decidir o enquadramento sem ampliar retroativamente a Fase 5.
+- UI/UX permanece `WAITING_FOR_REVIEW` contra `88e1947`, com escopo limitado pela decisão `ARCH-2026-09-10-002`. O review deve validar consentimento, histórico local separado, confirmação de esquecimento, foco, estados reais do Core Orb e acessibilidade/responsividade dos controles alterados; o dashboard completo não é gate desta fase.
 
 ### Production Blockers
 
@@ -170,32 +170,31 @@ Required Reviews:
 - `SEC-017` permanece MEDIUM e não bloqueante: o gate depende do lifespan e o harness sintético não valida schema, autenticação ou isolamento.
 - Warnings de Database sobre ausência de PostgreSQL real, confiança na marca Alembic e limitações operacionais permanecem abertos.
 - O aviso de depreciação Starlette/TestClient permanece; a repetição independente confirmou 45 testes Python e 19 testes frontend aprovados.
+- PLANNER registrou os warnings aceitos em [`docs/backlog.md`](backlog.md); o registro não os considera resolvidos.
 - Autenticação real continua planejada; identidade fornecida pelo cliente não é autenticação.
 - Commits locais ainda não enviados a `origin/main` exigem nova verificação antes de cada revisão.
 - Warnings aceitos para avanço devem ser copiados para [`docs/backlog.md`](backlog.md), sem removê-los do relatório original.
 
 ## Next Action
 
-- Role: PLANNER
+- Role: UI/UX
 - Status: WAITING_FOR_REVIEW
-- Task: consolidar os resultados de QA, Database e Security contra `88e1947` e resolver o enquadramento do review UI/UX requerido: definir se a fidelidade da Fase 5 será revisada somente contra o escopo visual já implementado ou se `UIUX-001` a `UIUX-005` pertencem a uma fase futura; não autorizar implementação do dashboard, próxima fase ou produção
+- Task: executar e persistir o `PHASE 5 FUNCTIONAL UX REVIEW` definido em `ARCH-2026-09-10-002`, avaliando somente a experiência funcional da Fase 5 e as restrições de não regressão; não usar fidelidade completa ao dashboard como critério, não implementar código e não iniciar fase futura
 - Target commit: `88e194778b4399a6713f118470f9d861c553cd9e`
 - Required inputs:
   - [`AGENTS.md`](../AGENTS.md)
-  - [`docs/reviews/qa-latest.md`](reviews/qa-latest.md)
-  - [`docs/reviews/database-audit-latest.md`](reviews/database-audit-latest.md)
-  - [`docs/reviews/security-review-latest.md`](reviews/security-review-latest.md)
+  - [`docs/handoff.md`](handoff.md)
   - [`docs/reviews/uiux-latest.md`](reviews/uiux-latest.md)
   - [`docs/reviews/architecture-latest.md`](reviews/architecture-latest.md)
-  - [`docs/design/dashboard-gap-matrix.md`](design/dashboard-gap-matrix.md)
+  - [`docs/design/`](design/README.md)
 - Expected output:
-  - decisão de escopo persistida em `docs/reviews/architecture-latest.md` e seção Planner do handoff
-  - definição inequívoca do review UI/UX ainda necessário, ou justificativa formal para alterar seu Required status
-  - warnings aceitos para avanço registrados por PLANNER em `docs/backlog.md`
-  - nova Next Action única, sem declarar a Fase 5 aprovada antes de todos os gates aplicáveis
-- Blocking dependencies: decisão técnica de escopo visual pelo PLANNER; nenhuma decisão do usuário é necessária para a consolidação
-- Parallel work: UI/UX pode apenas preparar leitura/evidência; nenhuma implementação ou escrita concorrente em `docs/handoff.md`
-- Escalation: PLANNER
+  - `docs/reviews/uiux-latest.md` atualizado contra o hash exato `88e1947`, identificado como `PHASE 5 FUNCTIONAL UX REVIEW`
+  - evidência e veredito para os sete critérios delimitados pelo Planner
+  - seção UI/UX do handoff atualizada pelo próprio owner
+  - `UIUX-001` a `UIUX-005` preservados como escopo futuro, sem transformá-los em blockers retroativos da Fase 5
+- Blocking dependencies: nenhuma; a decisão de escopo já foi persistida pelo PLANNER
+- Parallel work: somente leitura; nenhum outro Work deve editar `docs/handoff.md` durante a persistência do UI/UX
+- Escalation: NONE
 
 ## Recent History
 
@@ -211,3 +210,4 @@ Required Reviews:
 - 2026-09-10 — QA rejeitou `19e5738` por `QA-001`; DATABASE rejeitou por `DB-005`; SECURITY aprovou a feature com ressalvas e UI/UX persistiu o Target UI. COORDINATOR roteou os dois blockers funcionais ao DEV.
 - 2026-09-10 — DEV entregou `88e1947`; QA, Database e Security aprovaram o escopo funcional com warnings. COORDINATOR consolidou o novo alvo e roteou ao QA a persistência faltante em sua seção do handoff antes da consolidação do PLANNER.
 - 2026-09-10 — QA persistiu sua seção no commit `7bd7dab`; os três re-reviews técnicos estão alinhados a `88e1947`. COORDINATOR encaminhou ao PLANNER a consolidação e o enquadramento do review UI/UX pendente.
+- 2026-09-10 — PLANNER publicou `ARCH-2026-09-10-002` no commit `477e67f`, manteve UI/UX obrigatório com escopo funcional focado e deferiu a fidelidade completa ao Target UI. COORDINATOR roteou o único gate restante ao UI/UX.
