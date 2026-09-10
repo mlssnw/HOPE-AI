@@ -102,11 +102,12 @@ Required Reviews:
 ## Security Review
 
 - Coordination status: APPROVED_WITH_WARNINGS
-- Current target: `19e573893aba09da990256da05e7dab5af165ce1`
-- Last commit reviewed: `19e573893aba09da990256da05e7dab5af165ce1`
+- Current target: `88e194778b4399a6713f118470f9d861c553cd9e`
+- Last commit reviewed: `88e194778b4399a6713f118470f9d861c553cd9e`
 - Functional result: APPROVED_WITH_WARNINGS
 - Production readiness: REJECTED / BLOCKED
-- Resolved for Phase 5 scope: `SEC-006` e `SEC-007`
+- Confirmed for Phase 5 scope: schema gate fail-safe, chat degradado sem memória, `SEC-006` e `SEC-007`
+- New non-blocking warning: `SEC-017` — gate depende do lifespan; harness sintético não valida schema, autenticação ou isolamento
 - Deploy blockers: `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-008` e `SEC-012`
 - Scope warning: exclusão continua física e sem recuperação; autenticação, autorização, auditoria e controles operacionais permanecem planejados e obrigatórios antes de exposição pública
 - Report: [`security-review-latest.md`](reviews/security-review-latest.md)
