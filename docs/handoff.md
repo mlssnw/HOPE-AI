@@ -87,16 +87,17 @@ Required Reviews:
 
 ## Database Audit
 
-- Coordination status: REJECTED
-- Current target: `19e573893aba09da990256da05e7dab5af165ce1`
-- Last official result: REJECTED
-- Commit reviewed: `19e573893aba09da990256da05e7dab5af165ce1`
-- Base delivery covered: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
-- Feature blocker: `DB-005` — o runtime não verifica o migration head; sobre schema `0002`, o novo upsert de entidades falha porque depende da unique constraint criada apenas pela `0003`
-- Production blockers: `DB-001` role real de runtime não confirmada como restrita; `DB-003` hardening ainda não aplicado/validado no PostgreSQL real; `DB-004` busca vetorial sem provider e benchmark de produção
-- Resolved/mitigated in code: causa de `DB-002` corrigida no metadata; pool reduzido para 3+1; upsert atômico e FKs compostas implementados, todos condicionados à `0003`
-- Validation: 42 testes Python e 19 frontend passaram; head de código `20260903_0003`; SQL offline gerado; PostgreSQL real indisponível por DNS e nenhuma migration/mutação foi executada
-- Operational boundary: migration `0003`, role restrita, TLS `verify-full` e avaliação vetorial real continuam dependentes de ambiente seguro e autorização do usuário
+- Coordination status: APPROVED_WITH_WARNINGS
+- Current target: `88e194778b4399a6713f118470f9d861c553cd9e`
+- Last official result: APPROVED_WITH_WARNINGS
+- Commit reviewed: `88e194778b4399a6713f118470f9d861c553cd9e`
+- Baseline: `19e573893aba09da990256da05e7dab5af165ce1`
+- Feature blocker resolved: `DB-005` — o startup aceita somente uma revisão exatamente `20260903_0003`; tabela ausente, revisão vazia, `0002`, divergente, múltipla ou falha de consulta desativa memória antes de captura/upsert e preserva o chat degradado
+- Feature blockers: nenhum blocker de Database permanece para este escopo
+- Production blockers unchanged: `DB-001` role real de runtime não confirmada como restrita; `DB-003` hardening ainda não aplicado/validado no PostgreSQL real; `DB-004` busca vetorial sem provider e benchmark de produção
+- Validation: 36 testes focados e 45 testes Python completos passaram; matriz negativa adicional e lifespan descartável passaram; Alembic possui head único `20260903_0003`; PostgreSQL real permaneceu indisponível por DNS nas tentativas read-only
+- Warnings: ausência de validação PostgreSQL/asyncpg real; gate confia na marca Alembic; bypass de teste não comprova ambiente descartável; falha transitória exige reinício; migration `0003` continua sem ensaio real autorizado
+- Operational boundary: nenhuma migration, DDL, backfill, downgrade ou mutação real foi executada; esta aprovação funcional não autoriza produção
 - Report: [`database-audit-latest.md`](reviews/database-audit-latest.md)
 
 ## Security Review

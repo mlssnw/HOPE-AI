@@ -1,76 +1,68 @@
 # Database Audit — Latest
 
-- Status: REJECTED
-- Feature status: REJECTED — o runtime pode iniciar sobre schema `0002`, mas o upsert de entidades do Functional Commit exige a constraint única criada apenas pela `0003`
-- Production readiness: BLOCKED — migration, role restrita, TLS `verify-full` e provider vetorial de produção não foram aplicados/validados no ambiente real
-- Commit reviewed: `19e573893aba09da990256da05e7dab5af165ce1`
-- Base delivery covered: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
-- Environment: código exato do Functional Commit; testes SQLite descartáveis; PostgreSQL real anteriormente auditado em Aiven, atualmente inacessível por falha de resolução DNS
-- Read-only mode: YES no PostgreSQL real — nenhuma conexão foi estabelecida nesta rodada e nenhuma migration, DDL, CRUD ou manutenção foi executada; testes locais usaram bancos descartáveis
-- Applicability: APPLICABLE — a linhagem revisada altera schema, migration, integridade, pool, credenciais e pgvector; `19e5738` também altera consentimento e exclusão de memória
+- Status: APPROVED_WITH_WARNINGS
+- Feature status: APPROVED_WITH_WARNINGS — `DB-005` foi resolvido de forma fail-safe para o contrato da Fase 5
+- Production readiness: BLOCKED — role restrita, migration/hardening real, TLS forte e busca vetorial de produção continuam sem validação operacional
+- Commit reviewed: `88e194778b4399a6713f118470f9d861c553cd9e`
+- Baseline: `19e573893aba09da990256da05e7dab5af165ce1`
+- Environment: código exato do Functional Commit; testes SQLite descartáveis; tentativa read-only ao PostgreSQL configurado indisponível por resolução DNS
+- Read-only mode: YES — nenhuma migration, DDL, backfill, downgrade ou mutação foi executada em banco real
+- Applicability: APPLICABLE — a correção altera o gate de compatibilidade que decide se a memória persistente pode ser ativada
 - Date: 2026-09-10
 
-`HEAD` estava em `563cdf9`, à frente do alvo somente por documentação. Os arquivos funcionais entre `19e5738` e `HEAD` são idênticos.
+`HEAD` estava em `03049a5106ddd0ff1e7cea390452a621ba09cd29`, à frente do alvo por documentação. Não há diferença funcional em `backend/`, `migrations/` ou `tests/` entre o Functional Commit e o `HEAD` auditado.
 
-## PostgreSQL
+## DATABASE STATUS
 
-- Última versão real observada: `18.6`
-- Último head real registrado: `20260902_0002`
-- Head exigido pelo Functional Commit: `20260903_0003`
-- Estado nesta rodada: conexão indisponível por `getaddrinfo failed`; o head real e as precondições atuais não puderam ser reconsultados
+- PostgreSQL real, último estado conhecido: `18.6`.
+- pgvector real, último estado conhecido: `0.8.6`.
+- Database size atual: não revalidado; conexão indisponível por `gaierror`.
+- Alembic head do código: `20260903_0003`, único head.
+- Cadeia: `<base> → 20260902_0001 → 20260902_0002 → 20260903_0003`.
+- Última revisão real conhecida: `20260902_0002`.
+- Revisão exigida pelo runtime: exatamente `20260903_0003`.
+- Migration executada nesta revisão: NO.
+- Alembic upgrade/downgrade executado nesta revisão: NO.
 
-O relatório usa como evidência ambiental herdada o último Database Audit e o próprio handoff. Nenhum resultado do banco real foi inferido como atualizado.
+A tentativa de diagnóstico ao banco configurado foi feita dentro de transação explicitamente `READ ONLY`, com URL mascarada. Ela falhou por resolução DNS tanto no ambiente restrito quanto fora dele; portanto versão, tamanho, extensão, revisão, roles e dados atuais não foram inferidos como atualizados.
 
-## pgvector
+## SCHEMA STATUS
 
-- Última versão real observada: `0.8.6`
-- Tipo esperado: `vector(1536)`
-- Provider local: 1536 dimensões
-- Operador: cosseno `<=>`
-- Índice esperado: HNSW com `vector_cosine_ops`
+O gate está em `backend/database/session.py`: define `REQUIRED_MEMORY_SCHEMA_REVISION = "20260903_0003"`, verifica a existência de `alembic_version`, lê todas as linhas com `SELECT version_num FROM alembic_version`, ordena as revisões e aceita somente a tupla unitária `("20260903_0003",)`.
 
-O metadata SQLAlchemy agora declara corretamente `ix_memories_embedding_hnsw`, corrigindo a causa original de `DB-002`. O commit também impede `local-hash` quando `APP_ENVIRONMENT` é `production`, `prod` ou `staging`. Ainda não existe adapter semântico de produção nem conjunto real para validar recall, plano ou latência.
+Comportamento validado:
 
-## Migration
+| Estado observado | Resultado |
+|---|---|
+| tabela `alembic_version` ausente | incompatível; memória desativada |
+| tabela presente e vazia | incompatível; memória desativada |
+| revisão `20260902_0002` | incompatível; memória desativada |
+| revisão divergente | incompatível; memória desativada |
+| múltiplas revisões | incompatível; memória desativada |
+| duas linhas duplicadas com a revisão exigida | incompatível; memória desativada |
+| falha de conexão/consulta/inspeção | incompatível; memória desativada |
+| uma única revisão `20260903_0003` | compatível; memória ativada |
 
-- Current code head: `20260903_0003`
-- Expected real head: `20260903_0003`
-- Last known real head: `20260902_0002`
-- Cadeia: `<base> → 20260902_0001 → 20260902_0002 → 20260903_0003`
-- SQL offline `0002:0003`: gerado com sucesso
-- Migration executada nesta rodada: NO
-- Downgrade executado: NO
+A checagem é read-only por construção: no ensaio instrumentado em SQLite emitiu somente a inspeção de catálogo (`PRAGMA ...table_info`) e o `SELECT` de versão. A inspeção equivalente do PostgreSQL usa consultas de catálogo. Não há chamada de Alembic, `upgrade`, `metadata.create_all` ou migration no startup.
 
-A `0003` adiciona:
+O gate confia no versionamento do Alembic e não faz uma segunda inspeção estrutural de todas as constraints/colunas. Isso é aceitável para resolver `DB-005`, mas schema manualmente adulterado ou indevidamente estampado ainda pode produzir falso positivo operacional.
 
-- paridade do índice HNSW no metadata;
-- constraints de faixa e conteúdo;
-- unicidade canônica de entidades;
-- chaves compostas para garantir pertencimento ao mesmo usuário;
-- constraints contra autorrelações.
+## PGVECTOR STATUS
 
-Não existe teste de upgrade/downgrade da migration em PostgreSQL descartável. A migration cria constraints diretamente, sem etapa `NOT VALID`, validação prévia embutida ou tratamento de duplicatas legadas; em base maior ou divergente, poderá bloquear ou falhar.
+- Dimensão do modelo e da migration: `vector(1536)`.
+- Configuração aceita apenas `EMBEDDING_DIMENSIONS=1536`.
+- Provider local: 1536 dimensões, exclusivo de desenvolvimento/teste.
+- Provider semântico de produção: não configurado.
+- Métrica implementada: distância cosseno por `<=>`.
+- Índice: HNSW com `vector_cosine_ops`, declarado na migration e no metadata.
+- IVFFlat: não utilizado.
+- Plano/latência/recall em PostgreSQL real: não revalidado.
 
-## Schema
+A correção de `DB-005` não altera dimensão, operador ou índice. Os testes SQLite validam o controle do gate e contratos de metadata, mas não provam semântica, plano de execução ou desempenho de pgvector/PostgreSQL.
 
-O metadata do Functional Commit contém os contratos esperados da `0003`. Os testes confirmam a presença do HNSW, checks, unique constraints e foreign keys compostas.
+## DATA QUALITY
 
-Lacunas:
-
-- o processo web não verifica `alembic_version` na inicialização;
-- o schema ainda preserva FKs simples ao lado das novas FKs compostas, duplicando validação e custo de cascata;
-- `ck_memories_mention_count_nonnegative` permite zero, embora a semântica e o default atuais iniciem em um;
-- `entity_relations` continua sem unicidade equivalente à de `memory_relations`.
-
-## Data Integrity
-
-O teste `test_database_rejects_cross_user_relations` passou e confirma o contrato de isolamento no metadata criado do zero. Isso não valida a aplicação da migration sobre dados legados.
-
-A última auditoria real não encontrou duplicatas, valores fora de faixa ou referências cruzadas, mas esses dados são de 2026-09-03 e não foram tratados como prova atual devido à indisponibilidade da conexão.
-
-## Memory Data Quality
-
-Último estado real conhecido:
+Nenhum dado real foi lido ou alterado nesta rodada. O último estado conhecido permanece histórico, não atual:
 
 - 3 usuários;
 - 0 memórias;
@@ -78,110 +70,105 @@ A última auditoria real não encontrou duplicatas, valores fora de faixa ou ref
 - 13 eventos de memória;
 - 0 embeddings ativos.
 
-O Functional Commit não implementa limpeza automática das entidades logicamente órfãs. Nenhum dado foi removido ou corrigido nesta revisão.
+Duplicatas, registros vazios, relações órfãs, entidades órfãs, faixas de `importance`/`confidence`, embeddings nulos e timestamps atuais não puderam ser revalidados sem a instância PostgreSQL.
 
-## Relations
+## INTEGRITY
 
-As novas FKs compostas impedem relações entre usuários diferentes quando a `0003` está aplicada. O teste isolado correspondente passou.
+- O schema incompatível é bloqueado antes de qualquer captura, correção ou upsert de entidade.
+- `configure_memory(None)` remove `MemoryManager` e `MemoryService` do estado da aplicação e recria o Orchestrator sem persistência.
+- APIs de memória respondem `503` com diagnóstico do schema.
+- O teste entregue para `0002 + runtime novo` confirmou: health HTTP 200 com database indisponível, chat HTTP 200, `memory_available=false` e API de memória HTTP 503.
+- Checks, unicidade de entidade e FKs compostas permanecem definidos no metadata/migration `0003`; sua aplicação sobre dados reais não foi validada nesta revisão.
 
-O fluxo de exclusão introduzido por `19e5738` não remove a memória durante a interpretação do chat: retorna uma confirmação vinculada ao ID. A API só chama a exclusão quando `X-Hope-Confirm-Memory-Id` corresponde ao UUID da rota. Os testes confirmam que ausência ou divergência retorna HTTP 428 sem mutação.
+### DB-005
 
-## Indexes
+- State: RESOLVED no Functional Commit revisado.
+- Severity original: HIGH.
+- Blocking para Feature Status: NO.
+- Evidence: gate no lifespan valida exatamente `20260903_0003`; todos os estados ausente, inacessível, vazio, anterior, divergente ou múltiplo resultam em memória desativada.
+- Regression coverage: o teste `test_runtime_disables_memory_safely_when_schema_is_still_0002` cobre a falha original e o chat degradado.
+- Mutation boundary: nenhuma migration ou correção automática é iniciada pela aplicação.
 
-- HNSW declarado em migration e metadata: corrigido no código.
-- Índices compostos existentes atendem parte das novas FKs por usuário.
-- FKs simples legadas continuam podendo exigir índices iniciados diretamente pelo ID referenciado para cascades eficientes.
-- Busca textual e ordenação por importância continuam sem os índices especializados apontados no audit anterior.
+## PERFORMANCE
 
-Nenhum plano real foi obtido nesta rodada.
+- O gate executa uma vez por processo no startup, com inspeção de tabela e leitura integral de `alembic_version`; a tabela normalmente contém uma única linha.
+- O custo é desprezível em condição normal.
+- Uma falha transitória no startup mantém a memória desativada até reinício. É fail-safe, mas pode prolongar indisponibilidade após recuperação do banco.
+- Não existe timeout específico do gate nem retry controlado; o tempo de conexão depende do driver/rede.
+- Existe janela teórica entre a checagem única e alteração posterior do schema. Migrations devem permanecer coordenadas fora do processo web.
+- Planos de busca vetorial, sequential scans, `pg_stat_statements`, N+1 e orçamento multi-worker não foram medidos nesta rodada.
 
-## Vector Search
+## SECURITY
 
-O bloqueio do provider `local-hash` em ambientes declarados como deploy é uma melhoria válida, mas depende de `APP_ENVIRONMENT` estar configurado corretamente; o default permanece `development`.
+- A URL foi exibida somente com senha mascarada: `postgresql+asyncpg://avnadmin:***@host/hope?ssl=require`.
+- A validação do schema não usa a URL administrativa nem tenta elevar privilégio.
+- Erros de inspeção/permissão falham fechados para memória e não expõem a exceção ao cliente.
+- O health representa schema incompatível como banco configurado porém indisponível.
+- A role real continua sem comprovação de privilégio mínimo; o identificador histórico sugere uso administrativo.
+- TLS atual permanece em `require`, não `verify-full`.
+- RLS e autenticação real permanecem fora desta correção.
 
-Sem provider semântico, embeddings ativos ou PostgreSQL acessível, `DB-004` permanece aberto para Production Readiness.
+## BLOCKERS
 
-## Performance
+### Feature Status
 
-- Novo default de pool: 3 conexões + 1 overflow por processo, timeout 30 s e recycle 900 s.
-- A mudança reduz o risco anterior de um processo consumir 15 das 20 conexões disponíveis.
-- Múltiplos workers ainda exigem orçamento explícito de conexões.
-- N+1 na vinculação de entidades e nos eventos de acesso permanece.
-- `pg_stat_statements` e `track_io_timing` não puderam ser revalidados.
+Nenhum blocker de Database permanece para o escopo de `DB-005` no commit `88e194778b4399a6713f118470f9d861c553cd9e`.
 
-## Security
+### Production Readiness
 
-- `DATABASE_URL` e `DATABASE_ADMIN_URL` agora são separados na configuração.
-- O engine oculta parâmetros SQL e `safe_url` mascara a senha.
-- A separação de configuração não altera a role real por si só.
-- O último ambiente conhecido ainda usava `avnadmin`; não foi possível confirmar substituição nesta rodada.
-- TLS `verify-full` é recomendado na documentação, mas não é imposto pelo runtime.
-- RLS não foi implementada; o isolamento proposto depende das FKs compostas da `0003` e dos filtros da aplicação.
-- Opt-out de memória no chat bloqueia recuperação, captura e comandos de memória server-side nos testes.
+#### DB-001 — Role real de runtime não confirmada como restrita
 
-## Blockers
+- Severity: CRITICAL.
+- Blocking: YES somente para Production Readiness.
+- Required action: provisionar e auditar role mínima de runtime; manter credencial administrativa exclusiva para migrations autorizadas.
 
-### DB-005 — Runtime não bloqueia schema incompatível
+#### DB-003 — Migration/hardening não aplicado e validado no PostgreSQL real
 
-- Severity: HIGH
-- Blocking: YES para Feature Status
-- Evidence: `EntityRepository.upsert` executa `ON CONFLICT (user_id, normalized_name, entity_type)`, mas essa unique constraint só existe após `20260903_0003`; não há verificação de `alembic_version` no startup.
-- Reproduction: em schema descartável equivalente ao `0002`, o upsert falhou com `OperationalError: ON CONFLICT clause does not match any PRIMARY KEY or UNIQUE constraint`.
-- Impact: o backend pode iniciar aparentemente saudável sobre `0002` e falhar durante captura/correção que extraia entidades.
-- Required action: adicionar um gate explícito de compatibilidade do schema ou impedir ativação da memória até o head requerido; cobrir o caminho `0002 + runtime novo` com teste.
+- Severity: HIGH.
+- Blocking: YES somente para Production Readiness.
+- Required action: validar `0002 → 0003` em clone/instância PostgreSQL descartável, checar precondições e solicitar autorização separada antes de produção.
 
-### DB-001 — Role real de runtime não confirmada como restrita
+#### DB-004 — Busca vetorial de produção sem certificação
 
-- Severity: CRITICAL
-- Blocking: YES para Production Readiness
-- State: parcialmente tratado no código pela separação das URLs, mas não validado no ambiente real.
-- Required action: provisionar e auditar role mínima de runtime; manter a role administrativa somente para migrations autorizadas.
+- Severity: HIGH.
+- Blocking: YES somente para Production Readiness.
+- Required action: escolher provider semântico compatível com 1536 dimensões e medir qualidade, plano, recall e latência em dados representativos.
 
-### DB-003 — Hardening de isolamento ainda não aplicado/validado no PostgreSQL real
+## WARNINGS
 
-- Severity: HIGH
-- Blocking: YES para Production Readiness
-- State: corrigido no metadata e na `0003`, pendente de teste PostgreSQL e aplicação autorizada.
-- Required action: validar upgrade em clone/instância descartável, checar precondições e somente então solicitar autorização para produção.
+1. PostgreSQL real permaneceu inacessível por DNS; status, tamanho, roles, TLS, dados, head e pgvector atuais não foram revalidados.
+2. A matriz negativa foi executada em SQLite descartável. O fluxo SQLAlchemy é compatível em desenho com PostgreSQL/Alembic, mas não substitui teste real do driver `asyncpg`, catálogo, permissões e pgvector.
+3. O gate aceita a marca Alembic, não valida deriva estrutural. Um banco estampado incorretamente com `20260903_0003` pode passar mesmo sem todos os objetos esperados.
+4. O bypass `_schema_created_for_tests` é explícito e não é chamado no startup, mas não verifica tecnicamente que o ambiente seja `test` ou que a URL seja descartável. Uso indevido de `create_schema_for_tests` sobre banco persistente contornaria o gate durante aquele processo.
+5. Falha transitória de validação exige reinício para reativar memória; não há retry/recovery automático.
+6. A falha é registrada sem a causa técnica da exceção. Isso evita vazamento, mas reduz diagnóstico operacional; observabilidade segura deve distinguir DNS, credencial, permissão e timeout.
+7. O check ocorre uma vez por processo e não elimina corrida com migration externa após o startup.
+8. A migration `0003` ainda não possui teste de upgrade em PostgreSQL descartável com dados representativos.
+9. Dois warnings não funcionais apareceram no pytest: depreciação Starlette/httpx e cache sem permissão.
 
-### DB-004 — Busca vetorial de produção continua sem certificação
+## VALIDATION PERFORMED
 
-- Severity: HIGH
-- Blocking: YES para Production Readiness
-- State: `local-hash` agora é recusado em ambientes declarados de deploy, mas não há provider real nem benchmark.
-- Required action: escolher provider compatível com 1536 dimensões e executar avaliação representativa de qualidade e desempenho.
+- Functional Commit confirmado: `88e194778b4399a6713f118470f9d861c553cd9e`.
+- Baseline confirmado como ancestral: `19e573893aba09da990256da05e7dab5af165ce1`.
+- Diferença funcional `88e1947..HEAD`: nenhuma em `backend/`, `migrations/` ou `tests/`.
+- Testes focados de banco, memória, orchestrator, realtime e harness: `36 passed`.
+- Suíte Python completa: `45 passed`, 2 warnings não funcionais.
+- Matriz descartável adicional: tabela ausente, vazia, `0002`, divergente, múltipla, duplicada, exata e falha de consulta; todos os resultados foram fail-safe conforme esperado.
+- Lifespan exercitado adicionalmente para ausência, vazio, `0002`, divergência, múltiplas revisões e revisão exata.
+- SQL instrumentado durante o check: somente inspeção de catálogo e `SELECT version_num`.
+- Alembic heads: único head `20260903_0003`.
+- Alembic history: cadeia linear `0001 → 0002 → 0003`.
+- `git diff --check` entre baseline e alvo: sem erros.
+- PostgreSQL real: duas tentativas read-only, ambas falharam por `gaierror`; nenhuma query de dados ou mutação foi concluída.
+- Frontend: não reexecutado porque `npm` não estava disponível no PATH; não é evidência necessária para a conclusão de Database.
 
-## Resolved or Partially Resolved Findings
+## RECOMMENDATIONS
 
-- `DB-002`: causa no metadata corrigida; HNSW agora é declarado. Fechamento definitivo depende de `alembic check` limpo após a `0003` em PostgreSQL.
-- Pool excessivo: mitigado de 5+10 para 3+1 por processo.
-- Entidade duplicada por corrida: upsert atômico implementado, condicionado à `0003`.
-- Isolamento por usuário: FKs compostas implementadas, condicionado à `0003`.
+1. COORDINATOR deve marcar DATABASE como `APPROVED_WITH_WARNINGS` para `88e194778b4399a6713f118470f9d861c553cd9e` e remover `DB-005` dos Feature Blockers.
+2. Preservar `DB-001`, `DB-003` e `DB-004` exclusivamente em Production Readiness; este parecer não autoriza migration, deploy, alteração de role, TLS ou provider.
+3. Antes de produção, testar `0002 → 0003` em PostgreSQL descartável/clone, validar schema real, roles, TLS, pgvector e planos de consulta.
+4. Em evolução futura, restringir tecnicamente `create_schema_for_tests` a ambiente e banco comprovadamente descartáveis, e acrescentar observabilidade segura/retry controlado ao gate.
 
-## Warnings
+## CONCLUSION
 
-1. PostgreSQL real indisponível por DNS; head, roles, TLS e dados atuais não foram revalidados.
-2. A migration `0003` não possui teste real de upgrade/downgrade em PostgreSQL descartável.
-3. Constraints são criadas diretamente e podem bloquear/falhar em dados legados divergentes.
-4. `APP_ENVIRONMENT=development` é fail-open se a variável for omitida em deploy.
-5. TLS `verify-full` continua orientação, não requisito aplicado pelo código.
-6. Entidades logicamente órfãs continuam sem política de coleta.
-7. `mention_count >= 0` é mais permissivo que a semântica atual de contagem iniciada em um.
-8. N+1 e índices de busca/ordenação continuam como dívida de escala.
-9. Dois warnings não funcionais nos testes Python: depreciação Starlette/httpx e cache do pytest sem permissão.
-
-## Validation Performed
-
-- Functional Commit confirmado: `19e573893aba09da990256da05e7dab5af165ce1`.
-- Diferença `19e5738..HEAD`: somente documentação.
-- Python: `42 passed`.
-- Frontend: `19 passed`.
-- Alembic heads: `20260903_0003` único head.
-- SQL offline da migration `0002:0003`: gerado com sucesso.
-- Reproduzida incompatibilidade do upsert com schema anterior sem a unique constraint.
-- PostgreSQL real: conexão tentou resolução no sandbox e fora dele; ambas falharam por DNS.
-- Nenhum serviço pago, migration real, downgrade ou mutação em banco real foi executado.
-
-## Recommendation
-
-`REJECTED`. Development deve corrigir `DB-005` em novo Functional Commit. O código da `0003` melhora `DB-002` e `DB-003`, mas sua aplicação permanece uma ação sensível separada e não autorizada. `DB-001`, `DB-003` e `DB-004` continuam bloqueando apenas Production Readiness até validação ambiental e decisão do usuário.
+`APPROVED_WITH_WARNINGS`. `DB-005` está resolvido no escopo funcional: o runtime só ativa memória diante de uma única revisão exatamente igual a `20260903_0003`, falha fechado nos demais estados, preserva o chat degradado e não executa migration ou mutação automática. A aprovação não altera os blockers `DB-001`, `DB-003` e `DB-004`, que continuam impedindo somente Production Readiness.
