@@ -7,15 +7,15 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 ## Current Phase
 
 - Phase: 5
-- Phase status: CHANGES_REQUESTED
-- Feature status: CHANGES_REQUESTED — reviews obrigatórios ainda não aprovam o Functional Commit vigente
+- Phase status: WAITING_FOR_REVIEW
+- Feature status: WAITING_FOR_REVIEW — QA concluiu o re-review no arquivo `latest`, mas ainda precisa persistir o resultado em sua seção do handoff; UI/UX e consolidação do PLANNER permanecem pendentes
 - Production readiness: BLOCKED — Security rejeitou deploy público
 - Branch: `main`
 - Application version: 6.0 / Phase 5
 - Scope: chat consciente de memória, personalidade HOPE e hardening pós-auditoria da fase 5
 - Last approved commit: NOT_RECORDED
-- Working tree expected: preservar as alterações preexistentes dos reviewers em `docs/reviews/`; nenhum Work de governança deve incorporá-las ou reescrevê-las
-- Database environment: o último Database Audit foi read-only no head `20260902_0002`; a migration `20260903_0003` existe no código, mas não foi aplicada no PostgreSQL real
+- Working tree expected: preservar a alteração preexistente em `AGENTS.md` e os assets não rastreados; os commits de review não incorporam código funcional
+- Database environment: o re-review de Database validou o gate de schema em ambientes descartáveis; PostgreSQL real permaneceu inacessível e a migration `20260903_0003` não foi aplicada nem validada no ambiente real
 
 Required Reviews:
 
@@ -44,23 +44,23 @@ Required Reviews:
 
 ## Current Functional Commit
 
-- Commit: `19e573893aba09da990256da05e7dab5af165ce1`
+- Commit: `88e194778b4399a6713f118470f9d861c553cd9e`
 - Phase: 5
 - Created by: DEV
 - Status: READY_FOR_REVIEW
-- Base delivery: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
-- Notes: `19e5738` declara correções para `SEC-006` e `SEC-007`; `adfc728` permanece na linhagem com as correções declaradas de `QA-001`, `QA-002` e hardening de banco. Nenhuma delas é oficialmente verificada até os reviewers responsáveis persistirem resultados contra o Functional Commit vigente.
+- Base corrected: `19e573893aba09da990256da05e7dab5af165ce1`
+- Notes: `88e1947` corrige `QA-001` e `DB-005`. QA, Database e Security emitiram `APPROVED_WITH_WARNINGS` contra o hash exato; Database e Security completaram a persistência no handoff, enquanto QA ainda precisa atualizar sua seção própria para oficializar operacionalmente o resultado.
 
 ## Review Matrix
 
 | Work | Required | Status | Commit |
 |---|---|---|---|
-| DEV | YES | CHANGES_REQUESTED | `19e573893aba09da990256da05e7dab5af165ce1` |
-| QA | YES | REJECTED | `19e573893aba09da990256da05e7dab5af165ce1` |
-| DATABASE | YES | REJECTED | `19e573893aba09da990256da05e7dab5af165ce1` |
-| SECURITY | YES | APPROVED_WITH_WARNINGS | `19e573893aba09da990256da05e7dab5af165ce1` |
-| UI/UX | YES | WAITING_FOR_REVIEW | `19e573893aba09da990256da05e7dab5af165ce1` |
-| PLANNER | YES | BLOCKED | `19e573893aba09da990256da05e7dab5af165ce1` |
+| DEV | YES | READY_FOR_REVIEW | `88e194778b4399a6713f118470f9d861c553cd9e` |
+| QA | YES | WAITING_FOR_REVIEW | `88e194778b4399a6713f118470f9d861c553cd9e` |
+| DATABASE | YES | APPROVED_WITH_WARNINGS | `88e194778b4399a6713f118470f9d861c553cd9e` |
+| SECURITY | YES | APPROVED_WITH_WARNINGS | `88e194778b4399a6713f118470f9d861c553cd9e` |
+| UI/UX | YES | WAITING_FOR_REVIEW | `88e194778b4399a6713f118470f9d861c553cd9e` |
+| PLANNER | YES | BLOCKED | `88e194778b4399a6713f118470f9d861c553cd9e` |
 
 ## Development
 
@@ -141,17 +141,17 @@ Required Reviews:
 
 - Autonomy level: 2.5
 - Status: APPROVED
-- Operational conclusion: QA e DATABASE rejeitaram `19e5738` por `QA-001` e `DB-005`; SECURITY aprovou o escopo funcional com ressalvas; UI/UX aprovou e persistiu o Target UI sem conceder aprovação de fidelidade à implementação atual
-- Routing: LEVEL 1 — DEV, para corrigir somente `QA-001` e `DB-005` em novo Functional Commit antes de nova rodada de reviews
-- Boundary: nenhum veredito técnico foi alterado e nenhum blocker foi considerado resolvido apenas pela declaração do DEV
+- Operational conclusion: QA, Database e Security re-revisaram `88e1947` e emitiram `APPROVED_WITH_WARNINGS`; `QA-001` e `DB-005` não permanecem como blockers técnicos nos relatórios atuais. O resultado de QA ainda não é plenamente oficial porque sua seção própria do handoff permanece presa a `19e5738`.
+- Routing: LEVEL 1 — QA, exclusivamente para persistir em sua seção do handoff o resultado já registrado em `qa-latest.md`, sem repetir review, alterar código ou reescrever parecer alheio
+- Boundary: COORDINATOR atualizou somente Current Phase, Current Functional Commit, Review Matrix, blockers, warnings, Next Action e histórico; não concedeu aprovação técnica nem alterou seções ou relatórios de ownership dos reviewers
 
 ## Current Blockers
 
 ### Feature Blockers
 
-- `QA-001`: o harness E2E oficial não satisfaz o contrato tipado de recuperação e não consegue validar no browser o fluxo memory-aware nem a confirmação destrutiva. Estado: CHANGES_REQUESTED para DEV.
-- `DB-005`: o runtime pode iniciar sobre schema `0002`, mas o upsert de entidades exige a constraint única da migration `0003`; falta gate explícito de compatibilidade ou bloqueio seguro da memória. Estado: CHANGES_REQUESTED para DEV.
-- UI/UX pós-implementação continua `WAITING_FOR_REVIEW`; a aprovação do Target UI não equivale à aprovação da implementação atual.
+- Nenhum blocker funcional de QA, Database ou Security permanece aberto nos relatórios `latest` contra `88e1947`.
+- Persistência operacional de QA pendente: `qa-latest.md` aprova com warnings, mas a seção QA do handoff ainda aponta para `19e5738`; o COORDINATOR não pode atualizá-la em nome do QA.
+- UI/UX permanece `WAITING_FOR_REVIEW`. O relatório visual vigente aponta para `19e5738`, aprova o Target UI, não concede aprovação de fidelidade e condiciona a implementação do P0 a novo roteamento. Após a persistência de QA, PLANNER deve decidir o enquadramento sem ampliar retroativamente a Fase 5.
 
 ### Production Blockers
 
@@ -162,32 +162,28 @@ Required Reviews:
 ## Warnings
 
 - A direção visual foi persistida e aprovada; `UIUX-001` a `UIUX-005` são gaps para implementação futura do dashboard e não ampliam automaticamente o escopo corretivo atual da Fase 5.
-- `QA-003` permanece um warning não verificado no novo Functional Commit.
-- Warnings de Database e Security permanecem nos relatórios dos respectivos papéis e não devem ser tratados como resolvidos.
+- `QA-003` permanece LOW e não bloqueante; o re-review de QA o confirmou no novo Functional Commit.
+- `SEC-017` permanece MEDIUM e não bloqueante: o gate depende do lifespan e o harness sintético não valida schema, autenticação ou isolamento.
+- Warnings de Database sobre ausência de PostgreSQL real, confiança na marca Alembic e limitações operacionais permanecem abertos.
+- O aviso de depreciação Starlette/TestClient permanece; a repetição independente confirmou 45 testes Python e 19 testes frontend aprovados.
 - Autenticação real continua planejada; identidade fornecida pelo cliente não é autenticação.
 - Commits locais ainda não enviados a `origin/main` exigem nova verificação antes de cada revisão.
 - Warnings aceitos para avanço devem ser copiados para [`docs/backlog.md`](backlog.md), sem removê-los do relatório original.
 
 ## Next Action
 
-- Role: DEV
-- Status: CHANGES_REQUESTED
-- Task: corrigir somente `QA-001` e `DB-005` em novo Functional Commit; restaurar o harness E2E memory-aware e adicionar proteção fail-safe contra runtime incompatível com o migration head, sem aplicar migration real, iniciar implementação do dashboard ou incorporar blockers exclusivos de produção
-- Target commit: `19e573893aba09da990256da05e7dab5af165ce1`
+- Role: QA
+- Status: WAITING_FOR_REVIEW
+- Task: atualizar somente a seção QA deste handoff para refletir o resultado `APPROVED_WITH_WARNINGS` já persistido em `docs/reviews/qa-latest.md`; citar o Functional Commit exato, registrar `QA-001` como encerrado, preservar `QA-003` e não repetir review nem alterar código
+- Target commit: `88e194778b4399a6713f118470f9d861c553cd9e`
 - Required inputs:
   - [`AGENTS.md`](../AGENTS.md)
-  - [`docs/architecture.md`](architecture.md)
-  - [`docs/phase-5.md`](phase-5.md)
   - [`docs/reviews/qa-latest.md`](reviews/qa-latest.md)
-  - [`docs/reviews/database-audit-latest.md`](reviews/database-audit-latest.md)
-  - [`docs/reviews/security-review-latest.md`](reviews/security-review-latest.md)
 - Expected output:
-  - novo Functional Commit isolado com correções e testes proporcionais para `QA-001` e `DB-005`
-  - harness oficial validando memória habilitada e confirmação destrutiva end-to-end
-  - runtime falhando de modo seguro ou desativando memória quando o schema estiver abaixo do head exigido, com teste do cenário `0002 + runtime novo`
-  - documentação da Fase 5 e seção Development atualizadas com o novo hash
-- Blocking dependencies: nenhuma decisão adicional; a solução não pode executar migration ou mutação em banco real
-- Parallel work: nenhuma implementação visual do dashboard; UI/UX, PLANNER e reviewers aguardam o novo Functional Commit
+  - seção QA alinhada a `qa-latest.md` e ao commit `88e1947`
+  - commit exclusivamente documental, sem alterações funcionais ou em arquivos de outro owner
+- Blocking dependencies: nenhuma; o parecer técnico de QA já foi concluído
+- Parallel work: somente leitura e preparação pelo PLANNER/UI/UX; nenhuma implementação, nenhum review duplicado e nenhuma escrita concorrente em `docs/handoff.md`
 - Escalation: NONE
 
 ## Recent History
@@ -202,3 +198,4 @@ Required Reviews:
 - 2026-09-04 — DEV entregou `19e5738` com correções declaradas para `SEC-006` e `SEC-007`; COORDINATOR abriu a rodada paralela de QA, DATABASE, SECURITY e UI/UX no novo Functional Commit.
 - 2026-09-10 — UI/UX declarou o HOPE Main Dashboard como direção visual principal; COORDINATOR registrou `APPROVED BY UI/UX — PERSISTENCE PENDING` e roteou a formalização ao owner visual.
 - 2026-09-10 — QA rejeitou `19e5738` por `QA-001`; DATABASE rejeitou por `DB-005`; SECURITY aprovou a feature com ressalvas e UI/UX persistiu o Target UI. COORDINATOR roteou os dois blockers funcionais ao DEV.
+- 2026-09-10 — DEV entregou `88e1947`; QA, Database e Security aprovaram o escopo funcional com warnings. COORDINATOR consolidou o novo alvo e roteou ao QA a persistência faltante em sua seção do handoff antes da consolidação do PLANNER.

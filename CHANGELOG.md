@@ -7,7 +7,7 @@ Histórico verificável da evolução do HOPE AI. Commits documentais posteriore
 - **Período:** 2026-09-02 a 2026-09-10
 - **Versão:** `6.0.0-phase.5`
 - **Functional Commit atual:** `88e194778b4399a6713f118470f9d861c553cd9e`
-- **Status:** `READY_FOR_REVIEW` — QA, Database e Security ainda precisam revisar o hash atual; produção pública permanece bloqueada.
+- **Status:** `WAITING_FOR_REVIEW` — QA, Database e Security aprovaram o hash atual com ressalvas; a persistência operacional de QA e a consolidação UI/UX/Planner permanecem pendentes. Produção pública continua bloqueada.
 
 ### Resumo
 
