@@ -16,18 +16,20 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 - Last approved commit: `88e194778b4399a6713f118470f9d861c553cd9e`
 - Working tree expected: preservar a alteração preexistente em `AGENTS.md` e os assets não rastreados; os commits de review não incorporam código funcional
 - Database environment: o re-review de Database validou o gate de schema em ambientes descartáveis; PostgreSQL real permaneceu inacessível e a migration `20260903_0003` não foi aplicada nem validada no ambiente real
-- Next authorized planning target: Phase 6 — Identity / Authentication / Authorization
+- Next authorized planning target: revisão single-user da arquitetura e do roadmap, priorizando o Target UI antes de Security & Permissions
 
 ## User Strategic Decision
 
 - Decision date: 2026-09-10
-- Status: APPROVED — PLANNING_ONLY
-- Next priority: Phase 6 — Identity / Authentication / Authorization
-- Strategic order: 1) Phase 6 Identity / Authentication / Authorization; 2) Production Hardening; 3) implementação completa do HOPE Main Dashboard
-- Rationale: identidade e autorização são dependências para isolamento multiusuário, RLS, memória por usuário, PermissionManager, agentes, tools, ações sensíveis e futuras integrações
-- Production sequencing: hardening de produção vem depois da fundação de identidade para reduzir retrabalho
-- Visual boundary: o Target UI permanece aprovado e obrigatório como direção futura, mas não bloqueia o planejamento ou a implementação posteriormente autorizada da Fase 6
-- Authorization boundary: esta decisão autoriza somente o PLANNER a desenhar a Fase 6; não autoriza DEV, código, migration, provider, credencial, custo, produção ou dashboard
+- Status: APPROVED — PLANNING_ONLY; a decisão anterior de priorizar autenticação multiusuário está SUPERSEDED
+- Product model: SINGLE_USER — HOPE é uma assistente pessoal de uso individual e reconhece um único owner
+- Removed from immediate roadmap: autenticação multiusuário, RBAC complexo, isolamento entre múltiplos usuários, RLS orientado a tenants, organizações/teams e infraestrutura de identidade enterprise
+- Future security objective: Single-User Security & Permissions para tools, agentes, filesystem, código, Git, banco, integrações, ações externas e operações destrutivas
+- Permission model direction: `SAFE` permite execução automática; `WRITE` depende do contexto; `SENSITIVE` exige confirmação do owner; `DESTRUCTIVE` exige confirmação explícita forte
+- Priority proposal for Planner validation: 1) implementação completa do Target UI; 2) single-user permissions; 3) tools/coding; 4) agents; 5) Production Hardening quando necessário
+- Rationale: segurança deve proteger o único owner e governar efeitos reais sem importar complexidade de tenants, organizações ou identidade enterprise
+- Visual boundary: o Target UI permanece aprovado e volta a ser o primeiro candidato de implementação após planejamento e autorização explícita
+- Authorization boundary: esta decisão autoriza somente o PLANNER a revisar arquitetura, roadmap e sequência de fases; não autoriza DEV, código, migration, credencial, custo, produção ou dashboard
 
 Required Reviews:
 
@@ -52,7 +54,7 @@ Required Reviews:
 - Gap matrix: [`dashboard-gap-matrix.md`](design/dashboard-gap-matrix.md)
 - Rule: `VISUAL TARGET` não significa `IMPLEMENTED FEATURE`; áreas exibidas continuam classificadas pelo código e por `docs/architecture.md`
 - Public presentation: pode ser usado como hero, portfólio, apresentação ou LinkedIn somente como interface conceitual/alvo enquanto houver partes não implementadas
-- Implementation gate: a persistência visual está concluída, mas a implementação completa do dashboard permanece terceira na ordem estratégica e exige fase própria e autorização futura; não bloqueia a Fase 6
+- Implementation gate: o dashboard é o primeiro candidato na nova ordem proposta, mas continua sem autorização de implementação até o PLANNER definir fase, escopo, critérios, reviews e receber aprovação explícita da usuária
 
 ## Current Functional Commit
 
@@ -166,8 +168,8 @@ Required Reviews:
 
 - Autonomy level: 2.5
 - Status: APPROVED
-- Operational conclusion: a usuária escolheu a Fase 6 — Identity / Authentication / Authorization como próxima prioridade, seguida por Production Hardening e, depois, implementação completa do Target UI. A autorização atual cobre somente planejamento.
-- Routing: LEVEL 1 — PLANNER, para desenhar formalmente a Fase 6 e devolver escopo revisável antes de qualquer implementação
+- Operational conclusion: a usuária corrigiu a premissa do produto para single-user, removeu complexidade multiusuário do roadmap imediato e propôs Target UI → single-user permissions → tools/coding → agents → Production Hardening. A autorização atual cobre somente replanejamento.
+- Routing: LEVEL 2 — PLANNER, para revisar a arquitetura e o roadmap, redefinir a sequência/nomenclatura das próximas fases e especificar um PermissionManager simples por risco sem implementar
 - Boundary: COORDINATOR atualizou somente Current Phase, Current Functional Commit, Review Matrix, blockers, warnings, Next Action e histórico; não concedeu aprovação técnica nem alterou seções ou relatórios de ownership dos reviewers
 
 ## Current Blockers
@@ -201,7 +203,7 @@ Required Reviews:
 
 - Role: PLANNER
 - Status: NOT_STARTED
-- Task: desenhar a Fase 6 — Identity / Authentication / Authorization; definir goal, scope, non-goals, dependencies, opções e trade-offs de identidade, critérios de aceite, riscos, migração da identidade transitória, limites com RLS/PermissionManager e Required Reviews; não implementar código
+- Task: substituir a premissa multiusuário pela arquitetura single-user; reavaliar e persistir o roadmap proposto Target UI → Single-User Security & Permissions → tools/coding → agents → Production Hardening; definir como um único owner será reconhecido e como o PermissionManager aplicará níveis `SAFE`, `WRITE`, `SENSITIVE` e `DESTRUCTIVE`; não implementar código
 - Target commit: `88e194778b4399a6713f118470f9d861c553cd9e`
 - Required inputs:
   - [`AGENTS.md`](../AGENTS.md)
@@ -211,14 +213,16 @@ Required Reviews:
   - [`docs/reviews/security-review-latest.md`](reviews/security-review-latest.md)
   - [`docs/reviews/database-audit-latest.md`](reviews/database-audit-latest.md)
   - [`docs/reviews/uiux-latest.md`](reviews/uiux-latest.md)
+  - [`docs/design/dashboard-gap-matrix.md`](design/dashboard-gap-matrix.md)
 - Expected output:
-  - `docs/phase-6.md` com objetivo, escopo, non-goals, dependências, arquitetura proposta, riscos, acceptance criteria e plano de validação
-  - decisão persistida em `docs/reviews/architecture-latest.md` e seção Planner deste handoff
-  - Required Reviews definidos explicitamente como `YES` ou `NO`, com justificativa por domínio
-  - recomendação de provider/estratégia de identidade sem criar conta, assumir custo, usar credencial ou autorizar fornecedor em nome da usuária
-  - nova Next Action devolvida ao COORDINATOR; implementação permanece bloqueada até aprovação explícita do plano
-- Blocking dependencies: qualquer escolha de provider, conta, custo, credencial, tratamento de dados reais ou compromisso externo deve ser escalada à usuária; o desenho provider-agnostic pode avançar sem essas ações
-- Parallel work: SECURITY, DATABASE e UI/UX podem realizar somente leitura e fornecer insumos; nenhuma implementação, migration ou escrita concorrente no handoff está autorizada
+- `docs/future-architecture.md` e `docs/reviews/architecture-latest.md` revisados para remover complexidade multiusuário do roadmap imediato e registrar a estratégia single-user
+  - fases futuras reordenadas e renomeadas quando necessário, sem declarar nenhuma como iniciada ou implementada
+  - fronteira clara entre reconhecimento do owner, autorização por recurso/ação e PermissionManager por risco
+  - definição dos quatro níveis de risco, regras de confirmação, auditoria mínima, expiração/escopo de aprovações e proibição de autoelevação por tools/agentes
+  - decisão sobre qual será a próxima fase planejada, com goal, scope, non-goals, dependencies, acceptance criteria e Required Reviews
+  - seção Planner deste handoff atualizada e nova Next Action devolvida ao COORDINATOR
+- Blocking dependencies: nenhuma para o replanejamento; qualquer custo, credencial, provider, operação real, permissão sensível ou autorização de implementação volta à usuária
+- Parallel work: UI/UX, SECURITY e DATABASE podem fornecer insumos somente em leitura; nenhuma implementação, migration ou escrita concorrente no handoff está autorizada
 - Escalation: NONE para o planejamento; USER se uma decisão sensível for indispensável
 
 ## Recent History
@@ -239,3 +243,4 @@ Required Reviews:
 - 2026-09-10 — UI/UX aprovou com warnings o review funcional focado no commit documental `c00125e`, sem blockers e sem importar a fidelidade completa ao dashboard para a Fase 5. COORDINATOR devolveu a fase ao PLANNER para consolidação final.
 - 2026-09-10 — PLANNER consolidou a Fase 5 como `APPROVED_WITH_WARNINGS` no commit documental `8f3d1e1`, manteve Production Readiness `BLOCKED` e registrou os warnings de UI/UX no backlog. COORDINATOR encerrou o fluxo funcional e aguardou a escolha explícita da usuária para o próximo escopo.
 - 2026-09-10 — A usuária definiu a ordem estratégica: Fase 6 de identidade/autorização, depois Production Hardening e, por fim, implementação completa do Target UI. COORDINATOR autorizou somente o planejamento e encaminhou o desenho da Fase 6 ao PLANNER.
+- 2026-09-10 — A usuária corrigiu o modelo para SINGLE_USER, supersedeu autenticação multiusuário/RBAC/RLS por tenant e propôs a nova ordem Target UI → single-user permissions → tools/coding → agents → Production Hardening. COORDINATOR encaminhou a revisão formal ao PLANNER sem autorizar implementação.

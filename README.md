@@ -66,7 +66,7 @@ Assistentes tradicionais dependem principalmente do contexto imediato da convers
 | Versão atual | `6.0.0-phase.5` |
 | Fase atual | Fase 5 — memory-aware chat e personalidade HOPE |
 | Estado técnico | `APPROVED_WITH_WARNINGS` — Fase 5 funcionalmente concluída e aprovada pelos reviews independentes |
-| Próxima prioridade | Planejamento autorizado da Fase 6 — identidade, autenticação e autorização |
+| Próxima prioridade | Replanejamento single-user, com implementação do Target UI como primeiro candidato |
 | Deploy público | Ainda não habilitado — autenticação, autorização e hardening de produção pendentes |
 
 A fundação local/controlada já conecta chat, memória persistente, PostgreSQL/pgvector, Memory Globe e eventos em tempo real. Isso não equivale a prontidão para produção pública.
@@ -83,12 +83,14 @@ O acompanhamento técnico detalhado permanece no [painel operacional](docs/hando
 - [x] Chat consciente de memória com consentimento explícito.
 - [x] Correção e esquecimento com confirmação vinculada ao alvo.
 - [x] Aprovação final independente da Fase 5.
-- [ ] Fase 6 — identidade, autenticação e autorização reais para HTTP e WebSocket.
-- [ ] Production Hardening sobre a fundação de identidade.
 - [ ] Implementação fiel e acessível do dashboard visual aprovado.
+- [ ] Single-User Security & Permissions para um único owner, com níveis de risco.
+- [ ] Tools e coding governados por permissões explícitas.
+- [ ] Agentes limitados pelo PermissionManager e sem autoelevação.
+- [ ] Production Hardening quando necessário para o ambiente de uso.
 - [ ] Provider semântico de produção e avaliação de qualidade vetorial.
 - [ ] Streaming de respostas e broker distribuído.
-- [ ] Tools, agents e skills governados por permissões.
+- [ ] Skills governadas pelo mesmo modelo de permissões.
 - [ ] LLM & Memory Evaluation: relevância, recuperação, consolidação, regressão de prompts e context leakage.
 - [ ] Multimodalidade, geração de imagens e automações.
 - [ ] Desktop/PWA e implantação cloud pública.
@@ -234,7 +236,7 @@ tests/            testes Python e Node
 
 ## Limitações conhecidas
 
-- A identidade por UUID é transitória e não substitui autenticação.
+- A identidade por UUID é transitória e não comprova o owner único da instalação.
 - O embedding local é adequado a desenvolvimento, não à qualidade semântica de produção.
 - O Event Bus é local ao processo; múltiplas réplicas exigem broker compartilhado.
 - O histórico ativo do chat ainda fica no navegador.

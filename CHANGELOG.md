@@ -2,13 +2,14 @@
 
 Histórico verificável da evolução do HOPE AI. Commits documentais posteriores não substituem o Functional Commit de cada entrega.
 
-## Próxima prioridade — Planejamento da Fase 6
+## Próxima prioridade — Replanejamento single-user
 
 - **Data da decisão:** 2026-09-10
-- **Escopo autorizado:** planejamento de Identity / Authentication / Authorization; implementação ainda não iniciada
-- **Ordem estratégica:** Fase 6 → Production Hardening → implementação completa do HOPE Main Dashboard
-- **Motivação:** identidade server-side e autorização precedem isolamento multiusuário, RLS, memória por usuário, PermissionManager, agentes, tools, ações sensíveis e integrações
-- **Limite:** o Target UI permanece aprovado, mas não bloqueia a Fase 6; provider, credenciais, custos, migrations, produção e código exigem decisões e autorizações posteriores
+- **Modelo do produto:** SINGLE_USER — assistente pessoal para um único owner
+- **Escopo removido do roadmap imediato:** autenticação multiusuário, RBAC complexo, isolamento entre usuários, RLS por tenant, organizações/teams e identidade enterprise
+- **Ordem proposta para validação do Planner:** Target UI → Single-User Security & Permissions → tools/coding → agents → Production Hardening
+- **PermissionManager futuro:** níveis `SAFE`, `WRITE`, `SENSITIVE` e `DESTRUCTIVE`, com confirmação crescente conforme o risco
+- **Limite:** somente arquitetura e roadmap podem ser revisados agora; nenhuma implementação, migration, credencial, provider, custo ou produção está autorizada
 
 ## Fase 5 — Memory-aware chat e personalidade HOPE
 
