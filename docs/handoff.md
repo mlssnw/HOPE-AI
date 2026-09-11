@@ -8,7 +8,7 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 
 - Phase: 6 — Target UI Convergence
 - Phase status: IN_PROGRESS
-- Feature status: NOT_STARTED — autorização concedida; UI/UX deve confirmar a especificação pré-implementação antes do DEV
+- Feature status: IN_PROGRESS — UI/UX pré-implementação `APPROVED`; Development autorizado a implementar o contrato fechado da Phase 6
 - Production readiness: BLOCKED — Security rejeitou deploy público
 - Branch: `main`
 - Application version: 6.0 / Phase 5 baseline; Phase 6 ainda sem Functional Commit
@@ -16,7 +16,7 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 - Last approved commit: `88e194778b4399a6713f118470f9d861c553cd9e`
 - Working tree expected: preservar a alteração preexistente em `AGENTS.md` e os assets não rastreados; os commits de review não incorporam código funcional
 - Database environment: o re-review de Database validou o gate de schema em ambientes descartáveis; PostgreSQL real permaneceu inacessível e a migration `20260903_0003` não foi aplicada nem validada no ambiente real
-- Active phase: Phase 6 — Target UI Convergence, planejamento `APPROVED`, implementação `IN_PROGRESS` a partir da confirmação prévia de UI/UX
+- Active phase: Phase 6 — Target UI Convergence, planejamento `APPROVED`, especificação UI/UX `APPROVED` e implementação Development `IN_PROGRESS`
 
 ## User Strategic Decision
 
@@ -28,7 +28,7 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 - Permission model direction: `SAFE` permite execução automática; `WRITE` depende do contexto; `SENSITIVE` exige confirmação do owner; `DESTRUCTIVE` exige confirmação explícita forte
 - Planner recommendation: 1) Phase 6 Target UI Convergence; 2) Phase 7 Single-User Security & Permissions; 3) Phase 8 Read-Only Tools; 4) Phase 9 Permissioned Effects & Ephemeral Coding; 5) Phase 10 Ephemeral Agents; 6) Production Hardening antes de qualquer exposição escolhida
 - Rationale: segurança deve proteger o único owner e governar efeitos reais sem importar complexidade de tenants, organizações ou identidade enterprise
-- Visual boundary: o Target UI permanece aprovado e é o alvo oficial da Phase 6; UI/UX confirma a spec antes de o DEV alterar a interface
+- Visual boundary: o Target UI permanece aprovado e é o alvo oficial da Phase 6; UI/UX fechou a spec em `3c10be2` e o DEV deve implementá-la sem improvisar outra identidade
 - Authorization boundary: somente a Phase 6 está autorizada. Permanecem fora de escopo expansão funcional, banco, migrations, providers, produção, tools, agents e Phase 7
 
 Required Reviews:
@@ -54,7 +54,7 @@ Required Reviews:
 - Gap matrix: [`dashboard-gap-matrix.md`](design/dashboard-gap-matrix.md)
 - Rule: `VISUAL TARGET` não significa `IMPLEMENTED FEATURE`; áreas exibidas continuam classificadas pelo código e por `docs/architecture.md`
 - Public presentation: pode ser usado como hero, portfólio, apresentação ou LinkedIn somente como interface conceitual/alvo enquanto houver partes não implementadas
-- Implementation gate: OPEN — autorização explícita concedida em 2026-09-11; a sequência obrigatória começa por UI/UX e só depois segue ao DEV
+- Implementation gate: OPEN — autorização explícita concedida em 2026-09-11; UI/UX pré-implementação concluído em `3c10be2` e Development liberado
 
 ## Current Functional Commit
 
@@ -69,11 +69,11 @@ Required Reviews:
 
 | Work | Required | Status | Commit |
 |---|---|---|---|
-| DEV | YES | NOT_STARTED | — |
+| DEV | YES | IN_PROGRESS | `88e194778b4399a6713f118470f9d861c553cd9e` (baseline) |
 | QA | YES | NOT_STARTED | — |
 | DATABASE | NO | N/A | — |
 | SECURITY | YES | NOT_STARTED | — |
-| UI/UX | YES | IN_PROGRESS | `88e194778b4399a6713f118470f9d861c553cd9e` (baseline) |
+| UI/UX | YES | APPROVED | `88e194778b4399a6713f118470f9d861c553cd9e` (pre-implementation; review final pendente) |
 | PLANNER | YES | APPROVED | — (plan approved) |
 
 ## Development
@@ -178,8 +178,8 @@ Required Reviews:
 
 - Autonomy level: 2.5
 - Status: APPROVED
-- Operational conclusion: a usuária autorizou a implementação da Phase 6 dentro do scope, non-goals, acceptance criteria e Required Reviews aprovados. A correção editorial já foi concluída pelo PLANNER em `bd244bb`.
-- Routing: LEVEL 1 — UI/UX deve executar a confirmação pré-implementação e mapear os gaps P0/P1 ao baseline real; DEV permanece aguardando essa entrega
+- Operational conclusion: UI/UX aprovou a especificação pré-implementação, fechou o mapeamento P0/P1 e satisfez a Definition of Ready em `3c10be2`; o PLANNER sincronizou o plano e liberou Development em `a9b888b`.
+- Routing: LEVEL 1 — DEVELOPMENT, exclusivamente para implementar a Phase 6 autorizada e produzir um novo Functional Commit revisável
 - Boundary: COORDINATOR atualizou somente Current Phase, Current Functional Commit, Review Matrix, blockers, warnings, Next Action e histórico; não concedeu aprovação técnica nem alterou seções ou relatórios de ownership dos reviewers
 
 ## Current Blockers
@@ -212,23 +212,24 @@ Required Reviews:
 
 ## Next Action
 
-- Role: UI/UX
+- Role: DEVELOPMENT
 - Status: IN_PROGRESS
-- Task: confirmar a spec pré-implementação da Phase 6 e mapear cada gap P0/P1 aceito ao baseline funcional real, sem alterar código nem ampliar capacidades
+- Task: implementar exclusivamente a Phase 6 conforme o plano e a especificação UI/UX aprovada, produzir um novo Functional Commit e parar para QA, Security e UI/UX
 - Target commit: `88e194778b4399a6713f118470f9d861c553cd9e` (baseline funcional preservado)
 - Required inputs:
   - [`AGENTS.md`](../AGENTS.md)
+  - [`docs/architecture.md`](architecture.md)
   - [`docs/phase-6.md`](phase-6.md)
-  - [`docs/design/`](design/README.md)
+  - [`docs/design/phase-6-target-ui-spec.md`](design/phase-6-target-ui-spec.md)
   - [`docs/reviews/uiux-latest.md`](reviews/uiux-latest.md)
   - [`docs/design/dashboard-gap-matrix.md`](design/dashboard-gap-matrix.md)
 - Expected output:
-  - confirmação objetiva de que a spec existente é suficiente para implementação, ou lista fechada de ajustes documentais necessários
-  - mapeamento P0/P1 para componentes, estados e capacidades reais do baseline `88e1947`
-  - atualização exclusiva dos arquivos de ownership de UI/UX e commit somente documental
-  - devolução ao COORDINATOR para encaminhar o pacote fechado ao DEV
+  - implementação fiel dos gaps P0/P1 e das correções `UIUX-F5-W01` a `UIUX-F5-W03`
+  - testes e evidências exigidos pelo Development Evidence Package, sem alteração de backend ou persistência
+  - novo Functional Commit exclusivo da Phase 6, com documentação Development atualizada
+  - status `READY_FOR_REVIEW` e devolução ao COORDINATOR para reviews no mesmo hash
 - Blocking dependencies: nenhuma
-- Parallel work: QA e SECURITY podem apenas preparar checklists em modo read-only; DEV não deve iniciar até a confirmação de UI/UX
+- Parallel work: QA, SECURITY e UI/UX podem apenas preparar checklists em modo read-only; não devem revisar antes do novo Functional Commit
 - Escalation: NONE
 
 ## Recent History
@@ -254,3 +255,4 @@ Required Reviews:
 - 2026-09-10 — A usuária aprovou `ARCH-2026-09-10-003` e `docs/phase-6.md` como planejamento oficial, manteve a implementação não autorizada e solicitou ao PLANNER somente a correção editorial sobre a criação do arquivo da fase.
 - 2026-09-11 — PLANNER corrigiu a formulação histórica, registrou o planejamento como `APPROVED` e manteve a implementação `NOT_STARTED / NOT_AUTHORIZED` no commit `bd244bb`; COORDINATOR colocou o workflow em espera pela autorização explícita da usuária.
 - 2026-09-11 — A usuária autorizou a implementação da Phase 6 dentro do plano aprovado, manteve fora de escopo expansão funcional, banco, migrations, providers, produção, tools, agents e Phase 7; COORDINATOR abriu o gate e roteou a primeira ação pré-implementação ao UI/UX.
+- 2026-09-11 — UI/UX aprovou a especificação pré-implementação e fechou o mapeamento P0/P1 em `3c10be2`; PLANNER sincronizou a autorização e roteou a implementação ao Development em `a9b888b`; COORDINATOR liberou o DEV no escopo fechado.

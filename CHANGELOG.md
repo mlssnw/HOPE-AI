@@ -11,7 +11,8 @@ Histórico verificável da evolução do HOPE AI. Commits documentais posteriore
 - **PermissionManager futuro:** níveis `SAFE`, `WRITE`, `SENSITIVE` e `DESTRUCTIVE`, com confirmação crescente conforme o risco
 - **Resultado do Planner:** `ARCH-2026-09-10-003` e `docs/phase-6.md` aprovados como planejamento oficial
 - **Decisão da usuária:** implementação da Phase 6 autorizada em 2026-09-11, respeitando integralmente scope, non-goals, acceptance criteria e Required Reviews
-- **Primeira ação:** confirmação pré-implementação de UI/UX antes do encaminhamento ao Development
+- **UI/UX pré-implementação:** `APPROVED` em `3c10be2`, com Definition of Ready satisfeita e mapeamento P0/P1 fechado
+- **Implementação:** encaminhada ao Development após sincronização do plano em `a9b888b`; novo Functional Commit ainda pendente
 - **Limite:** expansão funcional, banco, migrations, providers, produção, tools, agents e Phase 7 permanecem não autorizados
 - **Correção editorial:** concluída em `bd244bb`; `docs/phase-6.md` não existia antes de `ARCH-2026-09-10-003` e foi criado pelo registro dessa decisão
 
