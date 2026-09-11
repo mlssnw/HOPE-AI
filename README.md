@@ -66,7 +66,7 @@ Assistentes tradicionais dependem principalmente do contexto imediato da convers
 | Versão atual | `6.0.0-phase.5` |
 | Fase atual | Fase 5 — memory-aware chat e personalidade HOPE |
 | Estado técnico | `APPROVED_WITH_WARNINGS` — Fase 5 funcionalmente concluída e aprovada pelos reviews independentes |
-| Próxima prioridade | Replanejamento single-user, com implementação do Target UI como primeiro candidato |
+| Próxima prioridade | `Phase 6 — Target UI Convergence`, plano pronto e aguardando aprovação explícita |
 | Deploy público | Ainda não habilitado — autenticação, autorização e hardening de produção pendentes |
 
 A fundação local/controlada já conecta chat, memória persistente, PostgreSQL/pgvector, Memory Globe e eventos em tempo real. Isso não equivale a prontidão para produção pública.
@@ -83,7 +83,7 @@ O acompanhamento técnico detalhado permanece no [painel operacional](docs/hando
 - [x] Chat consciente de memória com consentimento explícito.
 - [x] Correção e esquecimento com confirmação vinculada ao alvo.
 - [x] Aprovação final independente da Fase 5.
-- [ ] Implementação fiel e acessível do dashboard visual aprovado.
+- [ ] Phase 6 — implementação fiel e acessível do dashboard visual aprovado, ainda não autorizada.
 - [ ] Single-User Security & Permissions para um único owner, com níveis de risco.
 - [ ] Tools e coding governados por permissões explícitas.
 - [ ] Agentes limitados pelo PermissionManager e sem autoelevação.
