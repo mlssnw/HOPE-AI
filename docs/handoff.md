@@ -118,14 +118,20 @@ Required Reviews:
 
 ## UI/UX
 
-- Coordination status: WAITING_FOR_REVIEW
-- Current target: `19e573893aba09da990256da05e7dab5af165ce1`
-- Last official result: WAITING_FOR_REVIEW — fidelidade da implementação atual não foi aprovada por esta decisão
+- Coordination status: APPROVED_WITH_WARNINGS
+- Current target: `88e194778b4399a6713f118470f9d861c553cd9e`
+- Review type: PHASE 5 FUNCTIONAL UX REVIEW
+- Scope decision: `ARCH-2026-09-10-002`
+- Last official result: APPROVED_WITH_WARNINGS
+- Criteria approved: clareza e padrão seguro de “Memória no chat”; separação do histórico local; comunicação do opt-out; confirmação de esquecimento com alvo/consequência; foco inicial em “Cancelar”, Escape e recuperação de foco/erro; `FOCUS_MEMORIES` e Core Orb ligados a dados/eventos reais; teclado, foco, contraste, reduced motion e responsividade funcional dos controles; ausência de alegações sobre dashboard e capacidades futuras
+- Feature blockers: nenhum
+- Warnings: `UIUX-F5-W01` — badge “Memória” pode confundir disponibilidade do serviço com consentimento ativo; `UIUX-F5-W02` — status normal usa região assertiva; `UIUX-F5-W03` — toggles/Enviar e texto auxiliar ficam abaixo dos alvos dimensionais do contrato visual
 - Visual direction: APPROVED
 - Decision ID: `UIUX-VIS-2026-09-10-001`
 - Persistence: COMPLETE em `aa440f8a4660d1bb1530d3d3b9a08aacd28c092e`
 - Visual target: HOPE Main Dashboard
-- Required review: fidelidade de chat, estados do Core Orb, foco do Memory Globe, responsividade e acessibilidade da fase 5
+- Deferred visual scope: `UIUX-001` a `UIUX-005`, fidelidade completa e matriz P0/P1/P2/P3 permanecem requisitos de fase visual futura e não são blockers retroativos da Fase 5
+- Recommendation: devolver ao COORDINATOR para encaminhamento ao PLANNER e consolidação final da Fase 5; não autoriza dashboard, próxima fase ou produção
 - Report: [`uiux-latest.md`](reviews/uiux-latest.md)
 - Design source: [`docs/design/`](design/README.md)
 
