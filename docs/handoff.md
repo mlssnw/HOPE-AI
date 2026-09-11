@@ -151,18 +151,25 @@ Required Reviews:
 
 ## Planner
 
-- Status: APPROVED_WITH_WARNINGS
-- Decision ID: `ARCH-2026-09-10-002`
-- Phase 5 Feature Status: `APPROVED_WITH_WARNINGS`
-- Functional Commit consolidated: `88e194778b4399a6713f118470f9d861c553cd9e`
-- Review matrix considered: QA, Database, Security para a feature e UI/UX no `PHASE 5 FUNCTIONAL UX REVIEW` estão `APPROVED_WITH_WARNINGS` no hash exato
-- Functional blockers: nenhum; `QA-001` e `DB-005` estão encerrados, e `SEC-006` e `SEC-007` permanecem resolvidos para o escopo da fase
-- Accepted warnings: `QA-003`, `QA-WARN-HTTPX`, warnings vigentes de Database, `SEC-009`, `SEC-010`, `SEC-011`, `SEC-013`, `SEC-014`, `SEC-015`, `SEC-016`, `SEC-017` e `UIUX-F5-W01` a `UIUX-F5-W03`; `SEC-012` e os demais blockers de produção não foram aceitos como warnings funcionais
-- Production Readiness: `BLOCKED`; a aprovação funcional não autoriza deploy, exposição pública, risco HIGH/CRITICAL, PostgreSQL real, migration, credenciais, roles, TLS ou infraestrutura
-- Deferred visual scope: `UIUX-001` a `UIUX-005` e a fidelidade completa ao HOPE Main Dashboard permanecem em futura fase visual dedicada, ainda não autorizada
-- Phase boundary: nenhuma próxima fase, inclusive a Fase 6, foi iniciada ou autorizada
+- Status: READY_FOR_APPROVAL
+- Decision ID: `ARCH-2026-09-10-003`
+- Product model: `SINGLE_USER`; a direção multiusuário/enterprise está `SUPERSEDED` no roadmap imediato
+- Phase 5 boundary: permanece `APPROVED_WITH_WARNINGS` no Functional Commit `88e194778b4399a6713f118470f9d861c553cd9e`; nenhum finding de reviewer foi reescrito ou encerrado por esta decisão
+- Production Readiness: `BLOCKED`
+- Recommended order: Phase 6 Target UI Convergence → Phase 7 Single-User Security & Permissions → Phase 8 Read-Only Tools → Phase 9 Permissioned Effects & Ephemeral Coding → Phase 10 Ephemeral Agents → Production Hardening antes de qualquer exposição escolhida
+- Next phase proposal: `docs/phase-6.md`, planejamento `READY_FOR_APPROVAL`, implementação `NOT_STARTED / NOT_AUTHORIZED`, Functional Commit `NONE`
+- Phase 6 scope: convergência visual do HOPE Main Dashboard sobre capacidades reais, com acessibilidade, responsividade, não regressão de consentimento/esquecimento e correção de `UIUX-F5-W01` a `UIUX-F5-W03`
+- Phase 6 non-goals: owner authentication, permissions, tools, coding, agents, métricas/capacidades futuras, banco, migration, provider, produção e acesso remoto
+- Phase 6 Required Reviews: QA YES; DATABASE NO enquanto o diff permanecer estritamente visual; SECURITY YES; UI/UX YES
+- Owner architecture: `OwnerAuthenticator` → `OwnerSession` → `OwnerContext`; autorização por recurso ocorre antes do `PermissionManager` por risco
+- Permission model: `SAFE` automático somente em allowlist; `WRITE` limitado e recuperável; `SENSITIVE` com confirmação única do owner; `DESTRUCTIVE` com confirmação forte, alvo/fingerprint exatos e uso único
+- Permission invariants: fail-closed; grants curtos/revogáveis; nenhuma autoelevação; nenhum grant ampliado por herança; approval não reutilizável em outro alvo; prompt/memória/web/tool output nunca concedem autorização
+- Legacy identity: `X-Hope-User-Id` e `?user_id=` deixam de ser autoridade na Phase 7; campos `user_id` permanecem como namespace do owner; vínculo/descarte exige inventário, backup, rollback e autorização
+- RLS: RLS por tenant removido do roadmap imediato; RLS simples fica opcional como defesa adicional se o perfil remoto/cloud justificar
+- Pending user decisions: aprovar/revisar `ARCH-2026-09-10-003` e a Phase 6; mecanismo de owner recognition será escolhido somente antes da Phase 7; qualquer provider, custo, credencial, migration ou produção exige decisão separada
 - Architecture record: [`docs/reviews/architecture-latest.md`](reviews/architecture-latest.md)
-- Coordinator handoff: normalizar o painel público e os status operacionais para refletir a consolidação da Fase 5 e solicitar à usuária a escolha explícita do próximo escopo
+- Phase plan: [`docs/phase-6.md`](phase-6.md)
+- Coordinator handoff: normalizar o painel de planejamento e solicitar aprovação/ajustes à usuária; não encaminhar ao DEV e não declarar nova fase autorizada
 
 ## Coordinator
 

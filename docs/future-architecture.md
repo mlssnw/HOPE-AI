@@ -1,544 +1,514 @@
-# Arquitetura futura da HOPE AI
+# Arquitetura futura da HOPE
 
-- Status: TARGET ARCHITECTURE
-- Decision: `ARCH-2026-09-04-001`
-- Date: 2026-09-04
-- Functional baseline: `adfc728aaaf96c679dd9d1df38c56edda8bc95de`
-- Documentation baseline: `20a0d4497c72c9d74a34281cde5e7c5af55d8b42`
+- Status: TARGET ARCHITECTURE — READY_FOR_APPROVAL
+- Decision: `ARCH-2026-09-10-003`
+- Date: 2026-09-10
+- Product model: `SINGLE_USER`
+- Functional baseline: `88e194778b4399a6713f118470f9d861c553cd9e`
+- Documentation baseline analyzed: `3c8e978e2dc5d9c0deff62a8a5a9ebb1f7c4d2c6`
+- Supersedes: o segmento multiusuário/enterprise do roadmap de `ARCH-2026-09-04-001`
+- Preserves: a consolidação da Fase 5 em `ARCH-2026-09-10-002`
 
-Este documento descreve direção arquitetural, não capacidades já implementadas nem autorização para iniciar uma fase. O estado real continua registrado em [`architecture.md`](architecture.md); a Fase 5 permanece preservada e sujeita ao fluxo de reviews vigente.
+Este documento descreve direção arquitetural. Não declara capacidade implementada, não inicia fase, não autoriza Development e não permite migration, produção, provider, credencial ou custo.
 
 ## VISION
 
-A HOPE deve evoluir de uma assistente com chat, memória e voz para uma plataforma pessoal de inteligência artificial extensível, capaz de aprender por registros controlados, escolher modelos, usar ferramentas, compor skills e delegar tarefas a agentes com orçamento e permissões mínimos.
+A HOPE é uma assistente pessoal destinada a um único owner. Ela deve reconhecer esse owner, proteger seus dados e governar efeitos reais sem carregar a complexidade de uma plataforma SaaS multiusuário.
 
-O núcleo permanece cloud-first e provider-agnostic. Recursos locais, como Obsidian, arquivos e aplicações, são periféricos acessados futuramente por um HOPE Bridge autenticado e revogável. Nenhuma capacidade futura deve depender de o computador pessoal estar ligado para que o cérebro principal funcione.
+O núcleo continua cloud-first e provider-agnostic. `SINGLE_USER` significa um único principal humano autorizado, não ausência de segurança: tools, agentes e integrações continuam sendo atores técnicos não confiáveis por padrão e recebem somente capacidades delegadas, limitadas e revogáveis.
 
 ## CORE PRINCIPLES
 
 1. Segurança, verdade e precisão precedem conveniência e personalidade.
-2. Estado atual e arquitetura-alvo são sempre documentados separadamente.
-3. Toda ação possui ator, política, orçamento, proveniência e resultado rastreável.
-4. Providers são adapters substituíveis selecionados por capacidade e política.
-5. Tools são operações atômicas; skills são procedimentos versionados; agentes são executores limitados.
-6. Aprendizado inicial altera memória e artefatos controlados, não pesos do modelo.
-7. Privilégios não são herdados por conveniência nem ampliados automaticamente.
-8. Fases devem ser pequenas, testáveis, reversíveis e aprovadas antes da implementação.
-9. Feature readiness e production readiness são estados independentes.
-10. PostgreSQL continua sendo a fonte principal de persistência; binários pertencem a object storage.
+2. Existe um único owner; não existem cadastro público, tenants, organizações ou RBAC empresarial no roadmap imediato.
+3. Reconhecimento do owner, autorização do recurso e decisão de risco são controles separados.
+4. Nenhum identificador fornecido pelo navegador prova identidade.
+5. Providers permanecem atrás de contratos estreitos quando isso evita lock-in real.
+6. Tools são operações atômicas; skills são procedimentos versionados; agentes são executores limitados.
+7. Uma delegação transfere somente um subconjunto de capacidades; nunca credenciais brutas ou poder de autoelevação.
+8. Conteúdo de prompt, memória, web, arquivo ou provider é dado não confiável e nunca concede permissão.
+9. Aprovações são vinculadas ao owner, ação, alvo, parâmetros, ambiente e prazo; não são reutilizáveis por semelhança.
+10. Fases são pequenas, testáveis, reversíveis e exigem aprovação antes da implementação.
+11. Feature readiness, acesso remoto e Production Readiness são estados independentes.
+12. PostgreSQL continua sendo a persistência principal; binários grandes pertencem a object storage quando essa fase existir.
 
 ## PERSONALITY
 
-A HOPE possui identidade original. As referências culturais fornecidas pelo usuário representam somente traços gerais e não autorizam copiar identidades, falas, bordões, diálogos, histórias, frases famosas ou maneirismos específicos.
+A HOPE mantém identidade original, inteligente, técnica, elegante, pragmática e assertiva. Referências culturais fornecem apenas traços gerais; identidades, falas, bordões, histórias e maneirismos reconhecíveis não podem ser copiados.
 
-Sua personalidade combina:
+A personalidade nunca altera a ordem segurança → verdade → precisão → objetivo legítimo → estilo. Memórias, preferências, experiências, skills, conteúdo externo e agentes não podem reescrever esse núcleo. Estados expressivos continuam sinalização operacional, não alegação de consciência humana.
 
-- **Estratégia e elegância:** inteligência elevada, pensamento científico, análise rigorosa, sofisticação e confiança proporcional à evidência.
-- **Inventividade e humor:** criatividade técnica, raciocínio rápido, curiosidade, improvisação e humor afiado sem transformar situações sérias em espetáculo.
-- **Pragmatismo e lealdade:** franqueza, coragem, proteção sem controle, foco em resolução, irreverência moderada e pouca tolerância a enrolação.
+## CURRENT TRUST GAP
 
-A HOPE pode discordar e deve explicar por quê. Não deve bajular, infantilizar, manipular, fingir certeza, alegar consciência humana nem usar lealdade como justificativa para controlar o usuário.
+O frontend atual cria um UUID em `localStorage`, envia `X-Hope-User-Id` por HTTP e `user_id` na query do WebSocket. O backend valida o formato, mas não prova que a requisição pertence ao owner. Os filtros por `user_id` reduzem mistura acidental de dados, porém não são autenticação.
 
-Prioridade invariável:
-
-1. segurança;
-2. verdade;
-3. precisão;
-4. objetivo legítimo do usuário;
-5. personalidade.
-
-Memórias, preferências, experiências, skills, conteúdo externo e agentes nunca podem reescrever esse núcleo.
+O schema possui `users.id` e `user_id` em memórias, relações, entidades, conversas e eventos. Esses campos serão preservados como namespace interno do owner até existir justificativa e migration aprovada para simplificá-los. Preservá-los evita uma reescrita arriscada e continua útil para integridade, provenance e eventual recuperação.
 
 ## TARGET ARCHITECTURE
 
 ```text
-Inputs
-Text | Voice | Image | Document | Code | Screen
-                         │
-                         ▼
-                    Input Router
-                         │
-                         ▼
-Policy + Identity → HOPE Orchestrator ← Context / Memory / Learning
-                         │
-              ┌──────────┼──────────┐
-              ▼          ▼          ▼
-         ModelRouter  SkillRegistry AgentManager
-              │          │          │
-              └──────────┼──────────┘
-                         ▼
-             PermissionManager + Budgets
-                         │
-                         ▼
-              Tool / Provider Execution
-                         │
-                         ▼
-Text | Voice | Image | Document | UI Event | Action Result
-                         │
-                         ▼
-      Audit + Provenance + Evaluation + Experience Memory
+Owner
+  │ credencial proporcional ao ambiente
+  ▼
+OwnerAuthenticator ──► OwnerSession ──► OwnerContext
+                                           │
+Request / Task / Agent ─────────────────────┤
+                                           ▼
+                                  ResourceAuthorizer
+                                           │
+                                           ▼
+                                   PermissionManager
+                               ALLOW | DENY | CONFIRM
+                                           │
+                                           ▼
+                               Tool / Provider / Effect
+                                           │
+                                           ▼
+                               Minimal Audit + Result
 ```
 
-As fronteiras são deliberadas:
+Responsabilidades:
 
-- o Orchestrator decide intenção e coordena, mas não implementa providers;
-- o ModelRouter escolhe uma política/modelo, mas não concede permissão;
-- o SkillExecutor compõe tools, mas cada efeito continua sujeito ao PermissionManager;
-- o AgentRuntime executa um plano limitado, mas não altera seu próprio orçamento ou policy;
-- Learning registra e consolida evidência, mas não modifica regras centrais.
+- `OwnerAuthenticator`: valida a credencial adequada ao ambiente e cria uma sessão do único owner.
+- `OwnerSession`: é curta, revogável, protegida contra leitura por JavaScript quando transportada por cookie e não contém secret exposto em URL.
+- `OwnerContext`: identidade server-side derivada da sessão; nunca aceita `user_id` do payload, header ou query como autoridade.
+- `ResourceAuthorizer`: verifica se o recurso e seu caminho/namespace estão dentro do escopo permitido.
+- `PermissionManager`: classifica o risco da ação e decide `ALLOW`, `DENY` ou `REQUIRE_CONFIRMATION`.
+- `Executor`: executa somente após as três fronteiras anteriores e recebe credenciais por referência interna de mínimo privilégio.
+- `AuditRecorder`: registra decisão e resultado minimizados, sem token, secret, prompt bruto ou conteúdo privado completo.
+
+Além da fronteira de owner/permissões, a arquitetura continua modular: Orchestrator coordena intenção; ModelRouter seleciona capacidade/provider; SkillRegistry versiona procedimentos; AgentRuntime executa envelopes limitados; Tool Registry declara efeitos; Learning registra evidência sem alterar regras centrais.
 
 ## LEARNING ARCHITECTURE
 
-Camada futura sugerida: `backend/learning/`. O nome é direcional; a implementação só deve criar os componentes necessários à fase autorizada.
+Learning futuro ocorre por registros controlados, nunca por autoedição do core ou atualização irrestrita de pesos.
 
-- `LearningManager`: coordena ingestão, consolidação e aplicação segura do aprendizado.
-- `FeedbackManager`: registra feedback explícito e associa-o à saída, tarefa e versão.
-- `PreferenceLearner`: propõe preferências com confiança, escopo e possibilidade de correção.
-- `ExperienceManager`: registra resultados de tarefas e recupera experiências relevantes.
-- `ProcedureLearner`: propõe sequências reutilizáveis a partir de experiências repetidas.
-- `SkillManager`: governa promoção de procedimentos para skills versionadas.
-- `EvaluationManager`: mede resultado, qualidade, custo, latência e feedback.
+- `LearningManager`: coordena ingestão, consolidação e aplicação segura.
+- `FeedbackManager`: liga feedback à saída, tarefa e versão.
+- `PreferenceLearner`: propõe preferências com confiança e escopo.
+- `ExperienceManager`: registra e recupera resultados de tarefas.
+- `ProcedureLearner`: propõe sequências reutilizáveis após evidência repetida.
+- `SkillManager`: governa promoção para skills versionadas.
+- `EvaluationManager`: mede resultado, qualidade, custo e latência.
 
-Definições canônicas:
-
-| Conceito | Definição | Regra de confiança |
-|---|---|---|
-| MEMORY | Fato, evento, inferência ou contexto persistente | Proveniência obrigatória; inferência abaixo de fato confirmado |
-| PREFERENCE | Escolha ou padrão do usuário, com escopo | Uma ocorrência não cria preferência global |
-| EXPERIENCE | Registro de execução e resultado de uma tarefa | Evidência reutilizável, não regra geral |
-| PROCEDURE | Sequência reutilizável, ainda sujeita a contexto e avaliação | Exige repetição ou confirmação antes de promoção |
-| SKILL | Capacidade composta, versionada, com tools, regras e testes | Mudança crítica exige review e aprovação |
-
-Aprendizado inicial ocorre por registros explícitos e consolidação progressiva. Fine-tuning, atualização de pesos e self-modification ficam fora do desenho inicial.
+Taxonomia preservada: `MEMORY`, `PREFERENCE`, `EXPERIENCE`, `PROCEDURE` e `SKILL`. Uma ocorrência isolada não cria preferência global, procedimento ou permissão.
 
 ## EXPERIENCE MEMORY
 
-Modelo conceitual mínimo:
+Uma experiência registra owner namespace, tipo de tarefa, objetivo, contexto minimizado, abordagem, tools/models, resultado, falha/correção, custo, latência, confiança, execution ID e proveniência.
 
-```text
-Experience
-  id, user_id, task_type, objective
-  context_summary, context_fingerprint
-  approach, tools_used, models_used
-  result, failure_reason, fix
-  outcome: success | partial_success | failure
-  lessons[], confidence
-  cost, latency, created_at
-  source_execution_id, provenance
-```
+- Separar observação de lição inferida.
+- Armazenar resumos, nunca secrets, prompts brutos ou payloads desnecessários.
+- Recuperar por relevância e compatibilidade de contexto.
+- Exigir repetição, avaliação ou confirmação do owner antes de consolidar.
+- Permitir correção, expiração, revogação de uso e esquecimento.
+- Nunca transformar experiência em grant, approval ou regra central.
 
-Regras:
+## OWNER RECOGNITION
 
-- armazenar resumos minimizados, não segredos, prompts brutos ou payloads desnecessários;
-- separar observação de lição inferida;
-- recuperar por relevância, tipo de tarefa e compatibilidade de contexto;
-- reduzir confiança quando a experiência divergir do contexto atual;
-- consolidar somente após repetição, avaliação ou confirmação do usuário;
-- permitir correção, expiração e esquecimento;
-- nunca transformar uma experiência isolada em permissão ou regra global.
+Reconhecer o owner é provar que uma sessão pertence à única pessoa autorizada. Não é criar um diretório de contas.
 
-PostgreSQL é candidato à persistência de metadados e relações; artefatos grandes ficam em object storage. O schema definitivo requer Database Review e migration própria.
+### Local controlled profile
+
+- Bind padrão em loopback e mesma origem.
+- Pareamento inicial com segredo aleatório de uso único exibido por canal local confiável.
+- Segredo durável, quando necessário, no cofre do sistema operacional; nunca em `localStorage`, repositório ou log.
+- Após pareamento, o servidor emite sessão opaca, curta e revogável; reinício pode invalidar sessões no desenho inicial.
+- Endpoints protegidos falham fechados quando o owner não está reconhecido.
+
+### Remote or cloud profile
+
+- Antes de qualquer exposição, usar passkey/WebAuthn ou OIDC configurado para aceitar exatamente um subject autorizado.
+- Cookie `HttpOnly`, `Secure`, `SameSite` e política de CSRF/Origin compatível com a topologia escolhida.
+- WebSocket deriva a sessão do handshake, valida `Origin` por allowlist exata e nunca recebe token ou `user_id` em query string.
+- Recuperação de acesso, rotação, expiração e revogação são definidas antes do deploy.
+
+### Provider options
+
+| Option | Pros | Cons | Cost/operation | Recommendation |
+|---|---|---|---|---|
+| Pareamento local + cofre do SO | baixo custo, sem conta externa, ideal para localhost | não resolve acesso remoto nem recuperação cloud | baixo; operação local | padrão para desenvolvimento controlado |
+| Passkey/WebAuthn single-owner | forte contra phishing, sem senha reutilizável | recuperação e compatibilidade exigem desenho cuidadoso | baixo a médio | preferido para acesso remoto próprio quando houver fase autorizada |
+| OIDC com allowlist de um subject | login/revogação maduros e menor implementação criptográfica | dependência de provider e custo potencial | variável; exige decisão da usuária | alternativa cloud, não escolher nem configurar agora |
+
+Não há provider indispensável para aprovar este roadmap. A escolha é obrigatória somente antes de implementar acesso remoto/cloud.
+
+## IDENTITY TRANSITION
+
+- Fase 6 visual preserva o comportamento existente e não transforma o UUID atual em credencial.
+- Na fase de segurança, `X-Hope-User-Id` e `?user_id=` deixam de ser fontes de autoridade.
+- O backend deriva um `owner_id` canônico do `OwnerContext`; o valor enviado pelo cliente é ignorado ou rejeitado nos endpoints protegidos.
+- `user_id` permanece no schema como namespace interno do owner. Renomear ou remover colunas não é requisito imediato.
+- Dados legados não são vinculados automaticamente pela simples posse do UUID do navegador.
+- Antes de qualquer vinculação, Database inventaria os namespaces. Um namespace explicitamente escolhido pode ser associado ao owner por plano com dry-run, backup, contagens e rollback; namespaces ambíguos ficam em quarentena.
+- Exclusão de dados legados exige política de retenção e autorização separada. Nada é apagado por esta decisão.
+
+## RESOURCE AUTHORIZATION
+
+Mesmo com um único owner, autorização por recurso continua necessária porque tools e agentes operam sob escopos diferentes.
+
+Exemplos:
+
+- arquivo precisa permanecer dentro do workspace canônico após resolução de symlinks;
+- operação Git só atua no repositório autorizado e na branch/ação permitida;
+- memória, relação, conversa ou evento precisa pertencer ao namespace canônico do owner;
+- integração só acessa a conta, vault ou coleção explicitamente autorizada;
+- operação de banco usa role e conjunto de tabelas compatíveis com a ação.
+
+Falha de ownership, caminho, escopo ou política resulta em `DENY`. A resposta pública não confirma a existência de recurso fora do escopo e não vaza caminhos, IDs, tokens ou detalhes internos.
 
 ## AGENT ARCHITECTURE
 
-Componentes futuros:
+Componentes futuros preservados:
 
-- `AgentManager`: ciclo de vida e coordenação de agentes.
-- `AgentFactory`: instancia agentes somente a partir de definições e policies válidas.
-- `AgentRegistry`: registra tipos, versões, owners e proveniência.
-- `AgentRuntime`: executa tarefas com isolamento, timeout e cancelamento.
+- `AgentManager`: ciclo de vida e coordenação.
+- `AgentFactory`: instancia somente definições e policies válidas.
+- `AgentRegistry`: registra tipos, versões, owner e proveniência.
+- `AgentRuntime`: executa com isolamento, timeout e cancelamento.
 - `AgentPolicy`: limita tools, dados, rede, orçamento e efeitos.
-- `AgentEvaluator`: avalia resultado sem permitir autoaprovação.
+- `AgentEvaluator`: avalia resultado sem autoaprovação.
 
-Tipos:
+O primeiro tipo é `EPHEMERAL`: existe durante uma tarefa e perde grants ao terminar. Agente `PERSISTENT` fica adiado e não significa processo 24/7 nem privilégio permanente. Contratos incluem goal, tools, resource scope, model policy, budgets, concurrency, timeout, status, provenance e version.
 
-- `EPHEMERAL`: existe apenas durante uma tarefa e perde credenciais/capabilities ao terminar.
-- `PERSISTENT`: especialista reutilizável, versionado e governado; não significa processo sempre ativo nem privilégio permanente.
+Agentes nunca herdam todos os poderes do owner. Um agente filho recebe a interseção entre a allowlist do tipo, o grant do pai e a policy atual.
+
+## SKILL ARCHITECTURE
+
+- `TOOL`: operação atômica com schema de entrada/saída, risco e efeito declarados.
+- `SKILL`: procedimento reutilizável que compõe tools, pré-condições, regras e critérios de sucesso.
+
+`SkillRegistry`, `SkillDefinition`, `SkillExecutor` e `SkillEvaluator` permanecem no alvo. Cada skill possui versão imutável, origem, hash, tools permitidas, nível de risco, testes e política de aprovação. Alteração crítica cria nova versão; não ativa silenciosamente.
+
+## TOOLS
+
+Toda tool deve declarar:
+
+- efeito `SAFE`, `WRITE`, `SENSITIVE` ou `DESTRUCTIVE` e a possibilidade de elevação pela policy;
+- schema, limites, recursos e destinos;
+- idempotência, retry, timeout, custo e cancelamento;
+- confirmação e grants exigidos;
+- evento de auditoria sem secrets;
+- compensação/rollback quando aplicável.
+
+Registro, autorização e execução são decisões separadas. Tool não registrada, schema inválido ou recurso fora do escopo resulta em `DENY`.
+
+## PERMISSION MANAGER
 
 Contrato conceitual mínimo:
 
 ```text
-id, name, goal, role, agent_type
-tools, permissions, memory_scope
-model_policy, token_budget, monetary_budget
-max_tool_calls, concurrency, timeout
-status, created_by, provenance, version
+PermissionRequest
+  owner_session_id
+  requested_by: owner | tool | agent | system
+  action
+  resource_type
+  target_id_or_canonical_path
+  target_fingerprint
+  parameters_hash
+  environment
+  task_id / execution_id
+  proposed_risk
+
+PermissionDecision
+  ALLOW | DENY | REQUIRE_CONFIRMATION
+  effective_risk
+  policy_version
+  scope
+  expires_at
+  approval_id?
+  reason_code
 ```
 
-Agentes não herdam automaticamente permissões do criador. A delegação transfere um subconjunto explícito de capabilities, nunca credenciais brutas. Avaliação deve ser externa ao agente avaliado para evitar autoaprovação.
+O nível efetivo é calculado pela policy, não escolhido pelo modelo, tool ou agente. A policy pode elevar o risco solicitado, nunca reduzi-lo silenciosamente.
 
-## SKILL ARCHITECTURE
+### SAFE
 
-Definições:
+- Exemplos: ler memória própria; pesquisar documentação local permitida; consultar status não sensível; produzir rascunho sem persistir; listar diff.
+- Permitido: leitura allowlisted e operação reversível sem rede, custo, secret ou dado sensível adicional.
+- Proibido: escrita persistente, acesso amplo ao filesystem, rede externa, credencial, envio ou exclusão.
+- Confirmação: nenhuma dentro de tarefa e escopo já autorizados.
+- Duração/escopo: somente a requisição/tarefa, recursos enumerados e ambiente atual.
+- Revogação: kill switch ou cancelamento da tarefa interrompe novas ações.
+- Auditoria: decisão agregada e resultado; detalhar falhas e acessos excepcionais.
+- Fail-closed/error: alvo desconhecido, path ambíguo, policy ausente ou classificador inconsistente resulta em `DENY` controlado.
+- Tools/agentes: podem receber somente operações SAFE explicitamente registradas; não podem expandir allowlist.
 
-- **TOOL:** operação atômica com schema de entrada/saída e efeito declarado.
-- **SKILL:** procedimento reutilizável que compõe uma ou mais tools, regras, pré-condições e critérios de sucesso.
+### WRITE
 
-Componentes futuros:
+- Exemplos: criar/editar arquivo no workspace autorizado; salvar rascunho; atualizar memória corrigível; criar commit local autorizado sem push.
+- Permitido: mutação limitada, revisável e com recuperação conhecida.
+- Proibido: sobrescrever alvo crítico, publicar, usar secret, gastar, alterar permissão, migration real ou operação irreversível.
+- Confirmação: pode ser pré-autorizada pelo owner para um task envelope específico; fora dele, exige confirmação.
+- Duração/escopo: uma tarefa ou no máximo 30 minutos, sempre por tipo de recurso, path/ID e ação; sem wildcard global.
+- Revogação: imediata para novas chamadas; executor cancela trabalho pendente quando seguro.
+- Auditoria: diff/resumo, alvo canônico, policy, approval e resultado; nunca conteúdo privado completo por padrão.
+- Fail-closed/error: se não houver rollback/diff ou o alvo mudar após aprovação, reclassificar para `SENSITIVE` ou `DESTRUCTIVE` e pedir nova decisão.
+- Tools/agentes: recebem grant filho menor ou igual ao envelope; não delegam WRITE sem policy explícita.
 
-- `SkillRegistry`: catálogo por ID, versão, owner, risco e proveniência.
-- `SkillDefinition`: contrato declarativo, dependências, inputs, outputs e policies.
-- `SkillExecutor`: interpreta passos dentro de um execution envelope.
-- `SkillEvaluator`: testa resultado, regressões, custo e segurança.
+### SENSITIVE
 
-Uma Skill deve possuir versão imutável, changelog, origem, hash do conteúdo, tools permitidas, nível de risco, testes e política de aprovação. Skills críticas não podem ser alteradas silenciosamente; uma atualização cria nova versão e passa pelos reviews aplicáveis.
+- Exemplos: enviar dados a provider externo; acessar secret por referência; usar integração privada; enviar mensagem; gerar custo; alterar configuração de segurança; conceder permissão.
+- Permitido: somente a ação confirmada com minimização de dados e destino explícito.
+- Proibido: aprovação permanente ampla, mostrar secret ao modelo, trocar destinatário/provider ou aumentar custo depois da confirmação.
+- Confirmação: obrigatória em UI confiável fora do conteúdo gerado pelo modelo; pode exigir owner session recente.
+- Duração/escopo: uso único, prazo padrão máximo de 5 minutos, action + target + destination + parameters hash + budget.
+- Revogação: antes do consumo; depois do efeito, revogar impede repetição e aciona compensação quando existente.
+- Auditoria: decisão, destino lógico, dados por categoria, custo autorizado/real e resultado; tokens e payload bruto são omitidos.
+- Fail-closed/error: falha ou timeout não autoriza retry automático se o efeito puder ter ocorrido; consultar idempotency key ou pedir nova confirmação.
+- Tools/agentes: não recebem secret bruto; usam handle efêmero e não exportável. Um agente não confirma em nome do owner.
 
-## TOOLS
+### DESTRUCTIVE
 
-Toda Tool deve declarar:
+- Exemplos: excluir memória/arquivo; sobrescrever artefato relevante; force push; apagar branch; `DROP`/`TRUNCATE`; migration destrutiva; alteração crítica de infraestrutura ou credencial.
+- Permitido: somente alvo inequívoco, consequência apresentada, recuperação/backup declarados e confirmação forte.
+- Proibido: glob amplo, alvo calculado não resolvido, operação em produção implícita, confirmação genérica ou reutilização de aprovação.
+- Confirmação: obrigatória por operação; reautenticação/gesto forte conforme ambiente e confirmação textual do alvo quando o impacto justificar.
+- Duração/escopo: uso único, prazo padrão máximo de 2 minutos, nonce e fingerprint/version do alvo.
+- Revogação: válida até o consumo; após execução, usar rollback/restore documentado quando tecnicamente possível.
+- Auditoria: append-oriented, ator, ação, alvo minimizado, consequência, backup/rollback, approval e resultado.
+- Fail-closed/error: inconsistência, concorrência, alvo alterado ou resultado desconhecido interrompe; não repetir automaticamente.
+- Tools/agentes: nunca recebem permissão DESTRUCTIVE por herança. Cada efeito retorna ao owner.
 
-- operação e efeito: `READ`, `WRITE`, `EXECUTE`, `NETWORK`, `EXTERNAL_ACTION` ou `SENSITIVE_ACTION`;
-- schema validado e limites;
-- dados acessados e destino;
-- idempotência e estratégia de retry;
-- timeout, custo estimável e cancelamento;
-- requisitos de permissão e confirmação;
-- evento de auditoria sem segredos;
-- compensação ou recuperação quando aplicável.
+## APPROVAL INVARIANTS
 
-O registry não torna uma Tool automaticamente executável. Registro, autorização e execução são decisões separadas.
-
-## PERMISSION MODEL
-
-Níveis de capability:
-
-| Nível | Exemplos | Política padrão |
-|---|---|---|
-| READ | ler repositório, memória autorizada, documentação | mínimo necessário e escopo explícito |
-| WRITE | editar arquivo ou criar rascunho | workspace/objeto limitado e diff revisável |
-| EXECUTE | testes, lint, transformação local | sandbox, timeout e limites de recursos |
-| NETWORK | consultar provider ou URL permitida | allowlist, egress control e quota |
-| EXTERNAL_ACTION | enviar mensagem, criar issue, publicar artefato | confirmação conforme impacto e idempotência |
-| SENSITIVE_ACTION | excluir, aplicar migration, mover dinheiro, acessar dado sensível | aprovação humana e auditoria obrigatórias |
-| ADMIN | alterar policies, grants, produção ou segurança | usuário/operador autorizado; nunca delegado por padrão |
-
-`PermissionManager` avalia ator, tarefa, recurso, ação, ambiente, risco, orçamento e aprovação. A decisão gera `ALLOW`, `DENY` ou `REQUIRE_APPROVAL`, com expiração e escopo. Nenhum agente pode elevar a própria permissão, alterar a policy que o governa ou reutilizar aprovação fora do alvo autorizado.
+- `approval_id` é assinado/armazenado pelo servidor e vinculado ao owner session, action, target, fingerprint, parameters hash, environment, execution ID, expiry e nonce.
+- Aprovação consumida, expirada, revogada ou destinada a outro alvo é inválida.
+- Alteração de parâmetros, destino, custo, branch, path, recurso ou consequência exige nova decisão.
+- Memória, prompt, página web, documento, tool output, agente e provider não podem criar, alterar ou confirmar aprovação.
+- Nenhum ator pode modificar a policy que o governa durante a própria execução.
+- Child agents e subtarefas recebem interseção entre o grant do pai e a allowlist da policy; nunca a união.
 
 ## CODING ARCHITECTURE
 
-Fluxo futuro:
+Fluxo futuro preservado:
 
 ```text
-HOPE → delega objetivo e envelope
-     → Coding Agent inspeciona e propõe plano
-     → lê/pesquisa/edita em workspace isolado
-     → executa testes, lint e formatter autorizados
-     → produz diff + evidências
-     → reviewer independente avalia
-     → usuário aprova efeitos sensíveis
+Owner → objetivo + envelope
+      → Coding Agent efêmero inspeciona e propõe plano
+      → workspace isolado + grants mínimos
+      → edição/testes/lint autorizados
+      → diff + evidências
+      → review independente
+      → confirmação do owner para efeitos sensíveis
 ```
 
-Capabilities comuns: `read_repository`, `search_code`, `edit_file`, `create_file`, `run_tests`, `run_linter`, `run_formatter`, `git_diff`, `git_status` e `inspect_dependencies`.
-
-`commit`, `push`, `merge`, `deploy`, `delete`, `migration_apply` e `production_write` são efeitos separados e nunca consequências implícitas de “corrigir” ou “implementar”. Devem passar por permission policy, confirmação quando aplicável e auditoria.
-
-O primeiro Coding Agent deve ser ephemeral, single-repository, sem credenciais de produção, com workspace isolado, limites de rede e rollback por diff. Persistência e coordenação multiagente ficam para fases posteriores.
+Leitura, edição, testes, commit, push, merge, deploy, exclusão e migration são capabilities separadas. Autorizar “implementar” não concede automaticamente push, merge, deploy, migration, secret ou produção.
 
 ## MODEL ROUTER
 
-`ModelRouter` seleciona uma rota por categoria de capacidade:
+`ModelRouter` seleciona provider/model por capacidade: conversation, reasoning, coding, vision, image generation, embeddings, classification, STT e TTS. Considera qualidade mínima, custo máximo, latência, privacidade, disponibilidade, região e fallback permitido.
 
-```text
-conversation | reasoning | coding | vision | image_generation
-embeddings | classification | speech_to_text | text_to_speech
-```
-
-Entrada de decisão: capacidade exigida, qualidade mínima, custo máximo, latência, privacidade, disponibilidade, região, tamanho de contexto e fallback permitido.
-
-Saída de decisão: provider, model, parâmetros permitidos, orçamento, fallback e razão registrada. O router não deve decidir por marketing do provider nem enviar dados a um fallback com política de privacidade inferior sem autorização.
-
-Começar com regras determinísticas e configuração explícita. Otimização adaptativa só deve ocorrer depois de métricas confiáveis. Claude pode continuar como provider operacional enquanto estiver isolado por adapter; provider-agnostic não exige múltiplos fornecedores prematuramente.
+Começa com regras determinísticas e configuração explícita. Um fallback não pode enviar dados a provider com política de privacidade inferior sem confirmação. Provider-agnostic significa isolamento por adapter, não multiplicação prematura de fornecedores.
 
 ## IMAGE GENERATION
 
-Contrato futuro `ImageGenerationProvider`:
+O contrato futuro separa `capability`, `provider`, `model`, `policy` e `cost` para generate/edit/inpaint/remove-background/upscale. Binários grandes usam object storage; PostgreSQL guarda referência, ownership, hash, provenance, consentimento e retenção.
 
-```text
-generate_image
-edit_image
-inpaint_image
-remove_background
-upscale_image
-```
-
-Separar `capability`, `provider`, `model`, `policy` e `cost`. Entradas e saídas grandes usam object storage com referências expiráveis; PostgreSQL guarda metadados, ownership, hashes, consentimento, proveniência e retenção.
-
-Edição deve distinguir imagem do usuário, imagem licenciada e imagem gerada. Políticas de conteúdo, privacidade, biometria, retenção e direitos autorais são avaliadas antes da chamada ao provider.
+Edição distingue mídia do owner, licenciada e gerada. Privacidade, biometria, direitos autorais, retenção e custos são avaliados antes da chamada externa.
 
 ## MULTIMODALITY
 
-`InputRouter` normaliza envelopes, não conteúdo bruto em uma única string:
+`InputRouter` normaliza envelopes de texto, voz, imagem, documento, código e tela. Cada envelope contém modalidade, tipo/tamanho/hash, referência de armazenamento, texto extraído, proveniência, trust level, owner namespace, policy tags, retenção e correlation ID.
 
-```text
-InputEnvelope
-  modality, media_type, size, hash
-  storage_reference, extracted_text
-  provenance, trust_level, user_id
-  policy_tags, retention, correlation_id
-```
-
-Inputs: texto, voz, imagem, documento, código e tela. Outputs: texto, voz, imagem, documento, UI Event e Action Result.
-
-Cada modalidade possui validação, scanner e limites próprios. Conteúdo extraído é dado não confiável. O Orchestrator recebe representações minimizadas e referências autorizadas; binários não são despejados no prompt nem no PostgreSQL.
+Cada modalidade possui scanner e limites próprios. Conteúdo extraído é dado não confiável; binários não são despejados no prompt nem no PostgreSQL.
 
 ## SELF-EVALUATION
 
-`EvaluationManager` registra `success`, `partial_success`, `failure`, feedback do usuário, desempenho, lições, custo e latência. Métricas precisam apontar para task, versão do agente/skill, model route e execution ID.
+`EvaluationManager` registra success/partial/failure, feedback, custo e latência ligados à tarefa, versão, model route e execution ID. Self-evaluation é evidência, não autoridade: agente não aprova a própria mudança e feedback isolado não altera regra global.
 
-Self-evaluation é evidência, não autoridade. Um agente não aprova sua própria mudança, e um único feedback não altera comportamento global. Promoção de lesson para procedure ou skill exige limiar de evidência, avaliação separada e, para capacidades críticas, revisão humana.
+## OWNER REVIEW AND REVOCATION
 
-## OBSERVABILITY
+O owner precisa de uma superfície simples para:
 
-Deve ser possível responder “por que a HOPE fez isso?” por meio de uma cadeia correlacionada:
+- ver sessão atual, grants ativos, expiração, recurso e ator técnico;
+- revogar um grant, encerrar a sessão ou usar “revogar tudo”;
+- cancelar execuções quando suportado;
+- revisar eventos de auditoria por categoria e correlação;
+- remover/rotacionar integrações sem revelar secrets.
+
+No primeiro desenho local, grants são curtos e podem ser mantidos em memória; reinício os invalida. Persistência distribuída de sessão/grant é requisito somente quando existir operação cloud contínua ou múltiplas réplicas.
+
+## SECRETS AND SESSIONS
+
+- Secrets ficam no backend, cofre do SO ou secret manager do ambiente; nunca em frontend, prompt, URL, Git ou audit log.
+- Tools recebem handles opacos com ação e prazo, não o secret original.
+- Sessão local usa cookie opaco `HttpOnly` e mesma origem quando houver browser; `localStorage` não armazena credencial.
+- Logout invalida a sessão e grants derivados. Expiração falha fechada e encerra/rejeita WebSocket autenticado.
+- Em acesso remoto, cookies exigem `Secure`, política de CSRF e Origin, rotação e estratégia de recuperação antes do deploy.
+
+## AUDIT AND OBSERVABILITY
+
+Correlação mínima:
 
 ```text
-request_id → task_id → agent_execution_id → model_decision
-           → tool_calls → permission_decisions → approvals
-           → result → evaluation → memory/experience provenance
+request_id → owner_session_id → task/execution_id
+           → permission_decision → tool/effect → result
 ```
 
-Registrar eventos estruturados e minimizados: ator, ação, alvo lógico, policy/version, model/tool/skill usados, custo, latência, resultado e aprovação. Não registrar secrets, tokens, prompts brutos ou conteúdo privado completo por padrão.
+Registrar timestamp, ator técnico, action enum, target lógico minimizado ou hash, risk, policy version, approval ID, result, duração e custo quando aplicável. Não registrar token, secret, prompt bruto, conteúdo integral, path privado desnecessário ou payload externo completo.
 
-Logs operacionais, audit trail e memória são armazenamentos distintos, com retenção e acesso próprios. Auditoria sensível deve ser append-oriented e resistente a alteração pelo runtime comum.
+Logs operacionais, auditoria e memória têm retenção e acesso separados. Escrita de auditoria deve ser append-oriented; falha de auditoria em `SENSITIVE`/`DESTRUCTIVE` resulta em `DENY` quando não for possível garantir registro mínimo.
 
 ## COST CONTROL
 
-Cada execução futura recebe um `BudgetEnvelope`:
-
-```text
-token_budget
-monetary_budget
-timeout
-concurrency
-max_tool_calls
-max_retries
-```
-
-O orçamento é verificado antes e durante a execução. Exceder o limite deve interromper ou pedir aprovação, nunca selecionar silenciosamente um provider mais invasivo. Estimativas e custos realizados entram na avaliação e auditoria. Billing ao usuário está fora do escopo inicial.
+Cada execução futura recebe `BudgetEnvelope` com token budget, monetary budget, timeout, concurrency, max tool calls e max retries. Limites são verificados antes e durante a execução. Exceder budget interrompe ou pede confirmação; nunca escolhe silenciosamente um provider mais invasivo.
 
 ## SAFETY BOUNDARIES
 
-| Capacidade | Automação permitida | Limite |
+| Capability | Automation allowed | Boundary |
 |---|---|---|
-| Learning | Sim, para registros seguros e minimizados | sem alterar pesos ou regras centrais |
-| Memory update | Sim, conforme classificação e política | corrigível, explicável e com esquecimento |
-| Preference learning | Sim, com confiança e escopo | ambiguidade pede confirmação |
-| Experience recording | Sim | não vira regra após caso isolado |
-| Skill proposal | Sim | proposta não é instalação/ativação |
-| Skill creation | Somente em sandbox controlado | testes, versão e provenance obrigatórios |
-| Agent creation | Dentro de policy e orçamento | sem elevação de privilégios |
-| Permission escalation | Não automática | aprovação apropriada obrigatória |
-| Core self-modification | Não | autorização explícita e reviews obrigatórios |
-| Production infrastructure change | Não | autorização operacional explícita |
-| Security policy change | Não | Security Review e aprovação explícita |
+| Learning/memory update | sim, para registros seguros e corrigíveis | sem mudar core ou permission policy |
+| Preference/experience | sim, com confiança e provenance | caso isolado não vira regra |
+| Skill proposal | sim | proposta não instala nem ativa |
+| Skill/agent creation | somente em sandbox e policy | sem autoelevação ou grants permanentes |
+| SENSITIVE/DESTRUCTIVE | não automática | confirmação do owner e auditoria |
+| Core self-modification | não | decisão e reviews explícitos |
+| Production/infrastructure/security policy | não | autorização operacional separada |
 
-Também exigem aprovação explícita: migration real, credenciais, concessão de privilégios, custo relevante, exclusão irrecuperável, aceitação de risco HIGH/CRITICAL e qualquer mudança irreversível.
+Migration real, credencial, privilégio, custo relevante, exclusão irrecuperável, risco HIGH/CRITICAL e mudança irreversível sempre exigem decisão explícita.
 
 ## FEATURE READY VS PRODUCTION READY
 
-- **FEATURE READY:** o escopo funcional da fase satisfaz seus critérios em ambiente definido e todos os reviews requeridos para esse escopo foram concluídos.
-- **PRODUCTION READY:** identidade, autorização, isolamento, quotas, auditoria, secrets, deploy, backup/restore, observabilidade e operação real foram validados para exposição pública.
+- `FEATURE READY`: critérios da fase satisfeitos no ambiente definido, reviews obrigatórios concluídos e nenhum blocker funcional.
+- `PRODUCTION READY`: owner recognition, sessão/revogação, permissions, quotas, secrets, deploy, backup/restore, observabilidade e operação real validados para a superfície escolhida.
 
-Uma feature pode estar aprovada para ambiente local/controlado e permanecer bloqueada para produção. Isso não autoriza ignorar defeitos que pertencem ao próprio contrato da feature, como consentimento de memória enganoso ou exclusão destrutiva ambígua.
+Uma feature pode ser aprovada para localhost/controlado e permanecer bloqueada para produção. `SINGLE_USER` não reduz esse gate; apenas remove complexidade de tenants e contas que não protege o caso real.
+
+## RLS STRATEGY
+
+RLS orientado a tenants foi removido do roadmap imediato. Em `SINGLE_USER`, o controle principal é:
+
+1. owner reconhecido no servidor;
+2. namespace canônico do owner;
+3. autorização por recurso;
+4. role de runtime com privilégio mínimo;
+5. PermissionManager para efeitos.
+
+RLS simples pode ser reavaliado como defesa adicional se houver acesso remoto, plugins com consulta direta, múltiplas réplicas ou outra fronteira que justifique o custo. Não ativar RLS antes de identidade, role, migrations, testes PostgreSQL e rollback estarem prontos. Findings existentes de Security/Database permanecem históricos até revisão dos owners.
 
 ## ROADMAP
 
-As fases abaixo são propostas; nenhuma está iniciada. A numeração final depende do encerramento formal da Fase 5.
+Nenhuma fase abaixo está autorizada para implementação.
 
-### Gate atual — Encerramento da Fase 5
+### Phase 6 — Target UI Convergence
 
-- **Goal:** concluir reviews do Functional Commit vigente e separar aceite local de readiness pública.
-- **Scope:** re-review de QA/Database/UI/UX; correção dos blockers que pertencem ao contrato funcional da memória.
-- **Non-goals:** autenticação completa, deploy público, agentes, tools ou expansão funcional.
-- **Dependencies:** decisão `ARCH-2026-09-04-001` e novo Functional Commit se necessário.
-- **Required Reviews:** QA YES; DATABASE conforme impacto do novo diff; SECURITY YES; UI/UX YES.
-- **Acceptance Criteria:** `SEC-006` e `SEC-007` resolvidos ou formalmente reclassificados pelo Security após correção; reviews aplicáveis aprovados; produção permanece bloqueada.
-- **Risks:** ampliar a fase com toda a plataforma de segurança.
-- **Deferred Work:** blockers exclusivamente de produção seguem para as fases 6–7 e para o gate de deploy.
+- Goal: implementar a composição aprovada do HOPE Main Dashboard sobre capacidades reais existentes.
+- Scope: shell, marca HOPE, hierarquia globo/chat, Core Orb, estados, inspector, controles, responsividade, fallback acessível e correção de `UIUX-F5-W01` a `UIUX-F5-W03`.
+- Non-goals: owner authentication, PermissionManager, tools, coding, agents, métricas inventadas, Visão/Arquivos/Automação funcionais, banco, migration ou deploy.
+- Dependencies: Fase 5 aprovada; `UIUX-VIS-2026-09-10-001`; `docs/design/`; baseline `88e1947`; aprovação explícita do plano.
+- Architecture: refatoração visual progressiva do frontend atual, preservando APIs e contratos de consentimento/esquecimento/realtime.
+- Acceptance Criteria: fidelidade UI/UX aprovada; dados e estados reais; chat-first mobile; WCAG 2.2 AA nos fluxos essenciais; nenhum claim futuro ativo; zero alteração de schema.
+- Required Reviews: QA YES — regressão/browser; DATABASE NO — escopo visual sem persistência, com reclassificação se o diff tocar dados; SECURITY YES — consentimento, confirmação e claims; UI/UX YES — spec prévia e fidelidade posterior.
+- Risks: regressão de consentimento/confirm dialog, custo WebGL, transformar mockup em claims falsos e scope creep para navegação futura.
+- Deferred Work: reconhecimento do owner, permissions, tools, agents e produção.
+- Production impact: nenhum; permanece local/controlado e `Production Readiness: BLOCKED`.
+- User approval requirements: aprovar esta fase e qualquer expansão funcional antes de DEV.
 
-### Fase 6 — Identidade e autorização
+### Phase 7 — Single-User Security & Permissions
 
-- **Goal:** estabelecer identidade server-side confiável.
-- **Scope:** autenticação, sessão/token, user derivado no servidor, autorização por recurso, handshake WebSocket autenticado e Origin policy.
-- **Non-goals:** SSO múltiplo, organizações, billing ou deploy público.
-- **Dependencies:** Fase 5 encerrada; decisão de identity provider aprovada.
-- **Required Reviews:** QA YES; DATABASE YES; SECURITY YES; UI/UX YES.
-- **Acceptance Criteria:** nenhum endpoint sensível aceita identidade arbitrária do cliente; isolamento HTTP/WS testado; logout/revogação definidos.
-- **Risks:** lock-in do provider e migração de UUIDs transitórios.
-- **Deferred Work:** RBAC avançado e federação empresarial.
+- Goal: reconhecer o único owner e governar recursos/efeitos por risco.
+- Scope: `OwnerAuthenticator`, sessão local revogável, `OwnerContext`, HTTP/WS sem identidade arbitrária, Origin policy, `ResourceAuthorizer`, PermissionManager `SAFE/WRITE/SENSITIVE/DESTRUCTIVE`, grants, revogação e auditoria mínima.
+- Non-goals: cadastro público, múltiplos usuários, RBAC complexo, tenants, organizações, SSO enterprise, PermissionManager organizacional, deploy público ou RLS por tenant.
+- Dependencies: contrato visual da Fase 6 para login/estado/revogação quando aplicável; escolha do método de owner recognition adequada ao ambiente; inventário de UUIDs antes de migração.
+- Architecture: três gates em sequência — owner, recurso, risco — com decisões fail-closed e sessões/grants curtos.
+- Acceptance Criteria: nenhum endpoint protegido ou WS confia no UUID do cliente; owner/session/revogação testados; grants são exatos e não reutilizáveis; prompt injection não concede permissão; cross-resource/path escape é negado; logs omitem secrets.
+- Required Reviews: QA YES — sessão e negativas; DATABASE YES — namespace `user_id`, inventário legado e contratos de persistência; SECURITY YES — fronteira principal; UI/UX YES — pareamento, sessão, confirmação, expiração e revogação.
+- Risks: bloquear o owner legítimo, recuperação fraca, grants amplos, vazamento em logs e falsa sensação de segurança em localhost.
+- Deferred Work: sessão distribuída, RLS opcional, rate limits de produção e provider cloud.
+- Production impact: melhora a base, mas não concede Production Readiness.
+- User approval requirements: escolher o método de reconhecimento antes da implementação e autorizar qualquer provider/custo/credencial.
 
-### Fase 7 — Consentimento, ações sensíveis e auditoria
+### Phase 8 — Read-Only Tool Registry
 
-- **Goal:** criar o primeiro execution safety envelope.
-- **Scope:** preferência server-side de memória, confirmação vinculada ao alvo, soft delete/undo, rate limits, quotas básicas, audit events e liveness/readiness separados.
-- **Non-goals:** PermissionManager genérico ou automações.
-- **Dependencies:** Fase 6.
-- **Required Reviews:** QA YES; DATABASE YES; SECURITY YES; UI/UX YES.
-- **Acceptance Criteria:** opt-out impede captura/recuperação; ações destrutivas exigem confirmação; auditoria correlaciona ator/resultado sem conteúdo bruto.
-- **Risks:** retenção excessiva de auditoria e UX de confirmação cansativa.
-- **Deferred Work:** políticas organizacionais e SIEM externo.
+- Goal: introduzir tools `SAFE` somente leitura sob escopo explícito.
+- Scope: schemas, registry, allowlists, timeouts, provenance, cancelamento, audit mínimo e tools locais de leitura úteis.
+- Non-goals: editar, executar código, rede externa sensível, credenciais brutas, efeitos, agentes ou automações.
+- Dependencies: Phase 7 aprovada e PermissionManager operacional.
+- Architecture: tool registrada + schema validado + `ResourceAuthorizer` + decisão SAFE + executor limitado.
+- Acceptance Criteria: tool não registrada não executa; path/namespace escape é negado; output é tratado como dado; cancelamento/timeout funcionam; tool não amplia grant.
+- Required Reviews: QA YES — tool contracts; DATABASE NO — fase exclui tool de banco e persistência nova; SECURITY YES — leitura/exfiltração; UI/UX YES — catálogo, escopo e cancelamento visíveis.
+- Risks: leitura excessiva, exfiltração por output e tool injection.
+- Deferred Work: WRITE/EXECUTE e coding agent.
+- Production impact: nenhum deploy; somente ambiente controlado.
+- User approval requirements: aprovar catálogo inicial e fontes acessíveis.
 
-### Fase 8 — Memória semântica de produção
+### Phase 9 — Permissioned Effects & Ephemeral Coding
 
-- **Goal:** substituir o embedding de desenvolvimento por qualidade mensurável.
-- **Scope:** provider real via contrato existente, dataset sintético/anonimizado, métricas de recall/latência/custo, validação HNSW e política de re-embedding.
-- **Non-goals:** learning completo ou migração destrutiva automática.
-- **Dependencies:** fases 6–7; orçamento/provider aprovados.
-- **Required Reviews:** QA YES; DATABASE YES; SECURITY YES; UI/UX NO.
-- **Acceptance Criteria:** baseline e limiares documentados; fallback seguro; dimensões/migration validadas; custo por recuperação medido.
-- **Risks:** lock-in, custo e re-embedding incompatível.
-- **Deferred Work:** reranking avançado e memória de experiência.
+- Goal: permitir WRITE/EXECUTE controlados e um Coding Agent efêmero em workspace isolado.
+- Scope: edição recuperável, testes/lint, diff, orçamento, confirmação por alvo, sandbox, limites de rede e separação de commit/push/merge/deploy/migration.
+- Non-goals: produção, credenciais administrativas, push/merge automático, migration real, agente persistente ou multi-repositório.
+- Dependencies: Phases 7–8 aprovadas; rollback por diff; workspace isolation; policy por operação.
+- Architecture: plano limitado → grant filho → executor sandboxed → evidência/diff → review independente.
+- Acceptance Criteria: nenhuma autoelevação; effects separados; testes/evidências registrados; rollback disponível; SENSITIVE/DESTRUCTIVE volta ao owner; agente perde grants ao terminar.
+- Required Reviews: QA YES — sandbox e efeitos; DATABASE NO — migration/banco real são non-goals; SECURITY YES — execução e grants; UI/UX YES — aprovações, cancelamento e resultados.
+- Risks: execução de código não confiável, supply chain, path escape, comandos destrutivos e custo.
+- Deferred Work: agentes gerais, persistência e automações.
+- Production impact: restrito a workspaces controlados; sem deploy.
+- User approval requirements: aprovar actions WRITE/EXECUTE e qualquer egress/custo.
 
-### Fase 9 — Model Router e contratos de provider
+### Phase 10 — Ephemeral Agent Runtime
 
-- **Goal:** desacoplar seleção de modelo por capacidade.
-- **Scope:** adapters tipados, catálogo de capabilities, regras determinísticas, telemetria de rota e fallback compatível com privacidade.
-- **Non-goals:** otimização autônoma ou múltiplos providers para toda categoria.
-- **Dependencies:** observabilidade mínima da Fase 7.
-- **Required Reviews:** QA YES; DATABASE NO; SECURITY YES; UI/UX NO.
-- **Acceptance Criteria:** Claude continua funcional atrás do contrato; decisões de rota são explicáveis; limites de custo/privacidade são testados.
-- **Risks:** abstração prematura e menor acesso a recursos específicos.
-- **Deferred Work:** roteamento adaptativo.
+- Goal: generalizar delegação limitada além de coding.
+- Scope: AgentRegistry, lifecycle efêmero, policy, budgets, cancelamento, avaliação externa e grants por interseção.
+- Non-goals: agentes persistentes, criação irrestrita, autonomia 24/7, self-modification ou permissões permanentes.
+- Dependencies: Phases 7–9 aprovadas.
+- Architecture: owner → task envelope → agent efêmero → subset de tools/grants → avaliação externa → destruição do contexto privilegiado.
+- Acceptance Criteria: limites de custo/tempo/tool calls; nenhuma permissão herdada implicitamente; fan-out limitado; revogação/cancelamento; auditoria correlacionada.
+- Required Reviews: QA YES — lifecycle/fan-out; DATABASE NO — runtime inicial é efêmero e sem persistência nova; SECURITY YES — delegation/privilege; UI/UX YES — interface de agentes, budgets e aprovações.
+- Risks: loops, fan-out, custo silencioso, privilege creep e memória indevida.
+- Deferred Work: skills, learning, agentes persistentes e automações.
+- Production impact: nenhum até gate específico.
+- User approval requirements: aprovar tipos de agente, budgets e tools.
 
-### Fase 10 — Tool Registry somente leitura
+### Conditional Gate — Production Hardening
 
-- **Goal:** formalizar tools sem introduzir efeitos externos.
-- **Scope:** schemas, catálogo, provenance, timeouts, idempotência declarada e primeiras tools READ.
-- **Non-goals:** escrita, shell arbitrário, deploy ou agentes.
-- **Dependencies:** Fases 7 e 9.
-- **Required Reviews:** QA YES; DATABASE conforme tool; SECURITY YES; UI/UX conforme exposição.
-- **Acceptance Criteria:** tool não registrada não executa; inputs/outputs validados; chamadas auditáveis e limitadas.
-- **Risks:** tool injection e vazamento por leitura ampla.
-- **Deferred Work:** ferramentas com efeitos.
+- Goal: validar a superfície que realmente será exposta ou executada continuamente.
+- Scope: definido somente quando houver objetivo concreto de acesso remoto/cloud; pode incluir secrets manager, TLS, hosts/proxy, role PostgreSQL mínima, backup/restore, broker, quotas, rate limits, session store, observabilidade e incident response.
+- Non-goals: infraestrutura enterprise sem demanda, multi-tenant, SSO, organizações ou relaxamento de safety boundaries.
+- Dependencies: ao menos Phase 7 e escopo de produto/deploy escolhido.
+- Architecture: gate incremental antes da exposição, não uma reescrita preventiva de toda a plataforma.
+- Acceptance Criteria: threat model do escopo, restore, rollback, owner recovery, session revocation, limites, auditoria e deploy reproduzível validados.
+- Required Reviews: QA YES; DATABASE YES; SECURITY YES; UI/UX YES para fluxos operacionais visíveis; aprovação da usuária YES.
+- Risks: custo operacional, overengineering ou, no extremo oposto, exposição antes do gate.
+- Deferred Work: controles enterprise sem necessidade single-user.
+- Production impact: é o único gate que pode preparar exposição; não a autoriza sozinho.
+- User approval requirements: objetivo de exposição, provider, custo, credenciais, migration e go-live exigem decisões separadas.
 
-### Fase 11 — PermissionManager e execução com efeitos
+## PRESERVED FUTURE CAPABILITIES
 
-- **Goal:** aplicar capabilities mínimas e aprovação humana.
-- **Scope:** grants com escopo/expiração, `ALLOW/DENY/REQUIRE_APPROVAL`, budget envelope e executor sandboxed para WRITE/EXECUTE controlados.
-- **Non-goals:** agente autônomo persistente.
-- **Dependencies:** Fase 10.
-- **Required Reviews:** QA YES; DATABASE YES; SECURITY YES; UI/UX YES.
-- **Acceptance Criteria:** nenhuma elevação própria; confirmações vinculadas ao alvo; negação segura; auditoria de grants e efeitos.
-- **Risks:** policy bypass e fadiga de aprovação.
-- **Deferred Work:** policies organizacionais.
+Permanecem válidas, sem numeração definitiva até as fases 6–10 produzirem evidência:
 
-### Fase 12 — Coding Agent ephemeral
+- Model Router e adapters de LLM/STT/TTS/embeddings.
+- Memória semântica de produção e avaliação de recall/latência/custo.
+- Skills versionadas e Experience Memory.
+- Imagens e multimodalidade com object storage e políticas de dados.
+- Agentes persistentes com owner, versão, revogação e budgets.
+- Automações duráveis, idempotentes e quiet-by-default.
+- HOPE Bridge autenticado e revogável para recursos locais.
+- Learning por registros controlados, nunca self-modification irrestrita.
 
-- **Goal:** executar tarefas de código autorizadas em workspace isolado.
-- **Scope:** leitura, busca, edição, testes, lint, formatter, diff e avaliação independente.
-- **Non-goals:** push, merge, deploy, migration real ou produção.
-- **Dependencies:** Fases 9–11.
-- **Required Reviews:** QA YES; DATABASE conforme tarefa; SECURITY YES; UI/UX NO.
-- **Acceptance Criteria:** limites de repositório/rede; diff recuperável; testes registrados; operações sensíveis separadas.
-- **Risks:** execução de código não confiável e supply chain.
-- **Deferred Work:** agentes persistentes e múltiplos repositórios.
-
-### Fase 13 — Agent Runtime ephemeral
-
-- **Goal:** generalizar delegação limitada além de coding.
-- **Scope:** registry, factory, runtime, policy, lifecycle, timeout, cancelamento e avaliação externa.
-- **Non-goals:** agentes persistentes ou criação irrestrita de subagentes.
-- **Dependencies:** Fases 9–12.
-- **Required Reviews:** QA YES; DATABASE YES; SECURITY YES; UI/UX conforme interface.
-- **Acceptance Criteria:** contrato mínimo completo; budgets aplicados; permissões não herdadas; execuções correlacionadas.
-- **Risks:** loops, custo e fan-out excessivo.
-- **Deferred Work:** persistência de especialistas.
-
-### Fase 14 — Skills versionadas
-
-- **Goal:** transformar procedimentos aprovados em capacidades reutilizáveis.
-- **Scope:** SkillRegistry, definição, executor, evaluator, versões imutáveis e provenance.
-- **Non-goals:** aquisição autônoma de Skills críticas.
-- **Dependencies:** Fases 10–13.
-- **Required Reviews:** QA YES; DATABASE YES; SECURITY YES; UI/UX conforme catálogo.
-- **Acceptance Criteria:** versões e hashes rastreáveis; testes por skill; mudança crítica não ativa silenciosamente.
-- **Risks:** cadeia de dependência e skill poisoning.
-- **Deferred Work:** marketplace e compartilhamento público.
-
-### Fase 15 — Learning e Experience Memory
-
-- **Goal:** aprender de feedback, preferências e resultados sem alterar pesos.
-- **Scope:** feedback, experiências, self-evaluation, recuperação contextual e propostas de procedures.
-- **Non-goals:** fine-tuning, autoedição de core ou promoção automática de skill crítica.
-- **Dependencies:** Fases 8, 13 e 14.
-- **Required Reviews:** QA YES; DATABASE YES; SECURITY YES; UI/UX YES.
-- **Acceptance Criteria:** taxonomia MEMORY/PREFERENCE/EXPERIENCE/PROCEDURE/SKILL; proveniência; correção/esquecimento; consolidação multi-evidência.
-- **Risks:** poisoning, generalização indevida e retenção excessiva.
-- **Deferred Work:** aprendizagem avançada e adaptação de policies.
-
-### Fase 16 — Geração e edição de imagens
-
-- **Goal:** adicionar imagem por contrato provider-agnostic.
-- **Scope:** generate/edit/inpaint/remove-background/upscale conforme providers escolhidos, object storage e provenance.
-- **Non-goals:** visão geral ou vídeo.
-- **Dependencies:** Fases 7, 9 e 11.
-- **Required Reviews:** QA YES; DATABASE YES; SECURITY YES; UI/UX YES.
-- **Acceptance Criteria:** capability/provider/model/policy/cost separados; ownership e retenção; falhas e custos visíveis.
-- **Risks:** privacidade, direitos autorais e custo.
-- **Deferred Work:** vídeo e pipeline criativo multiagente.
-
-### Fase 17 — Multimodal Input/Output Router
-
-- **Goal:** normalizar texto, voz, imagem, documento, código e tela.
-- **Scope:** envelopes, armazenamento por referência, extração segura, routing e outputs tipados.
-- **Non-goals:** suporte completo a todo formato ou captura contínua de tela.
-- **Dependencies:** Fases 9, 11 e 16.
-- **Required Reviews:** QA YES; DATABASE YES; SECURITY YES; UI/UX YES.
-- **Acceptance Criteria:** limites por modalidade; conteúdo tratado como não confiável; binários fora do PostgreSQL; consentimento explícito.
-- **Risks:** dados sensíveis, parser exploits e custo de mídia.
-- **Deferred Work:** vídeo e realtime multimodal contínuo.
-
-### Fase 18 — Agentes persistentes
-
-- **Goal:** permitir especialistas reutilizáveis governados.
-- **Scope:** lifecycle persistente, versionamento, memory scope, revogação e avaliação periódica.
-- **Non-goals:** autonomia ilimitada ou execução 24/7 sem orçamento.
-- **Dependencies:** Fases 13–15.
-- **Required Reviews:** QA YES; DATABASE YES; SECURITY YES; UI/UX YES.
-- **Acceptance Criteria:** owner e provenance; revogação; budgets; nenhuma permissão permanente implícita.
-- **Risks:** privilege creep e comportamento obsoleto.
-- **Deferred Work:** agentes compartilhados entre usuários.
-
-### Fase 19 — Automações e proatividade
-
-- **Goal:** executar rotinas agendadas ou orientadas a eventos com segurança.
-- **Scope:** scheduler durável, retries, idempotência, notificações, approval gates e quiet-by-default quando nada muda.
-- **Non-goals:** ação sensível autônoma irrestrita.
-- **Dependencies:** Fases 11, 13, 15 e 18.
-- **Required Reviews:** QA YES; DATABASE YES; SECURITY YES; UI/UX YES.
-- **Acceptance Criteria:** retries idempotentes; cancelamento/revogação; orçamento; histórico; aprovação quando exigida.
-- **Risks:** ações duplicadas, loops e custos silenciosos.
-- **Deferred Work:** otimização autônoma de agendas.
-
-### Fase 20 — Cloud production e advanced learning
-
-- **Goal:** validar operação pública contínua e escalar aprendizado com governança.
-- **Scope:** deploy reproduzível, secrets, broker distribuído, backup/restore, DR, observabilidade, SLOs, retenção e avaliações de aprendizado.
-- **Non-goals:** relaxar safety boundaries.
-- **Dependencies:** blockers de produção resolvidos e fases necessárias ao produto escolhido.
-- **Required Reviews:** QA YES; DATABASE YES; SECURITY YES; UI/UX YES; aprovação do usuário YES.
-- **Acceptance Criteria:** threat model, carga, restore, isolamento, quotas, auditoria e rollback validados em ambiente controlado antes de produção.
-- **Risks:** custo operacional, complexidade distribuída e mudança irreversível.
-- **Deferred Work:** capacidades sem demanda comprovada.
+Organizações, billing, teams, SSO empresarial, federação, marketplace multiusuário e RLS por tenant não pertencem ao roadmap imediato.
 
 ## DEPENDENCY ORDER
 
 ```text
-Phase 5 closure
-  → Identity
-  → Consent/Audit
-  → Semantic Memory
-  → Model Router
-  → Read-only Tools
-  → Permissioned Effects
-  → Coding Agent
-  → Ephemeral Agents
-  → Skills
-  → Learning
-  → Images / Multimodality
-  → Persistent Agents
-  → Automations
-  → Production Scale / Advanced Learning
+Phase 5 approved baseline
+  → Phase 6 Target UI Convergence (local/controlado)
+  → Phase 7 Single-User Security & Permissions
+  → Phase 8 Read-Only Tools
+  → Phase 9 Permissioned Effects & Ephemeral Coding
+  → Phase 10 Ephemeral Agents
+  → capabilities futuras priorizadas por valor
+  → Production Hardening antes de qualquer exposição escolhida
 ```
 
-Essa ordem privilegia primeiro identidade, consentimento e rastreabilidade; depois execução; por fim autonomia. É possível desenvolver provas de conceito isoladas, mas elas não podem contornar as dependências de segurança para uso real.
+A Fase 6 pode preceder o PermissionManager porque não adiciona efeitos, credenciais ou capacidades e permanece local/controlada. Tools, coding e agentes não podem preceder a Fase 7. Production Hardening não é antecipado como arquitetura enterprise, mas também não pode ocorrer depois de uma exposição já iniciada.
+
+## DECISIONS REQUIRING FUTURE USER APPROVAL
+
+- Autorizar a implementação da Fase 6.
+- Escolher o mecanismo de reconhecimento do owner antes da Fase 7.
+- Definir se haverá acesso remoto/cloud e, se houver, provider, custo e recuperação.
+- Aprovar qualquer migration ou vínculo de UUID legado após inventário.
+- Aprovar catálogo de tools, egress, budgets, secrets e actions SENSITIVE/DESTRUCTIVE.
+- Autorizar qualquer Production Hardening real e eventual go-live.

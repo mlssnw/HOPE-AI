@@ -1,6 +1,6 @@
 # Arquitetura do HOPE AI
 
-Este documento registra o estado arquitetural observado no working tree em 3 de setembro de 2026. Ele complementa o histórico de `docs/phase-1.md` a `docs/phase-5.md` e separa explicitamente implementação atual de visão futura.
+Este documento registra o estado arquitetural observado no working tree em 3 de setembro de 2026. Ele complementa o histórico de `docs/phase-1.md` a `docs/phase-5.md` e separa explicitamente implementação atual de visão futura. A direção de produto foi corrigida em 10 de setembro de 2026 pela decisão `ARCH-2026-09-10-003`: a HOPE é `SINGLE_USER`, destinada a um único owner; isso não altera retroativamente o código nem os findings dos reviewers.
 
 Legenda:
 
@@ -37,6 +37,14 @@ PostgreSQL + pgvector (opcional em desenvolvimento)
 ```
 
 O backend serve o frontend e as APIs na mesma origem. Quando `DATABASE_URL` não está configurada ou a memória falha durante o chat, o chat continua de forma degradada e informa internamente que a memória não está disponível.
+
+### Modelo de ownership — TARGET SINGLE_USER, ainda não implementado
+
+A aplicação atual ainda usa um UUID criado no navegador e controlado pelo cliente. O alvo revisado não é uma plataforma de contas: existe um único owner, reconhecido por uma fronteira server-side proporcional ao ambiente. Em desenvolvimento local controlado, essa fronteira pode usar pareamento da instalação e sessão local; acesso remoto ou cloud exige credencial forte e sessão protegida antes da exposição.
+
+O baseline funcional preservado é `88e194778b4399a6713f118470f9d861c553cd9e`. As mudanças de direção registradas em `ARCH-2026-09-10-003` são exclusivamente documentais.
+
+Os campos `user_id` existentes permanecem no estado atual e serão preservados como namespace interno do owner até que uma migration específica seja justificada. Eles não provam identidade. Autenticação multiusuário, RBAC organizacional, tenants, teams, SSO empresarial, federação e RLS orientado a tenants foram removidos do roadmap imediato.
 
 ### Frontend — IMPLEMENTED
 
@@ -128,7 +136,7 @@ Os estados expressivos são sinalização operacional, não alegação de consci
 O domínio em `backend/memory/` está separado em componentes:
 
 - `MemoryManager`: fachada transacional e coordenação do ciclo de vida;
-- `MemoryRepository`: persistência e consultas isoladas por usuário;
+- `MemoryRepository`: persistência e consultas filtradas pelo namespace `user_id`, futuramente vinculado ao único owner;
 - `MemoryClassifier`: classificação determinística, importância, tipo e natureza;
 - `MemoryConsolidator`: detecção e reforço de duplicatas;
 - `MemoryRetriever`: combinação de similaridade, texto e importância;
@@ -164,7 +172,7 @@ Entidades mapeadas atualmente:
 
 Há índices por usuário, tipo, natureza e criação, além de índice HNSW com distância cosseno para embeddings no PostgreSQL. O HNSW está declarado tanto na migration quanto no metadata SQLAlchemy para impedir deriva de autogeração. As sessões fazem commit automático no sucesso e rollback em exceções.
 
-A migration de hardening adiciona FKs compostas com `user_id`, checks de domínio e unicidade normalizada de entidades. Isso impede relações cruzadas entre usuários no banco e torna o upsert PostgreSQL de entidades atômico. O runtime aceita uma role restrita em `DATABASE_URL`; Alembic pode usar `DATABASE_ADMIN_URL` separadamente. O pool é configurável e usa padrões conservadores de 3 conexões mais 1 overflow por worker, timeout de 30 segundos e recycle de 900 segundos. Parâmetros SQL permanecem ocultos nos logs.
+A migration de hardening adiciona FKs compostas com `user_id`, checks de domínio e unicidade normalizada de entidades. Isso impede relações entre namespaces incompatíveis no banco e torna o upsert PostgreSQL de entidades atômico. No modelo `SINGLE_USER`, essas FKs continuam úteis como integridade e compatibilidade; não representam uma decisão de suportar múltiplos tenants. O runtime aceita uma role restrita em `DATABASE_URL`; Alembic pode usar `DATABASE_ADMIN_URL` separadamente. O pool é configurável e usa padrões conservadores de 3 conexões mais 1 overflow por worker, timeout de 30 segundos e recycle de 900 segundos. Parâmetros SQL permanecem ocultos nos logs.
 
 Na inicialização, o runtime consulta `alembic_version` sem executar migrations e só ativa o subsistema de memória quando a revisão corresponde exatamente a `20260903_0003`. Um schema ausente, inacessível ou ainda em `0002` desativa memória, `MemoryService` e o contexto persistente antes de qualquer captura/upsert; a API de memória responde `503` com diagnóstico operacional e o chat básico continua em modo degradado. Schemas descartáveis criados por `create_schema_for_tests` usam explicitamente o metadata atual e permanecem compatíveis com esse gate.
 
@@ -172,7 +180,7 @@ Limitações atuais:
 
 - **PARTIAL:** o banco é necessário para memória persistente, mas não para o chat básico.
 - **PARTIAL:** conversas e mensagens estão modeladas, porém não integradas ao fluxo ativo do chat.
-- **PARTIAL:** as FKs compostas protegem integridade de escrita, mas RLS depende de autenticação real e permanece adiado para a exposição pública.
+- **PARTIAL:** as FKs compostas protegem integridade de escrita. RLS orientado a tenants não faz parte do roadmap imediato; RLS simples pode ser reavaliado como defesa adicional somente se o perfil de acesso remoto/cloud ou integrações diretas ao banco justificar seu custo.
 - **PARTIAL:** a separação de roles está suportada pelo código; sua criação e ativação no PostgreSQL gerenciado são ações operacionais ainda não executadas.
 - **PLANNED:** armazenamento externo formal para binários e grandes arquivos.
 
@@ -188,7 +196,7 @@ A aplicação não cria schema automaticamente em produção. `create_schema_for
 
 ### Realtime — IMPLEMENTED localmente
 
-O Event Bus é assíncrono, em memória e isolado pelo UUID informado. O endpoint `/ws/hope` mantém uma assinatura por usuário, emite `CONNECTED`, `PING`/`PONG` e encaminha:
+O Event Bus é assíncrono, em memória e segmentado pelo UUID informado. O endpoint `/ws/hope` mantém uma assinatura por namespace, emite `CONNECTED`, `PING`/`PONG` e encaminha:
 
 - `MEMORY_CREATED`;
 - `MEMORY_UPDATED`;
@@ -225,7 +233,7 @@ Tavily fornece busca web opcional com resultados limitados e validados. Há rast
 - **PLANNED:** arquitetura completa de tools, autorizações, auditoria e integrações adicionais.
 - **PLANNED:** automações.
 
-### Autenticação e segurança — PARTIAL
+### Reconhecimento do owner e segurança — PARTIAL
 
 Defesas implementadas:
 
@@ -235,15 +243,15 @@ Defesas implementadas:
 - renderização defensiva e bloqueio de URLs perigosas no frontend;
 - timeouts, limites, validação de resposta e mensagens públicas para integrações;
 - contexto externo e memória tratados como dados não confiáveis;
-- consultas de memória filtradas por UUID de usuário.
+- consultas de memória filtradas por UUID transitório.
 - opt-in explícito no chat, com recuperação e captura bloqueadas no servidor quando desativado;
 - confirmação destrutiva vinculada ao UUID exato antes de excluir memória pela API.
 
-Lacunas críticas antes de exposição pública:
+Lacunas críticas antes de qualquer acesso remoto ou exposição pública:
 
-- **PLANNED:** autenticação real;
-- **PLANNED:** autorização baseada em identidade verificada;
-- **PARTIAL:** `X-Hope-User-Id` e `user_id` no WebSocket são valores controlados pelo cliente e servem apenas como identidade transitória de desenvolvimento;
+- **PLANNED:** reconhecimento server-side do único owner e sessões protegidas, sem plataforma de contas multiusuário;
+- **PLANNED:** autorização por recurso e `PermissionManager` por risco para efeitos locais, externos, sensíveis e destrutivos;
+- **PARTIAL:** `X-Hope-User-Id` e `user_id` no WebSocket são valores controlados pelo cliente e servem apenas como namespace transitório de desenvolvimento;
 - **PLANNED:** rate limiting de produção, trilha de auditoria operacional abrangente e gestão cloud de secrets;
 - **PLANNED:** proteção distribuída do WebSocket e das ferramentas futuras.
 
@@ -267,6 +275,8 @@ Validação visual de browser e banco PostgreSQL real continuam tarefas ambienta
 Os itens desta seção são direção futura e não devem ser interpretados como autorização para iniciar uma nova fase.
 
 A especificação detalhada de plataforma, personalidade, Learning, Experience Memory, Agents, Skills, Tools, Permissions, Coding, Model Router, imagens, multimodalidade, avaliação, observabilidade, custos, limites de autonomia e roadmap está em [`docs/future-architecture.md`](future-architecture.md). O princípio estrutural é adicionar capacidades em camadas pequenas e reversíveis: identidade e consentimento precedem execução; permissões precedem agentes; experiências precedem aprendizado avançado.
+
+O alvo assume um único owner. Reconhecer esse owner não exige cadastro público, organizações, RBAC complexo ou isolamento entre tenants. Exige apenas uma credencial adequada ao ambiente, sessão revogável, escopo explícito de recursos e decisões de risco que tools, agentes e conteúdo não confiável não possam ampliar.
 
 ### Operação cloud-first contínua — PLANNED
 
@@ -302,10 +312,11 @@ A especificação detalhada de plataforma, personalidade, Learning, Experience M
 
 ### Critérios antes de produção pública
 
-1. Autenticação e autorização reais em HTTP e WebSocket.
+1. Reconhecimento forte do único owner e autorização real em HTTP e WebSocket, sem confiar no UUID do cliente.
 2. Deploy reproduzível e gestão de secrets.
 3. PostgreSQL/pgvector gerenciado com backup, restore e migrations validadas.
 4. Broker/realtime compatível com múltiplas réplicas.
 5. Rate limiting, observabilidade e auditoria sem vazamento de dados.
 6. Revisão de privacidade, retenção, exclusão e ações destrutivas.
 7. Testes end-to-end e validação de carga do Memory Globe e da recuperação.
+8. `PermissionManager` aplicado a tools, agentes e efeitos, com confirmações vinculadas ao owner, ação e alvo.
