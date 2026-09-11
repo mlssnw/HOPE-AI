@@ -66,7 +66,7 @@ Assistentes tradicionais dependem principalmente do contexto imediato da convers
 | Versão atual | `6.0.0-phase.5` |
 | Fase atual | Fase 5 — memory-aware chat e personalidade HOPE |
 | Estado técnico | `APPROVED_WITH_WARNINGS` — Fase 5 funcionalmente concluída e aprovada pelos reviews independentes |
-| Próxima prioridade | `Phase 6 — Target UI Convergence`, plano pronto e aguardando aprovação explícita |
+| Próxima prioridade | `Phase 6 — Target UI Convergence`, planejamento aprovado; implementação ainda não autorizada |
 | Deploy público | Ainda não habilitado — autenticação, autorização e hardening de produção pendentes |
 
 A fundação local/controlada já conecta chat, memória persistente, PostgreSQL/pgvector, Memory Globe e eventos em tempo real. Isso não equivale a prontidão para produção pública.
