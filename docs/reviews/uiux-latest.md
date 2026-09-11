@@ -1,135 +1,113 @@
 # UI/UX Review — Latest
 
-Status: APPROVED_WITH_WARNINGS
-Date: 2026-09-10
-Phase: 5
-Review type: PHASE 5 FUNCTIONAL UX REVIEW
-Scope decision: `ARCH-2026-09-10-002`
-Functional Commit reviewed: `88e194778b4399a6713f118470f9d861c553cd9e`
-Repository HEAD observed: `0cc9b2919670b6310baf2b5ea5e0968aa0b5f30b`
+Status: APPROVED
+Date: 2026-09-11
+Phase: 6
+Review type: PHASE 6 PRE-IMPLEMENTATION SPECIFICATION REVIEW
+Architecture decision: `ARCH-2026-09-10-003`
+Visual decision: `UIUX-VIS-2026-09-10-001`
+Functional baseline: `88e194778b4399a6713f118470f9d861c553cd9e`
+Coordinator authorization commit: `0bcc25a5437cab8a326e64281579ead56274d8cb`
 
 ## Scope Boundary
 
-Esta revisão avalia exclusivamente a experiência funcional da Fase 5 no Functional Commit indicado. O frontend executado no browser corresponde ao alvo funcional: entre `88e194778b4399a6713f118470f9d861c553cd9e` e o HEAD observado não existe alteração em `frontend/` nem no comportamento funcional revisado.
+Esta revisão confirma a prontidão da especificação de UI/UX para Development implementar exclusivamente a Phase 6 Target UI Convergence. O baseline funcional permanece o commit indicado; o Target UI orienta apresentação, hierarquia e linguagem visual, mas não cria capability, dado ou estado.
 
-Não fazem parte deste gate a fidelidade completa ao HOPE Main Dashboard, a implementação de `UIUX-001` a `UIUX-005`, a matriz P0/P1/P2/P3, novas navegações, métricas ou capacidades planejadas. Nenhuma alteração de código ou visual foi realizada.
+Não foram alterados frontend, backend, banco, providers, testes funcionais, plano de fase ou arquivos de outros Works. Este resultado não aprova a implementação futura: o novo Functional Commit ainda deverá passar por QA, Security e UI/UX pós-implementação conforme `docs/phase-6.md`.
 
 ## Result
 
-- Feature UX result: APPROVED_WITH_WARNINGS
+- Pre-implementation UI/UX result: APPROVED
 - Blocking findings: nenhum
-- Non-blocking warnings: `UIUX-F5-W01`, `UIUX-F5-W02` e `UIUX-F5-W03`
-- Dashboard fidelity: NOT_EVALUATED neste gate
-- Production readiness: não avaliada por UI/UX e permanece separada do Feature Status
+- P0/P1 mapping: CLOSED em [`docs/design/phase-6-target-ui-spec.md`](../design/phase-6-target-ui-spec.md)
+- Definition of Ready: SATISFIED
+- Implementation status: NOT_STARTED por este Work
+- Production readiness: NOT_EVALUATED
 
-## Acceptance Evidence
+## Specification Sufficiency Evidence
 
-### 1. Clareza e comportamento de “Memória no chat” — PASS
+### Component, state, flow and capability mapping — PASS
 
-- O controle possui label explícito e ajuda associada por `aria-describedby`: “permite recuperar e salvar dados persistentes; trechos relevantes podem ser enviados ao provedor de IA”.
-- O padrão seguro é desativado: `loadPreferences()` normaliza `memoryEnabled` para `false` quando não há preferência anterior; o browser confirmou o checkbox inicialmente desmarcado.
-- A requisição envia o estado atual como `memory_enabled`; enquanto há solicitação ativa, o controle fica desabilitado para impedir mudança de contexto no meio da operação.
-- Evidência: `frontend/index.html`, `frontend/js/chat.js`, `frontend/js/storage.js` e validação no harness local.
+Todos os gaps P0/P1 aceitos estão associados a componente, estados/fluxos, capability real do baseline e critério fechado de implementação. O contrato cobre `UIUX-GAP-001`, `002`, `004`, `005`, `007`, `008`, `010`, `016`, `017`, `018`, `019`, `021`, `022`, `006`, `009`, `011`, `014`, `015` e `020`.
 
-### 2. Memória persistente separada de histórico local — PASS
+Evidência: matriz `P0/P1 Baseline Mapping` em `docs/design/phase-6-target-ui-spec.md`, comparada com `docs/design/dashboard-gap-matrix.md`, `docs/phase-6.md` e o frontend do baseline.
 
-- “Memória no chat” e “Histórico local” são controles independentes, com labels distintos e preferências separadas.
-- O histórico é limitado ao navegador e só é carregado/salvo quando `persist` está habilitado; desativá-lo remove `hope.history.v1` sem alterar o consentimento de memória.
-- O teste frontend “consentimento antigo de histórico não ativa memória persistente” passou.
-- Evidência: `frontend/index.html`, `frontend/js/storage.js`, `frontend/js/chat.js` e `tests/frontend/storage.test.mjs`.
+### Responsive composition — PASS
 
-### 3. Comunicação quando a memória está desativada — PASS WITH WARNING
+Desktop, notebook, tablet e mobile possuem composição, prioridade, proporção e comportamento definidos. Mobile e tablet começam em conversa; Globe e inspector preservam estado, fechamento e retorno de foco.
 
-- Com “Memória no chat” desmarcada, uma tentativa de consultar, corrigir ou esquecer dados persistentes retorna: “A memória no chat está desativada. Ative-a antes de consultar, corrigir ou esquecer dados persistentes.”
-- O backend bloqueia recuperação, captura e comandos de memória quando `memory_enabled=false`; o browser confirmou a mensagem e a devolução do foco ao composer.
-- O warning `UIUX-F5-W01` registra a ambiguidade residual entre disponibilidade do serviço e consentimento da conversa.
-- Evidência: `backend/ai/orchestrator.py`, `frontend/js/chat.js`, `tests/test_ai_orchestrator.py` e validação no harness local.
+Evidência: `Phase 6 Surface Model` e `Accessibility and Focus Contract` em `docs/design/phase-6-target-ui-spec.md`.
 
-### 4. Confirmação de esquecimento — PASS
+### Accessibility, reduced motion and focus — PASS
 
-- O diálogo informa `Alvo: Arquitetura da HOPE` e a consequência “A memória e suas relações serão removidas permanentemente.”.
-- Os botões usam verbos inequívocos: “Cancelar” e “Esquecer memória”.
-- A confirmação aceita somente UUID válido e o cliente envia o mesmo UUID na rota e no header `X-Hope-Confirm-Memory-Id`; ausência ou divergência retornam `428` no harness.
-- Evidência: `frontend/index.html`, `frontend/js/memory-confirmation.js`, `frontend/js/api-client.js`, `tests/test_e2e_harness.py` e validação no browser desktop/mobile.
+O contrato fixa contraste, alvos, foco visível, ordem de Tab, Escape, retorno de foco, live regions, alternativas a pointer e precedência de reduced motion sobre os perfis visuais.
 
-### 5. Foco, Escape e recuperação — PASS
+Evidência: `Accessibility and Focus Contract`, `Quality Profiles` e os fluxos de consentimento/esquecimento da especificação.
 
-- Ao abrir o diálogo, o foco inicial observado foi “Cancelar”.
-- Escape fechou o modal sem executar a exclusão e devolveu o foco ao campo de mensagem, acionador do fluxo via chat.
-- Abertura pelo inspector preserva o botão “Esquecer” como destino de retorno; em falha de exclusão, o diálogo permanece aberto, reabilita as ações, apresenta erro com `role="alert"` e move o foco para “Cancelar”.
-- Evidência: `frontend/js/memory-globe.js` e validação no browser em 1280 × 720 e 390 × 844.
+### WebGL fallback and quality profiles — PASS
 
-### 6. `FOCUS_MEMORIES` e Core Orb baseados em eventos/dados reais — PASS
+O fallback deve consumir o mesmo grafo real e manter lista, busca, relações, inspector e conversa sem API nova. LOW/MEDIUM/HIGH/ULTRA alteram apenas fidelidade e LOD, nunca contagem, ação, seleção ou informação essencial.
 
-- O frontend aceita somente `FOCUS_MEMORIES`, deduplica e limita IDs; antes de destacar ou mover a câmera, filtra os IDs contra `layout.nodeMap`.
-- O grafo descarta nós inválidos e relações órfãs. O backend forma o evento de foco a partir dos IDs de memórias realmente recuperadas.
-- O Core Orb recebe apenas `AI_STATE_CHANGED` do realtime; `thinking`, `searching`, `speaking` e `error` são normalizados, e qualquer valor não suportado volta a `idle`.
-- Os testes de layout, eventos incrementais, estados do chat e normalização de `FOCUS_MEMORIES` passaram sem dados fabricados.
-- Evidência: `backend/ai/orchestrator.py`, `frontend/js/ui-events.js`, `frontend/js/memory-globe-core.js`, `frontend/js/memory-globe.js` e testes frontend.
+Evidência: `WebGL Fallback Contract` e `Quality Profiles` em `docs/design/phase-6-target-ui-spec.md`.
 
-### 7. Teclado, foco, contraste, movimento reduzido e responsividade — PASS WITH WARNINGS
+### Truthful states and claims — PASS
 
-- Tab alcançou “Memória no chat”; o foco visível medido foi outline sólido âmbar de 2 px. Escape e retorno de foco funcionaram no modal.
-- Contrastes computados sobre o fundo principal: texto auxiliar 7,91:1, foco âmbar 10,45:1, ação destrutiva 8,82:1 e toggle ativo 14,86:1.
-- `prefers-reduced-motion: reduce` reduz animações/transições globalmente e o renderer interrompe rotação automática.
-- Em 390 × 844, os controles alterados quebraram linha sem overflow horizontal; composer, toggles, Enviar e confirmação permaneceram legíveis e operáveis. O modal coube integralmente na viewport.
-- `UIUX-F5-W02` e `UIUX-F5-W03` registram as limitações não bloqueantes de anúncio e dimensionamento.
-- Evidência: `frontend/styles/main.css`, `frontend/js/memory-globe.js` e validação no browser desktop/mobile.
+Core Orb, chat, memória, ditado, esquecimento e Globe possuem fonte de verdade explícita. `LISTENING` depende de reconhecimento realmente ativo; `EXECUTING` e `ALERT` não aparecem sem eventos suportados. Visão, Arquivos, Automação, tools, coding, skills, agents, navegação sem destino e métricas sem fonte devem ser omitidos, inclusive como controles desabilitados ou “em breve”.
 
-### 8. Ausência de alegações sobre capacidades futuras — PASS
+Evidência: `State Truth Table` e `Capability Claim Allowlist` em `docs/design/phase-6-target-ui-spec.md`.
 
-- A interface operacional revisada não contém rail de navegação, “Visão”, “Arquivos”, “Automação” nem métricas inventadas do dashboard conceitual.
-- Contagens exibidas no globo são derivadas de `layout.memories` e `layout.entities` reais.
-- O browser confirmou ausência desses destinos/claims no DOM operacional.
-- A marca/expansão histórica permanece registrada em `UIUX-001` para a futura fase visual e não foi usada como blocker retroativo desta Fase 5.
-- Evidência: `frontend/index.html`, `frontend/js/memory-globe.js`, `docs/design/dashboard-gap-matrix.md` e inspeção do browser.
+### Sensitive functional guarantees — PASS
+
+A convergência visual preserva a separação entre consentimento de memória e histórico local, o padrão opt-in, o cancelamento e a confirmação de esquecimento com alvo, consequência, foco inicial em Cancelar, Escape, erro recuperável e retorno de foco.
+
+Evidência: mapeamentos `UIUX-GAP-010`, `UIUX-GAP-016` e `UIUX-GAP-017` e o baseline funcional aprovado na revisão da Phase 5.
+
+## Required Corrections Carried into Phase 6
+
+Estes itens não bloqueiam a prontidão da especificação, pois agora possuem contrato fechado. Eles deverão estar resolvidos no Functional Commit da Phase 6 e serão verificados no review pós-implementação.
+
+### UIUX-F5-W01 — Diferenciar serviço disponível de consentimento ativo
+
+- Severity: MEDIUM
+- Blocking: NO neste gate de especificação
+- Evidence: no baseline, o badge “Memória” pode aparecer online enquanto “Memória no chat” permanece desmarcada.
+- Impact: disponibilidade técnica pode ser interpretada como uso consentido na conversa.
+- Closed contract: rotular como “Serviço de memória disponível/indisponível”; o estado do consentimento permanece exclusivamente no controle “Memória no chat”.
+
+### UIUX-F5-W02 — Reservar anúncio assertivo para urgência
+
+- Severity: LOW
+- Blocking: NO neste gate de especificação
+- Evidence: no baseline, `#live-status` usa `aria-live="assertive"` também para progresso e sucesso rotineiros.
+- Impact: leitores de tela podem interromper conteúdo desnecessariamente.
+- Closed contract: status rotineiro usa `polite`; anúncio urgente fica restrito a falha que exige ação.
+
+### UIUX-F5-W03 — Corrigir alvos de toque e texto auxiliar
+
+- Severity: MEDIUM
+- Blocking: NO neste gate de especificação
+- Evidence: no baseline mobile, toggles medem 32 px, Enviar 36 px e a ajuda do consentimento 9,76 px.
+- Impact: menor precisão de toque e legibilidade para baixa visão ou destreza reduzida.
+- Closed contract: 44 × 44 px em toque e mínimo de 11 px para metadado não essencial.
 
 ## Findings
 
-### UIUX-F5-W01 — Status do serviço pode ser confundido com consentimento ativo
+Nenhum problema aberto na especificação. As ambiguidades identificadas durante a revisão foram fechadas no contrato da Phase 6:
 
-- Severity: MEDIUM
-- Blocking: NO
-- Evidence: `frontend/js/memory-globe.js` marca o badge superior “Memória” como online quando o grafo/realtime está disponível, independentemente do checkbox “Memória no chat”. No browser, o badge de serviço apareceu disponível com o consentimento inicialmente desmarcado.
-- Impact: uma pessoa pode interpretar “Memória” online como uso ativo na conversa, embora o controle de consentimento e o backend mantenham o opt-out corretamente.
-- Future recommendation: rotular o badge como disponibilidade do serviço ou tornar a distinção textual mais explícita na futura fase visual.
-
-### UIUX-F5-W02 — Atualizações normais usam região assertiva
-
-- Severity: LOW
-- Blocking: NO
-- Evidence: `frontend/index.html` define `#live-status` como `role="status" aria-live="assertive"`; `frontend/js/ui.js` usa a mesma região para progresso, conclusão, cancelamento e erros.
-- Impact: leitores de tela podem interromper conteúdo para mensagens rotineiras, elevando ruído e reduzindo conforto, embora o fluxo continue compreensível e operável.
-- Future recommendation: usar anúncio `polite` para estados normais e reservar anúncio urgente para falhas que exigem ação.
-
-### UIUX-F5-W03 — Alvos de toque e texto auxiliar ficam abaixo do contrato visual
-
-- Severity: MEDIUM
-- Blocking: NO
-- Evidence: no browser, “Memória no chat” e “Histórico local” mediram 32 px de altura, Enviar mediu 36 px e a ajuda de consentimento foi renderizada a 9,76 px; `docs/design/accessibility.md` define 44 × 44 px para toque e mínimo de 11 px para metadado não essencial.
-- Impact: a precisão de toque e a leitura podem piorar para pessoas com baixa visão ou destreza reduzida, principalmente no mobile; não houve overflow nem perda funcional em 390 × 844.
-- Future recommendation: elevar altura útil/alvo para 44 px no mobile e a ajuda para pelo menos 11 px na fase visual autorizada.
+- usar as categorias reais `Identidade`, `Temporal`, `Conhecimento`, `Contexto`, `Aplicações` e `Longo prazo`, sem substituir o modelo de dados pelos rótulos conceituais do asset;
+- omitir o rail conceitual e métricas sem fonte em vez de criar controles inertes;
+- limitar estados do Core Orb aos sinais reais do baseline;
+- tornar o chat a entrada principal em tablet/mobile;
+- manter equivalente textual funcional quando WebGL estiver indisponível.
 
 ## Validation Performed
 
-- `45 passed` na suíte Python completa; dois warnings ambientais sem falha funcional (`StarletteDeprecationWarning` e cache do pytest sem permissão de escrita).
-- `19 passed` na suíte frontend Node, incluindo histórico/consentimento, segurança da confirmação, grafo real, eventos e `FOCUS_MEMORIES`.
-- Browser no harness descartável: opt-out, recuperação com memória habilitada, confirmação de esquecimento, foco inicial, Escape, retorno de foco, contraste e viewport 390 × 844.
-- A exclusão real não foi acionada manualmente no browser; o contrato destrutivo foi validado pela suíte E2E contra o UUID exato e o fluxo de cancelamento foi validado visualmente.
-- Nenhum PostgreSQL real, provider pago, credencial ou dado real foi acessado.
-
-## Deferred Visual Requirements
-
-O Target UI `UIUX-VIS-2026-09-10-001` permanece aprovado. `UIUX-001` a `UIUX-005` continuam requisitos bloqueantes apenas para uma futura alegação de implementação/fidelidade do HOPE Main Dashboard:
-
-- `UIUX-001`: identidade `HOPE` sem expansão ou pontos;
-- `UIUX-002`: composição principal imersiva;
-- `UIUX-003`: fidelidade do Core Orb e densidade do Globe;
-- `UIUX-004`: arquitetura responsiva completa, chat-first no mobile;
-- `UIUX-005`: equivalente textual navegável do canvas.
-
-Esses itens não são blockers retroativos da Fase 5 e não foram reclassificados por este review.
+- Leitura integral dos contratos operacionais, arquitetura, handoff, Phase 6, decisão arquitetural, review anterior e documentação de design.
+- Comparação do frontend no baseline com a matriz P0/P1 e o Target UI aprovado.
+- Verificação de que o HEAD de autorização não altera `frontend/` em relação ao baseline funcional.
+- Revisão documental de links, identificadores, ownership, escopo e claims.
+- Nenhum teste funcional/browser foi executado porque não existe implementação da Phase 6 neste gate documental.
 
 ## Recommendation
 
-Devolver ao COORDINATOR para encaminhamento ao PLANNER e consolidação final da Fase 5. Esta aprovação com warnings não autoriza implementação do dashboard, início de outra fase nem produção pública.
+Devolver ao COORDINATOR para encaminhamento ao Development. O DEV pode implementar exclusivamente a Phase 6 conforme `docs/phase-6.md` e `docs/design/phase-6-target-ui-spec.md`, produzir novo Functional Commit e parar para os reviews obrigatórios. Não autoriza Phase 7, produção nem capacidades futuras.

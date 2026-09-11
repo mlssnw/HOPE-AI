@@ -132,20 +132,22 @@ Required Reviews:
 
 ## UI/UX
 
-- Coordination status: APPROVED_WITH_WARNINGS
+- Coordination status: APPROVED
 - Current target: `88e194778b4399a6713f118470f9d861c553cd9e`
-- Review type: PHASE 5 FUNCTIONAL UX REVIEW
-- Scope decision: `ARCH-2026-09-10-002`
-- Last official result: APPROVED_WITH_WARNINGS
-- Criteria approved: clareza e padrão seguro de “Memória no chat”; separação do histórico local; comunicação do opt-out; confirmação de esquecimento com alvo/consequência; foco inicial em “Cancelar”, Escape e recuperação de foco/erro; `FOCUS_MEMORIES` e Core Orb ligados a dados/eventos reais; teclado, foco, contraste, reduced motion e responsividade funcional dos controles; ausência de alegações sobre dashboard e capacidades futuras
+- Review type: PHASE 6 PRE-IMPLEMENTATION SPECIFICATION REVIEW
+- Scope decision: `ARCH-2026-09-10-003`
+- Coordinator authorization: `0bcc25a5437cab8a326e64281579ead56274d8cb`
+- Last official result: APPROVED
+- Specification: [`docs/design/phase-6-target-ui-spec.md`](design/phase-6-target-ui-spec.md)
+- P0/P1 mapping: CLOSED — cada gap aceito possui componente, estado/fluxo, capability real e contrato verificável
+- Definition of Ready: SATISFIED para Development
 - Feature blockers: nenhum
-- Warnings: `UIUX-F5-W01` — badge “Memória” pode confundir disponibilidade do serviço com consentimento ativo; `UIUX-F5-W02` — status normal usa região assertiva; `UIUX-F5-W03` — toggles/Enviar e texto auxiliar ficam abaixo dos alvos dimensionais do contrato visual
+- Required corrections: `UIUX-F5-W01`, `UIUX-F5-W02` e `UIUX-F5-W03` foram incorporados ao contrato e devem ser verificados no review pós-implementação
+- Guardrails: chat-first em tablet/mobile; fallback textual sem WebGL; reduced motion; perfis LOW/MEDIUM/HIGH/ULTRA sem perda funcional; Core Orb e métricas somente com fonte real; capacidades futuras omitidas
 - Visual direction: APPROVED
 - Decision ID: `UIUX-VIS-2026-09-10-001`
-- Persistence: COMPLETE em `aa440f8a4660d1bb1530d3d3b9a08aacd28c092e`
-- Visual target: HOPE Main Dashboard
-- Deferred visual scope: `UIUX-001` a `UIUX-005`, fidelidade completa e matriz P0/P1/P2/P3 permanecem requisitos de fase visual futura e não são blockers retroativos da Fase 5
-- Recommendation: devolver ao COORDINATOR para encaminhamento ao PLANNER e consolidação final da Fase 5; não autoriza dashboard, próxima fase ou produção
+- Implementation status: NOT_STARTED por UI/UX; este gate não aprova frontend ainda inexistente
+- Recommendation: devolver ao COORDINATOR para encaminhamento ao Development; após novo Functional Commit, executar QA, Security e UI/UX pós-implementação; não autoriza Phase 7 ou produção
 - Report: [`uiux-latest.md`](reviews/uiux-latest.md)
 - Design source: [`docs/design/`](design/README.md)
 
