@@ -151,13 +151,14 @@ Required Reviews:
 
 ## Planner
 
-- Status: READY_FOR_APPROVAL
+- Status: APPROVED
 - Decision ID: `ARCH-2026-09-10-003`
+- Planning approval record: a usuária aprovou a decisão e `docs/phase-6.md` como planejamento oficial; o COORDINATOR registrou o resultado em `7494c2ed589e559a955934f8a1580d3867e2356b`
 - Product model: `SINGLE_USER`; a direção multiusuário/enterprise está `SUPERSEDED` no roadmap imediato
 - Phase 5 boundary: permanece `APPROVED_WITH_WARNINGS` no Functional Commit `88e194778b4399a6713f118470f9d861c553cd9e`; nenhum finding de reviewer foi reescrito ou encerrado por esta decisão
 - Production Readiness: `BLOCKED`
 - Recommended order: Phase 6 Target UI Convergence → Phase 7 Single-User Security & Permissions → Phase 8 Read-Only Tools → Phase 9 Permissioned Effects & Ephemeral Coding → Phase 10 Ephemeral Agents → Production Hardening antes de qualquer exposição escolhida
-- Next phase proposal: `docs/phase-6.md`, planejamento `READY_FOR_APPROVAL`, implementação `NOT_STARTED / NOT_AUTHORIZED`, Functional Commit `NONE`
+- Next phase proposal: `docs/phase-6.md`, planejamento `APPROVED`, implementação `NOT_STARTED / NOT_AUTHORIZED`, Functional Commit `NONE`
 - Phase 6 scope: convergência visual do HOPE Main Dashboard sobre capacidades reais, com acessibilidade, responsividade, não regressão de consentimento/esquecimento e correção de `UIUX-F5-W01` a `UIUX-F5-W03`
 - Phase 6 non-goals: owner authentication, permissions, tools, coding, agents, métricas/capacidades futuras, banco, migration, provider, produção e acesso remoto
 - Phase 6 Required Reviews: QA YES; DATABASE NO enquanto o diff permanecer estritamente visual; SECURITY YES; UI/UX YES
@@ -166,10 +167,10 @@ Required Reviews:
 - Permission invariants: fail-closed; grants curtos/revogáveis; nenhuma autoelevação; nenhum grant ampliado por herança; approval não reutilizável em outro alvo; prompt/memória/web/tool output nunca concedem autorização
 - Legacy identity: `X-Hope-User-Id` e `?user_id=` deixam de ser autoridade na Phase 7; campos `user_id` permanecem como namespace do owner; vínculo/descarte exige inventário, backup, rollback e autorização
 - RLS: RLS por tenant removido do roadmap imediato; RLS simples fica opcional como defesa adicional se o perfil remoto/cloud justificar
-- Pending user decisions: aprovar/revisar `ARCH-2026-09-10-003` e a Phase 6; mecanismo de owner recognition será escolhido somente antes da Phase 7; qualquer provider, custo, credencial, migration ou produção exige decisão separada
+- Pending user decisions: autorizar explicitamente a implementação da Phase 6; o mecanismo de owner recognition será escolhido somente antes da Phase 7; qualquer provider, custo, credencial, migration ou produção exige decisão separada
 - Architecture record: [`docs/reviews/architecture-latest.md`](reviews/architecture-latest.md)
 - Phase plan: [`docs/phase-6.md`](phase-6.md)
-- Coordinator handoff: normalizar o painel de planejamento e solicitar aprovação/ajustes à usuária; não encaminhar ao DEV e não declarar nova fase autorizada
+- Coordinator handoff: manter o workflow em `WAITING_FOR_APPROVAL` da implementação; não encaminhar ao DEV nem interpretar a aprovação do planejamento como autorização de execução
 
 ## Coordinator
 

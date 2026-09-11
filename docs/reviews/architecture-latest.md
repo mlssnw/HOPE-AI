@@ -1,11 +1,12 @@
 # Architecture Review — Latest
 
-- Status: READY_FOR_APPROVAL
+- Status: APPROVED
 - Decision ID: `ARCH-2026-09-10-003`
 - Date: 2026-09-10
 - Product model: `SINGLE_USER`
 - Functional baseline analyzed: `88e194778b4399a6713f118470f9d861c553cd9e`
 - Repository HEAD analyzed: `3c8e978e2dc5d9c0deff62a8a5a9ebb1f7c4d2c6`
+- Planning approval recorded by COORDINATOR: `7494c2ed589e559a955934f8a1580d3867e2356b`
 - Superseded direction: autenticação multiusuário, RBAC complexo, tenants, organizações, SSO/federação e RLS orientado a tenants no roadmap imediato
 - Preserved decision: `ARCH-2026-09-10-002` e a Fase 5 `APPROVED_WITH_WARNINGS`
 - Production Readiness: BLOCKED
@@ -21,7 +22,7 @@ Também é necessário decidir se o Target UI pode ser implementado antes da fun
 - Fase 5: `APPROVED_WITH_WARNINGS` no Functional Commit `88e194778b4399a6713f118470f9d861c553cd9e`.
 - Production Readiness: `BLOCKED`.
 - Commits posteriores ao baseline são exclusivamente documentais.
-- Não existe `docs/phase-6.md` e nenhuma próxima fase foi implementada.
+- Antes da decisão `ARCH-2026-09-10-003`, não existia `docs/phase-6.md`; o próprio registro documental da decisão criou esse plano. Nenhuma próxima fase foi implementada.
 - O navegador cria e envia um UUID arbitrário; isso é namespace transitório, não autenticação.
 - O schema preserva `user_id` em memórias, relações, entidades, conversas e eventos.
 - O HOPE Main Dashboard é Target UI aprovado, mas a implementação atual permanece parcial.
@@ -173,7 +174,7 @@ Invariantes comuns:
 
 ## Acceptance Criteria
 
-- [ ] A usuária aprova ou solicita revisão de `ARCH-2026-09-10-003`.
+- [x] A usuária aprovou `ARCH-2026-09-10-003` e `docs/phase-6.md` como planejamento oficial; a implementação permanece não autorizada.
 - [x] Modelo `SINGLE_USER` está explícito e complexidade multiusuário/enterprise saiu do roadmap imediato.
 - [x] Findings de reviewers permanecem históricos e não foram encerrados pelo Planner.
 - [x] Target UI é a próxima fase proposta, não uma implementação autorizada.
@@ -189,7 +190,7 @@ Invariantes comuns:
 
 ## Implementation Phase
 
-- Planning status: `READY_FOR_APPROVAL`.
+- Planning status: `APPROVED`.
 - Phase 6 implementation status: `NOT_STARTED / NOT_AUTHORIZED`.
 - Phase 7+ implementation status: `NOT_STARTED / NOT_AUTHORIZED`.
 - Functional Commit for next phase: `NONE`.
@@ -207,7 +208,7 @@ Invariantes comuns:
 ## Coordinator Handoff
 
 - Recommended Next Role: COORDINATOR.
-- Status: READY_FOR_APPROVAL.
-- Task: normalizar o painel de planejamento e solicitar à usuária aprovação ou ajustes de `ARCH-2026-09-10-003` e de `docs/phase-6.md`.
+- Status: WAITING_FOR_APPROVAL.
+- Task: manter o workflow aguardando autorização explícita da usuária para implementar a Phase 6.
 - Do not route to: Development.
-- Boundary: somente após aprovação explícita o COORDINATOR pode abrir uma nova autorização de implementação; isso ainda não existe.
+- Boundary: a aprovação do planejamento não autoriza UI/UX adicional, Development, código, migration, provider, credencial, custo, produção ou implementação do dashboard; essa autorização ainda não existe.
