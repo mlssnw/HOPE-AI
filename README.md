@@ -65,7 +65,7 @@ Assistentes tradicionais dependem principalmente do contexto imediato da convers
 |---|---|
 | Versão atual | `6.0.0-phase.5` |
 | Fase atual | Fase 5 — memory-aware chat e personalidade HOPE |
-| Estado técnico | `WAITING_FOR_REVIEW` — QA, Database, Security e Planner concluíram seus gates; resta somente o review funcional focado de UI/UX |
+| Estado técnico | `WAITING_FOR_REVIEW` — QA, Database, Security e UI/UX aprovaram com ressalvas; resta somente a consolidação final do Planner |
 | Deploy público | Ainda não habilitado — autenticação, autorização e hardening de produção pendentes |
 
 A fundação local/controlada já conecta chat, memória persistente, PostgreSQL/pgvector, Memory Globe e eventos em tempo real. Isso não equivale a prontidão para produção pública.
