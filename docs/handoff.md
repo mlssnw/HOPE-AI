@@ -1,42 +1,42 @@
 # HOPE AI — Handoff
 
-Painel central de coordenação. Todo Work deve ler [`AGENTS.md`](../AGENTS.md), [`architecture.md`](architecture.md), a [fase vigente](phase-5.md), o [manual de reviews](reviews/README.md) e os relatórios `latest` aplicáveis antes de agir.
+Painel central de coordenação. Todo Work deve ler [`AGENTS.md`](../AGENTS.md), [`architecture.md`](architecture.md), a [fase vigente](phase-6.md), o [manual de reviews](reviews/README.md) e os relatórios `latest` aplicáveis antes de agir.
 
 Commits exclusivamente documentais não substituem o Functional Commit. Resultados técnicos permanecem nos arquivos próprios de cada reviewer.
 
 ## Current Phase
 
-- Phase: 5
-- Phase status: APPROVED_WITH_WARNINGS
-- Feature status: APPROVED_WITH_WARNINGS — Fase 5 funcionalmente concluída no commit `88e1947`; todos os reviews obrigatórios foram aprovados com warnings e nenhum blocker funcional permanece aberto
+- Phase: 6 — Target UI Convergence
+- Phase status: IN_PROGRESS
+- Feature status: NOT_STARTED — autorização concedida; UI/UX deve confirmar a especificação pré-implementação antes do DEV
 - Production readiness: BLOCKED — Security rejeitou deploy público
 - Branch: `main`
-- Application version: 6.0 / Phase 5
-- Scope: chat consciente de memória, personalidade HOPE e hardening pós-auditoria da fase 5
+- Application version: 6.0 / Phase 5 baseline; Phase 6 ainda sem Functional Commit
+- Scope: convergência visual do HOPE Main Dashboard sobre capacidades reais, com acessibilidade, responsividade e preservação dos contratos funcionais existentes
 - Last approved commit: `88e194778b4399a6713f118470f9d861c553cd9e`
 - Working tree expected: preservar a alteração preexistente em `AGENTS.md` e os assets não rastreados; os commits de review não incorporam código funcional
 - Database environment: o re-review de Database validou o gate de schema em ambientes descartáveis; PostgreSQL real permaneceu inacessível e a migration `20260903_0003` não foi aplicada nem validada no ambiente real
-- Next phase proposal: Phase 6 — Target UI Convergence, planejamento `APPROVED`, implementação `NOT_STARTED / NOT_AUTHORIZED`
+- Active phase: Phase 6 — Target UI Convergence, planejamento `APPROVED`, implementação `IN_PROGRESS` a partir da confirmação prévia de UI/UX
 
 ## User Strategic Decision
 
-- Decision date: 2026-09-10
-- Status: APPROVED — `ARCH-2026-09-10-003` e `docs/phase-6.md` aprovados como planejamento oficial; implementação continua não autorizada
+- Decision date: 2026-09-10; implementation authorization date: 2026-09-11
+- Status: APPROVED — `ARCH-2026-09-10-003` e `docs/phase-6.md` aprovados; implementação da Phase 6 explicitamente autorizada dentro do escopo definido
 - Product model: SINGLE_USER — HOPE é uma assistente pessoal de uso individual e reconhece um único owner
 - Removed from immediate roadmap: autenticação multiusuário, RBAC complexo, isolamento entre múltiplos usuários, RLS orientado a tenants, organizações/teams e infraestrutura de identidade enterprise
 - Future security objective: Single-User Security & Permissions para tools, agentes, filesystem, código, Git, banco, integrações, ações externas e operações destrutivas
 - Permission model direction: `SAFE` permite execução automática; `WRITE` depende do contexto; `SENSITIVE` exige confirmação do owner; `DESTRUCTIVE` exige confirmação explícita forte
 - Planner recommendation: 1) Phase 6 Target UI Convergence; 2) Phase 7 Single-User Security & Permissions; 3) Phase 8 Read-Only Tools; 4) Phase 9 Permissioned Effects & Ephemeral Coding; 5) Phase 10 Ephemeral Agents; 6) Production Hardening antes de qualquer exposição escolhida
 - Rationale: segurança deve proteger o único owner e governar efeitos reais sem importar complexidade de tenants, organizações ou identidade enterprise
-- Visual boundary: o Target UI permanece aprovado e foi formalizado como Phase 6 proposta; ainda depende de aprovação explícita da usuária antes de UI/UX ou DEV iniciar trabalho
-- Authorization boundary: a usuária aprovou a arquitetura e o plano, mas não autorizou UI/UX adicional, DEV, código, migration, credencial, custo, produção ou implementação do dashboard
+- Visual boundary: o Target UI permanece aprovado e é o alvo oficial da Phase 6; UI/UX confirma a spec antes de o DEV alterar a interface
+- Authorization boundary: somente a Phase 6 está autorizada. Permanecem fora de escopo expansão funcional, banco, migrations, providers, produção, tools, agents e Phase 7
 
 Required Reviews:
 
-- QA: YES — mudança funcional significativa
-- DATABASE: YES — memória, persistência, schema, migration, índices e pgvector foram afetados
-- SECURITY: YES — memória, WebSocket, voz, APIs externas, dados pessoais e configuração cloud são afetados
-- UI/UX: YES — chat, estados visuais, Core Orb e foco do Memory Globe foram afetados na fase
+- QA: YES — regressão, browser, responsividade, WebGL, teclado, console e Network
+- DATABASE: NO — desde que o diff permaneça estritamente visual e sem impacto de persistência
+- SECURITY: YES — não regressão de consentimento, confirmação destrutiva, conteúdo não confiável e claims de capacidade
+- UI/UX: YES — especificação pré-implementação e review final de fidelidade no mesmo Functional Commit
 
 ## Official Visual Direction
 
@@ -54,7 +54,7 @@ Required Reviews:
 - Gap matrix: [`dashboard-gap-matrix.md`](design/dashboard-gap-matrix.md)
 - Rule: `VISUAL TARGET` não significa `IMPLEMENTED FEATURE`; áreas exibidas continuam classificadas pelo código e por `docs/architecture.md`
 - Public presentation: pode ser usado como hero, portfólio, apresentação ou LinkedIn somente como interface conceitual/alvo enquanto houver partes não implementadas
-- Implementation gate: a Phase 6 está oficialmente planejada, mas nenhuma implementação pode começar até nova autorização explícita da usuária
+- Implementation gate: OPEN — autorização explícita concedida em 2026-09-11; a sequência obrigatória começa por UI/UX e só depois segue ao DEV
 
 ## Current Functional Commit
 
@@ -69,12 +69,12 @@ Required Reviews:
 
 | Work | Required | Status | Commit |
 |---|---|---|---|
-| DEV | YES | READY_FOR_REVIEW | `88e194778b4399a6713f118470f9d861c553cd9e` |
-| QA | YES | APPROVED_WITH_WARNINGS | `88e194778b4399a6713f118470f9d861c553cd9e` |
-| DATABASE | YES | APPROVED_WITH_WARNINGS | `88e194778b4399a6713f118470f9d861c553cd9e` |
-| SECURITY | YES | APPROVED_WITH_WARNINGS | `88e194778b4399a6713f118470f9d861c553cd9e` |
-| UI/UX | YES | APPROVED_WITH_WARNINGS | `88e194778b4399a6713f118470f9d861c553cd9e` |
-| PLANNER | YES | APPROVED_WITH_WARNINGS | `88e194778b4399a6713f118470f9d861c553cd9e` |
+| DEV | YES | NOT_STARTED | — |
+| QA | YES | NOT_STARTED | — |
+| DATABASE | NO | N/A | — |
+| SECURITY | YES | NOT_STARTED | — |
+| UI/UX | YES | IN_PROGRESS | `88e194778b4399a6713f118470f9d861c553cd9e` (baseline) |
+| PLANNER | YES | APPROVED | — (plan approved) |
 
 ## Development
 
@@ -176,8 +176,8 @@ Required Reviews:
 
 - Autonomy level: 2.5
 - Status: APPROVED
-- Operational conclusion: a usuária aprovou `ARCH-2026-09-10-003` e `docs/phase-6.md` como planejamento oficial, sem autorizar implementação. O PLANNER concluiu a correção editorial no commit `bd244bb`; o workflow está aguardando autorização explícita da usuária.
-- Routing: WAITING_FOR_USER_AUTHORIZATION — nenhum Work deve iniciar implementação, revisão técnica ou trabalho visual adicional até nova autorização explícita da usuária
+- Operational conclusion: a usuária autorizou a implementação da Phase 6 dentro do scope, non-goals, acceptance criteria e Required Reviews aprovados. A correção editorial já foi concluída pelo PLANNER em `bd244bb`.
+- Routing: LEVEL 1 — UI/UX deve executar a confirmação pré-implementação e mapear os gaps P0/P1 ao baseline real; DEV permanece aguardando essa entrega
 - Boundary: COORDINATOR atualizou somente Current Phase, Current Functional Commit, Review Matrix, blockers, warnings, Next Action e histórico; não concedeu aprovação técnica nem alterou seções ou relatórios de ownership dos reviewers
 
 ## Current Blockers
@@ -210,20 +210,24 @@ Required Reviews:
 
 ## Next Action
 
-- Role: USER
-- Status: WAITING_FOR_APPROVAL
-- Task: decidir quando autorizar explicitamente o início da implementação da Phase 6 — Target UI Convergence; até essa decisão, nenhuma implementação deve começar
+- Role: UI/UX
+- Status: IN_PROGRESS
+- Task: confirmar a spec pré-implementação da Phase 6 e mapear cada gap P0/P1 aceito ao baseline funcional real, sem alterar código nem ampliar capacidades
 - Target commit: `88e194778b4399a6713f118470f9d861c553cd9e` (baseline funcional preservado)
 - Required inputs:
   - [`AGENTS.md`](../AGENTS.md)
   - [`docs/phase-6.md`](phase-6.md)
-  - [`docs/reviews/architecture-latest.md`](reviews/architecture-latest.md)
+  - [`docs/design/`](design/README.md)
+  - [`docs/reviews/uiux-latest.md`](reviews/uiux-latest.md)
+  - [`docs/design/dashboard-gap-matrix.md`](design/dashboard-gap-matrix.md)
 - Expected output:
-  - autorização explícita da usuária para iniciar a Phase 6, ou instrução para continuar aguardando
-  - após autorização, COORDINATOR encaminha a primeira ação ao Work previsto no plano sem ampliar scope
-- Blocking dependencies: autorização explícita da usuária para implementação
-- Parallel work: somente leitura; UI/UX e DEV não devem iniciar trabalho enquanto a implementação permanecer não autorizada
-- Escalation: USER
+  - confirmação objetiva de que a spec existente é suficiente para implementação, ou lista fechada de ajustes documentais necessários
+  - mapeamento P0/P1 para componentes, estados e capacidades reais do baseline `88e1947`
+  - atualização exclusiva dos arquivos de ownership de UI/UX e commit somente documental
+  - devolução ao COORDINATOR para encaminhar o pacote fechado ao DEV
+- Blocking dependencies: nenhuma
+- Parallel work: QA e SECURITY podem apenas preparar checklists em modo read-only; DEV não deve iniciar até a confirmação de UI/UX
+- Escalation: NONE
 
 ## Recent History
 
@@ -247,3 +251,4 @@ Required Reviews:
 - 2026-09-10 — PLANNER publicou `ARCH-2026-09-10-003` e a proposta `Phase 6 — Target UI Convergence` no commit `68b102a`, com planejamento `READY_FOR_APPROVAL` e implementação `NOT_AUTHORIZED`. COORDINATOR encaminhou a decisão à usuária.
 - 2026-09-10 — A usuária aprovou `ARCH-2026-09-10-003` e `docs/phase-6.md` como planejamento oficial, manteve a implementação não autorizada e solicitou ao PLANNER somente a correção editorial sobre a criação do arquivo da fase.
 - 2026-09-11 — PLANNER corrigiu a formulação histórica, registrou o planejamento como `APPROVED` e manteve a implementação `NOT_STARTED / NOT_AUTHORIZED` no commit `bd244bb`; COORDINATOR colocou o workflow em espera pela autorização explícita da usuária.
+- 2026-09-11 — A usuária autorizou a implementação da Phase 6 dentro do plano aprovado, manteve fora de escopo expansão funcional, banco, migrations, providers, produção, tools, agents e Phase 7; COORDINATOR abriu o gate e roteou a primeira ação pré-implementação ao UI/UX.

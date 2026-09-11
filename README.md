@@ -6,7 +6,7 @@
 
 ![Status](https://img.shields.io/badge/status-em%20desenvolvimento-F2AE3D)
 ![Version](https://img.shields.io/badge/version-6.0.0--phase.5-FFF8E9)
-![Phase](https://img.shields.io/badge/phase-5-63BFD4)
+![Phase](https://img.shields.io/badge/phase-6-63BFD4)
 ![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-009688?logo=fastapi&logoColor=white)
 ![PostgreSQL + pgvector](https://img.shields.io/badge/PostgreSQL-pgvector-4169E1?logo=postgresql&logoColor=white)
@@ -64,9 +64,9 @@ Assistentes tradicionais dependem principalmente do contexto imediato da convers
 | Campo | Estado |
 |---|---|
 | Versão atual | `6.0.0-phase.5` |
-| Fase atual | Fase 5 — memory-aware chat e personalidade HOPE |
-| Estado técnico | `APPROVED_WITH_WARNINGS` — Fase 5 funcionalmente concluída e aprovada pelos reviews independentes |
-| Próxima prioridade | `Phase 6 — Target UI Convergence`, planejamento aprovado; implementação ainda não autorizada |
+| Fase atual | Phase 6 — Target UI Convergence |
+| Estado técnico | `IN_PROGRESS` — implementação autorizada; confirmação prévia da especificação por UI/UX em andamento |
+| Baseline funcional | Fase 5 `APPROVED_WITH_WARNINGS` no commit `88e1947` |
 | Deploy público | Ainda não habilitado — autenticação, autorização e hardening de produção pendentes |
 
 A fundação local/controlada já conecta chat, memória persistente, PostgreSQL/pgvector, Memory Globe e eventos em tempo real. Isso não equivale a prontidão para produção pública.
@@ -83,7 +83,7 @@ O acompanhamento técnico detalhado permanece no [painel operacional](docs/hando
 - [x] Chat consciente de memória com consentimento explícito.
 - [x] Correção e esquecimento com confirmação vinculada ao alvo.
 - [x] Aprovação final independente da Fase 5.
-- [ ] Phase 6 — implementação fiel e acessível do dashboard visual aprovado, ainda não autorizada.
+- [ ] Phase 6 — implementação fiel e acessível do dashboard visual aprovado, autorizada e em andamento.
 - [ ] Single-User Security & Permissions para um único owner, com níveis de risco.
 - [ ] Tools e coding governados por permissões explícitas.
 - [ ] Agentes limitados pelo PermissionManager e sem autoelevação.

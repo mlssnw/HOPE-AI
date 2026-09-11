@@ -2,16 +2,18 @@
 
 Histórico verificável da evolução do HOPE AI. Commits documentais posteriores não substituem o Functional Commit de cada entrega.
 
-## Próxima prioridade — Replanejamento single-user
+## Phase 6 — Target UI Convergence
 
 - **Data da decisão:** 2026-09-10
 - **Modelo do produto:** SINGLE_USER — assistente pessoal para um único owner
 - **Escopo removido do roadmap imediato:** autenticação multiusuário, RBAC complexo, isolamento entre usuários, RLS por tenant, organizações/teams e identidade enterprise
 - **Ordem proposta para validação do Planner:** Target UI → Single-User Security & Permissions → tools/coding → agents → Production Hardening
 - **PermissionManager futuro:** níveis `SAFE`, `WRITE`, `SENSITIVE` e `DESTRUCTIVE`, com confirmação crescente conforme o risco
-- **Limite:** somente arquitetura e roadmap podem ser revisados agora; nenhuma implementação, migration, credencial, provider, custo ou produção está autorizada
-- **Resultado do Planner:** `ARCH-2026-09-10-003` propõe `Phase 6 — Target UI Convergence`, seguida por Single-User Security & Permissions, tools, coding e agents; plano `READY_FOR_APPROVAL`
-- **Decisão da usuária:** arquitetura e `docs/phase-6.md` aprovadas como planejamento oficial; implementação permanece `NOT_AUTHORIZED`
+- **Resultado do Planner:** `ARCH-2026-09-10-003` e `docs/phase-6.md` aprovados como planejamento oficial
+- **Decisão da usuária:** implementação da Phase 6 autorizada em 2026-09-11, respeitando integralmente scope, non-goals, acceptance criteria e Required Reviews
+- **Primeira ação:** confirmação pré-implementação de UI/UX antes do encaminhamento ao Development
+- **Limite:** expansão funcional, banco, migrations, providers, produção, tools, agents e Phase 7 permanecem não autorizados
+- **Correção editorial:** concluída em `bd244bb`; `docs/phase-6.md` não existia antes de `ARCH-2026-09-10-003` e foi criado pelo registro dessa decisão
 
 ## Fase 5 — Memory-aware chat e personalidade HOPE
 
