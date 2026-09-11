@@ -2,8 +2,10 @@
 
 ## Phase Status
 
-- Planning status: `READY_FOR_APPROVAL`
-- Implementation status: `NOT_STARTED / NOT_AUTHORIZED`
+- Planning status: `APPROVED`
+- Implementation status: `IN_PROGRESS`
+- Implementation authorization: `0bcc25a5437cab8a326e64281579ead56274d8cb` — concedida pela usuária em 2026-09-11, sem expansão de escopo
+- Pre-implementation UI/UX: `APPROVED` — Definition of Ready `SATISFIED` em `3c10be208e4e4d6dcfc3329dd6207961c898d44c`
 - Functional Commit: `NONE`
 - Functional baseline: `88e194778b4399a6713f118470f9d861c553cd9e`
 - Architecture decision: `ARCH-2026-09-10-003`
@@ -115,7 +117,7 @@ A implementação autorizada deve ser incremental. A camada visual consome os es
 
 ## Acceptance Criteria
 
-- [ ] A usuária aprova explicitamente o plano antes do DEV.
+- [x] A usuária aprova explicitamente o plano antes do DEV.
 - [ ] Development produz novo Functional Commit e não mistura assets/preexisting work fora do escopo.
 - [ ] Marca visível e acessível é `HOPE`, sem expansão.
 - [ ] Dashboard reproduz hierarquia, paleta, composição e densidade controlada do Target UI.
@@ -191,8 +193,8 @@ Esta sequência é planejamento; não autoriza execução.
 
 ## Next Action
 
-- Role: COORDINATOR
-- Status: READY_FOR_APPROVAL
-- Task: apresentar `ARCH-2026-09-10-003` e este plano à usuária para aprovação ou ajustes.
-- Do not route to: Development.
-- Functional target: nenhum; a próxima fase ainda não possui Functional Commit.
+- Role: DEVELOPMENT
+- Status: NOT_STARTED
+- Task: implementar exclusivamente a Phase 6 conforme este plano e `docs/design/phase-6-target-ui-spec.md`, produzir um novo Functional Commit e parar para os reviews obrigatórios.
+- Do not route to: Phase 7, Database, providers, produção, tools ou agents.
+- Functional target: partir do baseline `88e194778b4399a6713f118470f9d861c553cd9e`; a Phase 6 ainda não possui Functional Commit.

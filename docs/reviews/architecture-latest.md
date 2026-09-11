@@ -7,6 +7,8 @@
 - Functional baseline analyzed: `88e194778b4399a6713f118470f9d861c553cd9e`
 - Repository HEAD analyzed: `3c8e978e2dc5d9c0deff62a8a5a9ebb1f7c4d2c6`
 - Planning approval recorded by COORDINATOR: `7494c2ed589e559a955934f8a1580d3867e2356b`
+- Phase 6 implementation authorization: `0bcc25a5437cab8a326e64281579ead56274d8cb` — concedida pela usuária em 2026-09-11, sem expansão de escopo
+- Pre-implementation UI/UX: `APPROVED` — Definition of Ready `SATISFIED` em `3c10be208e4e4d6dcfc3329dd6207961c898d44c`
 - Superseded direction: autenticação multiusuário, RBAC complexo, tenants, organizações, SSO/federação e RLS orientado a tenants no roadmap imediato
 - Preserved decision: `ARCH-2026-09-10-002` e a Fase 5 `APPROVED_WITH_WARNINGS`
 - Production Readiness: BLOCKED
@@ -174,10 +176,10 @@ Invariantes comuns:
 
 ## Acceptance Criteria
 
-- [x] A usuária aprovou `ARCH-2026-09-10-003` e `docs/phase-6.md` como planejamento oficial; a implementação permanece não autorizada.
+- [x] A usuária aprovou `ARCH-2026-09-10-003`, `docs/phase-6.md` e autorizou a implementação da Phase 6 em 2026-09-11, sem expansão de escopo.
 - [x] Modelo `SINGLE_USER` está explícito e complexidade multiusuário/enterprise saiu do roadmap imediato.
 - [x] Findings de reviewers permanecem históricos e não foram encerrados pelo Planner.
-- [x] Target UI é a próxima fase proposta, não uma implementação autorizada.
+- [x] Target UI é a Phase 6 autorizada e `IN_PROGRESS`, ainda sem Functional Commit.
 - [x] Dashboard não pode apresentar tools, agents, métricas ou rotas futuras como funcionais.
 - [x] Owner recognition, resource authorization e risk permissions estão separados.
 - [x] SAFE, WRITE, SENSITIVE e DESTRUCTIVE possuem regras de confirmação, escopo, expiração, revogação, auditoria e fail-closed.
@@ -186,12 +188,14 @@ Invariantes comuns:
 - [x] RLS por tenant foi removido do roadmap imediato sem alterar schema.
 - [x] Local/controlado e remoto/cloud têm requisitos distintos.
 - [x] Required Reviews estão definidos para a fase proposta.
-- [x] Nenhum código, migration, banco, provider, credencial, custo ou produção foi autorizado.
+- [x] Somente a implementação da Phase 6 foi autorizada; migration, banco, provider, credencial, custo, produção, tools, agents e Phase 7 permanecem não autorizados.
 
 ## Implementation Phase
 
 - Planning status: `APPROVED`.
-- Phase 6 implementation status: `NOT_STARTED / NOT_AUTHORIZED`.
+- Phase 6 implementation status: `IN_PROGRESS`.
+- Implementation authorization: `0bcc25a5437cab8a326e64281579ead56274d8cb`.
+- UI/UX pre-implementation status: `APPROVED` em `3c10be208e4e4d6dcfc3329dd6207961c898d44c`.
 - Phase 7+ implementation status: `NOT_STARTED / NOT_AUTHORIZED`.
 - Functional Commit for next phase: `NONE`.
 - Current functional baseline remains `88e194778b4399a6713f118470f9d861c553cd9e`.
@@ -207,8 +211,8 @@ Invariantes comuns:
 
 ## Coordinator Handoff
 
-- Recommended Next Role: COORDINATOR.
-- Status: WAITING_FOR_APPROVAL.
-- Task: manter o workflow aguardando autorização explícita da usuária para implementar a Phase 6.
-- Do not route to: Development.
-- Boundary: a aprovação do planejamento não autoriza UI/UX adicional, Development, código, migration, provider, credencial, custo, produção ou implementação do dashboard; essa autorização ainda não existe.
+- Recommended Next Role: DEVELOPMENT.
+- Status: NOT_STARTED.
+- Task: implementar exclusivamente a Phase 6 conforme `docs/phase-6.md` e `docs/design/phase-6-target-ui-spec.md`, produzir um novo Functional Commit e parar para os reviews obrigatórios.
+- Do not route to: Phase 7, Database, providers, produção, tools ou agents.
+- Boundary: a autorização cobre somente a implementação da Phase 6 dentro do escopo aprovado; não autoriza expansão funcional, migration, banco, provider, credencial, custo, produção ou qualquer fase posterior.
