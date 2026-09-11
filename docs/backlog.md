@@ -19,5 +19,8 @@ Somente PLANNER consolida entradas aqui após confirmar que não existe BLOCKER 
 | DB-WARNING-3 | Database | 5 | MEDIUM | Gate aceita a marca Alembic sem verificar deriva estrutural completa. | Database production gate | NOT_STARTED |
 | DB-WARNING-4 | Database | 5 | MEDIUM | Bypass de criação de schema para testes não comprova tecnicamente ambiente descartável. | Test infrastructure hardening | NOT_STARTED |
 | DB-WARNING-5 | Database | 5 | LOW | Falha transitória no startup exige reinício para reativar memória. | Observability/recovery hardening | NOT_STARTED |
+| UIUX-F5-W01 | UI/UX | 5 | MEDIUM | Badge “Memória” pode confundir disponibilidade do serviço com consentimento ativo na conversa. | Future dashboard/consent UX phase | NOT_STARTED |
+| UIUX-F5-W02 | UI/UX | 5 | LOW | Atualizações normais usam uma região `aria-live` assertiva e podem interromper conteúdo em leitores de tela. | Future accessibility UX phase | NOT_STARTED |
+| UIUX-F5-W03 | UI/UX | 5 | MEDIUM | Toggles, botão Enviar e texto auxiliar ficam abaixo dos alvos dimensionais do contrato visual. | Future dashboard/accessibility phase | NOT_STARTED |
 
 Status recomendados para este backlog: `NOT_STARTED`, `IN_PROGRESS`, `BLOCKED`, `WAITING_FOR_APPROVAL`, `SUPERSEDED` ou `APPROVED` quando a resolução tiver sido verificada pelo papel competente.

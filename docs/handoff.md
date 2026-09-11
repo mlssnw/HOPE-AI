@@ -139,14 +139,16 @@ Required Reviews:
 
 - Status: APPROVED_WITH_WARNINGS
 - Decision ID: `ARCH-2026-09-10-002`
-- Phase 5 consolidation: `WAITING_FOR_REVIEW` somente pelo gate UI/UX; QA, Database e Security permanecem `APPROVED_WITH_WARNINGS` para a feature
-- UI/UX classification: `Required: YES`, com review funcional focado em consentimento de memória, separação do histórico local, confirmação de esquecimento, foco, estados reais do Core Orb e acessibilidade dos controles alterados
-- UI/UX target: revisar exatamente `88e194778b4399a6713f118470f9d861c553cd9e` como `PHASE 5 FUNCTIONAL UX REVIEW`
-- Deferred visual scope: `UIUX-001` a `UIUX-005` e a fidelidade completa ao dashboard aprovado não bloqueiam a Fase 5; bloqueiam apenas alegar que o `TARGET UI` já foi implementado
-- Future phase boundary: o dashboard exige fase visual dedicada, novo Functional Commit e autorização explícita; nenhuma implementação foi autorizada por esta decisão
-- Production boundary: permanece `BLOCKED`; nenhum finding de Security ou Database foi aceito como risco de produção
+- Phase 5 Feature Status: `APPROVED_WITH_WARNINGS`
+- Functional Commit consolidated: `88e194778b4399a6713f118470f9d861c553cd9e`
+- Review matrix considered: QA, Database, Security para a feature e UI/UX no `PHASE 5 FUNCTIONAL UX REVIEW` estão `APPROVED_WITH_WARNINGS` no hash exato
+- Functional blockers: nenhum; `QA-001` e `DB-005` estão encerrados, e `SEC-006` e `SEC-007` permanecem resolvidos para o escopo da fase
+- Accepted warnings: `QA-003`, `QA-WARN-HTTPX`, warnings vigentes de Database, `SEC-009`, `SEC-010`, `SEC-011`, `SEC-013`, `SEC-014`, `SEC-015`, `SEC-016`, `SEC-017` e `UIUX-F5-W01` a `UIUX-F5-W03`; `SEC-012` e os demais blockers de produção não foram aceitos como warnings funcionais
+- Production Readiness: `BLOCKED`; a aprovação funcional não autoriza deploy, exposição pública, risco HIGH/CRITICAL, PostgreSQL real, migration, credenciais, roles, TLS ou infraestrutura
+- Deferred visual scope: `UIUX-001` a `UIUX-005` e a fidelidade completa ao HOPE Main Dashboard permanecem em futura fase visual dedicada, ainda não autorizada
+- Phase boundary: nenhuma próxima fase, inclusive a Fase 6, foi iniciada ou autorizada
 - Architecture record: [`docs/reviews/architecture-latest.md`](reviews/architecture-latest.md)
-- Coordinator handoff: rotear uma única Next Action ao UI/UX para persistir o review focado; após resultado aprovado, devolver ao Planner para consolidação final da feature
+- Coordinator handoff: normalizar o painel público e os status operacionais para refletir a consolidação da Fase 5 e solicitar à usuária a escolha explícita do próximo escopo
 
 ## Coordinator
 
