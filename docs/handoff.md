@@ -176,8 +176,8 @@ Required Reviews:
 
 - Autonomy level: 2.5
 - Status: APPROVED
-- Operational conclusion: a usuária aprovou `ARCH-2026-09-10-003` e `docs/phase-6.md` como planejamento oficial, sem autorizar implementação. Resta somente uma correção editorial no relatório do PLANNER antes de o workflow voltar a aguardar autorização da usuária.
-- Routing: LEVEL 1 — PLANNER, exclusivamente para corrigir a frase que afirma que `docs/phase-6.md` não existe, refletir a aprovação do planejamento em seus arquivos e devolver ao COORDINATOR; nenhuma decisão arquitetural deve ser reaberta
+- Operational conclusion: a usuária aprovou `ARCH-2026-09-10-003` e `docs/phase-6.md` como planejamento oficial, sem autorizar implementação. O PLANNER concluiu a correção editorial no commit `bd244bb`; o workflow está aguardando autorização explícita da usuária.
+- Routing: WAITING_FOR_USER_AUTHORIZATION — nenhum Work deve iniciar implementação, revisão técnica ou trabalho visual adicional até nova autorização explícita da usuária
 - Boundary: COORDINATOR atualizou somente Current Phase, Current Functional Commit, Review Matrix, blockers, warnings, Next Action e histórico; não concedeu aprovação técnica nem alterou seções ou relatórios de ownership dos reviewers
 
 ## Current Blockers
@@ -200,7 +200,7 @@ Required Reviews:
 - `UIUX-F5-W01` permanece MEDIUM e não bloqueante: o badge “Memória” pode confundir disponibilidade do serviço com consentimento ativo.
 - `UIUX-F5-W02` permanece LOW e não bloqueante: atualizações normais usam uma região `aria-live` assertiva.
 - `UIUX-F5-W03` permanece MEDIUM e não bloqueante: alguns alvos de toque e textos auxiliares ficam abaixo do contrato visual.
-- Correção editorial pendente: `architecture-latest.md` descreve em Current State que `docs/phase-6.md` não existe, embora o mesmo commit tenha criado o arquivo; o PLANNER deve registrar que essa era a condição anterior à decisão.
+- Correção editorial concluída: `architecture-latest.md` registra que `docs/phase-6.md` não existia antes de `ARCH-2026-09-10-003`; planejamento `APPROVED` e implementação `NOT_STARTED / NOT_AUTHORIZED` foram persistidos em `bd244bb`.
 - Warnings de Database sobre ausência de PostgreSQL real, confiança na marca Alembic e limitações operacionais permanecem abertos.
 - O aviso de depreciação Starlette/TestClient permanece; a repetição independente confirmou 45 testes Python e 19 testes frontend aprovados.
 - PLANNER registrou os warnings aceitos em [`docs/backlog.md`](backlog.md); o registro não os considera resolvidos.
@@ -210,22 +210,20 @@ Required Reviews:
 
 ## Next Action
 
-- Role: PLANNER
-- Status: NOT_STARTED
-- Task: realizar somente a correção editorial em `docs/reviews/architecture-latest.md`, substituindo a afirmação presente de que `docs/phase-6.md` não existe por uma formulação histórica inequívoca; registrar também que o planejamento foi aprovado pela usuária e que a implementação permanece `NOT_AUTHORIZED`
-- Target commit: `88e194778b4399a6713f118470f9d861c553cd9e`
+- Role: USER
+- Status: WAITING_FOR_APPROVAL
+- Task: decidir quando autorizar explicitamente o início da implementação da Phase 6 — Target UI Convergence; até essa decisão, nenhuma implementação deve começar
+- Target commit: `88e194778b4399a6713f118470f9d861c553cd9e` (baseline funcional preservado)
 - Required inputs:
   - [`AGENTS.md`](../AGENTS.md)
-  - [`docs/reviews/architecture-latest.md`](reviews/architecture-latest.md)
   - [`docs/phase-6.md`](phase-6.md)
+  - [`docs/reviews/architecture-latest.md`](reviews/architecture-latest.md)
 - Expected output:
-  - inconsistência editorial corrigida sem mudar arquitetura, roadmap, scope ou Required Reviews
-  - `docs/reviews/architecture-latest.md` e seção Planner do handoff marcando planejamento `APPROVED` e implementação `NOT_STARTED / NOT_AUTHORIZED`
-  - commit exclusivamente documental do PLANNER
-  - devolução ao COORDINATOR para manter o workflow em `WAITING_FOR_APPROVAL` da implementação
-- Blocking dependencies: nenhuma; a aprovação do planejamento já foi concedida
+  - autorização explícita da usuária para iniciar a Phase 6, ou instrução para continuar aguardando
+  - após autorização, COORDINATOR encaminha a primeira ação ao Work previsto no plano sem ampliar scope
+- Blocking dependencies: autorização explícita da usuária para implementação
 - Parallel work: somente leitura; UI/UX e DEV não devem iniciar trabalho enquanto a implementação permanecer não autorizada
-- Escalation: NONE
+- Escalation: USER
 
 ## Recent History
 
@@ -248,3 +246,4 @@ Required Reviews:
 - 2026-09-10 — A usuária corrigiu o modelo para SINGLE_USER, supersedeu autenticação multiusuário/RBAC/RLS por tenant e propôs a nova ordem Target UI → single-user permissions → tools/coding → agents → Production Hardening. COORDINATOR encaminhou a revisão formal ao PLANNER sem autorizar implementação.
 - 2026-09-10 — PLANNER publicou `ARCH-2026-09-10-003` e a proposta `Phase 6 — Target UI Convergence` no commit `68b102a`, com planejamento `READY_FOR_APPROVAL` e implementação `NOT_AUTHORIZED`. COORDINATOR encaminhou a decisão à usuária.
 - 2026-09-10 — A usuária aprovou `ARCH-2026-09-10-003` e `docs/phase-6.md` como planejamento oficial, manteve a implementação não autorizada e solicitou ao PLANNER somente a correção editorial sobre a criação do arquivo da fase.
+- 2026-09-11 — PLANNER corrigiu a formulação histórica, registrou o planejamento como `APPROVED` e manteve a implementação `NOT_STARTED / NOT_AUTHORIZED` no commit `bd244bb`; COORDINATOR colocou o workflow em espera pela autorização explícita da usuária.
