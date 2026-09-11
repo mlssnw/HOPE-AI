@@ -2,6 +2,14 @@
 
 Histórico verificável da evolução do HOPE AI. Commits documentais posteriores não substituem o Functional Commit de cada entrega.
 
+## Próxima prioridade — Planejamento da Fase 6
+
+- **Data da decisão:** 2026-09-10
+- **Escopo autorizado:** planejamento de Identity / Authentication / Authorization; implementação ainda não iniciada
+- **Ordem estratégica:** Fase 6 → Production Hardening → implementação completa do HOPE Main Dashboard
+- **Motivação:** identidade server-side e autorização precedem isolamento multiusuário, RLS, memória por usuário, PermissionManager, agentes, tools, ações sensíveis e integrações
+- **Limite:** o Target UI permanece aprovado, mas não bloqueia a Fase 6; provider, credenciais, custos, migrations, produção e código exigem decisões e autorizações posteriores
+
 ## Fase 5 — Memory-aware chat e personalidade HOPE
 
 - **Período:** 2026-09-02 a 2026-09-10

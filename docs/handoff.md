@@ -16,6 +16,18 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 - Last approved commit: `88e194778b4399a6713f118470f9d861c553cd9e`
 - Working tree expected: preservar a alteração preexistente em `AGENTS.md` e os assets não rastreados; os commits de review não incorporam código funcional
 - Database environment: o re-review de Database validou o gate de schema em ambientes descartáveis; PostgreSQL real permaneceu inacessível e a migration `20260903_0003` não foi aplicada nem validada no ambiente real
+- Next authorized planning target: Phase 6 — Identity / Authentication / Authorization
+
+## User Strategic Decision
+
+- Decision date: 2026-09-10
+- Status: APPROVED — PLANNING_ONLY
+- Next priority: Phase 6 — Identity / Authentication / Authorization
+- Strategic order: 1) Phase 6 Identity / Authentication / Authorization; 2) Production Hardening; 3) implementação completa do HOPE Main Dashboard
+- Rationale: identidade e autorização são dependências para isolamento multiusuário, RLS, memória por usuário, PermissionManager, agentes, tools, ações sensíveis e futuras integrações
+- Production sequencing: hardening de produção vem depois da fundação de identidade para reduzir retrabalho
+- Visual boundary: o Target UI permanece aprovado e obrigatório como direção futura, mas não bloqueia o planejamento ou a implementação posteriormente autorizada da Fase 6
+- Authorization boundary: esta decisão autoriza somente o PLANNER a desenhar a Fase 6; não autoriza DEV, código, migration, provider, credencial, custo, produção ou dashboard
 
 Required Reviews:
 
@@ -40,7 +52,7 @@ Required Reviews:
 - Gap matrix: [`dashboard-gap-matrix.md`](design/dashboard-gap-matrix.md)
 - Rule: `VISUAL TARGET` não significa `IMPLEMENTED FEATURE`; áreas exibidas continuam classificadas pelo código e por `docs/architecture.md`
 - Public presentation: pode ser usado como hero, portfólio, apresentação ou LinkedIn somente como interface conceitual/alvo enquanto houver partes não implementadas
-- Implementation gate: a persistência visual está concluída, mas nenhuma implementação do dashboard começa durante o loop corretivo atual sem novo roteamento após o fechamento dos blockers da Fase 5
+- Implementation gate: a persistência visual está concluída, mas a implementação completa do dashboard permanece terceira na ordem estratégica e exige fase própria e autorização futura; não bloqueia a Fase 6
 
 ## Current Functional Commit
 
@@ -154,8 +166,8 @@ Required Reviews:
 
 - Autonomy level: 2.5
 - Status: APPROVED
-- Operational conclusion: PLANNER consolidou a Fase 5 como `APPROVED_WITH_WARNINGS` no commit `88e1947`, após QA, Database, Security e UI/UX aprovarem o mesmo hash sem blocker funcional. Production Readiness permanece `BLOCKED`, e o HOPE Main Dashboard continua sendo Target UI futuro.
-- Routing: LEVEL 3 — USER, para escolher explicitamente o próximo escopo antes que qualquer nova fase, implementação visual, hardening de produção ou trabalho funcional seja iniciado
+- Operational conclusion: a usuária escolheu a Fase 6 — Identity / Authentication / Authorization como próxima prioridade, seguida por Production Hardening e, depois, implementação completa do Target UI. A autorização atual cobre somente planejamento.
+- Routing: LEVEL 1 — PLANNER, para desenhar formalmente a Fase 6 e devolver escopo revisável antes de qualquer implementação
 - Boundary: COORDINATOR atualizou somente Current Phase, Current Functional Commit, Review Matrix, blockers, warnings, Next Action e histórico; não concedeu aprovação técnica nem alterou seções ou relatórios de ownership dos reviewers
 
 ## Current Blockers
@@ -187,23 +199,27 @@ Required Reviews:
 
 ## Next Action
 
-- Role: USER
-- Status: WAITING_FOR_APPROVAL
-- Task: escolher explicitamente o próximo escopo a ser planejado — fase visual dedicada ao HOPE Main Dashboard, Fase 6 de identidade/autorização, hardening de Production Readiness ou outro objetivo delimitado — sem autorizar implementação implicitamente
+- Role: PLANNER
+- Status: NOT_STARTED
+- Task: desenhar a Fase 6 — Identity / Authentication / Authorization; definir goal, scope, non-goals, dependencies, opções e trade-offs de identidade, critérios de aceite, riscos, migração da identidade transitória, limites com RLS/PermissionManager e Required Reviews; não implementar código
 - Target commit: `88e194778b4399a6713f118470f9d861c553cd9e`
 - Required inputs:
   - [`AGENTS.md`](../AGENTS.md)
   - [`docs/reviews/architecture-latest.md`](reviews/architecture-latest.md)
   - [`docs/future-architecture.md`](future-architecture.md)
-  - [`docs/design/dashboard-gap-matrix.md`](design/dashboard-gap-matrix.md)
   - [`docs/backlog.md`](backlog.md)
+  - [`docs/reviews/security-review-latest.md`](reviews/security-review-latest.md)
+  - [`docs/reviews/database-audit-latest.md`](reviews/database-audit-latest.md)
+  - [`docs/reviews/uiux-latest.md`](reviews/uiux-latest.md)
 - Expected output:
-  - escolha explícita de qual objetivo deve seguir para planejamento
-  - limites de escopo, prioridade e eventual autorização sensível declarados pela usuária
-  - roteamento posterior ao PLANNER antes de qualquer implementação
-- Blocking dependencies: decisão explícita da usuária sobre o próximo escopo
-- Parallel work: somente leitura, organização e preservação do estado atual; nenhuma implementação ou alteração funcional está autorizada
-- Escalation: USER
+  - `docs/phase-6.md` com objetivo, escopo, non-goals, dependências, arquitetura proposta, riscos, acceptance criteria e plano de validação
+  - decisão persistida em `docs/reviews/architecture-latest.md` e seção Planner deste handoff
+  - Required Reviews definidos explicitamente como `YES` ou `NO`, com justificativa por domínio
+  - recomendação de provider/estratégia de identidade sem criar conta, assumir custo, usar credencial ou autorizar fornecedor em nome da usuária
+  - nova Next Action devolvida ao COORDINATOR; implementação permanece bloqueada até aprovação explícita do plano
+- Blocking dependencies: qualquer escolha de provider, conta, custo, credencial, tratamento de dados reais ou compromisso externo deve ser escalada à usuária; o desenho provider-agnostic pode avançar sem essas ações
+- Parallel work: SECURITY, DATABASE e UI/UX podem realizar somente leitura e fornecer insumos; nenhuma implementação, migration ou escrita concorrente no handoff está autorizada
+- Escalation: NONE para o planejamento; USER se uma decisão sensível for indispensável
 
 ## Recent History
 
@@ -222,3 +238,4 @@ Required Reviews:
 - 2026-09-10 — PLANNER publicou `ARCH-2026-09-10-002` no commit `477e67f`, manteve UI/UX obrigatório com escopo funcional focado e deferiu a fidelidade completa ao Target UI. COORDINATOR roteou o único gate restante ao UI/UX.
 - 2026-09-10 — UI/UX aprovou com warnings o review funcional focado no commit documental `c00125e`, sem blockers e sem importar a fidelidade completa ao dashboard para a Fase 5. COORDINATOR devolveu a fase ao PLANNER para consolidação final.
 - 2026-09-10 — PLANNER consolidou a Fase 5 como `APPROVED_WITH_WARNINGS` no commit documental `8f3d1e1`, manteve Production Readiness `BLOCKED` e registrou os warnings de UI/UX no backlog. COORDINATOR encerrou o fluxo funcional e aguardou a escolha explícita da usuária para o próximo escopo.
+- 2026-09-10 — A usuária definiu a ordem estratégica: Fase 6 de identidade/autorização, depois Production Hardening e, por fim, implementação completa do Target UI. COORDINATOR autorizou somente o planejamento e encaminhou o desenho da Fase 6 ao PLANNER.

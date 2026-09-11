@@ -66,6 +66,7 @@ Assistentes tradicionais dependem principalmente do contexto imediato da convers
 | Versão atual | `6.0.0-phase.5` |
 | Fase atual | Fase 5 — memory-aware chat e personalidade HOPE |
 | Estado técnico | `APPROVED_WITH_WARNINGS` — Fase 5 funcionalmente concluída e aprovada pelos reviews independentes |
+| Próxima prioridade | Planejamento autorizado da Fase 6 — identidade, autenticação e autorização |
 | Deploy público | Ainda não habilitado — autenticação, autorização e hardening de produção pendentes |
 
 A fundação local/controlada já conecta chat, memória persistente, PostgreSQL/pgvector, Memory Globe e eventos em tempo real. Isso não equivale a prontidão para produção pública.
@@ -82,8 +83,9 @@ O acompanhamento técnico detalhado permanece no [painel operacional](docs/hando
 - [x] Chat consciente de memória com consentimento explícito.
 - [x] Correção e esquecimento com confirmação vinculada ao alvo.
 - [x] Aprovação final independente da Fase 5.
+- [ ] Fase 6 — identidade, autenticação e autorização reais para HTTP e WebSocket.
+- [ ] Production Hardening sobre a fundação de identidade.
 - [ ] Implementação fiel e acessível do dashboard visual aprovado.
-- [ ] Autenticação e autorização reais para HTTP e WebSocket.
 - [ ] Provider semântico de produção e avaliação de qualidade vetorial.
 - [ ] Streaming de respostas e broker distribuído.
 - [ ] Tools, agents e skills governados por permissões.
