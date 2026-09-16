@@ -1,108 +1,113 @@
 # QA Review — Latest
 
-- Status: APPROVED_WITH_WARNINGS
-- Phase: 5
-- Functional commit reviewed: `88e194778b4399a6713f118470f9d861c553cd9e`
-- Previous functional baseline: `19e573893aba09da990256da05e7dab5af165ce1`
-- Review date: 2026-09-10
-- Branch during review: `main`
-- HEAD at review start: `03049a5106ddd0ff1e7cea390452a621ba09cd29`
-- Scope note: no functional diff was found between the reviewed commit and HEAD; later commits are documentation-only.
+- Status: `APPROVED_WITH_WARNINGS`
+- Phase: 6 — Target UI Convergence
+- Functional Commit reviewed: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
+- Approved functional baseline: `88e194778b4399a6713f118470f9d861c553cd9e`
+- Review date: 2026-09-16
+- Branch during review: `codex/phase-6-target-ui`
+- Scope note: commits posteriores ao alvo são documentais; não há diferença funcional entre `0912e94` e o HEAD revisado.
 
 ## Result
 
-Result: APPROVED_WITH_WARNINGS
+Result: `APPROVED_WITH_WARNINGS`
 
-Feature status: APPROVED_WITH_WARNINGS. `QA-001` is closed. No QA blocker remains for this functional commit.
+Feature Status: aprovado com ressalvas. Nenhum blocker funcional de QA permanece para a Phase 6. O finding histórico `QA-003` foi encerrado pela reprodução do cancelamento sem estado visual obsoleto.
 
-Production readiness: not approved by this review. Authentication, real PostgreSQL/pgvector validation, migration execution and other production controls remain under their respective owners.
+Production Readiness: não aprovada por este review. PostgreSQL/pgvector real, providers pagos, microfone físico, dispositivos móveis reais, leitor de tela manual, zoom nativo e controles de produção permanecem fora desta validação.
 
 ## Test Summary
 
-- Backend: PASSED — 45 Python tests passed with one pre-existing Starlette TestClient/httpx deprecation warning.
-- Frontend: PASSED — 19 Node tests passed.
-- Python syntax: PASSED — 44 Python files in `backend/` and `tests/` parsed successfully with `ast.parse` without creating bytecode.
-- JavaScript syntax: PASSED — every module under `frontend/js/` passed `node --check`.
-- Browser: PASSED WITH WARNING — official E2E harness loaded, WebGL Memory Globe rendered, memory-aware chat retrieved the expected memory, the destructive dialog named the target and focused Cancel, realtime removed the confirmed memory incrementally, and browser console contained zero errors or warnings. `QA-003` remains reproducible.
-- API: PASSED — missing and mismatched delete confirmation returned HTTP 428; exact UUID confirmation returned HTTP 204.
-- Memory: PASSED — retrieval with `memory_enabled=true`, exact-target forget confirmation, confirmed deletion, relation cleanup and isolated mock state were verified.
-- Realtime/regression: PASSED — the deletion event updated the open Memory Globe from three to two memories; full automated coverage for existing realtime and frontend flows remained green.
+- Backend: **PASSED** — 45 testes Python passaram; um warning preexistente Starlette/TestClient.
+- Focused API/realtime/E2E harness: **PASSED** — 11 testes passaram.
+- Frontend: **PASSED** — 36 testes Node passaram.
+- Python syntax: **PASSED** — 44 arquivos de `backend/` e `tests/` foram analisados por `ast.parse` sem geração de bytecode.
+- JavaScript syntax: **PASSED** — 30 módulos em `frontend/js/`, `tests/frontend/` e `tests/browser/` passaram em `node --check`.
+- Browser: **PASSED WITH ENVIRONMENTAL LIMITATIONS** — os cinco scripts oficiais passaram em Chrome 153 sobre harness descartável criado a partir do commit exato.
+- API: **PASSED** — validação, erros públicos, confirmação ausente/divergente 428 e confirmação exata foram exercitados.
+- Realtime: **PASSED** — seis eventos incrementais, PING/PONG, desconexão, sincronização HTTP, reconnect e reconciliação passaram sem recarga integral por evento.
+- Memory: **PASSED** — opt-in/out, recuperação, fontes por resposta, busca, lista, inspector, exclusão pelo UUID exato e remoção de relações passaram sobre dados sintéticos.
+- Security basic: **PASSED WITH PRODUCTION BOUNDARY** — HTML/SVG permaneceram inertes, protocolos executáveis foram rejeitados, não foi encontrado secret novo no delta e os fluxos destrutivos mantiveram confirmação inequívoca.
 
-## Commands and Evidence
+## Commands and Reproduced Evidence
 
 ### Git and scope
 
-- `git status --short --branch`, `git branch --show-current`, `git rev-parse HEAD` and `git log -1` were executed before testing.
-- `git show --format=fuller --stat --summary 88e1947...` confirmed the corrective commit.
-- `git diff 19e5738...88e1947 -- tests/e2e_app.py tests/test_e2e_harness.py` was inspected.
-- `git diff --quiet 88e1947..HEAD -- backend frontend tests migrations scripts requirements.txt package.json` returned no functional difference.
-- Pre-existing work was limited to modified `AGENTS.md` and untracked dashboard/hero assets; none was changed or staged by QA.
+- `git status --short --branch`, `git log`, `git show` e resolução dos hashes confirmaram branch, working tree e Functional Commit.
+- `git diff --check 88e1947..0912e94`: passou.
+- `git diff --quiet 0912e94..HEAD -- backend frontend tests migrations scripts requirements.txt package.json`: confirmou ausência de diferença funcional posterior.
+- `git show --stat 0912e94`: confirmou alterações de frontend, testes e evidências, sem backend, API, schema ou migration.
+- As alterações preexistentes em `AGENTS.md`, `Hope dashboard` e `docs/design/assets/hope-linkedin-hero*` foram preservadas.
 
-### Automated tests
+### Automated suites
 
-- `python -m pytest -q -p no:cacheprovider tests/test_e2e_harness.py tests/test_ai_orchestrator.py tests/test_api.py`: 16 passed in 3.72s.
-- `python -m pytest -q -p no:cacheprovider`: 45 passed, 1 warning in 4.99s.
-- `node --test tests/frontend/*.test.mjs`: 19 passed.
-- Python AST syntax check: 44 files passed.
-- `node --check` over `frontend/js/*.js`: passed.
+- `.venv\\Scripts\\python.exe -m pytest -q -p no:cacheprovider`: **45 passed**, 1 warning, 7.50 s.
+- `.venv\\Scripts\\python.exe -m pytest -q -p no:cacheprovider tests/test_realtime.py tests/test_e2e_harness.py tests/test_api.py`: **11 passed**, 1 warning, 11.63 s.
+- `node --test tests/frontend/*.test.mjs`: **36 passed**, 0 failed.
+- Python AST syntax check: **44 files passed**.
+- `node --check` sobre frontend e testes JavaScript: **30 files passed**.
 
-### QA-001 acceptance matrix
+### Browser package
 
-1. Typed domain models: PASSED — the harness now uses `MemoryView`, `MemorySearchHit`, `MemoryExplanation`, `MemoryGraph`, `MemoryRelationView`, `EntityView` and related view models.
-2. Isolated mock state: PASSED — two independently created browser apps started with three memories/two relations; deleting from one left it with two memories/one relation while the other remained at three/two.
-3. Retrieval with `memory_enabled=true`: PASSED — browser chat `Mostre a Arquitetura da HOPE.` completed with memory available and the focused automated contract returned `memories_used=[20000000-0000-4000-8000-000000000001]` plus `memory_retriever`.
-4. Forget identifies a real memory: PASSED — `Esqueça essa memória` opened confirmation for `Arquitetura da HOPE`.
-5. Confirmation bound to exact UUID: PASSED — response and client contract used `20000000-0000-4000-8000-000000000001` for both target and confirmation header.
-6. Missing/divergent confirmation: PASSED — both requests returned HTTP 428 without mutation.
-7. Confirmed deletion and relations: PASSED — exact confirmation returned HTTP 204; graph then contained two memories, one remaining unrelated edge and no entity link for the deleted memory.
-8. Existing flows: PASSED — full Python and frontend suites remained green; ordinary chat, API, realtime update and WebGL load were exercised.
-9. Focused/full suites: PASSED — results recorded above.
-10. Browser/console/network: PASSED WITH LIMITATION — recovery and destructive confirmation were exercised in browser; the exact confirmed DELETE was issued against the same disposable harness through HTTP, and its realtime event updated the open browser. Access logs showed `428`, `428`, `204`, then graph `200`; browser console showed zero errors/warnings. The destructive button itself was not clicked by QA automation.
+O commit `0912e94` foi exportado para uma cópia temporária. O runner iniciou exclusivamente `tests.e2e_app` em loopback, com banco e chaves externas vazios. Nenhum arquivo versionado, banco real, provider ou dado pessoal foi usado.
+
+- `node tests/browser/run.mjs`: **PASS complete Phase 6 browser package; disposable state only**.
+- Scripts executados: `globe-compositing`, `phase-6`, `phase-6-runtime`, `phase-6-accessibility` e `phase-6-flows`.
+- Chrome: `153.0.8010.47`; WebGL via ANGLE/AMD Radeon/Direct3D11; 16 processadores lógicos reportados.
+- Console/page/assets: nenhum erro inesperado; HTTP 428/500/503 dos cenários negativos eram deliberados e tratados.
+- Artefatos reproduzidos na cópia descartável: 39 screenshots e três JSONs de resultados.
+
+## Acceptance Matrix
+
+1. **Sete viewports: PASSED.** `320×568`, `390×844`, `768×1024`, `1024×768`, `1280×720`, `1440×900` e `1920×1080` passaram sem overflow horizontal; o composer permaneceu visível em `1280×720`.
+2. **Chat-first e preservação de estado/foco: PASSED.** Mobile/tablet iniciaram na conversa; alternância para memória e retorno preservaram estado, seleção e foco.
+3. **Reflow, texto e landscape: PASSED WITH LIMITATION.** Reflow equivalente a zoom 200%, texto 130% e `844×390` passaram. O menu nativo de zoom não foi automatizado; baixa altura exige rolagem vertical prevista.
+4. **Teclado, foco e Escape: PASSED.** Ordem de foco, confirmação com Cancelar inicial, Escape, fullscreen, inspector e retorno de foco passaram.
+5. **Contraste e touch targets: PASSED.** Razões reproduzidas: texto normal 13,56:1; secundário 6,54:1; primário 10,54:1; perigo 7,74:1; foco 13,99:1; borda de controle 4,30:1. Alvos móveis atenderam 44 px.
+6. **Reduced motion e perfis: PASSED.** LOW/MEDIUM/HIGH/ULTRA preservaram dados e controles; reduced motion removeu movimento contínuo e zoom automático.
+7. **WebGL/fallback: PASSED.** Renderização, composição alpha, perda de contexto, fallback textual, busca, lista, relações, inspector e recuperação WebGL passaram.
+8. **Realtime: PASSED.** Eventos incrementais não dispararam GET integral por evento; heartbeat PONG, queda, HTTP fallback de 30 s e reconnect passaram.
+9. **Chat/cancelamento/fontes: PASSED.** Opt-in de memória, opt-out, fontes vinculadas à resposta, HTML inerte, erro público e cancelamento seguro passaram. Evento remoto obsoleto não recolocou o globo em processamento.
+10. **Memory Globe: PASSED.** Loading, empty, ready, unavailable, error, degraded, busca sem retirar contexto, lista equivalente, inspector e atualização de relações passaram.
+11. **Esquecimento seguro: PASSED.** Alvo real, UUID exato, 428 ausente/divergente, Cancelar, Escape bloqueado em submitting, erro recuperável, sucesso e remoção das relações passaram.
+12. **Voz: PASSED WITH LIMITATION.** Estados unsupported/unavailable, callbacks reais da fixture e áudio PCM local passaram; microfone e provider TTS reais não foram exercitados.
+13. **Performance: PASSED no ambiente reproduzido.** Cena sintética com 3.000 nós/2.999 relações: LOW 59,91 FPS/400 nós, MEDIUM 59,91/1.000, HIGH 59,91/2.500 e ULTRA 59,35/3.000; p95 entre 16,8 e 17 ms.
+14. **Capability claims: PASSED.** Não foram encontrados controles funcionais para Visão, Arquivos, automação, tools, coding, skills, agents, perfil ou métricas sem fonte.
+15. **Regressão completa: PASSED.** Suítes Python/frontend, sintaxe e pacote browser permaneceram verdes.
 
 ## Regressions Found
 
-- No new blocking regression was found.
-- `QA-003` remains reproducible and unchanged by this backend/test-harness correction.
+- Nenhuma regressão bloqueante ou nova regressão funcional foi reproduzida.
 
-## Closed Blockers
+## Closed Findings
 
-### QA-001 — CLOSED
+### QA-003 — CLOSED
 
-- Severity: MEDIUM (historical)
-- Evidence: typed retrieval objects replaced dictionaries; focused tests passed; the browser retrieved the mocked memory and opened exact-target confirmation; API negative and positive delete paths passed; graph state and relations were updated.
-- Impact: the official Phase 5 harness can now validate the memory-aware flow that was blocked in the previous review.
-- Recommendation: close `QA-001`; retain the new harness tests as regression coverage.
+- Severity histórica: LOW.
+- Evidence: o teste frontend `cancel ignores stale remote processing until the next local request` passou; o browser confirmou cancelamento seguro, e o estado local voltou imediatamente a idle sem aceitar o evento remoto obsoleto.
+- Impact: a inconsistência visual temporária observada na Phase 5 não foi reproduzida no Functional Commit da Phase 6.
+- Recommendation: manter os testes de apresentação/cancelamento como cobertura de regressão.
 
 ## Open Blockers
 
-- None.
+- Nenhum blocker de QA.
 
-## Non-blocking Findings
+## Non-blocking Issues
 
-### QA-003 — Memory Globe state lags after cancellation
+### QA-ENV-002 — Validações dependentes de ambiente real não executadas
 
-- Severity: LOW
-- Blocking: no
-- Evidence: after cancelling the delayed `aguarde` request, chat immediately displayed `Solicitação cancelada.`, while the globe remained `Consultando memórias…` for approximately three seconds before returning to `Tempo real conectado`.
-- Impact: transient visual inconsistency; controls recover and the chat remains usable.
-- Recommendation: Development should make the client-side abort transition the Core Orb/globe to idle immediately or correlate and discard the stale server state event. Track as backlog warning if accepted for phase advancement.
+- Severity: INFO.
+- Evidence: a rodada usou Chrome headless, viewport/reflow controlado, reconhecimento de voz por callbacks, PCM local e harness sintético. Não houve leitor de tela manual, zoom pelo menu nativo, teclado virtual/dispositivo físico, microfone real, provider pago ou PostgreSQL/pgvector real.
+- Impact: o review comprova o comportamento funcional no ambiente descartável, mas não qualidade de voz, integração com hardware, experiência assistiva manual ou Production Readiness.
+- Recommendation: manter esses itens nos gates próprios de acessibilidade manual, providers, Database e Production Hardening.
 
-### QA-WARN-HTTPX — Deprecated TestClient integration
+### QA-WARN-HTTPX — Integração TestClient obsoleta
 
-- Severity: INFO
-- Blocking: no
-- Evidence: the complete Python suite emitted one `StarletteDeprecationWarning` advising migration from the current httpx TestClient integration.
-- Impact: no current functional failure; future dependency upgrades may require maintenance.
-- Recommendation: schedule dependency/test-client maintenance outside this corrective scope.
-
-### QA-ENV-001 — Real infrastructure not exercised
-
-- Severity: INFO
-- Blocking: no for QA feature approval
-- Evidence: tests used mocks, SQLite/disposable state and the in-memory browser harness. No PostgreSQL/pgvector instance, migration, paid provider, credential or real user data was accessed.
-- Impact: this review does not establish production database or provider readiness.
-- Recommendation: preserve the existing Database/Security production gates and perform their authorized environment validations separately.
+- Severity: INFO.
+- Evidence: as duas execuções Python emitiram `StarletteDeprecationWarning` recomendando migração da integração atual com `httpx`.
+- Impact: nenhuma falha atual; uma atualização futura de dependências pode exigir manutenção.
+- Recommendation: tratar em manutenção técnica fora do escopo visual da Phase 6.
 
 ## Recommendation
 
-APPROVED_WITH_WARNINGS. Close `QA-001` for Functional Commit `88e194778b4399a6713f118470f9d861c553cd9e`. The COORDINATOR should update the Review Matrix and Feature Blockers accordingly, retain `QA-003` as a LOW non-blocking warning, and continue waiting for the other required reviewers before consolidating Phase 5.
+`APPROVED_WITH_WARNINGS` para o Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`. Encerrar `QA-003`, manter os limites ambientais e o warning do TestClient como não bloqueantes, e encaminhar ao COORDINATOR para consolidação com Security e UI/UX. Production Readiness permanece `BLOCKED`.
