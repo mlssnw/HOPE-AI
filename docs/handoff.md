@@ -7,16 +7,16 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 ## Current Phase
 
 - Phase: 6 — Target UI Convergence
-- Phase status: IN_PROGRESS
-- Feature status: IN_PROGRESS — UI/UX pré-implementação `APPROVED`; Development autorizado a implementar o contrato fechado da Phase 6
+- Phase status: WAITING_FOR_REVIEW
+- Feature status: READY_FOR_REVIEW — Development entregou a Phase 6 no Functional Commit `0912e94`; reviews independentes pendentes
 - Production readiness: BLOCKED — Security rejeitou deploy público
-- Branch: `main`
-- Application version: 6.0 / Phase 5 baseline; Phase 6 ainda sem Functional Commit
+- Branch: `codex/phase-6-target-ui`
+- Application version: 6.0 / Phase 6 candidate; aprovação funcional pendente
 - Scope: convergência visual do HOPE Main Dashboard sobre capacidades reais, com acessibilidade, responsividade e preservação dos contratos funcionais existentes
 - Last approved commit: `88e194778b4399a6713f118470f9d861c553cd9e`
 - Working tree expected: preservar a alteração preexistente em `AGENTS.md` e os assets não rastreados; os commits de review não incorporam código funcional
 - Database environment: o re-review de Database validou o gate de schema em ambientes descartáveis; PostgreSQL real permaneceu inacessível e a migration `20260903_0003` não foi aplicada nem validada no ambiente real
-- Active phase: Phase 6 — Target UI Convergence, planejamento `APPROVED`, especificação UI/UX `APPROVED` e implementação Development `IN_PROGRESS`
+- Active phase: Phase 6 — Target UI Convergence, implementação `READY_FOR_REVIEW` em `0912e94`
 
 ## User Strategic Decision
 
@@ -46,7 +46,7 @@ Required Reviews:
 - Direction status: APPROVED
 - Decision ID: `UIUX-VIS-2026-09-10-001`
 - Persistence status: COMPLETE — decisão, asset canônico, especificação e matriz de gaps foram versionados em `aa440f8`
-- Implementation status: PARTIAL — o frontend atual implementa partes do chat, Memory Globe, Core Orb, inspector e estados, mas a composição-alvo não comprova as demais capacidades mostradas
+- Implementation status: IMPLEMENTED — candidate `0912e94`, ainda pendente de QA, Security e UI/UX no mesmo hash
 - Scope: interface principal, Memory Globe, Core Orb, navegação, chat, sessão atual, Memory Inspector, controles, hierarquia visual, estados, identidade visual e apresentação pública
 - Source of truth order: `docs/design/` → `docs/reviews/uiux-latest.md` → dashboard visual aprovado → documentação histórica anterior
 - Canonical reference: [`hope-dashboard-approved-2026-09-10.png`](design/assets/hope-dashboard-approved-2026-09-10.png)
@@ -58,22 +58,22 @@ Required Reviews:
 
 ## Current Functional Commit
 
-- Commit: `88e194778b4399a6713f118470f9d861c553cd9e`
-- Phase: 5
+- Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
+- Phase: 6
 - Created by: DEV
-- Status: APPROVED_WITH_WARNINGS
-- Base corrected: `19e573893aba09da990256da05e7dab5af165ce1`
-- Notes: `88e1947` corrige `QA-001` e `DB-005`. QA, Database, Security e UI/UX emitiram e persistiram `APPROVED_WITH_WARNINGS` contra o hash exato; nenhum blocker funcional desses quatro domínios permanece aberto.
+- Status: READY_FOR_REVIEW
+- Base approved: `88e194778b4399a6713f118470f9d861c553cd9e`
+- Notes: o commit contém frontend, testes e evidências da Phase 6; o commit documental posterior `efe0ce8` não altera sua identidade. QA, Security e UI/UX devem revisar exatamente `0912e94`.
 
 ## Review Matrix
 
 | Work | Required | Status | Commit |
 |---|---|---|---|
-| DEV | YES | IN_PROGRESS | `88e194778b4399a6713f118470f9d861c553cd9e` (baseline) |
-| QA | YES | NOT_STARTED | — |
+| DEV | YES | READY_FOR_REVIEW | `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
+| QA | YES | WAITING_FOR_REVIEW | `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
 | DATABASE | NO | N/A | — |
-| SECURITY | YES | NOT_STARTED | — |
-| UI/UX | YES | APPROVED | `88e194778b4399a6713f118470f9d861c553cd9e` (pre-implementation; review final pendente) |
+| SECURITY | YES | WAITING_FOR_REVIEW | `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
+| UI/UX | YES | WAITING_FOR_REVIEW | `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
 | PLANNER | YES | APPROVED | — (plan approved) |
 
 ## Development
@@ -184,15 +184,15 @@ Required Reviews:
 
 - Autonomy level: 2.5
 - Status: APPROVED
-- Operational conclusion: UI/UX aprovou a especificação pré-implementação, fechou o mapeamento P0/P1 e satisfez a Definition of Ready em `3c10be2`; o PLANNER sincronizou o plano e liberou Development em `a9b888b`.
-- Routing: LEVEL 1 — DEVELOPMENT, exclusivamente para implementar a Phase 6 autorizada e produzir um novo Functional Commit revisável
+- Operational conclusion: Development entregou a Phase 6 como `READY_FOR_REVIEW` no Functional Commit `0912e94`, com registro documental em `efe0ce8`; o diff não altera backend, banco ou persistência.
+- Routing: LEVEL 1 — QA, SECURITY e UI/UX podem revisar em paralelo o mesmo hash, cada papel em seu relatório `latest`; DATABASE permanece `N/A`
 - Boundary: COORDINATOR atualizou somente Current Phase, Current Functional Commit, Review Matrix, blockers, warnings, Next Action e histórico; não concedeu aprovação técnica nem alterou seções ou relatórios de ownership dos reviewers
 
 ## Current Blockers
 
 ### Feature Blockers
 
-- Nenhum blocker funcional permanece aberto nos quatro reviews obrigatórios contra `88e1947`. A Fase 5 está funcionalmente concluída com warnings.
+- Nenhum blocker funcional da Phase 6 foi registrado até o momento; QA, Security e UI/UX ainda precisam revisar `0912e94`.
 
 ### Production Blockers
 
@@ -205,10 +205,8 @@ Required Reviews:
 - A direção visual foi persistida e aprovada; `UIUX-001` a `UIUX-005` são gaps para implementação futura do dashboard e não ampliam automaticamente o escopo corretivo atual da Fase 5.
 - `QA-003` permanece LOW e não bloqueante; o re-review de QA o confirmou no novo Functional Commit.
 - `SEC-017` permanece MEDIUM e não bloqueante: o gate depende do lifespan e o harness sintético não valida schema, autenticação ou isolamento.
-- `UIUX-F5-W01` permanece MEDIUM e não bloqueante: o badge “Memória” pode confundir disponibilidade do serviço com consentimento ativo.
-- `UIUX-F5-W02` permanece LOW e não bloqueante: atualizações normais usam uma região `aria-live` assertiva.
-- `UIUX-F5-W03` permanece MEDIUM e não bloqueante: alguns alvos de toque e textos auxiliares ficam abaixo do contrato visual.
-- Correção editorial concluída: `architecture-latest.md` registra que `docs/phase-6.md` não existia antes de `ARCH-2026-09-10-003`; planejamento `APPROVED` e implementação `NOT_STARTED / NOT_AUTHORIZED` foram persistidos em `bd244bb`.
+- `UIUX-F5-W01`, `UIUX-F5-W02` e `UIUX-F5-W03` foram tratados pelo DEV em `0912e94`, mas permanecem abertos até confirmação do review UI/UX pós-implementação.
+- Correção editorial concluída: `architecture-latest.md` registra que `docs/phase-6.md` não existia antes de `ARCH-2026-09-10-003`; o estado histórico de `bd244bb` foi supersedido pela autorização e pela entrega atual `0912e94`.
 - Warnings de Database sobre ausência de PostgreSQL real, confiança na marca Alembic e limitações operacionais permanecem abertos.
 - O aviso de depreciação Starlette/TestClient permanece; a repetição independente confirmou 45 testes Python e 19 testes frontend aprovados.
 - PLANNER registrou os warnings aceitos em [`docs/backlog.md`](backlog.md); o registro não os considera resolvidos.
@@ -218,24 +216,24 @@ Required Reviews:
 
 ## Next Action
 
-- Role: DEVELOPMENT
-- Status: IN_PROGRESS
-- Task: implementar exclusivamente a Phase 6 conforme o plano e a especificação UI/UX aprovada, produzir um novo Functional Commit e parar para QA, Security e UI/UX
-- Target commit: `88e194778b4399a6713f118470f9d861c553cd9e` (baseline funcional preservado)
+- Role: QA + SECURITY + UI/UX
+- Status: WAITING_FOR_REVIEW
+- Task: executar reviews independentes da Phase 6 no mesmo Functional Commit, sem modificar código e sem ampliar o escopo
+- Target commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
 - Required inputs:
   - [`AGENTS.md`](../AGENTS.md)
   - [`docs/architecture.md`](architecture.md)
   - [`docs/phase-6.md`](phase-6.md)
   - [`docs/design/phase-6-target-ui-spec.md`](design/phase-6-target-ui-spec.md)
-  - [`docs/reviews/uiux-latest.md`](reviews/uiux-latest.md)
-  - [`docs/design/dashboard-gap-matrix.md`](design/dashboard-gap-matrix.md)
+  - [`docs/evidence/phase-6/README.md`](evidence/phase-6/README.md)
+  - diff `88e1947..0912e94`
 - Expected output:
-  - implementação fiel dos gaps P0/P1 e das correções `UIUX-F5-W01` a `UIUX-F5-W03`
-  - testes e evidências exigidos pelo Development Evidence Package, sem alteração de backend ou persistência
-  - novo Functional Commit exclusivo da Phase 6, com documentação Development atualizada
-  - status `READY_FOR_REVIEW` e devolução ao COORDINATOR para reviews no mesmo hash
+  - QA valida regressão, browser, viewports, WebGL, foco, console, Network e evidências
+  - Security valida não regressão de consentimento, exclusão, conteúdo não confiável e claims de capacidade
+  - UI/UX valida fidelidade ao contrato, acessibilidade, responsividade e fechamento dos três warnings herdados
+  - cada reviewer persiste o resultado em seu arquivo `latest`, citando o hash exato, e devolve ao COORDINATOR
 - Blocking dependencies: nenhuma
-- Parallel work: QA, SECURITY e UI/UX podem apenas preparar checklists em modo read-only; não devem revisar antes do novo Functional Commit
+- Parallel work: QA, SECURITY e UI/UX podem executar em paralelo porque usam o mesmo hash e arquivos próprios distintos; não devem alterar código nem `docs/handoff.md` durante a rodada
 - Escalation: NONE
 
 ## Recent History
@@ -262,3 +260,4 @@ Required Reviews:
 - 2026-09-11 — PLANNER corrigiu a formulação histórica, registrou o planejamento como `APPROVED` e manteve a implementação `NOT_STARTED / NOT_AUTHORIZED` no commit `bd244bb`; COORDINATOR colocou o workflow em espera pela autorização explícita da usuária.
 - 2026-09-11 — A usuária autorizou a implementação da Phase 6 dentro do plano aprovado, manteve fora de escopo expansão funcional, banco, migrations, providers, produção, tools, agents e Phase 7; COORDINATOR abriu o gate e roteou a primeira ação pré-implementação ao UI/UX.
 - 2026-09-11 — UI/UX aprovou a especificação pré-implementação e fechou o mapeamento P0/P1 em `3c10be2`; PLANNER sincronizou a autorização e roteou a implementação ao Development em `a9b888b`; COORDINATOR liberou o DEV no escopo fechado.
+- 2026-09-15 — Development entregou a Phase 6 como `READY_FOR_REVIEW` no Functional Commit `0912e94`, com registro documental `efe0ce8`; COORDINATOR abriu QA, Security e UI/UX em paralelo no mesmo hash e manteve Database `N/A`.

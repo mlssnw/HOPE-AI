@@ -65,8 +65,8 @@ Assistentes tradicionais dependem principalmente do contexto imediato da convers
 |---|---|
 | Versão atual | `6.0.0-phase.5` |
 | Fase atual | Phase 6 — Target UI Convergence |
-| Estado técnico | `IN_PROGRESS` — especificação UI/UX aprovada; implementação em andamento pelo Development |
-| Baseline funcional | Fase 5 `APPROVED_WITH_WARNINGS` no commit `88e1947` |
+| Estado técnico | `READY_FOR_REVIEW` — candidate da Phase 6 entregue em `0912e94`; QA, Security e UI/UX pendentes |
+| Baseline aprovado | Fase 5 `APPROVED_WITH_WARNINGS` no commit `88e1947` |
 | Deploy público | Ainda não habilitado — autenticação, autorização e hardening de produção pendentes |
 
 A fundação local/controlada já conecta chat, memória persistente, PostgreSQL/pgvector, Memory Globe e eventos em tempo real. Isso não equivale a prontidão para produção pública.
@@ -83,7 +83,7 @@ O acompanhamento técnico detalhado permanece no [painel operacional](docs/hando
 - [x] Chat consciente de memória com consentimento explícito.
 - [x] Correção e esquecimento com confirmação vinculada ao alvo.
 - [x] Aprovação final independente da Fase 5.
-- [ ] Phase 6 — implementação fiel e acessível do dashboard visual aprovado, em andamento pelo Development.
+- [ ] Phase 6 — candidate implementado em `0912e94`, aguardando QA, Security e UI/UX.
 - [ ] Single-User Security & Permissions para um único owner, com níveis de risco.
 - [ ] Tools e coding governados por permissões explícitas.
 - [ ] Agentes limitados pelo PermissionManager e sem autoelevação.
