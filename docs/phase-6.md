@@ -3,10 +3,10 @@
 ## Phase Status
 
 - Planning status: `APPROVED`
-- Implementation status: `IN_PROGRESS`
+- Implementation status: `READY_FOR_REVIEW` — entrega de Development; aprovação independente pendente
 - Implementation authorization: `0bcc25a5437cab8a326e64281579ead56274d8cb` — concedida pela usuária em 2026-09-11, sem expansão de escopo
 - Pre-implementation UI/UX: `APPROVED` — Definition of Ready `SATISFIED` em `3c10be208e4e4d6dcfc3329dd6207961c898d44c`
-- Functional Commit: `NONE`
+- Functional Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
 - Functional baseline: `88e194778b4399a6713f118470f9d861c553cd9e`
 - Architecture decision: `ARCH-2026-09-10-003`
 - Production Readiness: `BLOCKED`
@@ -237,7 +237,7 @@ Este registro descreve a implementação entregue por Development. Não modifica
 
 ### Handoff Boundary
 
-- Functional Commit: a registrar após criação do commit isolado.
+- Functional Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` — `feat(ui): converge phase 6 target dashboard with accessible memory globe`.
 - Required Reviews preservados: QA YES; SECURITY YES; UI/UX YES; DATABASE NO.
-- Development não encerra findings de reviewers, não aprova a fase e não inicia os reviews finais. A devolução ao COORDINATOR ocorrerá com hash exato e status `READY_FOR_REVIEW`.
+- Development não encerra findings de reviewers, não aprova a fase e não inicia os reviews finais. Entrega `READY_FOR_REVIEW` ao COORDINATOR no hash acima; este registro de hash é documental e não muda a identidade funcional.
 - Phase 7 e Production Readiness permanecem fora do escopo; produção continua `BLOCKED`.
