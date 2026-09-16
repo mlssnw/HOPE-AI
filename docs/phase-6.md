@@ -198,3 +198,46 @@ Esta sequência é planejamento; não autoriza execução.
 - Task: implementar exclusivamente a Phase 6 conforme este plano e `docs/design/phase-6-target-ui-spec.md`, produzir um novo Functional Commit e parar para os reviews obrigatórios.
 - Do not route to: Phase 7, Database, providers, produção, tools ou agents.
 - Functional target: partir do baseline `88e194778b4399a6713f118470f9d861c553cd9e`; a Phase 6 ainda não possui Functional Commit.
+
+## Development Implementation — 2026-09-15
+
+Este registro descreve a implementação entregue por Development. Não modifica o planejamento, a matriz de reviews ou o gate de produção acima, nem concede aprovação final de fidelidade visual.
+
+### Implemented
+
+- Shell contínuo com proporção 62/38 no desktop e 58/42 no notebook; marca e nome acessível HOPE; tablet/mobile iniciam na conversa e alternam superfícies sem descartar o DOM, rascunho ou seleção.
+- Globe com núcleo em camadas, filamentos, microarcos e partículas não semânticas limitadas; anéis apenas para categorias presentes, nós/relações exclusivamente do payload. Composição premultiplicada corrige atenuação indevida de transparência.
+- Perfis LOW/MEDIUM/HIGH/ULTRA com limites de LOD/DPR e seleção prioritária; LOW sem autorrotação. Movimento reduzido prevalece, elimina ciclos/trilhas e preserva foco sem zoom automático.
+- Separação do controller DOM e renderer WebGL; lista acessível, busca com contexto visual preservado, inspector com campos reais e relações atualizadas por eventos. Fallback inicial e após perda de contexto mantém os dados e permite recuperar o renderer com estado/seleção.
+- Eventos incrementais preservados: criação com transição a partir do núcleo e interação imediata, atualização do nó, exclusão com dissolução e retração das relações removidas. Não há GET do grafo por evento; reconciliação fica na conexão/recuperação ou fallback periódico.
+- Estado operacional local coordena chat, reconhecimento e áudio com realtime. Cancelamento não deixa o globo preso em processamento; uma síntese antiga cancelada não interrompe a resposta nova.
+- Chat preserva Enter/Shift+Enter, opt-in de memória separado do histórico, cancelamento e renderização defensiva. Fontes/memórias usadas ficam ligadas à resposta. Confirmação destrutiva preserva UUID, consequência, Cancelar inicial, bloqueio em submitting, erro recuperável e retorno de foco.
+- `UIUX-F5-W01`: disponibilidade explícita como “Serviço de memória disponível/indisponível”, sem indicar consentimento. `W02`: status rotineiro polite e falhas urgentes em alert. `W03`: alvos 44 px em toque, controles de pelo menos 12 px, metadados de pelo menos 11 px, contraste/foco medidos.
+- Capacidades futuras, rail sem destino, perfil, métricas inventadas e timestamps não fornecidos foram omitidos. Nenhum backend, API ou persistência foi alterado.
+
+### Files Changed
+
+- `frontend/index.html`, `frontend/styles/main.css`.
+- `frontend/js/app.js`, `chat.js`, `ui.js`, `voice.js`, `memory-globe.js`.
+- Novos `frontend/js/memory-globe-controller.js`, `presentation-state.js`, `surface.js`.
+- Testes do renderer/estado em `tests/frontend/`; runner e cinco verificadores em `tests/browser/`; comando `test:browser` em `package.json`.
+- Evidências de Development em [`evidence/phase-6/README.md`](evidence/phase-6/README.md), sem alteração dos arquivos de ownership de reviewers/design.
+
+### Validation and Limits
+
+- Regressão Python: `python -m pytest -q -p no:cacheprovider`, **45 passed**; um warning preexistente de depreciação Starlette/TestClient.
+- Regressão frontend: `node --test tests/frontend/*.test.mjs`, **36 passed**. Casos novos cobrem LOD/seleção, câmera, reduced motion, composição WebGL, busca sem remover contexto, criação interativa, listening real e cancelamento com eventos atrasados.
+- Sintaxe: `python -m compileall -q backend tests` e `node --check` nos módulos frontend e testes.
+- Navegador: `node tests/browser/run.mjs` executa harness descartável, matriz de sete viewports, chat/consentimento/histórico, confirmação completa e 428, foco/Escape, estados negativos, fallback sem WebGL, contexto perdido/recuperado, seis eventos realtime, heartbeat e sincronização HTTP de 30 s. Resultados e capturas no pacote de evidências.
+- Contraste calculado: texto principal 13,56:1, secundário 6,54:1, texto do primário 10,54:1, texto de perigo 7,74:1; foco 13,99:1 e contorno de controle 4,30:1 nas superfícies medidas.
+- Performance medida em Chrome/Windows, Ryzen 7 Pro 7735U e Radeon/ANGLE, viewport 1440×900, cena sintética de 3.000 nós e 2.999 relações. FPS/p95 e limites efetivamente desenhados constam em `runtime-results.json`; não representa carga de produção ou dispositivo móvel.
+- Zoom 200% validado por reflow equivalente (720×450 CSS, DPR 2), texto 130% e landscape 844×390. Em baixa altura há rolagem vertical para alcançar controles. Menu nativo de zoom, leitor de tela manual, teclado virtual físico e dispositivos reais não foram automatizados; a árvore acessível foi inspecionada.
+- Voz usa callbacks controlados e PCM local; não mede qualidade de provider. HTTP 428/500/503 nos cenários negativos são deliberados, não erros inesperados de assets/JavaScript.
+- Nenhum PostgreSQL real, migration, provider pago, credencial, infraestrutura, push ou deploy foi usado. Alterações preexistentes em `AGENTS.md`, `Hope dashboard` e `hope-linkedin-hero*` permanecem excluídas da entrega.
+
+### Handoff Boundary
+
+- Functional Commit: a registrar após criação do commit isolado.
+- Required Reviews preservados: QA YES; SECURITY YES; UI/UX YES; DATABASE NO.
+- Development não encerra findings de reviewers, não aprova a fase e não inicia os reviews finais. A devolução ao COORDINATOR ocorrerá com hash exato e status `READY_FOR_REVIEW`.
+- Phase 7 e Production Readiness permanecem fora do escopo; produção continua `BLOCKED`.

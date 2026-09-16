@@ -1,0 +1,67 @@
+{
+  "browser": "153.0.8010.47",
+  "tests": [
+    "all six realtime events, no full HTTP reload per event, heartbeat PONG, disconnected HTTP sync and reconnect",
+    "all quality caps preserve data; reduced motion removes continuous movement and automatic zoom",
+    "context loss preserves data and switches to textual fallback; retry restores WebGL",
+    "real audio playing/stop with local PCM; TTS error retains text and exits speaking"
+  ],
+  "performance": [
+    {
+      "quality": "low",
+      "viewport": [
+        1440,
+        900
+      ],
+      "inputNodes": 3000,
+      "inputEdges": 2999,
+      "renderedNodes": 400,
+      "frames": 108,
+      "fps": 59.91345833795628,
+      "p95FrameMs": 17
+    },
+    {
+      "quality": "medium",
+      "viewport": [
+        1440,
+        900
+      ],
+      "inputNodes": 3000,
+      "inputEdges": 2999,
+      "renderedNodes": 1000,
+      "frames": 108,
+      "fps": 59.9001663893511,
+      "p95FrameMs": 17
+    },
+    {
+      "quality": "high",
+      "viewport": [
+        1440,
+        900
+      ],
+      "inputNodes": 3000,
+      "inputEdges": 2999,
+      "renderedNodes": 2500,
+      "frames": 100,
+      "fps": 55.47542438699657,
+      "p95FrameMs": 33.5
+    },
+    {
+      "quality": "ultra",
+      "viewport": [
+        1440,
+        900
+      ],
+      "inputNodes": 3000,
+      "inputEdges": 2999,
+      "renderedNodes": 3000,
+      "frames": 88,
+      "fps": 48.364935421819155,
+      "p95FrameMs": 33.400000000000546
+    }
+  ],
+  "hardware": {
+    "renderer": "ANGLE (AMD, AMD Radeon(TM) Graphics (0x00001681) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "cores": 16
+  }
+}
