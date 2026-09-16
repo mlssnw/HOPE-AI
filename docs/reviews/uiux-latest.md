@@ -1,113 +1,140 @@
 # UI/UX Review — Latest
 
 Status: APPROVED
-Date: 2026-09-11
+Date: 2026-09-16
 Phase: 6
-Review type: PHASE 6 PRE-IMPLEMENTATION SPECIFICATION REVIEW
-Architecture decision: `ARCH-2026-09-10-003`
-Visual decision: `UIUX-VIS-2026-09-10-001`
+Review type: PHASE 6 POST-IMPLEMENTATION UI/UX REVIEW
+Functional Commit reviewed: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
 Functional baseline: `88e194778b4399a6713f118470f9d861c553cd9e`
-Coordinator authorization commit: `0bcc25a5437cab8a326e64281579ead56274d8cb`
+Pre-implementation specification commit: `3c10be208e4e4d6dcfc3329dd6207961c898d44c`
+Development documentation commit: `efe0ce83ca913a32aa1778adcf656f43c4c041ee`
+Review-round coordination commit: `e1f2e697a32b9a38f4172c2303f09255a901df39`
+Repository HEAD observed: `f9c0ca8289f62596946d21441ba239dcd7777fd3` — review documental posterior ao Functional Commit
+Visual decision: `UIUX-VIS-2026-09-10-001`
 
 ## Scope Boundary
 
-Esta revisão confirma a prontidão da especificação de UI/UX para Development implementar exclusivamente a Phase 6 Target UI Convergence. O baseline funcional permanece o commit indicado; o Target UI orienta apresentação, hierarquia e linguagem visual, mas não cria capability, dado ou estado.
+Esta revisão compara exclusivamente a implementação da Phase 6 no Functional Commit indicado com o Target UI aprovado e com `docs/design/phase-6-target-ui-spec.md`. O HEAD observado está à frente apenas por documentação de entrega, coordenação e review; não existe alteração em `frontend/`, `tests/` ou `package.json` entre o Functional Commit e o HEAD da rodada.
 
-Não foram alterados frontend, backend, banco, providers, testes funcionais, plano de fase ou arquivos de outros Works. Este resultado não aprova a implementação futura: o novo Functional Commit ainda deverá passar por QA, Security e UI/UX pós-implementação conforme `docs/phase-6.md`.
+Não foram alterados código, testes, handoff, plano, evidências ou arquivos de outros Works. Este parecer aprova fidelidade e experiência da feature em ambiente local/controlado; não autoriza produção, Phase 7 ou capacidades futuras.
 
 ## Result
 
-- Pre-implementation UI/UX result: APPROVED
+- Post-implementation UI/UX result: APPROVED
 - Blocking findings: nenhum
-- P0/P1 mapping: CLOSED em [`docs/design/phase-6-target-ui-spec.md`](../design/phase-6-target-ui-spec.md)
-- Definition of Ready: SATISFIED
-- Implementation status: NOT_STARTED por este Work
-- Production readiness: NOT_EVALUATED
+- Non-blocking findings: nenhum
+- Target UI fidelity: APPROVED dentro do contrato de truthfulness e das capacidades reais do baseline
+- P0/P1 implementation mapping: SATISFIED
+- Inherited warnings: `UIUX-F5-W01`, `UIUX-F5-W02` e `UIUX-F5-W03` CLOSED
+- Production readiness: NOT_EVALUATED por UI/UX e permanece separada do Feature Status
 
-## Specification Sufficiency Evidence
+## Acceptance Evidence
 
-### Component, state, flow and capability mapping — PASS
+### 1. Identidade, shell e hierarquia visual — PASS
 
-Todos os gaps P0/P1 aceitos estão associados a componente, estados/fluxos, capability real do baseline e critério fechado de implementação. O contrato cobre `UIUX-GAP-001`, `002`, `004`, `005`, `007`, `008`, `010`, `016`, `017`, `018`, `019`, `021`, `022`, `006`, `009`, `011`, `014`, `015` e `020`.
+- Marca visual, nome acessível, título e metadata usam somente `HOPE`, sem expansão, pontos intermediários ou significado retroativo.
+- Desktop usa superfície contínua 62/38; notebook usa 58/42. O Globe domina a composição, o estado operacional permanece central no topo e o chat mantém leitura e ação primária claras.
+- A paleta grafite/azul profundo, branco quente e âmbar preserva a direção aprovada sem copiar o rail conceitual ou simular destinos inexistentes.
+- Em 1280 × 720 e nos viewports maiores, o composer permanece alcançável sem scroll horizontal e o inspector ocupa a região do Globe sem cobrir o núcleo selecionado.
+- Evidence: `frontend/index.html`, `frontend/styles/main.css`, `1280x720-chat.png`, `1440x900-chat.png` e `1920x1080-chat.png`.
 
-Evidência: matriz `P0/P1 Baseline Mapping` em `docs/design/phase-6-target-ui-spec.md`, comparada com `docs/design/dashboard-gap-matrix.md`, `docs/phase-6.md` e o frontend do baseline.
+### 2. Memory Globe, Core Orb, densidade e verdade dos dados — PASS
 
-### Responsive composition — PASS
+- Nós, entidades e relações continuam derivados do payload normalizado; categorias renderizadas são somente as presentes no grafo real. A fixture de três memórias permanece honestamente esparsa em vez de fabricar conteúdo para imitar o mockup.
+- O Core Orb implementa seed, três volumes, filamentos, microarcos, halo e partículas ambientais limitadas. Estados alteram intensidade/coreografia sem criar dados semânticos.
+- Busca preserva o contexto atenuado; criação, atualização, exclusão e relações são incrementais e o item novo fica interativo antes do fim da transição.
+- O renderer limita densidade por perfil, prioriza seleção/destaques/relações e mantém a contagem baseada no payload completo, não no LOD desenhado.
+- Evidence: `frontend/js/memory-globe.js`, `frontend/js/memory-globe-controller.js`, testes do renderer, `profile-*.png`, `search-empty.png` e `runtime-results.json`.
 
-Desktop, notebook, tablet e mobile possuem composição, prioridade, proporção e comportamento definidos. Mobile e tablet começam em conversa; Globe e inspector preservam estado, fechamento e retorno de foco.
+### 3. Chat, inspector e controles — PASS
 
-Evidência: `Phase 6 Surface Model` e `Accessibility and Focus Contract` em `docs/design/phase-6-target-ui-spec.md`.
+- Chat, composer, Enviar, Cancelar, fontes por resposta, memória opt-in, histórico local, Web, Obsidian, leitura e ditado permanecem integrados e distinguíveis.
+- O inspector mostra somente campos retornados, agrupa proveniência e relacionados e mantém Focar, Perguntar e Esquecer. Campos ausentes não recebem conteúdo fictício.
+- Busca, sincronização, centralização, expansão, lista, modos, qualidade, movimento reduzido e câmera executam funções reais; o modo Memória fica indisponível sem seleção e possui explicação acessível.
+- Evidence: `inspector-desktop.png`, `inspector-mobile.png`, árvore acessível, `phase-6-flows.mjs` e reprodução independente no harness.
 
-### Accessibility, reduced motion and focus — PASS
+### 4. Desktop, notebook, tablet e mobile chat-first — PASS
 
-O contrato fixa contraste, alvos, foco visível, ordem de Tab, Escape, retorno de foco, live regions, alternativas a pointer e precedência de reduced motion sobre os perfis visuais.
+- Os sete viewports obrigatórios foram reproduzidos: 320 × 568, 390 × 844, 768 × 1024, 1024 × 768, 1280 × 720, 1440 × 900 e 1920 × 1080.
+- Tablet e mobile iniciam em Conversa. O alternador troca superfícies sem descartar rascunho, chat ou seleção; voltar da Memória restaura o foco ao acionador.
+- Em 320 × 568 e 390 × 844, composer e ações primárias aparecem antes do Globe. A superfície de Memória é dedicada, com controles reorganizados e perfil LOW; tablet usa MEDIUM.
+- Não houve overflow horizontal. Landscape e alturas curtas usam rolagem vertical para alcance, preservando os controles.
+- Evidence: matriz `*-chat.png`/`*-memory.png`, `accessibility-results.json` e pacote browser reproduzido.
 
-Evidência: `Accessibility and Focus Contract`, `Quality Profiles` e os fluxos de consentimento/esquecimento da especificação.
+### 5. Acessibilidade, contraste, foco e movimento reduzido — PASS
 
-### WebGL fallback and quality profiles — PASS
+- Contrastes medidos: texto principal 13,56:1; secundário 6,54:1; texto da ação primária 10,54:1; perigo 7,74:1; foco 13,99:1; contorno de controle 4,30:1.
+- Foco visível é de 2 px; a ordem de Tab percorre busca, controles, canvas/lista, conversa e composer. Pointer, touch e câmera possuem alternativas explícitas.
+- Alvos móveis medem ao menos 44 × 44 px; controles usam ao menos 12 px e metadados não essenciais ao menos 11 px.
+- Escape fecha camadas na ordem contratada e restaura foco em lista, inspector, fullscreen, alternador e confirmação. O diálogo destrutivo começa em Cancelar, mantém alvo/consequência, bloqueia ações durante submissão e recupera foco em erro.
+- `prefers-reduced-motion` e o controle local eliminam rotação contínua, transições cosméticas e zoom automático; informação permanece em texto/contraste.
+- Evidence: `accessibility-results.json`, `reduced-motion.png`, `confirmation.png`, `delete-*.png` e reprodução browser.
 
-O fallback deve consumir o mesmo grafo real e manter lista, busca, relações, inspector e conversa sem API nova. LOW/MEDIUM/HIGH/ULTRA alteram apenas fidelidade e LOD, nunca contagem, ação, seleção ou informação essencial.
+### 6. Fallback textual sem WebGL — PASS
 
-Evidência: `WebGL Fallback Contract` e `Quality Profiles` em `docs/design/phase-6-target-ui-spec.md`.
+- Falha inicial ou perda de contexto preserva o mesmo payload e apresenta mensagem, retry, busca, contagem, lista navegável, relações, inspector e conversa.
+- A recuperação restaura WebGL sem perder seleção ou estado. O fallback não cria API, nó ou relação e não altera consentimento.
+- Evidence: `no-webgl.png`, `webgl-restored.png`, `phase-6-flows.mjs`, `phase-6-runtime.mjs` e reprodução independente.
 
-### Truthful states and claims — PASS
+### 7. Perfis LOW/MEDIUM/HIGH/ULTRA — PASS
 
-Core Orb, chat, memória, ditado, esquecimento e Globe possuem fonte de verdade explícita. `LISTENING` depende de reconhecimento realmente ativo; `EXECUTING` e `ALERT` não aparecem sem eventos suportados. Visão, Arquivos, Automação, tools, coding, skills, agents, navegação sem destino e métricas sem fonte devem ser omitidos, inclusive como controles desabilitados ou “em breve”.
+- Defaults: LOW no mobile, MEDIUM em tablet/notebook e HIGH no desktop; ULTRA exige seleção explícita. A escolha manual não é sobrescrita durante a sessão.
+- Limites confirmados com 3.000 nós/2.999 relações: LOW 400 nós, MEDIUM 1.000, HIGH 2.500 e ULTRA 3.000 da fixture recebida. Lista, contagens, seleção e controles preservam o payload completo.
+- Rodada independente: LOW 59,34 FPS; MEDIUM 59,91; HIGH 56,06; ULTRA 54,42 no hardware documentado. HIGH supera a meta de 45 FPS.
+- Evidence: testes do renderer, `runtime-results.json`, `profile-*.png` e execução independente do pacote browser.
 
-Evidência: `State Truth Table` e `Capability Claim Allowlist` em `docs/design/phase-6-target-ui-spec.md`.
+### 8. Estados reais, claims e capacidades futuras — PASS
 
-### Sensitive functional guarantees — PASS
+- Chat, memória, Globe, voz e Core Orb usam sinais reais. `Ouvindo` ocorre somente entre callbacks reais de reconhecimento; `HOPE falando` somente durante áudio real; estado desconhecido retorna ao seguro.
+- Contagens vêm do grafo normalizado e disponibilidade descreve serviço/conexão, não consentimento.
+- Visão, Arquivos, Automação, tools, coding, skills, agents, navegação global sem destino, perfil/conta e métricas sem fonte não aparecem nem como itens desabilitados/“em breve”.
+- Estados loading, empty, unavailable, error e realtime degradado mantêm chat e recuperação claros sem skeletons ou nós fictícios.
+- Evidence: busca estática no Functional Commit, `voice-*.png`, `memory-*.png`, `realtime-degraded.png` e reprodução browser.
 
-A convergência visual preserva a separação entre consentimento de memória e histórico local, o padrão opt-in, o cancelamento e a confirmação de esquecimento com alvo, consequência, foco inicial em Cancelar, Escape, erro recuperável e retorno de foco.
+## Inherited Warning Closure
 
-Evidência: mapeamentos `UIUX-GAP-010`, `UIUX-GAP-016` e `UIUX-GAP-017` e o baseline funcional aprovado na revisão da Phase 5.
+### UIUX-F5-W01 — CLOSED
 
-## Required Corrections Carried into Phase 6
+- Previous severity: MEDIUM
+- Blocking: NO
+- Evidence: a interface usa “Serviço de memória disponível/indisponível” no resumo de sistema e mantém “Memória no chat” como controle independente, desmarcado por padrão.
+- Impact after fix: disponibilidade técnica e consentimento não compartilham mais o mesmo claim.
 
-Estes itens não bloqueiam a prontidão da especificação, pois agora possuem contrato fechado. Eles deverão estar resolvidos no Functional Commit da Phase 6 e serão verificados no review pós-implementação.
+### UIUX-F5-W02 — CLOSED
 
-### UIUX-F5-W01 — Diferenciar serviço disponível de consentimento ativo
+- Previous severity: LOW
+- Blocking: NO
+- Evidence: status rotineiros usam `role="status"`/`aria-live="polite"`; `#urgent-status` e erros destrutivos usam `role="alert"` somente para falhas que exigem atenção.
+- Impact after fix: progresso e sucesso não interrompem leitores de tela como anúncio urgente.
 
-- Severity: MEDIUM
-- Blocking: NO neste gate de especificação
-- Evidence: no baseline, o badge “Memória” pode aparecer online enquanto “Memória no chat” permanece desmarcada.
-- Impact: disponibilidade técnica pode ser interpretada como uso consentido na conversa.
-- Closed contract: rotular como “Serviço de memória disponível/indisponível”; o estado do consentimento permanece exclusivamente no controle “Memória no chat”.
+### UIUX-F5-W03 — CLOSED
 
-### UIUX-F5-W02 — Reservar anúncio assertivo para urgência
-
-- Severity: LOW
-- Blocking: NO neste gate de especificação
-- Evidence: no baseline, `#live-status` usa `aria-live="assertive"` também para progresso e sucesso rotineiros.
-- Impact: leitores de tela podem interromper conteúdo desnecessariamente.
-- Closed contract: status rotineiro usa `polite`; anúncio urgente fica restrito a falha que exige ação.
-
-### UIUX-F5-W03 — Corrigir alvos de toque e texto auxiliar
-
-- Severity: MEDIUM
-- Blocking: NO neste gate de especificação
-- Evidence: no baseline mobile, toggles medem 32 px, Enviar 36 px e a ajuda do consentimento 9,76 px.
-- Impact: menor precisão de toque e legibilidade para baixa visão ou destreza reduzida.
-- Closed contract: 44 × 44 px em toque e mínimo de 11 px para metadado não essencial.
+- Previous severity: MEDIUM
+- Blocking: NO
+- Evidence: media queries/coarse pointer fixam 44 px para controles móveis; botões usam 12 px e a ajuda do consentimento 11 px no mobile. O browser confirmou os limites nos viewports de 320 e 390 px.
+- Impact after fix: precisão de toque e legibilidade atendem ao contrato da Phase 6.
 
 ## Findings
 
-Nenhum problema aberto na especificação. As ambiguidades identificadas durante a revisão foram fechadas no contrato da Phase 6:
-
-- usar as categorias reais `Identidade`, `Temporal`, `Conhecimento`, `Contexto`, `Aplicações` e `Longo prazo`, sem substituir o modelo de dados pelos rótulos conceituais do asset;
-- omitir o rail conceitual e métricas sem fonte em vez de criar controles inertes;
-- limitar estados do Core Orb aos sinais reais do baseline;
-- tornar o chat a entrada principal em tablet/mobile;
-- manter equivalente textual funcional quando WebGL estiver indisponível.
+Nenhum finding aberto. Não há blocker ou warning de UI/UX para o Functional Commit revisado.
 
 ## Validation Performed
 
-- Leitura integral dos contratos operacionais, arquitetura, handoff, Phase 6, decisão arquitetural, review anterior e documentação de design.
-- Comparação do frontend no baseline com a matriz P0/P1 e o Target UI aprovado.
-- Verificação de que o HEAD de autorização não altera `frontend/` em relação ao baseline funcional.
-- Revisão documental de links, identificadores, ownership, escopo e claims.
-- Nenhum teste funcional/browser foi executado porque não existe implementação da Phase 6 neste gate documental.
+- Inspeção do diff `88e194778b4399a6713f118470f9d861c553cd9e..0912e9492370f6bce8c51762d1a8a87b5bd16aa8` e confirmação de ausência de backend/schema/persistência no escopo visual.
+- `45 passed` na suíte Python completa; um warning preexistente de Starlette/TestClient.
+- `36 passed` na suíte frontend Node.
+- Pacote browser completo reproduzido em cópia temporária limpa, destacada exatamente em `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`, usando Chrome 153 e o Playwright compartilhado do workspace: composição WebGL, sete viewports, fluxos, runtime, acessibilidade e estados negativos passaram.
+- Console/assets sem erros inesperados. HTTP 428/500/503 dos cenários negativos eram deliberados.
+- Inspeção visual da referência canônica e das capturas de desktop, notebook, tablet, mobile, inspector, voz, confirmação, fallback, perfis, reduced motion e estados.
+
+## Validation Boundaries
+
+- Zoom 200% foi validado por reflow CSS equivalente; o menu nativo do navegador não foi automatizado.
+- A árvore acessível e a navegação por teclado foram verificadas no Chrome; não houve sessão manual com leitor de tela, dispositivo móvel físico, teclado virtual real ou microfone/provider externo.
+- A medição de FPS é local e sintética; não certifica hardware móvel, rede, banco ou carga de produção.
+
+Esses limites não ocultam regressão observada e não impedem a aprovação da feature no ambiente local/controlado.
 
 ## Recommendation
 
-Devolver ao COORDINATOR para encaminhamento ao Development. O DEV pode implementar exclusivamente a Phase 6 conforme `docs/phase-6.md` e `docs/design/phase-6-target-ui-spec.md`, produzir novo Functional Commit e parar para os reviews obrigatórios. Não autoriza Phase 7, produção nem capacidades futuras.
+Devolver ao COORDINATOR para consolidação com QA e Security no mesmo Functional Commit. UI/UX aprova a implementação da Phase 6 e não recomenda correção adicional neste gate. Production Readiness permanece separada e Phase 7 não está autorizada por este resultado.
