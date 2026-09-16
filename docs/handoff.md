@@ -95,18 +95,17 @@ Required Reviews:
 
 ## QA
 
-- Coordination status: APPROVED_WITH_WARNINGS
-- Current target: `88e194778b4399a6713f118470f9d861c553cd9e`
-- Last official result: APPROVED_WITH_WARNINGS
-- Commit reviewed: `88e194778b4399a6713f118470f9d861c553cd9e`
-- Baseline: `19e573893aba09da990256da05e7dab5af165ce1`
-- Feature blocker resolved: `QA-001` — o harness E2E usa modelos tipados, isola estado, recupera memória com opt-in e valida confirmação/exclusão vinculada ao UUID exato com remoção das relações
-- Open QA blockers: nenhum
-- Validation: 16 testes focados, 45 Python completos, 19 frontend e sintaxe Python/JavaScript passaram; browser, console, API e atualização realtime foram validados no harness descartável
-- Warning carried: `QA-003` — após cancelamento, o chat muda imediatamente, mas o Memory Globe pode permanecer em processamento por aproximadamente três segundos
-- Environment boundary: nenhum PostgreSQL/pgvector real, migration, provider pago, credencial ou dado real foi acessado; Production Readiness permanece sob os gates dos reviewers responsáveis
-- Review commit: `934b7f1696285182a6f8e4bc1dc9d535ab7d08eb`
-- Report: [`qa-latest.md`](reviews/qa-latest.md)
+- Coordination status: BLOCKED
+- Current target: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
+- Baseline: `88e194778b4399a6713f118470f9d861c553cd9e`
+- Current Phase 6 result: BLOCKED — não existe resultado independente de QA da Phase 6 persistido no relatório oficial ou recuperável no histórico da tarefa
+- Blocking condition: a repetição dos testes foi expressamente vedada nesta atualização; sem evidência independente já registrada, QA não pode atribuir `APPROVED`, `APPROVED_WITH_WARNINGS` ou `REJECTED` ao Functional Commit `0912e94`
+- Tests in this update: não executados, conforme solicitação da usuária
+- Code changes: nenhum
+- Previous official result: `APPROVED_WITH_WARNINGS` para `88e194778b4399a6713f118470f9d861c553cd9e`; `QA-001` encerrado e `QA-003` mantido como LOW/non-blocking
+- Open functional blockers asserted by QA for Phase 6: nenhum — a condição atual é de ausência de validação, não um defeito funcional reproduzido
+- Required resolution: disponibilizar a conclusão/evidência da revisão independente já realizada ou autorizar a execução da revisão da Phase 6
+- Report status: [`qa-latest.md`](reviews/qa-latest.md) ainda documenta somente a Phase 5 e não foi alterado nesta atualização
 
 ## Database Audit
 
