@@ -171,23 +171,24 @@ Required Reviews:
 
 ## Planner
 
-- Status: APPROVED_WITH_WARNINGS
-- Decision ID: `ARCH-2026-09-19-001`
-- Phase 6 Feature Status: `APPROVED_WITH_WARNINGS`
-- Functional Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
-- Review matrix: QA `APPROVED_WITH_WARNINGS` em `5d5c2ddd18cfe12011bdd5f51503fbbfcc66904d`; Security `APPROVED_WITH_WARNINGS` em `f9c0ca8289f62596946d21441ba239dcd7777fd3`; UI/UX `APPROVED` em `7122d256c68e0018d74ae2e64600167e2db73fb4`; todos sobre o mesmo Functional Commit
-- Database: `N/A` — nenhum delta de backend, API, schema, migration, query ou persistência
-- Feature blockers: nenhum permanece aberto
-- Closed by reviewers: `QA-003` por QA; `UIUX-F5-W01`, `UIUX-F5-W02` e `UIUX-F5-W03` por UI/UX
-- Open non-blocking warnings: `QA-ENV-002`, `QA-WARN-HTTPX`, `SEC-018` e warnings históricos aplicáveis de Database/Security
-- Production Readiness: `BLOCKED`; blockers históricos de produção não foram aceitos, encerrados ou reclassificados e não bloqueiam retroativamente a feature local/controlada
-- Scope boundary: aprovação funcional não autoriza deploy, exposição pública, merge, push, banco real, migration, provider, credencial, custo, infraestrutura ou aceitação de risco HIGH/CRITICAL
-- Dashboard boundary: HOPE Main Dashboard aprovado dentro das capabilities reais da Phase 6; tools, agents, métricas sem fonte e demais capacidades futuras continuam omitidos/não implementados
-- Phase 7+: `NOT_STARTED / NOT_AUTHORIZED`; nenhuma próxima fase foi iniciada
-- Pending user decision: escolher e autorizar explicitamente o próximo escopo; owner recognition, providers, custos, credenciais, banco e produção exigem decisões próprias quando aplicáveis
+- Status: WAITING_FOR_APPROVAL
+- Decision ID: `ARCH-2026-09-20-001`
+- Phase 6 boundary: permanece `APPROVED_WITH_WARNINGS` e congelada no Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`; `ARCH-2026-09-19-001` continua sendo sua consolidação final
+- Documentation decision: `docs/product-vision.md` passa a concentrar a visão futura; `docs/roadmap.md`, ordem/dependências/gates; `docs/future-architecture.md`, contratos técnicos; `docs/architecture.md` permanece centrado no estado implementado
+- Proposed next phase: Phase 7 — Conversational Presence Foundation; planejamento/implementação ainda `NOT_STARTED` e sem autorização
+- Voice sequencing: formatação display/spoken, turn/cancel, estados, frases originais e amplitude local podem preceder permissions; cloud STT/TTS novo, wake word em background, speaker profile, dispositivos, dados sensíveis e efeitos exigem Phase 8 Single-User Security & Permissions
+- Proposed order: 7 Conversational Presence → 8 Security & Permissions → 9 Realtime Voice → 10 Cloud/Shared Client → 11 Windows/Wake Word → 12 Android/Device Context → 13 Speaker Verification (optional) → 14 Router/Diagnostics → 15–22 tools, effects, coding, agents, learning, multimodal, automations e Bridge
+- Personality: HOPE continua original; Lena Luthor, Tony Stark e Dean Winchester são referências propostas de traços gerais. A proibição absoluta vigente de falas/bordões permanece ativa
+- Pending personality decision: owner deve aprovar/rejeitar a exceção estreita de referência explícita e decidir se Dean/inspirações podem integrar o SelfKnowledge público; nenhuma regra foi alterada por este planejamento
+- Product contracts: SelfKnowledge público seguro; modos combináveis; `InteractionStyleAdapter` sem autoridade; memória/voz controláveis; Tasks distinto de Calendar; Diagnostics/audit minimizados; localização somente por dispositivo registrado; clientes instaláveis; ModelRouter e Bridge provider-agnostic
+- Production Readiness: `BLOCKED`; nenhuma exposição, provider, custo, credencial, migration, banco real ou risco HIGH/CRITICAL foi autorizado
+- Phase 7+: implementation status `NOT_STARTED`; authorization `NONE`; UI/UX e Development não devem ser acionados antes da decisão da owner e de um plano de fase aprovado
+- Pending owner decisions: aprovar/revisar visão e roadmap; personalidade/SelfKnowledge; próxima fase; privacy/retention de voz; providers/custos; speaker profile; ordem de clientes; localização; integrações; cloud/produção
 - Architecture record: [`docs/reviews/architecture-latest.md`](reviews/architecture-latest.md)
-- Phase plan: [`docs/phase-6.md`](phase-6.md)
-- Coordinator handoff: normalizar o painel público com esta consolidação e solicitar à usuária a escolha do próximo escopo; não encaminhar ao DEV nem iniciar Phase 7 automaticamente
+- Product vision: [`docs/product-vision.md`](product-vision.md)
+- Roadmap: [`docs/roadmap.md`](roadmap.md)
+- Future architecture: [`docs/future-architecture.md`](future-architecture.md)
+- Coordinator handoff: apresentar a decisão à owner e coletar aprovações; não encaminhar UI/UX ou Development nem iniciar Phase 7 automaticamente
 
 ## Coordinator
 

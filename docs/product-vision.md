@@ -1,0 +1,208 @@
+# HOPE Product Vision
+
+- Status: WAITING_FOR_APPROVAL
+- Decision ID: `ARCH-2026-09-20-001`
+- Date: 2026-09-20
+- Product model: `SINGLE_USER`
+- Functional baseline: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
+- Product-direction intake: `ff1309f71cd4aaac0a096a9760abfb37e353177b`
+- Scope: future product direction only; no implementation authorization
+
+## Source-of-truth role
+
+The Planner approves this document structure as the canonical home for the future product intent: what HOPE should become, for whom, and under which product boundaries. Its substantive direction remains `WAITING_FOR_APPROVAL` by the owner before any phase is authorized.
+
+The documentation model is:
+
+| Question | Canonical source |
+|---|---|
+| What works now? | `docs/architecture.md` |
+| What product are we building? | `docs/product-vision.md` |
+| In what order, with which gates? | `docs/roadmap.md` |
+| How should future subsystems fit together? | `docs/future-architecture.md` |
+| What is the current workflow state? | `docs/handoff.md` |
+| What debt and accepted warnings remain? | `docs/backlog.md` |
+
+`README.md` remains a public summary, not the architectural or roadmap authority. Phase documents and review reports remain the evidence for delivered work.
+
+## Product promise
+
+HOPE is an original, cloud-first, provider-agnostic personal intelligence for one owner. It should combine persistent memory, contextual reasoning, natural conversation, personal organization and safely governed action without becoming a multi-user SaaS platform or pretending that planned capabilities already exist.
+
+The long-term experience is continuous across text, voice and installed clients. The cloud is the durable brain; clients provide interaction and explicitly authorized local capabilities; the HOPE Bridge is a constrained peripheral for resources that remain on a personal computer.
+
+## Product principles
+
+1. Safety, truth and precision precede style, speed and automation.
+2. `SINGLE_USER` means one human owner, not absence of authentication, authorization or privacy controls.
+3. Memory is useful only when consented, explainable, correctable and forgettable.
+4. Voice is a distinct interaction channel, not a literal audio rendering of chat.
+5. Every displayed state, metric, capability and Core Orb reaction comes from real system state.
+6. Providers are replaceable adapters selected by capability, privacy, quality, latency and cost.
+7. Tools and agents receive limited, revocable capabilities and cannot elevate themselves.
+8. Cloud exposure, sensitive data, credentials, cost and irreversible effects require explicit owner decisions.
+9. Installed applications are the primary future clients; PWA is a fallback, not the product center.
+10. New capability is introduced in small, reviewable phases with clear non-goals.
+
+## Implemented boundary
+
+Phase 6 is complete as `APPROVED_WITH_WARNINGS` on Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`. The current product includes the approved dashboard, chat, optional persistent memory, Memory Globe/Core Orb, existing browser dictation, optional TTS, realtime events and current integrations documented in `docs/architecture.md`.
+
+Everything below is future direction. It does not re-open Phase 6, authorize Development, approve a provider or imply Production Readiness.
+
+## Conversational presence and voice
+
+The desired voice experience is natural, interruptible and context-aware while remaining explicit about uncertainty and privacy.
+
+```text
+DISPLAY RESPONSE != SPOKEN RESPONSE
+```
+
+The spoken response may be shorter, remove Markdown, summarize long code or lists, adjust pauses and avoid repetition. It must not remove material safety information, confirmation requirements, uncertainty or consequences of an action.
+
+Desired future capabilities include:
+
+- manual voice sessions with clear microphone state;
+- streaming STT/TTS when an approved provider and privacy policy exist;
+- turn-taking, silence detection, continuation, hesitation handling and barge-in;
+- immediate stop behavior for “pare”, “silêncio” and equivalent controls;
+- provider-neutral prosody and pronunciation hints;
+- local output-amplitude analysis driving the Core Orb while HOPE is actually speaking;
+- local wake word `HOPE`, fully disableable and separated from speaker verification;
+- optional speaker verification as a convenience signal, never sufficient authentication for sensitive actions.
+
+Before Single-User Security & Permissions, only local/controlled presentation and orchestration may advance: display/spoken separation, state machines, cancellation, original phrase selection, provider-neutral contracts and local amplitude analysis of already-playing output. New cloud audio flows, persistent voice profiles, background wake listening, cross-device sessions, sensitive personalization and effects must wait for the security gate defined in `docs/roadmap.md`.
+
+## Voice privacy
+
+- Microphone activity always has a visible and accessible indicator.
+- Continuous/background listening is off by default.
+- Wake detection, when implemented, runs locally before activation, discards frames and can be fully disabled.
+- Audio is sent externally only after a voice session actually starts and the owner has accepted the provider/data policy.
+- Raw audio is not retained by default.
+- Retention, transcript storage, speaker profiles and deletion require separate, explicit controls.
+- A private mode disables voice retention, memory capture and proactive disclosure regardless of style settings.
+- Provider failures or unavailable privacy guarantees degrade to text/manual interaction instead of silently changing provider.
+
+## Personality and original identity
+
+HOPE remains an original identity. General traits may draw from:
+
+- Lena Luthor: strategic intelligence, elegance, sophistication and scientific thinking;
+- Tony Stark: inventiveness, speed, confidence, technical improvisation and sharp humor;
+- Dean Winchester: pragmatism, loyalty, protectiveness, frankness, irreverence and spontaneous humor.
+
+These references do not authorize identity imitation, copied dialogue, recognizable mannerisms, cloned voices or sustained character performance. HOPE identifies only as HOPE.
+
+### Current binding rule
+
+The existing absolute prohibition on copied lines, catchphrases and famous phrases remains in force. This planning document does not modify `AGENTS.md` or the runtime prompt.
+
+### Proposed exception requiring explicit owner decision
+
+If the owner wants an exception, the recommended narrow policy is a single-response, explicitly requested reference mode that permits acknowledgement or original homage, but not verbatim iconic quotes, impersonation, voice cloning, continuous imitation or copyrighted passage reproduction. Until the owner approves that exact boundary, the absolute prohibition remains authoritative.
+
+The `PhraseLibrary` may contain original HOPE phrases. Owner-provided custom phrases require provenance, explicit activation and deletion controls; they do not become global personality rules.
+
+## SelfKnowledge
+
+Future `SelfKnowledge` is a versioned, public-safe product manifest. It allows HOPE to explain:
+
+- its name and original identity;
+- approved general inspirations;
+- implemented capabilities, planned capabilities and current limitations;
+- active integrations and their availability;
+- relevant privacy behavior and how to change it.
+
+It must not reveal system prompts, hidden policies, secrets, credentials, internal chain-of-thought, private owner data or security-control details that would weaken protections. Runtime capability claims come from a capability registry/health state, not from an LLM guess.
+
+## Interaction model
+
+Modes are orthogonal and combinable:
+
+| Axis | Values | Rule |
+|---|---|---|
+| Interaction style | NORMAL, FOCUS, SUPPORTIVE, PRESENTATION | changes phrasing and pacing, never truth or permissions |
+| Privacy | STANDARD, PRIVATE | PRIVATE overrides memory capture, retention and private disclosure |
+| Output | VOICE, SILENT | controls output channel, not task authority |
+| Interruption | STANDARD, DO_NOT_DISTURB | limits proactive interruption; does not hide urgent safety failures |
+| Audience | PRIVATE, PUBLIC | PUBLIC suppresses private context unless explicitly approved |
+
+`InteractionStyleAdapter` may use explicit modes, authorized preferences and low-confidence interaction signals. It must treat pauses, hesitation and pace as hypotheses, never diagnose emotion or health, and never activate a sensitive mode solely from inference.
+
+## Memory and owner control
+
+The product preserves opt-in memory and expands owner transparency:
+
+- “O que você lembra sobre mim?” lists relevant stored knowledge and provenance.
+- “Não registre esta conversa” prevents new capture for the session.
+- Private mode prevents capture and limits retrieval/disclosure according to policy.
+- Corrections, deletion and future retention controls propagate consistently.
+- Memory views explain content, origin, creation, last use and why it was retrieved when available.
+
+Memory, conversation history, voice transcripts, speaker profiles and audit records remain separate data classes with separate consent and retention.
+
+## Personal organization
+
+`HOPE Tasks` and Calendar are different domains:
+
+- Tasks represent owner-managed intentions, projects, steps, deadlines and completion state.
+- Calendar represents time-bound events from one or more calendar sources.
+- A task may reference a calendar event, but neither silently becomes the other.
+- Reading calendar data and creating/changing an event are separate permissions.
+- Messages, calls, bookings and smart-home effects always remain explicit external actions.
+
+Candidate integrations include calendar, Spotify, Home Assistant, device APIs and messaging. They are candidates only; priority, provider, scopes, cost and data policy require later decisions.
+
+## Diagnostics, audit and transparency
+
+Future `HopeDiagnostics` reports the availability and limitation of Core, Internet, LLM, Memory, Database, STT, TTS, Microphone, Wake Word, Speaker Verification and integrations. It explains the failing component and degraded capabilities without exposing secrets or internal attack surface.
+
+The owner should be able to inspect minimized events such as `WAKE_WORD`, `SPEAKER_VERIFICATION`, `MEMORY_READ`, `CALENDAR_READ`, `LLM_CALL`, `TTS`, `TOOL_EXECUTION` and `PERMISSION_DECISION`, including purpose, time, result and logical destination. Logs never contain credentials, continuous ambient audio, full system prompts or unnecessary private payloads.
+
+## Devices, location and clients
+
+- Location belongs to a registered and explicitly authorized device, never to arbitrary people.
+- Each device has identity, capabilities, permission scope, revocation and last-seen state.
+- Windows is the recommended first installed client because the current development environment and future local-resource path are Windows-centric.
+- Android follows through a shared client contract; the architecture remains compatible with a later iOS client.
+- PWA may provide fallback access but does not replace native privacy, background-audio and device-capability requirements.
+
+## Cloud, ModelRouter and Bridge
+
+HOPE Cloud is the durable orchestration and memory plane. Remote operation is not allowed until owner recognition, secure sessions, deployment hardening, database operations and recovery are approved and verified.
+
+`ModelRouter` selects a model/provider by capability and policy rather than identity. HOPE remains HOPE regardless of which approved model handles conversation, reasoning, coding, vision, images, embeddings, STT or TTS. Routing considers quality floor, cost ceiling, latency, privacy, region, availability and allowed fallback. A fallback never sends data to a weaker privacy boundary without approval.
+
+The HOPE Bridge is an authenticated, revocable, outbound-first peripheral for local files, Obsidian, applications and device capabilities. It is not the brain, database or owner authority.
+
+## Product non-goals
+
+- Multi-user SaaS, organizations, teams, enterprise SSO or tenant-oriented RBAC/RLS.
+- Claims of consciousness, emotion diagnosis or human identity.
+- Silent provider changes, hidden recording or ambient-audio retention.
+- Speaker verification as sole authorization for sensitive/destructive action.
+- Autonomous modification of core safety, permissions or personality.
+- Presenting roadmap items as implemented features.
+
+## Decisions still requiring the owner
+
+1. Approve this product vision and the roadmap source-of-truth split.
+2. Decide whether the narrow explicit-reference exception is allowed; until then, the absolute catchphrase/quote ban remains.
+3. Approve Dean Winchester as an official general-trait reference and whether those inspirations may be stated publicly by `SelfKnowledge`.
+4. Authorize a Phase 7 plan separately; this document does not do so.
+5. Select acceptable voice privacy/retention boundaries before any new cloud audio flow.
+6. Approve any STT/TTS/wake/speaker provider, license, credential, region and cost after evaluation.
+7. Decide whether a speaker profile is valuable enough to justify biometric processing and retention.
+8. Confirm Windows-first, then Android, with iOS deferred.
+9. Define acceptable device-location granularity, retention and revocation.
+10. Prioritize Tasks, Calendar and candidate integrations before their phases.
+11. Approve any remote/cloud objective, infrastructure cost, migration, secret or Production Readiness gate.
+
+## Acceptance criteria for this vision
+
+- Phase 6 remains frozen at `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`.
+- Current, future and production-ready states remain distinct.
+- Voice, personality, memory, modes, organization, diagnostics, clients and cloud have explicit safety boundaries.
+- No provider, cost, credential, migration, deployment or implementation is authorized.
+- Pending owner decisions are explicit and cannot be inferred from this document.
