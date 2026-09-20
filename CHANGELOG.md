@@ -13,7 +13,8 @@ Histórico verificável da evolução do HOPE AI. Commits documentais posteriore
 - **Decisão da usuária:** implementação da Phase 6 autorizada em 2026-09-11, respeitando integralmente scope, non-goals, acceptance criteria e Required Reviews
 - **UI/UX pré-implementação:** `APPROVED` em `3c10be2`, com Definition of Ready satisfeita e mapeamento P0/P1 fechado
 - **Implementação:** entregue pelo Development no Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`, com 45 testes Python e 36 testes frontend aprovados
-- **Review gate:** `READY_FOR_REVIEW`; QA, Security e UI/UX devem revisar o mesmo hash; Database permanece `N/A`
+- **Reviews técnicos:** QA `APPROVED_WITH_WARNINGS`, Security `APPROVED_WITH_WARNINGS` e UI/UX `APPROVED` no mesmo Functional Commit; Database `N/A`
+- **Próximo gate:** consolidação final do Planner; Phase 7 permanece não autorizada
 - **Limite:** expansão funcional, banco, migrations, providers, produção, tools, agents e Phase 7 permanecem não autorizados
 - **Correção editorial:** concluída em `bd244bb`; `docs/phase-6.md` não existia antes de `ARCH-2026-09-10-003` e foi criado pelo registro dessa decisão
 
