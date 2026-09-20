@@ -173,23 +173,27 @@ Required Reviews:
 ## Planner
 
 - Status: WAITING_FOR_APPROVAL
-- Decision ID: `ARCH-2026-09-20-001`
+- Decision ID: `ARCH-2026-09-20-002`
+- Approved parent decision: `ARCH-2026-09-20-001` — owner-approved on 2026-09-20 in `f85b9bb775574b8a1340497e3e9e6d99b9b19c8c`
 - Phase 6 boundary: permanece `APPROVED_WITH_WARNINGS` e congelada no Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`; `ARCH-2026-09-19-001` continua sendo sua consolidação final
-- Documentation decision: `docs/product-vision.md` passa a concentrar a visão futura; `docs/roadmap.md`, ordem/dependências/gates; `docs/future-architecture.md`, contratos técnicos; `docs/architecture.md` permanece centrado no estado implementado
-- Proposed next phase: Phase 7 — Conversational Presence Foundation; planejamento/implementação ainda `NOT_STARTED` e sem autorização
-- Voice sequencing: formatação display/spoken, turn/cancel, estados, frases originais e amplitude local podem preceder permissions; cloud STT/TTS novo, wake word em background, speaker profile, dispositivos, dados sensíveis e efeitos exigem Phase 8 Single-User Security & Permissions
-- Proposed order: 7 Conversational Presence → 8 Security & Permissions → 9 Realtime Voice → 10 Cloud/Shared Client → 11 Windows/Wake Word → 12 Android/Device Context → 13 Speaker Verification (optional) → 14 Router/Diagnostics → 15–22 tools, effects, coding, agents, learning, multimodal, automations e Bridge
-- Personality: HOPE continua original; Lena Luthor, Tony Stark e Dean Winchester são referências propostas de traços gerais. A proibição absoluta vigente de falas/bordões permanece ativa
-- Pending personality decision: owner deve aprovar/rejeitar a exceção estreita de referência explícita e decidir se Dean/inspirações podem integrar o SelfKnowledge público; nenhuma regra foi alterada por este planejamento
+- Approved direction: `docs/product-vision.md`, `docs/roadmap.md` e `docs/future-architecture.md` são oficiais para visão, sequência/gates e contratos futuros; `docs/architecture.md` permanece centrado no estado implementado
+- Phase 7 plan: [`docs/phase-7.md`](phase-7.md) criado; planning `WAITING_FOR_APPROVAL`, implementation `NOT_STARTED`, authorization `NONE` / `NOT_AUTHORIZED`
+- Phase 7 scope: display/spoken, turn/cancel, VoiceManager/SpeechFormatter/TurnManager/VoiceStateManager, contratos de prosódia/pronúncia, PhraseLibrary original, modos combináveis, SelfKnowledge público seguro e amplitude local/efêmera do áudio já reproduzido
+- Phase 7 non-goals: novo cloud STT/TTS, streaming provider, wake word, speaker profile/biometria, cross-device, persistência, integração/efeito, provider/credencial/custo, banco/migration, deploy ou produção
+- Approved order: 7 Conversational Presence → 8 Security & Permissions → 9 Realtime Voice → 10 Cloud/Shared Client → 11 Windows/Wake Word → 12 Android/Device Context → 13 Speaker Verification (optional) → 14 Router/Diagnostics → 15–22 tools, effects, coding, agents, learning, multimodal, automations e Bridge
+- Personality: owner aprovou Lena Luthor, Tony Stark e Dean Winchester como referências de traços gerais e sua presença no `SelfKnowledge` público seguro; HOPE identifica somente como HOPE
+- Reference boundary: reconhecimento ou homenagem original somente sob pedido explícito; citações famosas literais, diálogo copiado, imitação de identidade, clonagem de voz e atuação contínua permanecem proibidos
+- Normative follow-up: eventual reconciliação de `AGENTS.md` deve ocorrer em commit separado da owner/COORDINATOR; a mudança preexistente nesse arquivo foi preservada e não pertence ao commit do Planner
 - Product contracts: SelfKnowledge público seguro; modos combináveis; `InteractionStyleAdapter` sem autoridade; memória/voz controláveis; Tasks distinto de Calendar; Diagnostics/audit minimizados; localização somente por dispositivo registrado; clientes instaláveis; ModelRouter e Bridge provider-agnostic
+- Required Reviews Phase 7: QA `YES`; DATABASE `NO` enquanto não houver persistência; SECURITY `YES`; UI/UX `YES`
 - Production Readiness: `BLOCKED`; nenhuma exposição, provider, custo, credencial, migration, banco real ou risco HIGH/CRITICAL foi autorizado
-- Phase 7+: implementation status `NOT_STARTED`; authorization `NONE`; UI/UX e Development não devem ser acionados antes da decisão da owner e de um plano de fase aprovado
-- Pending owner decisions: aprovar/revisar visão e roadmap; personalidade/SelfKnowledge; próxima fase; privacy/retention de voz; providers/custos; speaker profile; ordem de clientes; localização; integrações; cloud/produção
+- Phase 7+: implementation status `NOT_STARTED`; authorization `NONE`; UI/UX e Development não devem ser acionados antes da aprovação do plano e de autorização de implementação separada
+- Pending owner decisions: aprovar/revisar o plano Phase 7 e autorizar implementação separadamente; privacy/retention de voz; providers/custos; speaker profile; localização; integrações; cloud/produção
 - Architecture record: [`docs/reviews/architecture-latest.md`](reviews/architecture-latest.md)
 - Product vision: [`docs/product-vision.md`](product-vision.md)
 - Roadmap: [`docs/roadmap.md`](roadmap.md)
 - Future architecture: [`docs/future-architecture.md`](future-architecture.md)
-- Coordinator handoff: apresentar a decisão à owner e coletar aprovações; não encaminhar UI/UX ou Development nem iniciar Phase 7 automaticamente
+- Coordinator handoff: normalizar a aprovação de `ARCH-2026-09-20-001` no painel público e apresentar `ARCH-2026-09-20-002`/`docs/phase-7.md` à owner; não encaminhar UI/UX ou Development
 
 ## Coordinator
 

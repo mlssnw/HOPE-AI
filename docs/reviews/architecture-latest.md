@@ -1,239 +1,194 @@
 # Architecture Review — Latest
 
 - Status: WAITING_FOR_APPROVAL
-- Decision ID: `ARCH-2026-09-20-001`
+- Decision ID: `ARCH-2026-09-20-002`
 - Date: 2026-09-20
 - Product model: `SINGLE_USER`
+- Approved parent decision: `ARCH-2026-09-20-001` — `APPROVED` by owner on 2026-09-20
+- Approval record analyzed: `f85b9bb775574b8a1340497e3e9e6d99b9b19c8c`
 - Functional Commit preserved: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
-- Repository HEAD analyzed: `ff1309f71cd4aaac0a096a9760abfb37e353177b`
-- Product-direction intake: `docs/coordination/product-direction-2026-09-19.md`
-- Preserves: Phase 6 `APPROVED_WITH_WARNINGS` in `ARCH-2026-09-19-001`
+- Repository HEAD analyzed: `f85b9bb775574b8a1340497e3e9e6d99b9b19c8c`
+- Phase 7 planning: WAITING_FOR_APPROVAL
+- Phase 7 implementation: NOT_STARTED
+- Phase 7 implementation authorization: NONE
 - Production Readiness: BLOCKED
 
 ## Problem
 
-The new owner direction adds continuous voice, wake word, speaker verification, installed clients, device context, broader personality/self knowledge, organization, integrations, diagnostics, ModelRouter, automations and Bridge. The previous post-Phase 6 sequence places all voice after permissions and stores product vision, technical target and phase ordering in overlapping documents.
-
-The architecture must preserve voice priority without allowing cloud audio, biometrics, background listening, remote clients or effects to bypass owner recognition, privacy and permission gates.
+The owner approved the product vision, roadmap, `ARCH-2026-09-20-001`, the personality/public `SelfKnowledge` boundary and Phase 7 as the next planning target. The project now needs an exact Phase 7 plan that delivers safe local conversational-presence foundations without turning roadmap approval into implementation authorization or crossing into cloud audio, biometrics, persistence, providers, effects or production.
 
 ## Current State
 
-- Phase 6 is closed and frozen at `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`.
-- Current voice is partial: browser dictation plus optional ElevenLabs TTS, without a generic voice contract.
-- The Core Orb already reacts to real speaking/listening state, but there is no formal turn, speech-formatting, prosody or phrase architecture.
-- Owner identity remains a browser-controlled UUID and is not authentication.
-- Production Readiness remains `BLOCKED` by existing Security/Database findings.
-- The product direction in `ff1309f` is an intake, not an implementation authorization.
-- The absolute ban on copied dialogue/catchphrases remains the binding personality rule.
+- Phase 6 remains frozen as `APPROVED_WITH_WARNINGS` on Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`.
+- The owner approved `docs/product-vision.md`, `docs/roadmap.md` and the target architecture on 2026-09-20.
+- The owner approved Dean Winchester as a general-trait reference alongside Lena Luthor and Tony Stark and allowed those inspirations in public-safe `SelfKnowledge`.
+- The owner approved recognition/original homage only when explicitly requested; literal famous quotes, copied dialogue, identity imitation, voice cloning and continuous acting remain prohibited.
+- Current voice remains browser dictation plus optional TTS, with no generic conversational-presence contract.
+- Core Orb and status already reflect real voice signals, but display/spoken separation, formal turn ownership, mode resolution, public `SelfKnowledge` and ephemeral output amplitude are not implemented.
+- Owner identity remains a browser-controlled UUID. Production Readiness remains `BLOCKED`.
+- No Phase 7 implementation, UI/UX specification, provider evaluation, database change or production action has started.
 
 ## Constraints
 
-- Documentation and planning only; no code, provider, credential, cost, migration, database, deploy or production action.
-- Do not re-open or expand Phase 6.
-- Do not present future capability as implemented.
-- Preserve `SINGLE_USER`, cloud-first and provider-agnostic principles without introducing enterprise identity complexity.
-- Audio, biometrics, location, messages, calendar writes, device control and external effects require explicit privacy/permission boundaries.
-- Do not change the catchphrase/quote rule without an explicit owner decision.
+- Planning and documentation only.
+- Preserve the exact Phase 6 Functional Commit and all reviewer findings.
+- Do not edit functional code, tests, migrations, reviewer reports, design ownership files or `AGENTS.md`.
+- Do not add new STT/TTS cloud flow, provider, endpoint, credential, cost or retention.
+- Do not add wake word, speaker profile, biometric processing, cross-device behavior, persistence, integration or external effect.
+- Do not authorize UI/UX or Development.
+- Future implementation must remain local/controlled and truthful about capabilities.
+- Any normative `AGENTS.md` reconciliation must be a separate owner/Coordinator-controlled change because the current working tree already contains an owner change in that file.
 
 ## Options
 
-### Option A — Voice capabilities before security
+### Option A — Extend the current voice controller as a monolith
 
-- Pros: fastest path to a visible voice-first product.
-- Cons: risks retrofitting identity/privacy into cloud audio, background listening and speaker profiles.
-- Cost: low initially, high rework and variable provider spend.
-- Complexity: medium initially, high operationally.
-- Security impact: unacceptable if extended beyond local presentation contracts.
-- Database impact: low initially; high once profiles/transcripts/devices appear.
-- Maintenance impact: duplicated provider and session logic is likely.
+- Pros: fewer initial modules and direct reuse of the current browser/TTS path.
+- Cons: formatting, state, cancellation, playback, modes and personality become coupled.
+- Cost: low initially, increasing with later realtime voice.
+- Complexity: low initially; high under race conditions and client reuse.
+- Security impact: privacy and stale-turn boundaries remain implicit.
+- Database impact: none if disciplined, but future persistence can enter without an explicit seam.
+- Maintenance impact: high coupling to the current browser and provider path.
 
-### Option B — Security and cloud foundation before all voice work
+### Option B — Small deterministic components behind a VoiceManager facade
 
-- Pros: simple dependency story and strong trust boundary first.
-- Cons: postpones safe local conversation work that can validate product value without new sensitive data.
-- Cost: medium-to-high upfront.
-- Complexity: high before feedback.
-- Security impact: strongest sequencing.
-- Database impact: early session/identity/device work.
-- Maintenance impact: infrastructure may be built before its actual interaction requirements are known.
-
-### Option C — Local conversational foundation, then security, then sensitive voice/cloud
-
-- Pros: preserves voice priority while keeping cloud audio, biometrics, registered devices and effects behind security.
-- Cons: Phase 7 needs strict non-goals and cannot quietly become realtime cloud voice.
-- Cost: incremental; provider cost deferred until justified.
-- Complexity: moderate and staged.
-- Security impact: acceptable if only local state/formatting/contracts precede Phase 8.
-- Database impact: none in Phase 7; explicit reviews begin when identity or persistence changes.
-- Maintenance impact: shared contracts reduce later duplication across web, desktop and mobile.
+- Pros: isolates content transformation, turn validity, state, modes and presentation; tests remain provider-free; future adapters stay replaceable.
+- Cons: requires explicit contracts before visible expansion.
+- Cost: low-to-medium with no new provider spend.
+- Complexity: medium and bounded.
+- Security impact: privacy, cancellation and public-manifest invariants become testable.
+- Database impact: none; all Phase 7 state is ephemeral.
+- Maintenance impact: lower and reusable by future installed clients.
 
 ## Recommendation
 
-Adopt Option C and the three-document split:
-
-- `docs/product-vision.md`: canonical future product intent;
-- `docs/roadmap.md`: canonical phase order, dependencies and gates;
-- `docs/future-architecture.md`: canonical future technical contracts.
-
-The documentation structure is approved by the Planner. The substantive roadmap and personality/privacy decisions remain `WAITING_FOR_APPROVAL`; no phase is authorized.
+Adopt Option B and submit `docs/phase-7.md` for owner approval. Keep implementation `NOT_STARTED` and `NOT_AUTHORIZED`. The phase ends at local presentation/orchestration contracts over existing capabilities; any need for new external audio, provider, persistence, identity, device or effect returns to the Planner.
 
 ## Rationale
 
-Formatting speech, managing turns, exposing real voice state and animating the Core Orb from local output amplitude do not require a new identity system or provider. Cloud streaming, speaker profiles, device registration and external effects do. Splitting the work at that trust boundary delivers useful product learning without normalizing insecure audio/data flows.
-
-Separating product vision, roadmap and technical architecture also lets `docs/architecture.md` remain honest about current implementation and prevents the handoff/backlog from becoming substitute roadmaps.
+Display/spoken separation, deterministic turn cancellation, truthful voice state and local output amplitude solve current product gaps without requiring a trusted owner session or sending a new data class externally. The same boundary preserves voice priority while keeping the sensitive capabilities behind Phase 8 and later roadmap gates.
 
 ## Architecture
 
 ```text
-Product Vision
-     │
-     ▼
-Roadmap + gates
-     │
-     ▼
-Future technical contracts
-     │
-     ├─ Conversational Presence
-     ├─ Owner / Resource / Permission gates
-     ├─ Cloud + Clients + Devices
-     ├─ ModelRouter + Diagnostics
-     └─ Tools → Effects → Coding → Agents
+Canonical response ──┬──► DisplayResponse ──► UI
+                     │
+                     └──► SpeechFormatter ──► SpokenResponse
+                                                  │
+TurnManager ── cancel / validity ───────────────► VoiceManager
+                                                  │
+                                                  ├──► existing playback path
+                                                  └──► VoiceStateManager
+                                                            │
+                                             local amplitude ─┴─► Core Orb/status
+
+ModeResolver ──► narrower presentation/privacy/output behavior
+SelfKnowledgeManifest ──► allowlisted public identity/capability facts
+PhraseLibrary ──► original optional surface language
 ```
 
-Voice foundation:
+Key decisions:
 
-```text
-TurnManager → SpeechFormatter → VoiceManager → STT/TTS Adapter
-      │              │                │
- cancel/barge-in   prosody,         VoiceStateManager
-                  pronunciation          │
-                  phrase library         ▼
-                                   Core Orb + status
-```
+- Display content remains canonical; spoken content is a traceable presentation derivative.
+- Turn/session identity is authoritative for cancellation and late-event rejection.
+- `VoiceManager` wraps existing capabilities but adds no provider or data flow.
+- Modes can restrict memory/output but never grant permission or alter truth.
+- `SelfKnowledge` is curated, versioned and public-safe; capability claims require real state.
+- PhraseLibrary is original and subordinate to substantive content.
+- Output amplitude remains local, ephemeral and non-biometric.
 
-`VoiceManager`, `SpeechFormatter`, `TurnManager`, `VoiceStateManager`, `ProsodyManager`, `PronunciationManager`, `PhraseLibrary` and provider capability contracts are defined in `docs/future-architecture.md`. No provider is selected.
+## Approved Personality and SelfKnowledge Boundary
 
-## Voice sequencing decision
+- Approved inspirations: Lena Luthor, Tony Stark and Dean Winchester, as general traits only.
+- Public `SelfKnowledge`: may name those approved inspirations while identifying only as HOPE.
+- Explicit-reference rule: recognition or original homage is allowed only when the owner explicitly requests it.
+- Prohibited: literal famous quotes, copied dialogue, character identity imitation, cloned voice, recognizable or sustained acting and copyrighted passage reproduction.
+- Runtime status: unchanged; this decision does not implement or modify prompts.
+- Documentation follow-up: any `AGENTS.md` wording update must be isolated from this commit and must preserve the owner's preexisting working-tree change.
 
-| Capability | Before Phase 8 security? | Boundary |
-|---|---|---|
-| Display/spoken response separation | YES | local deterministic formatting; preserve safety/uncertainty |
-| Turn and cancellation state | YES | local/control-plane state; no new external data |
-| Voice/Core Orb state and output amplitude | YES | analyze already-playing output locally; no transmit/store |
-| Original PhraseLibrary/prosody/pronunciation contracts | YES | no copyrighted quotes; no sensitive owner profile |
-| Manual voice UI around existing capabilities | YES | no expansion of provider/data flow |
-| Realtime cloud STT/TTS | NO | requires owner session, privacy, provider/cost and retention decision |
-| Background/local wake word | NO by roadmap | technically separable, but deferred until secure installed client and explicit privacy controls |
-| Speaker verification/profile | NO | biometric processing; never sole authentication |
-| Cross-device voice, location or effects | NO | requires registered devices, resource authorization and PermissionManager |
+## Scope and Non-goals
 
-## Personality and SelfKnowledge decision
+In scope:
 
-- HOPE remains original; Lena Luthor, Tony Stark and Dean Winchester are proposed general-trait references only.
-- `SelfKnowledge` may expose only an approved public manifest of identity, capabilities and limitations; it cannot reveal prompts, secrets or private owner data.
-- The existing absolute ban on copied lines/catchphrases remains active.
-- Recommended pending option: an explicitly requested, single-response reference mode limited to acknowledgement/original homage, never verbatim iconic quote, impersonation, cloned voice or sustained imitation.
-- The owner must explicitly approve or reject that option and approve whether Dean/public inspirations become official runtime knowledge.
+- display/spoken separation;
+- `VoiceManager`, `SpeechFormatter`, `TurnManager`, `VoiceStateManager`;
+- provider-neutral prosody/pronunciation contracts;
+- original PhraseLibrary;
+- combinable, session-local modes;
+- public-safe `SelfKnowledge`;
+- local/ephemeral amplitude of already-playing output;
+- accessibility, cancellation and deterministic tests.
 
-## Roadmap decision
+Out of scope:
 
-The proposed official sequence is:
-
-1. Phase 7 — Conversational Presence Foundation.
-2. Phase 8 — Single-User Security & Permissions.
-3. Phase 9 — Realtime Voice Sessions.
-4. Phase 10 — Cloud & Shared Client Foundation.
-5. Phase 11 — Windows Client & Local Wake Word.
-6. Phase 12 — Android Client & Registered Device Context.
-7. Phase 13 — Speaker Verification & Voice Profile, optional gate.
-8. Phase 14 — Model Router, Diagnostics & Transparency.
-9. Phase 15 — Personal Organization & Read-Only Tools.
-10. Phase 16 — Permissioned Effects & External Integrations.
-11. Phase 17 — Ephemeral Coding Workspace.
-12. Phase 18 — Ephemeral Agent Runtime.
-13. Phase 19 — Skills & Experience Learning.
-14. Phase 20 — Multimodal & Documents.
-15. Phase 21 — Automations & Proactivity.
-16. Phase 22 — HOPE Bridge.
-17. Advanced HOPE remains an unnumbered horizon.
-
-This replaces only the previous post-Phase 6 phase ordering. The `SINGLE_USER` trust model, PermissionManager levels and Phase 6 history from `ARCH-2026-09-10-003` remain valid.
+- new cloud STT/TTS or streaming provider;
+- background wake word;
+- speaker profile or biometric processing;
+- cross-device/client work;
+- persistence, schema, migration or PostgreSQL real;
+- integration, tool, agent or external effect;
+- provider, credential, cost, deployment or production;
+- Phase 8 or any later phase.
 
 ## Required Reviews
 
-| Phase group | QA | Database | Security | UI/UX |
-|---|---|---|---|---|
-| 7 Conversational Presence | YES | NO | YES | YES |
-| 8 Security & Permissions | YES | YES | YES | YES |
-| 9 Realtime Voice | YES | NO* | YES | YES |
-| 10 Cloud/Shared Client | YES | YES | YES | YES |
-| 11 Windows/Wake Word | YES | NO | YES | YES |
-| 12 Android/Device Context | YES | YES | YES | YES |
-| 13 Speaker Verification | YES | YES | YES | YES |
-| 14 Router/Diagnostics/Audit | YES | YES | YES | YES |
-| 15–16 Organization/Tools/Effects | YES | YES | YES | YES |
-| 17 Coding Workspace | YES | NO | YES | YES |
-| 18–22 Agents through Bridge | YES | YES | YES | YES |
-
-`*` Phase 9 Database becomes YES and returns to the Planner if transcripts, sessions, preferences or audio metadata are persisted.
-
-## Documentation governance
-
-- Keep `docs/architecture.md` centered on `IMPLEMENTED/PARTIAL` current state; no update is needed because this decision changes no code.
-- Keep `docs/backlog.md` at its existing path and evolve its title/description to “Technical Debt & Accepted Warnings” in a later Planner/Coordinator documentation pass; do not mix roadmap items into it.
-- Reduce `docs/handoff.md` later through the Coordinator to current phase, functional commit, matrix, blockers, warnings, current owner, next action and concise history. Detailed evidence remains in phase/review/decision files.
-- README/CHANGELOG updates belong to the Coordinator after owner approval; this Planner task does not overwrite them.
-- UI/UX specifications begin only after an approved phase is selected; Development remains unauthorized.
+| Work | Required | Justification |
+|---|---|---|
+| QA | YES | content transformation, cancellation, race handling, browser behavior and regression are functional changes |
+| DATABASE | NO | the plan prohibits persistence, schema, migration and query changes; any data impact forces replanning with Database `YES` |
+| SECURITY | YES | voice privacy, modes, untrusted content, `SelfKnowledge` and truthful capability claims require security review |
+| UI/UX | YES | spoken/display behavior, voice state, stop controls, Core Orb, reduced motion and accessibility require pre/post review |
 
 ## Risks
 
-- Phase 7 could drift into cloud voice before the security boundary.
-- Background wake word can create covert-listening perception even when local.
-- Speaker verification can be mistaken for strong authentication or produce biometric retention risk.
-- A broad roadmap can encourage parallel implementation before dependencies are met.
-- Public SelfKnowledge can leak private/internal policy if not manifest-based.
-- ModelRouter fallback can silently weaken privacy or increase cost.
-- Client/device location can become surveillance if scope and expiry are vague.
-- Tasks and Calendar can become coupled and cause unintended external writes.
-- Future handoff simplification could erase evidence if done by deletion rather than linkage.
+- Speech formatting may alter meaning or omit a material warning.
+- A stale callback may speak after cancellation or overwrite current state.
+- Privacy/audience modes may be misunderstood as retroactive deletion or concealment.
+- Phrase selection may become repetitive or drift toward imitation.
+- Public `SelfKnowledge` may leak protected data or overstate capability.
+- Local amplitude may behave inconsistently under browser autoplay/Web Audio restrictions.
+- The phase may drift into provider, background listening, biometrics or persistence.
+- Roadmap/plan approval may be misread as implementation authorization.
 
 ## Acceptance Criteria
 
-- [x] Phase 6 remains frozen on the exact Functional Commit.
-- [x] Product vision, roadmap and technical architecture have distinct source-of-truth roles.
-- [x] Voice capabilities that may precede security are explicitly limited.
-- [x] Cloud audio, background wake, speaker profile, sensitive data and effects have security gates.
-- [x] Future voice component contracts are provider-neutral and do not select a vendor.
-- [x] Personality conflict is explicit and the current absolute ban remains unchanged.
-- [x] SelfKnowledge, modes, privacy, memory, Tasks/Calendar, integrations, diagnostics, audit, location, clients, Bridge and ModelRouter are covered.
-- [x] Every proposed phase has Required Reviews and owner-approval boundaries in `docs/roadmap.md`.
-- [x] `docs/architecture.md`, reports, design files, backlog, README, CHANGELOG and functional code were not altered by this decision.
-- [ ] Owner approves or revises the substantive product vision and roadmap.
-- [ ] Owner selects and separately authorizes a next phase.
+- [x] `ARCH-2026-09-20-001`, product vision and roadmap are recorded as owner-approved.
+- [x] The approved personality/public `SelfKnowledge` decisions replace only their former pending state.
+- [x] Phase 6 and its Functional Commit remain unchanged.
+- [x] `docs/phase-7.md` defines problem, scope, non-goals, dependencies, architecture, contracts, privacy/security, database impact, tests, reviews, risks, rollout/rollback and authorization gates.
+- [x] Phase 7 scope includes only the local/controlled conversational-presence foundation.
+- [x] Required Reviews are QA YES, DATABASE NO, SECURITY YES and UI/UX YES with explicit reasons.
+- [x] Production Readiness remains `BLOCKED`.
+- [x] No code, migration, database, provider, credential, cost, deploy or production action is authorized.
+- [x] The owner change in `AGENTS.md` and untracked assets remain outside the Planner commit.
+- [ ] Owner approves or revises `ARCH-2026-09-20-002` and `docs/phase-7.md`.
+- [ ] Owner separately authorizes Phase 7 implementation after plan approval.
 
 ## Implementation Phase
 
-- Planning status: WAITING_FOR_APPROVAL.
-- Phase 7 implementation status: NOT_STARTED.
-- Phase 7 authorization: NONE.
-- Phase 8+ implementation status: NOT_STARTED.
-- Production Readiness: BLOCKED.
+- Phase 7 planning: `WAITING_FOR_APPROVAL`.
+- Phase 7 feature/implementation: `NOT_STARTED`.
+- Phase 7 implementation authorization: `NONE` / `NOT_AUTHORIZED`.
+- UI/UX pre-implementation: `NOT_STARTED` and not routed.
+- Development: `NOT_STARTED` and not routed.
+- Phase 8+: `NOT_STARTED`.
+- Production Readiness: `BLOCKED`.
 
 ## Deferred Items
 
-- Exact Phase 7 plan and UI/UX specification.
-- Provider/license/cost evaluation for STT, TTS, wake word and speaker verification.
-- Owner recognition method, legacy namespace inventory and any migration.
-- Cloud topology, data region, backup/restore and public exposure.
-- Speaker-profile value/retention decision.
-- Integration/provider priorities and budgets.
-- Any code, app distribution, credentials, database changes or production operation.
+- Owner approval/revision of the exact Phase 7 plan.
+- Separate Phase 7 implementation authorization.
+- Any normative `AGENTS.md` reconciliation in an isolated owner/Coordinator change.
+- Provider/license/cost/privacy evaluation for realtime voice, wake and speaker verification.
+- Owner recognition and PermissionManager in Phase 8.
+- Persistent modes, preferences, pronunciation, transcript or voice data.
+- Cloud, clients, devices, tools, integrations, agents and production.
 
 ## Coordinator Handoff
 
-- Recommended Next Role: COORDINATOR.
-- Status: WAITING_FOR_APPROVAL.
-- Task: present `ARCH-2026-09-20-001`, `docs/product-vision.md` and `docs/roadmap.md` to the owner, collect the pending decisions and normalize the public/operational panel only after approval.
-- Do not route to: UI/UX, Development, Database implementation, provider evaluation with credentials, cloud or production.
-- Boundary: roadmap approval would still not authorize implementation; the selected next phase requires its own plan and explicit authorization.
+- Recommended next role: `COORDINATOR`.
+- Status: `WAITING_FOR_APPROVAL`.
+- Task: normalize the approved parent decision in the public panel and present `ARCH-2026-09-20-002` / `docs/phase-7.md` to the owner for approval or revision.
+- Do not route to: UI/UX, Development, Database implementation, provider evaluation, cloud or production.
+- Boundary: approval of the phase plan would still not authorize implementation; a separate explicit owner authorization is required.

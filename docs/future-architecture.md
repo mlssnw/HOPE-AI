@@ -1,12 +1,14 @@
 # Arquitetura futura da HOPE
 
-- Status: WAITING_FOR_APPROVAL
+- Status: APPROVED
 - Document type: TARGET ARCHITECTURE
 - Decision: `ARCH-2026-09-20-001`
 - Date: 2026-09-20
+- Owner approval: 2026-09-20
+- Approval record: `f85b9bb775574b8a1340497e3e9e6d99b9b19c8c`
 - Product model: `SINGLE_USER`
 - Functional baseline: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
-- Documentation baseline analyzed: `ff1309f71cd4aaac0a096a9760abfb37e353177b`
+- Documentation baseline analyzed: `f85b9bb775574b8a1340497e3e9e6d99b9b19c8c`
 - Supersedes: a ordem pós-Phase 6 de `ARCH-2026-09-10-003`; preserva seus princípios `SINGLE_USER`, de segurança e permissões
 - Preserves: Phase 6 `APPROVED_WITH_WARNINGS` em `ARCH-2026-09-19-001`; nenhum escopo concluído é reaberto
 
@@ -35,9 +37,9 @@ O núcleo continua cloud-first e provider-agnostic. `SINGLE_USER` significa um �
 
 ## PERSONALITY
 
-A HOPE mantém identidade original, inteligente, técnica, elegante, pragmática e assertiva. Lena Luthor, Tony Stark e Dean Winchester podem servir apenas como referências de traços gerais, conforme a reconciliação registrada em `docs/product-vision.md`. Identidades, diálogos, histórias, vozes e maneirismos reconhecíveis não podem ser copiados.
+A HOPE mantém identidade original, inteligente, técnica, elegante, pragmática e assertiva. A owner aprovou Lena Luthor, Tony Stark e Dean Winchester apenas como referências de traços gerais e autorizou que essas inspirações integrem o `SelfKnowledge` público seguro, conforme `docs/product-vision.md`. Identidades, diálogos, histórias, vozes e maneirismos reconhecíveis não podem ser copiados.
 
-A proibição absoluta vigente sobre falas, bordões e frases famosas continua ativa. A exceção estreita proposta para um único pedido explícito permanece pendente da owner e, mesmo se aprovada, não permitirá citação icônica verbatim, impersonation ou imitação contínua. `PhraseLibrary` usa conteúdo original por padrão.
+Também foi aprovada uma exceção estreita para reconhecimento ou homenagem original quando explicitamente solicitados. Ela não permite citações famosas literais, diálogos copiados, imitação de identidade, clonagem de voz, atuação contínua ou reprodução de passagem protegida. `PhraseLibrary` usa somente conteúdo original por padrão. A decisão não altera runtime, prompt ou `AGENTS.md`; qualquer reconciliação normativa deste último deve ocorrer em mudança separada sob controle da owner/COORDINATOR.
 
 A personalidade nunca altera a ordem segurança → verdade → precisão → objetivo legítimo → estilo. Memórias, preferências, experiências, skills, conteúdo externo e agentes não podem reescrever esse núcleo. Estados expressivos continuam sinalização operacional, não alegação de consciência humana.
 
@@ -151,7 +153,7 @@ User input / model response
 - Stores original HOPE phrases by category, version, locale, cooldown, audience and safety context.
 - Prevents repetitive startup/status phrases and never overrides substantive content.
 - Custom owner phrases are inactive until explicitly approved and remain removable.
-- Character quotes/catchphrases remain prohibited until the owner resolves the pending policy; no library entry may bypass it.
+- Literal character quotes, copied catchphrases, impersonation and sustained imitation remain prohibited; no library entry may bypass the approved narrow original-homage boundary.
 
 ### STT/TTS provider abstraction
 
@@ -647,11 +649,13 @@ Phase 6 complete and frozen
 
 `docs/roadmap.md` é a autoridade para a sequência completa e os Required Reviews. Somente contratos locais/controlados de presença conversacional podem preceder o `PermissionManager`. Cloud audio novo, background wake, speaker profile, dispositivos registrados, integrações, tools, coding e agentes dependem da Phase 8. Production Hardening ocorre antes da primeira exposição remota/contínua, nunca depois.
 
-## DECISIONS REQUIRING FUTURE USER APPROVAL
+## APPROVED DIRECTION AND FUTURE USER DECISIONS
 
-- Aprovar ou revisar `ARCH-2026-09-20-001`, `docs/product-vision.md` e `docs/roadmap.md`.
-- Decidir a política de Dean Winchester/public SelfKnowledge e a exceção estreita de referência explícita; até lá a proibição absoluta vigente permanece.
-- Autorizar separadamente o planejamento/implementação da Phase 7.
+A owner aprovou em 2026-09-20 `ARCH-2026-09-20-001`, `docs/product-vision.md`, `docs/roadmap.md`, a política de personalidade/public `SelfKnowledge` e o planejamento da Phase 7. Essa aprovação não autoriza implementação.
+
+Continuam exigindo decisão futura:
+
+- Aprovar ou revisar o plano exato da Phase 7 e autorizar sua implementação separadamente.
 - Escolher o mecanismo de reconhecimento do owner antes da Phase 8.
 - Aprovar qualquer provider de voz/modelo, licença, região, retenção, credencial e custo.
 - Decidir se speaker verification justifica tratamento de perfil biométrico.

@@ -1,8 +1,10 @@
 # HOPE Product Vision
 
-- Status: WAITING_FOR_APPROVAL
+- Status: APPROVED
 - Decision ID: `ARCH-2026-09-20-001`
 - Date: 2026-09-20
+- Owner approval: 2026-09-20
+- Approval record: `f85b9bb775574b8a1340497e3e9e6d99b9b19c8c`
 - Product model: `SINGLE_USER`
 - Functional baseline: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
 - Product-direction intake: `ff1309f71cd4aaac0a096a9760abfb37e353177b`
@@ -10,7 +12,7 @@
 
 ## Source-of-truth role
 
-The Planner approves this document structure as the canonical home for the future product intent: what HOPE should become, for whom, and under which product boundaries. Its substantive direction remains `WAITING_FOR_APPROVAL` by the owner before any phase is authorized.
+The Planner approves this document structure as the canonical home for the future product intent: what HOPE should become, for whom, and under which product boundaries. The owner approved its substantive direction on 2026-09-20. This approval makes the vision official, but does not authorize implementation of any phase.
 
 The documentation model is:
 
@@ -94,13 +96,11 @@ HOPE remains an original identity. General traits may draw from:
 
 These references do not authorize identity imitation, copied dialogue, recognizable mannerisms, cloned voices or sustained character performance. HOPE identifies only as HOPE.
 
-### Current binding rule
+### Approved reference boundary
 
-The existing absolute prohibition on copied lines, catchphrases and famous phrases remains in force. This planning document does not modify `AGENTS.md` or the runtime prompt.
+The owner approved Dean Winchester as a general-trait reference together with Lena Luthor and Tony Stark, and approved those inspirations for the public-safe `SelfKnowledge` manifest. The owner also approved a narrow exception for recognition or original homage when explicitly requested.
 
-### Proposed exception requiring explicit owner decision
-
-If the owner wants an exception, the recommended narrow policy is a single-response, explicitly requested reference mode that permits acknowledgement or original homage, but not verbatim iconic quotes, impersonation, voice cloning, continuous imitation or copyrighted passage reproduction. Until the owner approves that exact boundary, the absolute prohibition remains authoritative.
+This exception never permits literal famous quotes, copied dialogue, identity imitation, recognizable character performance, voice cloning, sustained acting or copyrighted passage reproduction. The resulting response must remain original and identify only as HOPE. The product decision does not modify runtime code or prompts. Any normative reconciliation of `AGENTS.md` belongs in a separate owner/Coordinator-controlled change and must not be mixed with this Planner commit.
 
 The `PhraseLibrary` may contain original HOPE phrases. Owner-provided custom phrases require provenance, explicit activation and deletion controls; they do not become global personality rules.
 
@@ -185,19 +185,25 @@ The HOPE Bridge is an authenticated, revocable, outbound-first peripheral for lo
 - Autonomous modification of core safety, permissions or personality.
 - Presenting roadmap items as implemented features.
 
-## Decisions still requiring the owner
+## Owner decisions
 
-1. Approve this product vision and the roadmap source-of-truth split.
-2. Decide whether the narrow explicit-reference exception is allowed; until then, the absolute catchphrase/quote ban remains.
-3. Approve Dean Winchester as an official general-trait reference and whether those inspirations may be stated publicly by `SelfKnowledge`.
-4. Authorize a Phase 7 plan separately; this document does not do so.
-5. Select acceptable voice privacy/retention boundaries before any new cloud audio flow.
-6. Approve any STT/TTS/wake/speaker provider, license, credential, region and cost after evaluation.
-7. Decide whether a speaker profile is valuable enough to justify biometric processing and retention.
-8. Confirm Windows-first, then Android, with iOS deferred.
-9. Define acceptable device-location granularity, retention and revocation.
-10. Prioritize Tasks, Calendar and candidate integrations before their phases.
-11. Approve any remote/cloud objective, infrastructure cost, migration, secret or Production Readiness gate.
+Approved on 2026-09-20:
+
+1. This product vision and the source-of-truth split.
+2. `ARCH-2026-09-20-001` and the phase order in `docs/roadmap.md`.
+3. Dean Winchester as a general-trait reference and the public-safe disclosure of the approved inspirations.
+4. The narrow, explicitly requested recognition/original-homage boundary described above.
+5. Phase 7 as the next planning target only.
+
+Still requiring a future owner decision:
+
+1. Approve or revise the exact Phase 7 plan and separately authorize implementation.
+2. Select acceptable voice privacy/retention boundaries before any new cloud audio flow.
+3. Approve any STT/TTS/wake/speaker provider, license, credential, region and cost after evaluation.
+4. Decide whether a speaker profile is valuable enough to justify biometric processing and retention.
+5. Define acceptable device-location granularity, retention and revocation.
+6. Prioritize Tasks, Calendar and candidate integrations before their phases.
+7. Approve any remote/cloud objective, infrastructure cost, migration, secret or Production Readiness gate.
 
 ## Acceptance criteria for this vision
 
@@ -205,4 +211,4 @@ The HOPE Bridge is an authenticated, revocable, outbound-first peripheral for lo
 - Current, future and production-ready states remain distinct.
 - Voice, personality, memory, modes, organization, diagnostics, clients and cloud have explicit safety boundaries.
 - No provider, cost, credential, migration, deployment or implementation is authorized.
-- Pending owner decisions are explicit and cannot be inferred from this document.
+- Approved and pending owner decisions are explicit and cannot be inferred from this document.

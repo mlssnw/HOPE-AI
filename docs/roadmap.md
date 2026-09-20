@@ -1,15 +1,17 @@
 # HOPE Roadmap
 
-- Status: WAITING_FOR_APPROVAL
+- Status: APPROVED
 - Decision ID: `ARCH-2026-09-20-001`
 - Date: 2026-09-20
+- Owner approval: 2026-09-20
+- Approval record: `f85b9bb775574b8a1340497e3e9e6d99b9b19c8c`
 - Completed phase: Phase 6 — `APPROVED_WITH_WARNINGS`
 - Functional Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
 - Implementation authorization: NONE for Phase 7+
 
 ## Source-of-truth role
 
-This document is the canonical planning source for phase order, dependencies, gates and Required Reviews. Because the proposed sequence has security, privacy, cloud, data and cost consequences, it remains `WAITING_FOR_APPROVAL`. It does not authorize any phase.
+This document is the canonical planning source for phase order, dependencies, gates and Required Reviews. The owner approved the sequence on 2026-09-20. Roadmap approval establishes direction only: it does not authorize implementation of any phase.
 
 The Phase 6 history remains governed by `docs/phase-6.md` and `ARCH-2026-09-19-001`. The post-Phase 6 ordering in `ARCH-2026-09-10-003` is `SUPERSEDED` for planning by this proposal; its `SINGLE_USER`, permission and safety principles remain preserved.
 
@@ -78,12 +80,12 @@ Production Hardening is inserted before any phase is exposed remotely or continu
 - Goal: create a provider-neutral, local/controlled conversation and voice-presentation layer.
 - Scope: `VoiceManager`, `SpeechFormatter`, `TurnManager`, `VoiceStateManager`, provider-neutral prosody/pronunciation contracts, original `PhraseLibrary`, stop/cancel behavior, combinable modes, public-safe `SelfKnowledge` contract and local Core Orb amplitude from already-playing output.
 - Non-goals: new cloud audio, streaming provider, background wake word, speaker profile, biometric processing, cross-device session, persistence changes or external effects.
-- Dependencies: Phase 6 frozen; owner decision on personality/public SelfKnowledge before those parts enter implementation.
+- Dependencies: Phase 6 frozen; approved personality/public `SelfKnowledge` boundary; an approved Phase 7 plan and separate implementation authorization before UI/UX or Development starts.
 - Acceptance: displayed/spoken outputs are distinct; safety and uncertainty survive speech formatting; stale turns cannot speak; stop is immediate; Core Orb amplitude stays local and ephemeral; modes cannot change permissions or truth.
 - Reviews: QA YES; DATABASE NO; SECURITY YES; UI/UX YES.
 - Cost/complexity: low-to-medium / medium.
 - Production impact: none; local/controlled only.
-- Owner approval: required before planning is handed to UI/UX or Development.
+- Owner approval: planning was authorized on 2026-09-20; the resulting phase plan and implementation still require separate approval before UI/UX or Development starts.
 
 ## Phase 8 — Single-User Security & Permissions
 
@@ -269,12 +271,12 @@ Production Hardening is inserted before any phase is exposed remotely or continu
 
 Persistent agents, richer learning, ambient multimodal context and broader autonomy remain an unnumbered horizon. They receive phase numbers only after Phases 7–22 produce evidence and the owner defines a concrete problem. This avoids treating aspiration as scheduled implementation.
 
-## Required owner decisions before any next phase
+## Approved direction and remaining gate
 
-- Approve or revise `ARCH-2026-09-20-001` and this sequence.
-- Select the next phase explicitly; default recommendation is Phase 7 only.
-- Resolve the personality/public SelfKnowledge questions needed by Phase 7.
-- Do not interpret roadmap approval as Development authorization; Phase 7 requires its own approved phase document and authorization.
+- Approved on 2026-09-20: `ARCH-2026-09-20-001`, this sequence, the personality/public `SelfKnowledge` boundary and Phase 7 as the next planning target.
+- Pending: approve or revise the exact Phase 7 plan.
+- Pending: separately authorize Phase 7 implementation after the plan is approved.
+- Roadmap or plan approval must not be interpreted as Development authorization.
 
 ## Deferred cross-cutting gates
 
