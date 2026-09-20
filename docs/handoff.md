@@ -160,26 +160,23 @@ Required Reviews:
 
 ## Planner
 
-- Status: APPROVED
-- Decision ID: `ARCH-2026-09-10-003`
-- Planning approval record: a usuária aprovou a decisão e `docs/phase-6.md` como planejamento oficial; o COORDINATOR registrou o resultado em `7494c2ed589e559a955934f8a1580d3867e2356b`
-- Product model: `SINGLE_USER`; a direção multiusuário/enterprise está `SUPERSEDED` no roadmap imediato
-- Phase 5 boundary: permanece `APPROVED_WITH_WARNINGS` no Functional Commit `88e194778b4399a6713f118470f9d861c553cd9e`; nenhum finding de reviewer foi reescrito ou encerrado por esta decisão
-- Production Readiness: `BLOCKED`
-- Recommended order: Phase 6 Target UI Convergence → Phase 7 Single-User Security & Permissions → Phase 8 Read-Only Tools → Phase 9 Permissioned Effects & Ephemeral Coding → Phase 10 Ephemeral Agents → Production Hardening antes de qualquer exposição escolhida
-- Next phase proposal: `docs/phase-6.md`, planejamento `APPROVED`, implementação `NOT_STARTED / NOT_AUTHORIZED`, Functional Commit `NONE`
-- Phase 6 scope: convergência visual do HOPE Main Dashboard sobre capacidades reais, com acessibilidade, responsividade, não regressão de consentimento/esquecimento e correção de `UIUX-F5-W01` a `UIUX-F5-W03`
-- Phase 6 non-goals: owner authentication, permissions, tools, coding, agents, métricas/capacidades futuras, banco, migration, provider, produção e acesso remoto
-- Phase 6 Required Reviews: QA YES; DATABASE NO enquanto o diff permanecer estritamente visual; SECURITY YES; UI/UX YES
-- Owner architecture: `OwnerAuthenticator` → `OwnerSession` → `OwnerContext`; autorização por recurso ocorre antes do `PermissionManager` por risco
-- Permission model: `SAFE` automático somente em allowlist; `WRITE` limitado e recuperável; `SENSITIVE` com confirmação única do owner; `DESTRUCTIVE` com confirmação forte, alvo/fingerprint exatos e uso único
-- Permission invariants: fail-closed; grants curtos/revogáveis; nenhuma autoelevação; nenhum grant ampliado por herança; approval não reutilizável em outro alvo; prompt/memória/web/tool output nunca concedem autorização
-- Legacy identity: `X-Hope-User-Id` e `?user_id=` deixam de ser autoridade na Phase 7; campos `user_id` permanecem como namespace do owner; vínculo/descarte exige inventário, backup, rollback e autorização
-- RLS: RLS por tenant removido do roadmap imediato; RLS simples fica opcional como defesa adicional se o perfil remoto/cloud justificar
-- Pending user decisions: autorizar explicitamente a implementação da Phase 6; o mecanismo de owner recognition será escolhido somente antes da Phase 7; qualquer provider, custo, credencial, migration ou produção exige decisão separada
+- Status: APPROVED_WITH_WARNINGS
+- Decision ID: `ARCH-2026-09-19-001`
+- Phase 6 Feature Status: `APPROVED_WITH_WARNINGS`
+- Functional Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
+- Review matrix: QA `APPROVED_WITH_WARNINGS` em `5d5c2ddd18cfe12011bdd5f51503fbbfcc66904d`; Security `APPROVED_WITH_WARNINGS` em `f9c0ca8289f62596946d21441ba239dcd7777fd3`; UI/UX `APPROVED` em `7122d256c68e0018d74ae2e64600167e2db73fb4`; todos sobre o mesmo Functional Commit
+- Database: `N/A` — nenhum delta de backend, API, schema, migration, query ou persistência
+- Feature blockers: nenhum permanece aberto
+- Closed by reviewers: `QA-003` por QA; `UIUX-F5-W01`, `UIUX-F5-W02` e `UIUX-F5-W03` por UI/UX
+- Open non-blocking warnings: `QA-ENV-002`, `QA-WARN-HTTPX`, `SEC-018` e warnings históricos aplicáveis de Database/Security
+- Production Readiness: `BLOCKED`; blockers históricos de produção não foram aceitos, encerrados ou reclassificados e não bloqueiam retroativamente a feature local/controlada
+- Scope boundary: aprovação funcional não autoriza deploy, exposição pública, merge, push, banco real, migration, provider, credencial, custo, infraestrutura ou aceitação de risco HIGH/CRITICAL
+- Dashboard boundary: HOPE Main Dashboard aprovado dentro das capabilities reais da Phase 6; tools, agents, métricas sem fonte e demais capacidades futuras continuam omitidos/não implementados
+- Phase 7+: `NOT_STARTED / NOT_AUTHORIZED`; nenhuma próxima fase foi iniciada
+- Pending user decision: escolher e autorizar explicitamente o próximo escopo; owner recognition, providers, custos, credenciais, banco e produção exigem decisões próprias quando aplicáveis
 - Architecture record: [`docs/reviews/architecture-latest.md`](reviews/architecture-latest.md)
 - Phase plan: [`docs/phase-6.md`](phase-6.md)
-- Coordinator handoff: manter o workflow em `WAITING_FOR_APPROVAL` da implementação; não encaminhar ao DEV nem interpretar a aprovação do planejamento como autorização de execução
+- Coordinator handoff: normalizar o painel público com esta consolidação e solicitar à usuária a escolha do próximo escopo; não encaminhar ao DEV nem iniciar Phase 7 automaticamente
 
 ## Coordinator
 

@@ -3,12 +3,14 @@
 ## Phase Status
 
 - Planning status: `APPROVED`
-- Implementation status: `READY_FOR_REVIEW` — entrega de Development; aprovação independente pendente
+- Feature status: `APPROVED_WITH_WARNINGS`
+- Implementation status: `APPROVED_WITH_WARNINGS` — reviews independentes concluídos no Functional Commit exato
 - Implementation authorization: `0bcc25a5437cab8a326e64281579ead56274d8cb` — concedida pela usuária em 2026-09-11, sem expansão de escopo
 - Pre-implementation UI/UX: `APPROVED` — Definition of Ready `SATISFIED` em `3c10be208e4e4d6dcfc3329dd6207961c898d44c`
 - Functional Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
 - Functional baseline: `88e194778b4399a6713f118470f9d861c553cd9e`
 - Architecture decision: `ARCH-2026-09-10-003`
+- Consolidation decision: `ARCH-2026-09-19-001`
 - Production Readiness: `BLOCKED`
 
 ## Goal
@@ -23,9 +25,10 @@ O Target UI `UIUX-VIS-2026-09-10-001` define a direção visual oficial, mas o f
 
 - Fase 5 está `APPROVED_WITH_WARNINGS` no baseline `88e1947`.
 - Chat, Memory Globe, Core Orb, inspector, realtime, consentimento e confirmação destrutiva existem.
-- Target UI está aprovado, porém a implementação é `PARTIAL`.
+- Target UI e sua implementação P0/P1 estão `APPROVED` por UI/UX no Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`.
 - `UIUX-GAP-001` a `UIUX-GAP-022` descrevem gaps e constraints; elementos planejados não podem ser ativados sem backend real.
-- `UIUX-F5-W01`, `UIUX-F5-W02` e `UIUX-F5-W03` permanecem abertos e são apropriados para tratamento visual nesta fase.
+- `UIUX-F5-W01`, `UIUX-F5-W02` e `UIUX-F5-W03` foram encerrados por UI/UX; `QA-003` foi encerrado por QA.
+- `QA-ENV-002`, `QA-WARN-HTTPX` e `SEC-018` permanecem abertos e não bloqueantes para a feature.
 - A identidade UUID controlada pelo cliente permanece limitação conhecida; sua correção pertence à Phase 7.
 
 ## Scope
@@ -57,7 +60,7 @@ O Target UI `UIUX-VIS-2026-09-10-001` define a direção visual oficial, mas o f
 - Decisão `ARCH-2026-09-10-003` aprovada pela usuária.
 - Target UI `UIUX-VIS-2026-09-10-001` e asset canônico.
 - `docs/design/README.md`, `official-dashboard.md`, `dashboard-gap-matrix.md` e demais contratos visuais aplicáveis.
-- Functional baseline `88e194778b4399a6713f118470f9d861c553cd9e` preservado até uma implementação autorizada produzir novo hash.
+- Functional baseline histórico `88e194778b4399a6713f118470f9d861c553cd9e` e Functional Commit da fase `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`.
 - Working tree preexistente separado do eventual commit funcional.
 
 ## Architecture
@@ -115,25 +118,37 @@ A implementação autorizada deve ser incremental. A camada visual consome os es
 | SECURITY | YES | consentimento, confirmação destrutiva, conteúdo não confiável e claims de capacidade precisam de não regressão |
 | UI/UX | YES | UI/UX especifica antes e revisa fidelidade depois contra o mesmo Functional Commit |
 
+## Consolidated Review Matrix
+
+| Work | Result | Commit/record |
+|---|---|---|
+| Development | READY_FOR_REVIEW | Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
+| QA | APPROVED_WITH_WARNINGS | review `5d5c2ddd18cfe12011bdd5f51503fbbfcc66904d` sobre `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
+| Database | N/A | nenhum delta de backend, API, schema, migration ou persistência |
+| Security | APPROVED_WITH_WARNINGS | review `f9c0ca8289f62596946d21441ba239dcd7777fd3` sobre `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
+| UI/UX | APPROVED | review `7122d256c68e0018d74ae2e64600167e2db73fb4` sobre `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
+
+Nenhum blocker funcional permanece aberto. Production Readiness continua `BLOCKED` por gates históricos que não foram aceitos, encerrados ou reclassificados nesta consolidação.
+
 ## Acceptance Criteria
 
 - [x] A usuária aprova explicitamente o plano antes do DEV.
-- [ ] Development produz novo Functional Commit e não mistura assets/preexisting work fora do escopo.
-- [ ] Marca visível e acessível é `HOPE`, sem expansão.
-- [ ] Dashboard reproduz hierarquia, paleta, composição e densidade controlada do Target UI.
-- [ ] Nenhuma tool, agent, automação, Visão, Arquivos, métrica ou rota futura aparece como funcional.
-- [ ] Nós, relações, métricas e estados exibidos vêm de dados/eventos reais.
-- [ ] Consentimento de memória e histórico local continuam separados, compreensíveis e operáveis.
-- [ ] Esquecimento mantém confirmação com alvo/consequência, Cancelar inicial, Escape e retorno de foco.
-- [ ] `UIUX-F5-W01`, `UIUX-F5-W02` e `UIUX-F5-W03` recebem correção e evidência.
-- [ ] Mobile 390 × 844 é chat-first; 320 × 568, 768 × 1024, 1024 × 768, 1280 × 720, 1440 × 900 e 1920 × 1080 são validados.
-- [ ] Zoom 200%, textos 30% maiores, landscape e `prefers-reduced-motion` são validados.
-- [ ] Fluxos essenciais atendem WCAG 2.2 AA e existe alternativa textual/fallback quando WebGL não estiver disponível.
-- [ ] Perfis LOW/MEDIUM/HIGH/ULTRA preservam informação e controles; qualidade altera apenas fidelidade.
-- [ ] Chat, API, cancelamento, realtime, memória e confirmação destrutiva não sofrem regressão.
-- [ ] Nenhuma alteração de schema, migration, banco real, provider, secret, credencial ou infraestrutura entra no Functional Commit.
-- [ ] QA, Security e UI/UX concluem review no mesmo hash; Database permanece `N/A` somente se o diff continuar sem impacto de dados.
-- [ ] Production Readiness permanece `BLOCKED`.
+- [x] Development produziu o Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` sem incorporar assets/preexisting work fora do escopo.
+- [x] Marca visível e acessível é `HOPE`, sem expansão.
+- [x] Dashboard reproduz hierarquia, paleta, composição e densidade controlada do Target UI dentro das capabilities reais.
+- [x] Nenhuma tool, agent, automação, Visão, Arquivos, métrica ou rota futura aparece como funcional.
+- [x] Nós, relações, métricas e estados exibidos vêm de dados/eventos reais.
+- [x] Consentimento de memória e histórico local continuam separados, compreensíveis e operáveis.
+- [x] Esquecimento mantém confirmação com alvo/consequência, Cancelar inicial, Escape e retorno de foco.
+- [x] `UIUX-F5-W01`, `UIUX-F5-W02` e `UIUX-F5-W03` receberam correção e foram encerrados por UI/UX.
+- [x] Matriz de viewports foi validada e mobile permanece chat-first.
+- [x] Zoom por equivalência de reflow, textos 30% maiores, landscape e `prefers-reduced-motion` foram validados; limites manuais permanecem em `QA-ENV-002`.
+- [x] Validações automatizadas de acessibilidade e fallback textual/WebGL foram aprovadas; leitor de tela e dispositivos físicos permanecem limites ambientais rastreados.
+- [x] Perfis LOW/MEDIUM/HIGH/ULTRA preservam informação e controles; qualidade altera apenas fidelidade.
+- [x] Chat, API, cancelamento, realtime, memória e confirmação destrutiva não sofreram regressão nos reviews concluídos.
+- [x] Nenhuma alteração de schema, migration, banco real, provider, secret, credencial ou infraestrutura entrou no Functional Commit.
+- [x] QA, Security e UI/UX concluíram review no mesmo hash; Database permaneceu `N/A` sem impacto de dados.
+- [x] Production Readiness permanece `BLOCKED`.
 
 ## Test Strategy
 
@@ -193,11 +208,11 @@ Esta sequência é planejamento; não autoriza execução.
 
 ## Next Action
 
-- Role: DEVELOPMENT
-- Status: NOT_STARTED
-- Task: implementar exclusivamente a Phase 6 conforme este plano e `docs/design/phase-6-target-ui-spec.md`, produzir um novo Functional Commit e parar para os reviews obrigatórios.
-- Do not route to: Phase 7, Database, providers, produção, tools ou agents.
-- Functional target: partir do baseline `88e194778b4399a6713f118470f9d861c553cd9e`; a Phase 6 ainda não possui Functional Commit.
+- Role: COORDINATOR
+- Status: WAITING_FOR_APPROVAL
+- Task: normalizar o painel público com a consolidação `ARCH-2026-09-19-001` e solicitar à usuária a escolha explícita do próximo escopo.
+- Do not route to: Development, Phase 7, Database, providers, produção, merge, push, tools ou agents sem nova autorização.
+- Functional target: Phase 6 consolidada em `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`; nenhuma próxima fase foi iniciada.
 
 ## Development Implementation — 2026-09-15
 

@@ -1,218 +1,168 @@
 # Architecture Review — Latest
 
-- Status: APPROVED
-- Decision ID: `ARCH-2026-09-10-003`
-- Date: 2026-09-10
+- Status: APPROVED_WITH_WARNINGS
+- Decision ID: `ARCH-2026-09-19-001`
+- Date: 2026-09-19
+- Phase: Phase 6 — Target UI Convergence
 - Product model: `SINGLE_USER`
-- Functional baseline analyzed: `88e194778b4399a6713f118470f9d861c553cd9e`
-- Repository HEAD analyzed: `3c8e978e2dc5d9c0deff62a8a5a9ebb1f7c4d2c6`
-- Planning approval recorded by COORDINATOR: `7494c2ed589e559a955934f8a1580d3867e2356b`
-- Phase 6 implementation authorization: `0bcc25a5437cab8a326e64281579ead56274d8cb` — concedida pela usuária em 2026-09-11, sem expansão de escopo
-- Pre-implementation UI/UX: `APPROVED` — Definition of Ready `SATISFIED` em `3c10be208e4e4d6dcfc3329dd6207961c898d44c`
-- Superseded direction: autenticação multiusuário, RBAC complexo, tenants, organizações, SSO/federação e RLS orientado a tenants no roadmap imediato
-- Preserved decision: `ARCH-2026-09-10-002` e a Fase 5 `APPROVED_WITH_WARNINGS`
+- Functional Commit reviewed: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
+- Functional baseline: `88e194778b4399a6713f118470f9d861c553cd9e`
+- Repository HEAD analyzed: `f25bf5a0138798854f33ddb1a96c6fe23163cf38`
+- Scope decision: `ARCH-2026-09-10-003`
 - Production Readiness: BLOCKED
 
 ## Problem
 
-O roadmap anterior tratava identidade como fundação de uma plataforma multiusuário. A HOPE, porém, é uma assistente pessoal de uso individual. Manter tenants, RBAC complexo, organizações e identidade enterprise elevaria custo e manutenção sem proteger melhor o risco real: tools, agentes e integrações executando ações sobre dados e sistemas do único owner.
-
-Também é necessário decidir se o Target UI pode ser implementado antes da fundação de permissões sem mascarar lacunas de segurança ou apresentar capacidades futuras como existentes.
+Consolidar a Phase 6 depois dos reviews independentes obrigatórios, sem refazer a validação dos reviewers, confundir aprovação funcional com autorização de produção ou iniciar automaticamente a Phase 7.
 
 ## Current State
 
-- Fase 5: `APPROVED_WITH_WARNINGS` no Functional Commit `88e194778b4399a6713f118470f9d861c553cd9e`.
-- Production Readiness: `BLOCKED`.
-- Commits posteriores ao baseline são exclusivamente documentais.
-- Antes da decisão `ARCH-2026-09-10-003`, não existia `docs/phase-6.md`; o próprio registro documental da decisão criou esse plano. Nenhuma próxima fase foi implementada.
-- O navegador cria e envia um UUID arbitrário; isso é namespace transitório, não autenticação.
-- O schema preserva `user_id` em memórias, relações, entidades, conversas e eventos.
-- O HOPE Main Dashboard é Target UI aprovado, mas a implementação atual permanece parcial.
-- Findings de QA, Database, Security e UI/UX continuam sob ownership dos respectivos reviewers.
+- Development entregou `READY_FOR_REVIEW` no Functional Commit exato `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`.
+- QA registrou `APPROVED_WITH_WARNINGS` no mesmo hash e não encontrou blocker funcional.
+- Security registrou `APPROVED_WITH_WARNINGS` no mesmo hash e não encontrou novo blocker funcional da Phase 6.
+- UI/UX registrou `APPROVED` no mesmo hash, com fidelidade P0/P1 aceita e nenhum blocker ou warning visual neste gate.
+- Database é `N/A`: o diff funcional não alterou backend, API, schema, migration, query ou persistência.
+- `QA-003` foi encerrado por QA; `UIUX-F5-W01`, `UIUX-F5-W02` e `UIUX-F5-W03` foram encerrados por UI/UX.
+- `QA-ENV-002`, `QA-WARN-HTTPX` e `SEC-018` permanecem abertos e não bloqueantes.
+- Blockers históricos de produção e limitações do PostgreSQL real permanecem vigentes exclusivamente para Production Readiness.
 
 ## Constraints
 
-- Planejamento e documentação somente.
-- Não implementar, criar migration, acessar banco real, configurar provider, usar credencial, aceitar custo ou autorizar produção.
-- Não encerrar nem reescrever findings de outros Works.
-- Não alterar o Functional Commit nem o status consolidado da Fase 5.
-- Preservar prioridade visual sem esconder consentimento, ações sensíveis ou limitações reais.
-- Evitar arquitetura multiusuário/enterprise sem demanda.
+- Consolidar somente documentação sob ownership do PLANNER.
+- Não alterar código, testes, evidências, relatórios de reviewers, schema, migrations, banco real, assets ou configuração.
+- Não mudar o Functional Commit nem incorporar commits documentais à identidade funcional da fase.
+- Não aceitar riscos HIGH/CRITICAL, autorizar deploy, merge, push, produção, custo, provider, credencial ou infraestrutura.
+- Não iniciar Phase 7 nem tratar o dashboard como autorização para capacidades futuras.
 
 ## Options
 
-### Option A — Manter o roadmap multiusuário anterior
+### Option A — Consolidar a Phase 6 com warnings rastreados
 
-- Pros: prepara uma futura plataforma SaaS e permite múltiplas identidades/roles.
-- Cons: resolve um problema inexistente, amplia schema, UX, operação e threat model.
-- Cost: alto, incluindo provider, suporte e manutenção contínua.
-- Complexity: alta.
-- Security impact: mais superfícies de account takeover, recuperação, RBAC e tenant isolation.
-- Database impact: identities, sessions, tenant RLS, backfills e policies adicionais.
-- Maintenance impact: alto e permanente.
-
-### Option B — Confiar implicitamente em localhost e remover identidade/permissões
-
-- Pros: menor esforço imediato e nenhuma dependência externa.
-- Cons: não protege secrets, filesystem, Git, banco, providers ou ações de tools/agentes; não suporta acesso remoto seguro.
-- Cost: baixo agora, alto após incidente ou expansão.
+- Pros: respeita os três pareceres independentes, encerra o gate funcional e mantém os limites de produção explícitos.
+- Cons: dívida ambiental, de harness e de produção permanece aberta.
+- Cost: baixo; documentação e acompanhamento de backlog.
 - Complexity: baixa.
-- Security impact: fail-open; prompt injection ou conteúdo malicioso poderia acionar efeitos sem um principal confiável.
-- Database impact: nenhum imediato.
-- Maintenance impact: dívida crítica antes de tools/agentes.
+- Security impact: nenhum risco novo é aceito; `SEC-018` segue aberto e os blockers de produção permanecem bloqueantes para deploy.
+- Database impact: nenhum; Database continua `N/A` para o diff da fase.
+- Maintenance impact: warnings não bloqueantes passam a ter rastreabilidade central.
 
-### Option C — Single-owner boundary + autorização de recurso + PermissionManager por risco
+### Option B — Rejeitar ou reabrir a Phase 6
 
-- Pros: protege o risco real com poucos componentes; funciona localmente e admite evolução cloud sem virar plataforma de contas.
-- Cons: ainda exige sessão, confirmação, revogação e UX própria; o mecanismo remoto precisará decisão futura.
-- Cost: baixo a médio no modo local; custo cloud somente se acesso remoto for escolhido.
-- Complexity: moderada e proporcional.
-- Security impact: fail-closed, grants mínimos e nenhuma autoelevação.
-- Database impact: preserva `user_id`; migrations só se inventário/sessão/audit exigir.
-- Maintenance impact: contratos pequenos e substituíveis, sem RBAC/tenant matrix.
+- Pros: permitiria exigir validações ambientais adicionais antes do encerramento funcional.
+- Cons: contradiz QA, Security e UI/UX, que não identificaram blocker de feature; mistura readiness de produção com escopo visual controlado.
+- Cost: médio, com nova rodada sem delta funcional justificável.
+- Complexity: média e sem ganho arquitetural proporcional.
+- Security impact: não reduz os blockers de produção existentes, pois eles pertencem a gates futuros distintos.
+- Database impact: nenhum.
+- Maintenance impact: prolonga um gate concluído e enfraquece a separação entre Feature Status e Production Readiness.
 
 ## Recommendation
 
-Adotar a Option C.
+Adotar a Option A.
 
-Confirmar a prioridade visual com um ajuste mínimo de segurança na sequência:
-
-1. Phase 6 — Target UI Convergence, estritamente visual e local/controlada.
-2. Phase 7 — Single-User Security & Permissions.
-3. Phase 8 — Read-Only Tool Registry.
-4. Phase 9 — Permissioned Effects & Ephemeral Coding.
-5. Phase 10 — Ephemeral Agent Runtime.
-6. Production Hardening como gate condicional antes de qualquer acesso remoto/cloud escolhido, não como pacote enterprise antecipado.
-
-Tools/coding foram divididos em duas fases porque leitura e efeitos têm riscos materialmente diferentes. Agents permanecem depois do PermissionManager e do executor controlado.
+Consolidar a Phase 6 como `APPROVED_WITH_WARNINGS` no Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`. Manter Production Readiness `BLOCKED` e devolver ao COORDINATOR para normalização do painel e solicitação à usuária da escolha explícita do próximo escopo.
 
 ## Rationale
 
-O dashboard pode vir primeiro porque a Fase 6 proposta não adiciona credenciais, efeitos ou novas capacidades; ela apenas converge a apresentação de fluxos existentes e continua bloqueada para produção. Exigir QA, Security e UI/UX reduz o risco de esconder consentimento, confirmação destrutiva ou estados reais.
+Todos os reviews obrigatórios concluíram sobre o mesmo artefato funcional e nenhum reportou blocker da feature. Os warnings remanescentes não invalidam a convergência visual em ambiente local/controlado, mas também não autorizam exposição pública. Database não precisa de review adicional porque não houve delta de dados. Reabrir a fase apenas por blockers históricos de produção violaria a separação de gates definida pelo projeto.
 
-O controle relevante para uma assistente pessoal não é “qual tenant pode acessar qual tenant”, mas “quem é o único owner, qual recurso esta execução pode tocar e qual risco esta ação representa”. Separar essas perguntas evita tanto o fail-open de localhost quanto o excesso de uma plataforma enterprise.
+## Review Matrix Considered
+
+| Work | Result | Functional Commit | Review record | Consolidation |
+|---|---|---|---|---|
+| Development | READY_FOR_REVIEW | `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` | entrega funcional | accepted as delivery, not self-approval |
+| QA | APPROVED_WITH_WARNINGS | `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` | `5d5c2ddd18cfe12011bdd5f51503fbbfcc66904d` | accepted |
+| Database | N/A | `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` | no data delta | accepted as N/A |
+| Security | APPROVED_WITH_WARNINGS | `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` | `f9c0ca8289f62596946d21441ba239dcd7777fd3` | accepted |
+| UI/UX | APPROVED | `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` | `7122d256c68e0018d74ae2e64600167e2db73fb4` | accepted |
+
+Coordination routed consolidation in `f25bf5a0138798854f33ddb1a96c6fe23163cf38`. Esses commits são documentais e não mudam o Functional Commit.
+
+## Warning Disposition
+
+### Closed by the competent reviewer
+
+- `QA-003`: closed by QA; cancelamento restaura o estado visual e descarta processamento remoto obsoleto.
+- `UIUX-F5-W01`: closed by UI/UX; disponibilidade do serviço não é apresentada como consentimento.
+- `UIUX-F5-W02`: closed by UI/UX; anúncios rotineiros e urgentes foram separados.
+- `UIUX-F5-W03`: closed by UI/UX; alvos, tipografia, contraste e foco atendem ao contrato revisado.
+
+### Open and non-blocking for the feature
+
+- `QA-ENV-002` — INFO: permanecem limites de validação manual/ambiental, inclusive leitor de tela e dispositivos físicos.
+- `QA-WARN-HTTPX` — INFO: depreciação Starlette TestClient/httpx.
+- `SEC-018` — LOW: o harness browser herda ambiente amplo e usa proteções operacionais insuficientes para subprocessos destrutivos.
+- Warnings históricos de Database e Security continuam no backlog conforme seus relatórios de origem.
+
+### Production-only boundaries
+
+- `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-008` e `SEC-012` continuam bloqueando Production Readiness.
+- Role restrita, TLS, migration real, validação estrutural e operação com PostgreSQL real continuam não comprovados/autorizados.
+- Esses itens não foram aceitos, encerrados ou reclassificados; apenas não bloqueiam retroativamente a feature visual local/controlada.
 
 ## Architecture
 
+A consolidação não modifica a arquitetura oficial. O dashboard implementado continua uma camada de apresentação sobre contratos existentes:
+
 ```text
-OwnerAuthenticator → OwnerSession → OwnerContext
-                                      ↓
-                              ResourceAuthorizer
-                                      ↓
-                              PermissionManager
-                        ALLOW | DENY | CONFIRM
-                                      ↓
-                           Tool / Agent / Effect
-                                      ↓
-                              Minimal Audit
+Existing FastAPI/API contracts — unchanged
+                │
+                ▼
+Existing frontend state/data adapters
+                │
+        ┌───────┼────────┐
+        ▼       ▼        ▼
+   App Shell  Globe    Conversation
+        │       │        │
+        └───────┼────────┘
+                ▼
+  Responsive + Accessible Presentation
 ```
 
-- Reconhecimento do owner prova o principal humano único.
-- Autorização por recurso limita path, repositório, memória, banco, integração e destino.
-- PermissionManager decide risco e confirmação; não autentica e não substitui resource checks.
-- Tools e agentes recebem interseção de grants, nunca permissão igual ou maior por herança.
-- Aprovação é vinculada a owner session, ação, alvo, fingerprint, parâmetros, ambiente, execution ID, nonce e expiração.
-- Conteúdo não confiável não cria grants nem confirma ações.
-
-## Permission Levels
-
-| Level | Default decision | Confirmation | Scope/expiry | Examples |
-|---|---|---|---|---|
-| SAFE | ALLOW somente em allowlist | não, dentro da tarefa | requisição/tarefa e recursos enumerados | leitura de memória própria, docs permitidas, status |
-| WRITE | ALLOW somente com task envelope; senão CONFIRM | contextual | uma tarefa ou até 30 min, alvo/ação exatos | editar workspace, salvar rascunho, commit local autorizado |
-| SENSITIVE | REQUIRE_CONFIRMATION | owner em UI confiável | uso único, até 5 min, destino/parâmetros/budget | provider externo, secret handle, mensagem, custo, integração privada |
-| DESTRUCTIVE | REQUIRE_STRONG_CONFIRMATION | owner + alvo/consequência inequívocos | uso único, até 2 min, nonce e fingerprint | excluir, sobrescrever, force push, DDL/migration destrutiva |
-
-Invariantes comuns:
-
-- policy ausente, alvo ambíguo, erro de classificação ou mudança de parâmetros resulta em `DENY`.
-- grants são revogáveis e não sobrevivem além do escopo definido.
-- retry de efeito incerto não é automático.
-- agents não confirmam em nome do owner nem modificam a policy que os governa.
-- audit omite secrets, tokens, prompts brutos e conteúdo privado completo.
-
-## Owner and Legacy Identity
-
-- Desenvolvimento local: pareamento da instalação e sessão opaca server-side; segredo no cofre do SO quando necessário.
-- Remoto/cloud: passkey/WebAuthn ou OIDC allowlisted para um único subject, escolhidos somente quando houver objetivo de acesso remoto.
-- `X-Hope-User-Id` e `?user_id=` deixam de ser autoridade na Phase 7.
-- `user_id` do banco permanece como namespace canônico do owner por compatibilidade.
-- Nenhum UUID legado é autoassociado pela simples posse no browser.
-- Vínculo, quarentena ou descarte dependem de inventário do Database, dry-run, backup, rollback e autorização específica.
-- RLS por tenant sai do roadmap imediato; RLS simples fica como defesa opcional condicionada ao perfil de deploy.
-
-## Required Reviews
-
-### Phase 6 — Target UI Convergence
-
-- QA: YES — browser, regressão, responsividade, WebGL e controles existentes.
-- DATABASE: NO — escopo não altera schema, query ou persistência; mudança funcional de dados exige retorno ao Planner e reclassificação.
-- SECURITY: YES — consentimento, confirmação destrutiva, claims e ausência de capacidades falsas.
-- UI/UX: YES — especificação prévia e review de fidelidade no mesmo Functional Commit.
-
-### Phase 7 — Single-User Security & Permissions
-
-- QA: YES — sessão, revogação, HTTP/WS e negativas de permissão.
-- DATABASE: YES se houver migration, vínculo de namespace ou persistência de sessão/audit; o impacto deve ser fechado antes do DEV.
-- SECURITY: YES — review obrigatório da fronteira de owner, grants, secrets e prompt injection.
-- UI/UX: YES — pareamento, expiração, confirmação, revogação e estados acessíveis.
-
-### Phases 8–10
-
-- Phase 8: QA YES; DATABASE NO porque exclui tool de banco/persistência; SECURITY YES; UI/UX YES.
-- Phase 9: QA YES; DATABASE NO porque migration e banco real são non-goals; SECURITY YES; UI/UX YES.
-- Phase 10: QA YES; DATABASE NO porque o runtime inicial é efêmero; SECURITY YES; UI/UX YES.
-- Regra de reclassificação: qualquer proposta que introduza persistência, query relevante, migration ou tool de banco volta ao Planner antes do DEV e torna Database `YES`.
+- O HOPE Main Dashboard está aprovado para as capacidades reais da Phase 6.
+- Tools, coding, agents, métricas sem fonte, autenticação do owner e PermissionManager continuam futuros.
+- O modelo `SINGLE_USER` e a sequência arquitetural definida em `ARCH-2026-09-10-003` permanecem inalterados.
 
 ## Risks
 
-- A Phase 6 visual pode esconder controles de segurança ou criar botões inertes para capacidades futuras.
-- “Single-user” pode ser confundido com “sem autenticação” e resultar em acesso remoto inseguro.
-- Grants WRITE amplos podem virar autorização permanente por conveniência.
-- Confirmações frequentes podem gerar fadiga e cliques automáticos.
-- Dados legados podem ser atribuídos ao owner errado sem inventário.
-- Manter `user_id` pode ser confundido com suporte multi-tenant, embora seja apenas namespace compatível.
-- Adiar Production Hardening não pode significar expor antes do gate.
+- Warnings ambientais podem esconder incompatibilidades em leitores de tela, dispositivos físicos ou ambiente real.
+- O harness browser pode executar subprocessos com ambiente mais amplo que o necessário até `SEC-018` ser tratado.
+- A aprovação visual pode ser confundida com aprovação de produção ou disponibilidade de capacidades futuras.
+- Blockers históricos de identidade, secrets, TLS, banco e operação continuam críticos para qualquer exposição pública.
 
 ## Acceptance Criteria
 
-- [x] A usuária aprovou `ARCH-2026-09-10-003`, `docs/phase-6.md` e autorizou a implementação da Phase 6 em 2026-09-11, sem expansão de escopo.
-- [x] Modelo `SINGLE_USER` está explícito e complexidade multiusuário/enterprise saiu do roadmap imediato.
-- [x] Findings de reviewers permanecem históricos e não foram encerrados pelo Planner.
-- [x] Target UI é a Phase 6 autorizada e `IN_PROGRESS`, ainda sem Functional Commit.
-- [x] Dashboard não pode apresentar tools, agents, métricas ou rotas futuras como funcionais.
-- [x] Owner recognition, resource authorization e risk permissions estão separados.
-- [x] SAFE, WRITE, SENSITIVE e DESTRUCTIVE possuem regras de confirmação, escopo, expiração, revogação, auditoria e fail-closed.
-- [x] Tools/agents não podem autoelevar, reutilizar approval ou herdar grants maiores.
-- [x] UUID transitório e `user_id` possuem estratégia segura e não destrutiva.
-- [x] RLS por tenant foi removido do roadmap imediato sem alterar schema.
-- [x] Local/controlado e remoto/cloud têm requisitos distintos.
-- [x] Required Reviews estão definidos para a fase proposta.
-- [x] Somente a implementação da Phase 6 foi autorizada; migration, banco, provider, credencial, custo, produção, tools, agents e Phase 7 permanecem não autorizados.
+- [x] QA, Security e UI/UX revisaram exatamente `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`.
+- [x] Nenhum blocker funcional permanece aberto para a Phase 6.
+- [x] Database foi mantido `N/A` somente porque não houve delta de backend, API, schema, migration ou persistência.
+- [x] `QA-003` e `UIUX-F5-W01` a `UIUX-F5-W03` foram encerrados somente com evidência dos respectivos reviewers.
+- [x] `QA-ENV-002`, `QA-WARN-HTTPX` e `SEC-018` permanecem rastreados e não bloqueantes para a feature.
+- [x] Blockers históricos de produção permanecem abertos e Production Readiness continua `BLOCKED`.
+- [x] Feature Status e Production Readiness estão separados explicitamente.
+- [x] Functional Commit permanece `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`.
+- [x] Nenhum código, teste, migration, banco, provider, credencial, infraestrutura ou asset foi alterado na consolidação.
+- [x] Phase 7 não foi iniciada nem autorizada.
 
 ## Implementation Phase
 
-- Planning status: `APPROVED`.
-- Phase 6 implementation status: `IN_PROGRESS`.
-- Implementation authorization: `0bcc25a5437cab8a326e64281579ead56274d8cb`.
-- UI/UX pre-implementation status: `APPROVED` em `3c10be208e4e4d6dcfc3329dd6207961c898d44c`.
-- Phase 7+ implementation status: `NOT_STARTED / NOT_AUTHORIZED`.
-- Functional Commit for next phase: `NONE`.
-- Current functional baseline remains `88e194778b4399a6713f118470f9d861c553cd9e`.
+- Phase 6 Feature Status: `APPROVED_WITH_WARNINGS`.
+- Functional Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`.
+- Production Readiness: `BLOCKED`.
+- Phase 7+: `NOT_STARTED / NOT_AUTHORIZED`.
+- Next gate: `WAITING_FOR_APPROVAL` da usuária para escolher explicitamente o próximo escopo.
 
 ## Deferred Items
 
-- Escolha do mecanismo de owner recognition para Phase 7.
-- Inventário e decisão sobre namespaces UUID legados.
-- Qualquer provider, custo, credencial, migration ou acesso remoto.
-- RLS simples como defesa adicional, somente se o deploy justificar.
-- Model Router, memória semântica, skills, learning, imagens, multimodalidade, agentes persistentes, automações e HOPE Bridge.
-- Production Hardening real e go-live.
+- `QA-ENV-002`, `QA-WARN-HTTPX` e `SEC-018`.
+- Warnings históricos de Database e Security.
+- Todos os blockers exclusivos de Production Readiness.
+- Phase 7 — Single-User Security & Permissions e qualquer fase posterior.
+- Deploy, merge, push, acesso remoto, provider, custo, credencial, migration e operação real.
 
 ## Coordinator Handoff
 
-- Recommended Next Role: DEVELOPMENT.
-- Status: NOT_STARTED.
-- Task: implementar exclusivamente a Phase 6 conforme `docs/phase-6.md` e `docs/design/phase-6-target-ui-spec.md`, produzir um novo Functional Commit e parar para os reviews obrigatórios.
-- Do not route to: Phase 7, Database, providers, produção, tools ou agents.
-- Boundary: a autorização cobre somente a implementação da Phase 6 dentro do escopo aprovado; não autoriza expansão funcional, migration, banco, provider, credencial, custo, produção ou qualquer fase posterior.
+- Recommended Next Role: COORDINATOR.
+- Status: WAITING_FOR_APPROVAL.
+- Task: normalizar o painel público com a consolidação da Phase 6 e solicitar à usuária a escolha explícita do próximo escopo.
+- Do not route to: DEVELOPMENT, Phase 7, produção, merge, push, Database, providers, tools ou agents sem nova autorização.
+- Boundary: a decisão aprova a feature da Phase 6 com warnings no hash exato; não concede nenhuma autorização operacional ou de próxima fase.
