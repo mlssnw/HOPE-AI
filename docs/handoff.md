@@ -16,7 +16,7 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 - Last approved Functional Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
 - Working tree expected: preservar a alteração preexistente em `AGENTS.md` e os assets não rastreados; os commits de review não incorporam código funcional
 - Database environment: o re-review de Database validou o gate de schema em ambientes descartáveis; PostgreSQL real permaneceu inacessível e a migration `20260903_0003` não foi aplicada nem validada no ambiente real
-- Active phase: Phase 6 — Target UI Convergence concluída; nenhuma próxima fase está autorizada. Nova direção de produto aguarda reconciliação do PLANNER.
+- Active phase: Phase 6 — Target UI Convergence concluída; nenhuma próxima fase está autorizada. `ARCH-2026-09-20-001` aguarda decisão da owner.
 
 ## User Strategic Decision
 
@@ -26,21 +26,21 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 - Removed from immediate roadmap: autenticação multiusuário, RBAC complexo, isolamento entre múltiplos usuários, RLS orientado a tenants, organizações/teams e infraestrutura de identidade enterprise
 - Future security objective: Single-User Security & Permissions para tools, agentes, filesystem, código, Git, banco, integrações, ações externas e operações destrutivas
 - Permission model direction: `SAFE` permite execução automática; `WRITE` depende do contexto; `SENSITIVE` exige confirmação do owner; `DESTRUCTIVE` exige confirmação explícita forte
-- Planner recommendation: 1) Phase 6 Target UI Convergence; 2) Phase 7 Single-User Security & Permissions; 3) Phase 8 Read-Only Tools; 4) Phase 9 Permissioned Effects & Ephemeral Coding; 5) Phase 10 Ephemeral Agents; 6) Production Hardening antes de qualquer exposição escolhida
+- Historical Planner recommendation: `SUPERSEDED` para ordem futura por `ARCH-2026-09-20-001`; preservada aqui como evidência da decisão que orientou a Phase 6
 - Rationale: segurança deve proteger o único owner e governar efeitos reais sem importar complexidade de tenants, organizações ou identidade enterprise
 - Visual boundary: o Target UI permanece aprovado e é o alvo oficial da Phase 6; UI/UX fechou a spec em `3c10be2` e o DEV deve implementá-la sem improvisar outra identidade
 - Authorization boundary: somente a Phase 6 está autorizada. Permanecem fora de escopo expansão funcional, banco, migrations, providers, produção, tools, agents e Phase 7
 
 ## Product Direction Intake — 2026-09-19
 
-- Status: REGISTERED — PENDING PLANNER RECONCILIATION
+- Status: PLANNER RECONCILED — WAITING_FOR_APPROVAL
 - Source: decisão explícita da owner, persistida em [`docs/coordination/product-direction-2026-09-19.md`](coordination/product-direction-2026-09-19.md)
 - Preserved truths: `SINGLE_USER`, assistente pessoal, cloud-first, provider-agnostic, memória persistente e experiência centrada no Memory Globe/Core Orb
 - New future direction: voice presence, realtime voice, wake word `HOPE`, speaker verification, self knowledge, personalidade ampliada, modos combináveis, memória controlável, organização pessoal, integrações, diagnósticos, auditoria transparente, localização por dispositivo, apps instaláveis e Model Router
-- Personality conflict: inclusão de Dean Winchester como referência de traços, public self knowledge e uso excepcional de referências/bordões por pedido explícito conflitam com a política vigente; decisão permanece pendente do PLANNER
-- Roadmap impact: a sequência posterior à Phase 6 deve ser replanejada; o COORDINATOR não renumerou fases nem autorizou implementação
-- Documentation proposal: PLANNER deve decidir `docs/product-vision.md`, `docs/roadmap.md`, redução futura do handoff e separação explícita entre roadmap e `docs/backlog.md`
-- Routing boundary: PLANNER primeiro; UI/UX somente após consolidação; Development não está autorizado
+- Personality conflict: inclusão de Dean Winchester como referência de traços, public self knowledge e uso excepcional de referências/bordões por pedido explícito conflitam com a política vigente; o PLANNER definiu limites e a decisão permanece pendente da owner
+- Roadmap impact: PLANNER propôs a nova ordem em `docs/roadmap.md` sob `ARCH-2026-09-20-001`; a proposta ainda não está aprovada pela owner e não autoriza implementação
+- Documentation decision: PLANNER aprovou a separação entre `docs/product-vision.md`, `docs/roadmap.md` e `docs/future-architecture.md`; backlog/handoff permanecem em revisão documental futura
+- Routing boundary: decisão da owner primeiro; UI/UX e Development não estão autorizados
 
 Required Reviews:
 
@@ -195,7 +195,7 @@ Required Reviews:
 - Autonomy level: 2.5
 - Status: APPROVED
 - Operational conclusion: Phase 6 foi consolidada pelo PLANNER como `APPROVED_WITH_WARNINGS` no Functional Commit `0912e94`. Database permanece `N/A`; Production Readiness continua `BLOCKED` separadamente.
-- Routing: LEVEL 2 — a nova direção de produto exige reconciliação arquitetural, novo roadmap, dependências de segurança e decisões de documentação pelo PLANNER antes de UI/UX ou Development
+- Routing: LEVEL 3 — `ARCH-2026-09-20-001`, visão, roadmap, personalidade pública e seleção da próxima fase dependem de decisão explícita da owner; UI/UX e Development permanecem bloqueados
 - Boundary: COORDINATOR atualizou somente Current Phase, Current Functional Commit, Review Matrix, blockers, warnings, Next Action e histórico; não concedeu aprovação técnica nem alterou seções ou relatórios de ownership dos reviewers
 
 ## Current Blockers
@@ -220,35 +220,32 @@ Required Reviews:
 - Warnings de Database sobre ausência de PostgreSQL real, confiança na marca Alembic e limitações operacionais permanecem abertos.
 - O aviso de depreciação Starlette/TestClient permanece; a repetição independente confirmou 45 testes Python e 36 testes frontend aprovados.
 - PLANNER registrou os warnings aceitos em [`docs/backlog.md`](backlog.md); o registro não os considera resolvidos.
-- Reconhecimento seguro do owner permanece planejado para a Phase 7; o UUID fornecido pelo cliente continua sendo apenas namespace transitório, não prova do owner.
+- Reconhecimento seguro do owner está proposto para a Phase 8 no novo roadmap ainda não aprovado; o UUID fornecido pelo cliente continua sendo apenas namespace transitório, não prova do owner.
 - Commits locais ainda não enviados a `origin/main` exigem nova verificação antes de cada revisão.
 - Warnings aceitos para avanço devem ser copiados para [`docs/backlog.md`](backlog.md), sem removê-los do relatório original.
-- O README foi normalizado para a conclusão comprovada da Phase 6, mas preserva o roadmap anterior como referência até o PLANNER consolidar a nova ordem; a visão futura não deve ser publicada como capacidade atual.
-- A política vigente de personalidade ainda não inclui Dean Winchester/public self knowledge e proíbe absolutamente bordões; a nova intenção da owner não altera essa regra até reconciliação explícita do PLANNER.
+- O README foi normalizado para a conclusão comprovada da Phase 6, mas preserva o roadmap anterior como referência até a owner decidir `ARCH-2026-09-20-001`; a visão futura não deve ser publicada como capacidade atual.
+- O PLANNER propôs Dean Winchester como referência de traços e uma exceção estreita para referência explícita, mas a política vigente continua proibindo absolutamente falas/bordões até decisão da owner.
 - Wake word, speaker verification, realtime voice, apps instaláveis, integrações, diagnóstico, auditoria ampliada e Model Router são `PLANNED/PROPOSED`, não capacidades implementadas.
 
 ## Next Action
 
-- Role: PLANNER
-- Status: WAITING_FOR_REVIEW
-- Task: reconciliar a nova visão de produto, as contradições de personalidade/self knowledge, as dependências de segurança/voz/cloud e a estrutura documental; publicar um novo roadmap oficial sem reabrir ou ampliar a Phase 6
+- Role: USER
+- Status: WAITING_FOR_APPROVAL
+- Task: aprovar ou revisar `ARCH-2026-09-20-001`, a visão/roadmap, a política de personalidade pública e a seleção da próxima fase para planejamento
 - Target commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
 - Required inputs:
-  - [`AGENTS.md`](../AGENTS.md)
-  - [`docs/architecture.md`](architecture.md)
-  - [`docs/future-architecture.md`](future-architecture.md)
-  - [`docs/phase-6.md`](phase-6.md)
   - [`docs/reviews/architecture-latest.md`](reviews/architecture-latest.md)
-  - [`docs/coordination/product-direction-2026-09-19.md`](coordination/product-direction-2026-09-19.md)
+  - [`docs/product-vision.md`](product-vision.md)
+  - [`docs/roadmap.md`](roadmap.md)
 - Expected output:
-  - `docs/product-vision.md` e `docs/roadmap.md`, se aprovados como fontes de verdade, ou decisão explícita por estrutura alternativa
-  - reconciliação da personalidade, public self knowledge e política de referências/bordões
-  - arquitetura e dependências para voice presence, realtime voice, wake word, speaker verification, clients/cloud e permissions
-  - nova ordem e numeração de fases com Required Reviews, sem autorizar implementação
-  - atualização exclusiva dos arquivos de ownership do PLANNER e devolução ao COORDINATOR
-- Blocking dependencies: nenhuma
-- Parallel work: somente leitura; UI/UX e Development não devem iniciar novas specs ou implementação durante a consolidação
-- Escalation: NONE
+  - aprovar/revisar a visão de produto e a ordem proposta das Phases 7–22
+  - aprovar/rejeitar Dean Winchester como referência oficial de traços e sua menção em `SelfKnowledge` público
+  - aprovar/rejeitar a exceção estreita de referência explícita; até lá permanece a proibição absoluta
+  - selecionar se Phase 7 — Conversational Presence Foundation deve ser a próxima fase a receber planejamento próprio
+  - nenhuma aprovação acima autoriza implementação; o plano da Phase 7 e sua execução exigem autorizações separadas
+- Blocking dependencies: decisão da owner
+- Parallel work: somente leitura; UI/UX e Development não devem iniciar specs ou implementação
+- Escalation: USER
 
 ## Recent History
 
@@ -278,3 +275,4 @@ Required Reviews:
 - 2026-09-19 — QA concluiu `APPROVED_WITH_WARNINGS` em `5d5c2dd`, Security concluiu `APPROVED_WITH_WARNINGS` em `f9c0ca8` e UI/UX concluiu `APPROVED` em `7122d25`, todos contra `0912e94`; COORDINATOR encaminhou a consolidação final ao Planner.
 - 2026-09-19 — PLANNER consolidou a Phase 6 como `APPROVED_WITH_WARNINGS` em `ARCH-2026-09-19-001`/`5ca95f4`, manteve Production Readiness `BLOCKED` e não iniciou a Phase 7.
 - 2026-09-19 — A owner apresentou nova direção futura para voz, wake word, speaker verification, personalidade/self knowledge, modos, apps, integrações, transparência e Model Router. COORDINATOR registrou o intake sem ampliar a Phase 6 e encaminhou a reconciliação arquitetural e o novo roadmap ao PLANNER.
+- 2026-09-20 — PLANNER publicou `ARCH-2026-09-20-001` em `de2242a`, criou `docs/product-vision.md` e `docs/roadmap.md`, separou presença conversacional local dos gates de segurança e devolveu a decisão à owner sem autorizar Phase 7, UI/UX ou Development.
