@@ -2,6 +2,14 @@
 
 Histórico verificável da evolução do HOPE AI. Commits documentais posteriores não substituem o Functional Commit de cada entrega.
 
+## Product Direction Intake — decisão de 2026-09-19, registrada em 2026-09-20
+
+- A owner registrou nova direção futura para voice presence, realtime voice, wake word `HOPE`, speaker verification, Core Orb reativo à amplitude local, self knowledge, personalidade ampliada, modos combináveis, memória controlável, organização pessoal, integrações, diagnósticos, auditoria, localização por dispositivo, apps instaláveis e Model Router.
+- O registro oficial de coordenação está em [`docs/coordination/product-direction-2026-09-19.md`](docs/coordination/product-direction-2026-09-19.md).
+- A direção é visão de produto e entrada de planejamento; nenhuma capacidade foi declarada implementada e nenhuma próxima fase foi autorizada.
+- Personalidade, uso excepcional de referências/bordões, dependências de segurança, numeração de fases e novo roadmap aguardam reconciliação do Planner.
+- Phase 6 permanece congelada no Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`, sem scope creep.
+
 ## Phase 6 — Target UI Convergence
 
 - **Data da decisão:** 2026-09-10
@@ -14,7 +22,8 @@ Histórico verificável da evolução do HOPE AI. Commits documentais posteriore
 - **UI/UX pré-implementação:** `APPROVED` em `3c10be2`, com Definition of Ready satisfeita e mapeamento P0/P1 fechado
 - **Implementação:** entregue pelo Development no Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`, com 45 testes Python e 36 testes frontend aprovados
 - **Reviews técnicos:** QA `APPROVED_WITH_WARNINGS`, Security `APPROVED_WITH_WARNINGS` e UI/UX `APPROVED` no mesmo Functional Commit; Database `N/A`
-- **Próximo gate:** consolidação final do Planner; Phase 7 permanece não autorizada
+- **Consolidação final:** `APPROVED_WITH_WARNINGS` por `ARCH-2026-09-19-001`, registrada no commit documental `5ca95f4`
+- **Próximo gate:** nova visão e roadmap em reconciliação pelo Planner; nenhuma fase posterior está autorizada
 - **Limite:** expansão funcional, banco, migrations, providers, produção, tools, agents e Phase 7 permanecem não autorizados
 - **Correção editorial:** concluída em `bd244bb`; `docs/phase-6.md` não existia antes de `ARCH-2026-09-10-003` e foi criado pelo registro dessa decisão
 

@@ -7,16 +7,16 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 ## Current Phase
 
 - Phase: 6 — Target UI Convergence
-- Phase status: WAITING_FOR_REVIEW
-- Feature status: APPROVED_WITH_WARNINGS — QA, Security e UI/UX concluíram sem blocker funcional; consolidação final do Planner pendente
+- Phase status: APPROVED_WITH_WARNINGS
+- Feature status: APPROVED_WITH_WARNINGS — QA, Security e UI/UX concluíram sem blocker funcional; PLANNER consolidou em `ARCH-2026-09-19-001`
 - Production readiness: BLOCKED — Security rejeitou deploy público
 - Branch: `codex/phase-6-target-ui`
-- Application version: 6.0 / Phase 6 candidate; consolidação do Planner pendente
+- Application version: 6.0 / Phase 6 aprovada para ambiente local/controlado
 - Scope: convergência visual do HOPE Main Dashboard sobre capacidades reais, com acessibilidade, responsividade e preservação dos contratos funcionais existentes
-- Last approved commit: `88e194778b4399a6713f118470f9d861c553cd9e`
+- Last approved Functional Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
 - Working tree expected: preservar a alteração preexistente em `AGENTS.md` e os assets não rastreados; os commits de review não incorporam código funcional
 - Database environment: o re-review de Database validou o gate de schema em ambientes descartáveis; PostgreSQL real permaneceu inacessível e a migration `20260903_0003` não foi aplicada nem validada no ambiente real
-- Active phase: Phase 6 — Target UI Convergence, reviews técnicos concluídos em `0912e94`; aguardando Planner
+- Active phase: Phase 6 — Target UI Convergence concluída; nenhuma próxima fase está autorizada. Nova direção de produto aguarda reconciliação do PLANNER.
 
 ## User Strategic Decision
 
@@ -30,6 +30,17 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 - Rationale: segurança deve proteger o único owner e governar efeitos reais sem importar complexidade de tenants, organizações ou identidade enterprise
 - Visual boundary: o Target UI permanece aprovado e é o alvo oficial da Phase 6; UI/UX fechou a spec em `3c10be2` e o DEV deve implementá-la sem improvisar outra identidade
 - Authorization boundary: somente a Phase 6 está autorizada. Permanecem fora de escopo expansão funcional, banco, migrations, providers, produção, tools, agents e Phase 7
+
+## Product Direction Intake — 2026-09-19
+
+- Status: REGISTERED — PENDING PLANNER RECONCILIATION
+- Source: decisão explícita da owner, persistida em [`docs/coordination/product-direction-2026-09-19.md`](coordination/product-direction-2026-09-19.md)
+- Preserved truths: `SINGLE_USER`, assistente pessoal, cloud-first, provider-agnostic, memória persistente e experiência centrada no Memory Globe/Core Orb
+- New future direction: voice presence, realtime voice, wake word `HOPE`, speaker verification, self knowledge, personalidade ampliada, modos combináveis, memória controlável, organização pessoal, integrações, diagnósticos, auditoria transparente, localização por dispositivo, apps instaláveis e Model Router
+- Personality conflict: inclusão de Dean Winchester como referência de traços, public self knowledge e uso excepcional de referências/bordões por pedido explícito conflitam com a política vigente; decisão permanece pendente do PLANNER
+- Roadmap impact: a sequência posterior à Phase 6 deve ser replanejada; o COORDINATOR não renumerou fases nem autorizou implementação
+- Documentation proposal: PLANNER deve decidir `docs/product-vision.md`, `docs/roadmap.md`, redução futura do handoff e separação explícita entre roadmap e `docs/backlog.md`
+- Routing boundary: PLANNER primeiro; UI/UX somente após consolidação; Development não está autorizado
 
 Required Reviews:
 
@@ -61,7 +72,7 @@ Required Reviews:
 - Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
 - Phase: 6
 - Created by: DEV
-- Status: APPROVED_WITH_WARNINGS — consolidação final do Planner pendente
+- Status: APPROVED_WITH_WARNINGS — consolidado pelo PLANNER em `ARCH-2026-09-19-001`
 - Base approved: `88e194778b4399a6713f118470f9d861c553cd9e`
 - Notes: o commit contém frontend, testes e evidências da Phase 6; commits documentais posteriores não alteram sua identidade. QA, Security e UI/UX revisaram exatamente `0912e94` sem blocker funcional.
 
@@ -74,7 +85,7 @@ Required Reviews:
 | DATABASE | NO | N/A | — |
 | SECURITY | YES | APPROVED_WITH_WARNINGS | `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
 | UI/UX | YES | APPROVED | `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
-| PLANNER | YES | WAITING_FOR_REVIEW | `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
+| PLANNER | YES | APPROVED_WITH_WARNINGS | `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
 
 ## Development
 
@@ -182,8 +193,8 @@ Required Reviews:
 
 - Autonomy level: 2.5
 - Status: APPROVED
-- Operational conclusion: QA, Security e UI/UX concluíram os reviews obrigatórios de `0912e94` sem blocker funcional. Database permanece `N/A`; Production Readiness continua `BLOCKED` separadamente.
-- Routing: LEVEL 1 — PLANNER deve consolidar a Phase 6, registrar warnings aceitos no backlog e definir o próximo gate sem iniciar a Phase 7 automaticamente
+- Operational conclusion: Phase 6 foi consolidada pelo PLANNER como `APPROVED_WITH_WARNINGS` no Functional Commit `0912e94`. Database permanece `N/A`; Production Readiness continua `BLOCKED` separadamente.
+- Routing: LEVEL 2 — a nova direção de produto exige reconciliação arquitetural, novo roadmap, dependências de segurança e decisões de documentação pelo PLANNER antes de UI/UX ou Development
 - Boundary: COORDINATOR atualizou somente Current Phase, Current Functional Commit, Review Matrix, blockers, warnings, Next Action e histórico; não concedeu aprovação técnica nem alterou seções ou relatórios de ownership dos reviewers
 
 ## Current Blockers
@@ -211,27 +222,31 @@ Required Reviews:
 - Reconhecimento seguro do owner permanece planejado para a Phase 7; o UUID fornecido pelo cliente continua sendo apenas namespace transitório, não prova do owner.
 - Commits locais ainda não enviados a `origin/main` exigem nova verificação antes de cada revisão.
 - Warnings aceitos para avanço devem ser copiados para [`docs/backlog.md`](backlog.md), sem removê-los do relatório original.
+- O README foi normalizado para a conclusão comprovada da Phase 6, mas preserva o roadmap anterior como referência até o PLANNER consolidar a nova ordem; a visão futura não deve ser publicada como capacidade atual.
+- A política vigente de personalidade ainda não inclui Dean Winchester/public self knowledge e proíbe absolutamente bordões; a nova intenção da owner não altera essa regra até reconciliação explícita do PLANNER.
+- Wake word, speaker verification, realtime voice, apps instaláveis, integrações, diagnóstico, auditoria ampliada e Model Router são `PLANNED/PROPOSED`, não capacidades implementadas.
 
 ## Next Action
 
 - Role: PLANNER
 - Status: WAITING_FOR_REVIEW
-- Task: consolidar os reviews obrigatórios da Phase 6 no Functional Commit exato, registrar warnings aceitos e emitir a decisão final da fase sem iniciar Phase 7
+- Task: reconciliar a nova visão de produto, as contradições de personalidade/self knowledge, as dependências de segurança/voz/cloud e a estrutura documental; publicar um novo roadmap oficial sem reabrir ou ampliar a Phase 6
 - Target commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
 - Required inputs:
   - [`AGENTS.md`](../AGENTS.md)
   - [`docs/architecture.md`](architecture.md)
+  - [`docs/future-architecture.md`](future-architecture.md)
   - [`docs/phase-6.md`](phase-6.md)
-  - [`docs/reviews/qa-latest.md`](reviews/qa-latest.md)
-  - [`docs/reviews/security-review-latest.md`](reviews/security-review-latest.md)
-  - [`docs/reviews/uiux-latest.md`](reviews/uiux-latest.md)
+  - [`docs/reviews/architecture-latest.md`](reviews/architecture-latest.md)
+  - [`docs/coordination/product-direction-2026-09-19.md`](coordination/product-direction-2026-09-19.md)
 - Expected output:
-  - decisão consolidada da Phase 6 baseada nos três reviews e no `DATABASE: N/A`
-  - warnings não bloqueantes copiados ao backlog sem serem tratados como resolvidos
-  - atualização exclusiva dos arquivos de ownership do Planner e commit documental
-  - devolução ao COORDINATOR; Phase 7 permanece não autorizada
+  - `docs/product-vision.md` e `docs/roadmap.md`, se aprovados como fontes de verdade, ou decisão explícita por estrutura alternativa
+  - reconciliação da personalidade, public self knowledge e política de referências/bordões
+  - arquitetura e dependências para voice presence, realtime voice, wake word, speaker verification, clients/cloud e permissions
+  - nova ordem e numeração de fases com Required Reviews, sem autorizar implementação
+  - atualização exclusiva dos arquivos de ownership do PLANNER e devolução ao COORDINATOR
 - Blocking dependencies: nenhuma
-- Parallel work: somente leitura; nenhuma nova implementação ou fase deve começar durante a consolidação
+- Parallel work: somente leitura; UI/UX e Development não devem iniciar novas specs ou implementação durante a consolidação
 - Escalation: NONE
 
 ## Recent History
@@ -260,3 +275,5 @@ Required Reviews:
 - 2026-09-11 — UI/UX aprovou a especificação pré-implementação e fechou o mapeamento P0/P1 em `3c10be2`; PLANNER sincronizou a autorização e roteou a implementação ao Development em `a9b888b`; COORDINATOR liberou o DEV no escopo fechado.
 - 2026-09-15 — Development entregou a Phase 6 como `READY_FOR_REVIEW` no Functional Commit `0912e94`, com registro documental `efe0ce8`; COORDINATOR abriu QA, Security e UI/UX em paralelo no mesmo hash e manteve Database `N/A`.
 - 2026-09-19 — QA concluiu `APPROVED_WITH_WARNINGS` em `5d5c2dd`, Security concluiu `APPROVED_WITH_WARNINGS` em `f9c0ca8` e UI/UX concluiu `APPROVED` em `7122d25`, todos contra `0912e94`; COORDINATOR encaminhou a consolidação final ao Planner.
+- 2026-09-19 — PLANNER consolidou a Phase 6 como `APPROVED_WITH_WARNINGS` em `ARCH-2026-09-19-001`/`5ca95f4`, manteve Production Readiness `BLOCKED` e não iniciou a Phase 7.
+- 2026-09-19 — A owner apresentou nova direção futura para voz, wake word, speaker verification, personalidade/self knowledge, modos, apps, integrações, transparência e Model Router. COORDINATOR registrou o intake sem ampliar a Phase 6 e encaminhou a reconciliação arquitetural e o novo roadmap ao PLANNER.

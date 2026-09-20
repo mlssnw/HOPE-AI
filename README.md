@@ -21,7 +21,7 @@
 </p>
 
 <p align="center">
-  <em>Target UI aprovado: Memory Globe, memória persistente, contexto ativo e interação com a HOPE. A implementação visual atual ainda é parcial.</em>
+  <em>Target UI aprovado: a implementação da Phase 6 foi aceita dentro das capacidades reais; elementos futuros da peça conceitual continuam identificados como visão.</em>
 </p>
 
 <p align="center">
@@ -36,14 +36,15 @@ A HOPE é um assistente pessoal experimental de IA com memória persistente e re
 
 Assistentes tradicionais dependem principalmente do contexto imediato da conversa. A HOPE nasceu para explorar uma abordagem em que memória, contexto, relações e histórico possam persistir e ser consultados de forma controlada ao longo do tempo.
 
-## ✨ Última atualização — Fase 5
+## ✨ Última atualização — Phase 6
 
-- Memória persistente passou a exigir consentimento explícito antes de recuperar, capturar ou alterar lembranças.
-- Esquecimento agora exige confirmação associada ao UUID exato da memória; ausência ou divergência é rejeitada.
-- O chat continua disponível em modo degradado quando a memória ou o banco não estão disponíveis.
-- O runtime agora desativa a memória de forma segura quando o schema não corresponde à migration exigida.
+- O dashboard convergiu para a direção visual aprovada sem ativar capacidades futuras inexistentes.
+- Memory Globe/Core Orb, chat, inspector, responsividade chat-first, fallback sem WebGL e acessibilidade foram integrados ao novo shell.
+- Consentimento de memória, histórico local, cancelamento e confirmação destrutiva permanecem separados e operáveis.
+- QA, Security e UI/UX revisaram o mesmo Functional Commit; o Planner consolidou a fase como `APPROVED_WITH_WARNINGS`.
+- A nova visão futura de voz, wake word, apps e personalidade está registrada para planejamento, sem autorização de implementação.
 
-[📖 Ver detalhes técnicos da Fase 5](docs/phase-5.md)
+[📖 Ver detalhes técnicos da Phase 6](docs/phase-6.md)
 
 ## ⚙️ Implementado atualmente
 
@@ -51,12 +52,12 @@ Assistentes tradicionais dependem principalmente do contexto imediato da convers
 |---|---|
 | Memória | CRUD, classificação, consolidação, proveniência, entidades, relações e recuperação híbrida em PostgreSQL/pgvector. Ativação no chat é opt-in. |
 | IA | `HopeOrchestrator` com personalidade original, contexto delimitado e Claude como provider operacional atual. Abstração multi-LLM ainda é parcial. |
-| Visualização | Memory Globe WebGL alimentado por dados reais, com modos orbital, clusters e memória. O novo dashboard aprovado ainda é Target UI. |
+| Visualização | Dashboard da Phase 6 aprovado dentro das capacidades reais, com Memory Globe/Core Orb, modos orbital, clusters e memória, responsividade e fallback textual/WebGL. |
 | Tempo real | Event Bus e WebSocket com eventos incrementais, heartbeat, reconnect e reconciliação HTTP. O barramento ainda é local ao processo. |
 | Busca | Recuperação híbrida de memória; Tavily e busca textual no Obsidian ficam disponíveis quando configurados. |
 | Voz | Ditado pela Web Speech API e TTS por ElevenLabs quando suportados e configurados. |
 | Integrações | Adapters para Anthropic, Tavily, ElevenLabs e Obsidian Local REST API; todos opcionais e protegidos pelo backend. |
-| Qualidade | 45 testes Python e 19 testes frontend cobrindo os principais contratos funcionais e cenários degradados. |
+| Qualidade | 45 testes Python e 36 testes frontend, além de validação browser da matriz de viewports, WebGL/fallback, realtime, acessibilidade e cenários degradados. |
 | Segurança | Segredos no backend, CSP restrita, conteúdo externo tratado como não confiável, consentimento de memória e confirmação destrutiva. Autenticação e hardening de produção permanecem pendentes. |
 
 ## 🚦 Status do projeto
@@ -65,7 +66,7 @@ Assistentes tradicionais dependem principalmente do contexto imediato da convers
 |---|---|
 | Versão atual | `6.0.0-phase.5` |
 | Fase atual | Phase 6 — Target UI Convergence |
-| Estado técnico | `APPROVED_WITH_WARNINGS` pelos reviews técnicos em `0912e94`; consolidação final do Planner pendente |
+| Estado técnico | Phase 6 `APPROVED_WITH_WARNINGS` no Functional Commit `0912e94`, consolidada em `ARCH-2026-09-19-001` |
 | Baseline aprovado | Fase 5 `APPROVED_WITH_WARNINGS` no commit `88e1947` |
 | Deploy público | Ainda não habilitado — autenticação, autorização e hardening de produção pendentes |
 
@@ -75,6 +76,8 @@ O acompanhamento técnico detalhado permanece no [painel operacional](docs/hando
 
 ## 🗺️ Em desenvolvimento / Roadmap
 
+O roadmap posterior à Phase 6 está em reconciliação pelo Planner após nova direção de produto. A lista abaixo preserva o planejamento anterior como referência e não autoriza nenhuma próxima fase.
+
 - [x] Backend FastAPI protegendo credenciais e integrações.
 - [x] Fundação PostgreSQL + pgvector com migrations versionadas.
 - [x] CRUD, classificação, consolidação, proveniência, entidades e relações de memória.
@@ -83,7 +86,7 @@ O acompanhamento técnico detalhado permanece no [painel operacional](docs/hando
 - [x] Chat consciente de memória com consentimento explícito.
 - [x] Correção e esquecimento com confirmação vinculada ao alvo.
 - [x] Aprovação final independente da Fase 5.
-- [ ] Phase 6 — candidate `0912e94` aprovado por QA, Security e UI/UX; consolidação do Planner pendente.
+- [x] Phase 6 — Target UI Convergence aprovada com warnings no Functional Commit `0912e94`.
 - [ ] Single-User Security & Permissions para um único owner, com níveis de risco.
 - [ ] Tools e coding governados por permissões explícitas.
 - [ ] Agentes limitados pelo PermissionManager e sem autoelevação.
@@ -95,7 +98,7 @@ O acompanhamento técnico detalhado permanece no [painel operacional](docs/hando
 - [ ] Multimodalidade, geração de imagens e automações.
 - [ ] Desktop/PWA e implantação cloud pública.
 
-O roadmap detalhado e ainda não autorizado está em [docs/future-architecture.md](docs/future-architecture.md).
+O planejamento anterior e ainda não autorizado está em [docs/future-architecture.md](docs/future-architecture.md). A nova direção está registrada como entrada de coordenação e só será refletida aqui depois da consolidação do Planner.
 
 ## Arquitetura resumida
 
@@ -190,7 +193,7 @@ Durante o desenvolvimento, `X-Hope-User-Id` separa dados por UUID, mas **não é
 A HOPE trata qualidade como parte da arquitetura do produto:
 
 - **45 testes Python**;
-- **19 testes frontend**;
+- **36 testes frontend**;
 - cenários de memória, consentimento, correção e esquecimento;
 - WebSocket, heartbeat, reconexão e eventos incrementais;
 - degradação segura quando banco, schema ou providers não estão disponíveis;
@@ -241,15 +244,17 @@ tests/            testes Python e Node
 - O Event Bus é local ao processo; múltiplas réplicas exigem broker compartilhado.
 - O histórico ativo do chat ainda fica no navegador.
 - A resposta não usa streaming de tokens.
-- A implementação visual atual ainda não corresponde integralmente ao dashboard aprovado.
+- O asset conceitual do dashboard ainda exibe capacidades futuras omitidas corretamente pela implementação da Phase 6.
 - Web Speech API, providers externos e Obsidian dependem de suporte e configuração locais.
 
 ## Documentação
 
 - [Arquitetura atual](docs/architecture.md)
 - [Fase 5](docs/phase-5.md)
+- [Phase 6](docs/phase-6.md)
 - [Dashboard oficial e regras de uso](docs/design/official-dashboard.md)
 - [Handoff operacional](docs/handoff.md)
+- [Nova direção de produto — intake para o Planner](docs/coordination/product-direction-2026-09-19.md)
 - [Reviews técnicos](docs/reviews/README.md)
 - [Arquitetura futura](docs/future-architecture.md)
 - [Changelog](CHANGELOG.md)
