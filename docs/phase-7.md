@@ -23,7 +23,7 @@ A Phase 6 possui chat, ditado do navegador, TTS opcional e estados básicos de v
 
 ## Current State
 
-- Phase 6 está `APPROVED_WITH_WARNINGS` no Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`.
+- A implementação da Phase 6 está no Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`; os pareceres anteriores permanecem evidência, mas o status operacional para integração é `WAITING_FOR_REVIEW` até QA e Security confirmarem o Integration Candidate documental.
 - A resposta textual atual é a fonte usada pela interface e pela leitura em voz.
 - `frontend/js/voice.js` usa Web Speech API para ditado; o backend possui TTS opcional ligado à ElevenLabs.
 - Cancelamento e proteção contra áudio antigo existem no fluxo atual, mas não formam um contrato de turno reutilizável.
@@ -105,7 +105,8 @@ A separação entre resposta canônica, versão falada e estado de turno resolve
 
 ## Dependencies
 
-- Phase 6 congelada e consolidada em `ARCH-2026-09-19-001`.
+- Functional Commit da Phase 6 congelado em `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`; consolidação histórica preservada em `ARCH-2026-09-19-001` sem substituir o gate final de integração.
+- Integration Candidate documental da Phase 6 confirmado por QA e Security no mesmo hash e integrado em `main`; a rodada anterior sobre `0912e94` não substitui esse gate final da branch.
 - Direção `ARCH-2026-09-20-001`, `docs/product-vision.md` e `docs/roadmap.md` aprovadas pela owner.
 - Contratos atuais de estado, acessibilidade, reduced motion e truthfulness em `docs/design/`.
 - Plano Phase 7 aprovado pela owner antes de qualquer especificação ou implementação.
@@ -344,6 +345,7 @@ Sequência futura, não autorizada:
 
 - Aprovação explícita deste plano não autoriza implementação.
 - Development só pode iniciar com nova autorização explícita da owner, depois do gate de UI/UX aplicável.
+- A limpeza documental, os reviews finais de QA/Security sobre o mesmo Integration Candidate e a integração da Phase 6 em `main` devem estar concluídos antes dessa autorização de implementação.
 - Qualquer novo provider, dado persistido, credencial, custo, migration, acesso remoto ou mudança de produção exige decisão própria.
 - Risco HIGH/CRITICAL não pode ser aceito por Planner, reviewers ou Coordinator.
 - A Phase 8 e qualquer fase posterior exigem planejamento e autorização separados.

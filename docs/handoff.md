@@ -172,28 +172,26 @@ Required Reviews:
 
 ## Planner
 
-- Status: WAITING_FOR_APPROVAL
-- Decision ID: `ARCH-2026-09-20-002`
-- Approved parent decision: `ARCH-2026-09-20-001` — owner-approved on 2026-09-20 in `f85b9bb775574b8a1340497e3e9e6d99b9b19c8c`
-- Phase 6 boundary: permanece `APPROVED_WITH_WARNINGS` e congelada no Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`; `ARCH-2026-09-19-001` continua sendo sua consolidação final
-- Approved direction: `docs/product-vision.md`, `docs/roadmap.md` e `docs/future-architecture.md` são oficiais para visão, sequência/gates e contratos futuros; `docs/architecture.md` permanece centrado no estado implementado
-- Phase 7 plan: [`docs/phase-7.md`](phase-7.md) criado; planning `WAITING_FOR_APPROVAL`, implementation `NOT_STARTED`, authorization `NONE` / `NOT_AUTHORIZED`
-- Phase 7 scope: display/spoken, turn/cancel, VoiceManager/SpeechFormatter/TurnManager/VoiceStateManager, contratos de prosódia/pronúncia, PhraseLibrary original, modos combináveis, SelfKnowledge público seguro e amplitude local/efêmera do áudio já reproduzido
-- Phase 7 non-goals: novo cloud STT/TTS, streaming provider, wake word, speaker profile/biometria, cross-device, persistência, integração/efeito, provider/credencial/custo, banco/migration, deploy ou produção
-- Approved order: 7 Conversational Presence → 8 Security & Permissions → 9 Realtime Voice → 10 Cloud/Shared Client → 11 Windows/Wake Word → 12 Android/Device Context → 13 Speaker Verification (optional) → 14 Router/Diagnostics → 15–22 tools, effects, coding, agents, learning, multimodal, automations e Bridge
-- Personality: owner aprovou Lena Luthor, Tony Stark e Dean Winchester como referências de traços gerais e sua presença no `SelfKnowledge` público seguro; HOPE identifica somente como HOPE
-- Reference boundary: reconhecimento ou homenagem original somente sob pedido explícito; citações famosas literais, diálogo copiado, imitação de identidade, clonagem de voz e atuação contínua permanecem proibidos
-- Normative follow-up: eventual reconciliação de `AGENTS.md` deve ocorrer em commit separado da owner/COORDINATOR; a mudança preexistente nesse arquivo foi preservada e não pertence ao commit do Planner
-- Product contracts: SelfKnowledge público seguro; modos combináveis; `InteractionStyleAdapter` sem autoridade; memória/voz controláveis; Tasks distinto de Calendar; Diagnostics/audit minimizados; localização somente por dispositivo registrado; clientes instaláveis; ModelRouter e Bridge provider-agnostic
-- Required Reviews Phase 7: QA `YES`; DATABASE `NO` enquanto não houver persistência; SECURITY `YES`; UI/UX `YES`
-- Production Readiness: `BLOCKED`; nenhuma exposição, provider, custo, credencial, migration, banco real ou risco HIGH/CRITICAL foi autorizado
-- Phase 7+: implementation status `NOT_STARTED`; authorization `NONE`; UI/UX e Development não devem ser acionados antes da aprovação do plano e de autorização de implementação separada
-- Pending owner decisions: aprovar/revisar o plano Phase 7 e autorizar implementação separadamente; privacy/retention de voz; providers/custos; speaker profile; localização; integrações; cloud/produção
+- Status: WAITING_FOR_REVIEW
+- Decision ID: `ARCH-2026-09-21-001`
+- Functional Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` permanece a identidade da implementação da Phase 6
+- Integration Candidate: o HEAD exclusivamente documental produzido por esta limpeza; o COORDINATOR deve registrar o hash resultante e rotear QA + Security sobre esse mesmo candidate
+- Phase 6 operational status: `WAITING_FOR_REVIEW`; os pareceres anteriores sobre `0912e94` permanecem evidência, mas não aprovam automaticamente a branch limpa para PR/merge
+- UI/UX evidence: `APPROVED` anteriormente sobre `0912e94`; não substitui as confirmações finais de QA e Security
+- Architecture cleanup: [`docs/architecture.md`](architecture.md) atualizado para o dashboard implementado, módulos Phase 6, 45 testes Python, 36 frontend, validação browser e limites ambientais
+- Version decision: manter `6.0.0-phase.5` sem editar código; é metadata legado e imutável do Functional Commit, não fonte do status operacional da fase
+- Rejected version option: mudar para `6.0.0-phase.6` tocaria `backend/main.py`, criaria novo Functional Commit e exigiria nova análise/reviews por uma sincronização cosmética
+- Integration gate: QA `YES`, SECURITY `YES`, DATABASE `NO`, UI/UX `NO`; PR/merge somente depois de QA e Security confirmarem o mesmo candidate
+- Merge status: `BLOCKED` até os reviews finais; esta decisão não aprova integração
+- Phase 7 plan: [`docs/phase-7.md`](phase-7.md) permanece `WAITING_FOR_APPROVAL`, implementation `NOT_STARTED`, authorization `NONE` / `NOT_AUTHORIZED`
+- Sequencing: limpeza documental → Integration Candidate → QA + Security no mesmo hash → PR/merge autorizado → somente depois eventual decisão separada sobre Phase 7
+- Production Readiness: `BLOCKED`; merge local/repositório não autoriza deploy ou exposição pública
+- Working tree boundary: alteração preexistente em `AGENTS.md`, `Hope dashboard` e assets `hope-linkedin-hero*` deve permanecer fora do candidate
 - Architecture record: [`docs/reviews/architecture-latest.md`](reviews/architecture-latest.md)
 - Product vision: [`docs/product-vision.md`](product-vision.md)
 - Roadmap: [`docs/roadmap.md`](roadmap.md)
 - Future architecture: [`docs/future-architecture.md`](future-architecture.md)
-- Coordinator handoff: normalizar a aprovação de `ARCH-2026-09-20-001` no painel público e apresentar `ARCH-2026-09-20-002`/`docs/phase-7.md` à owner; não encaminhar UI/UX ou Development
+- Coordinator handoff: registrar o commit documental resultante como Integration Candidate e encaminhar primeiro a QA e Security; não abrir/mesclar PR nem iniciar Phase 7 antes das duas confirmações
 
 ## Coordinator
 
