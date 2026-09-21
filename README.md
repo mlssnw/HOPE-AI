@@ -5,7 +5,7 @@
 **Assistente pessoal experimental de Inteligência Artificial com memória persistente, contexto explicável e visualização das relações que importam.**
 
 ![Status](https://img.shields.io/badge/status-em%20desenvolvimento-F2AE3D)
-![Version](https://img.shields.io/badge/version-6.0.0--phase.5-FFF8E9)
+![Runtime](https://img.shields.io/badge/runtime-6.0.0--phase.5-FFF8E9)
 ![Phase](https://img.shields.io/badge/phase-6-63BFD4)
 ![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-009688?logo=fastapi&logoColor=white)
@@ -21,7 +21,7 @@
 </p>
 
 <p align="center">
-  <em>Target UI aprovado: a implementação da Phase 6 foi aceita dentro das capacidades reais; elementos futuros da peça conceitual continuam identificados como visão.</em>
+  <em>Target UI aprovado: a implementação da Phase 6 está presente no Functional Commit; a integração final aguarda confirmação de QA e Security.</em>
 </p>
 
 <p align="center">
@@ -41,8 +41,8 @@ Assistentes tradicionais dependem principalmente do contexto imediato da convers
 - O dashboard convergiu para a direção visual aprovada sem ativar capacidades futuras inexistentes.
 - Memory Globe/Core Orb, chat, inspector, responsividade chat-first, fallback sem WebGL e acessibilidade foram integrados ao novo shell.
 - Consentimento de memória, histórico local, cancelamento e confirmação destrutiva permanecem separados e operáveis.
-- QA, Security e UI/UX revisaram o mesmo Functional Commit; o Planner consolidou a fase como `APPROVED_WITH_WARNINGS`.
-- A nova visão futura de voz, wake word, apps e personalidade está registrada para planejamento, sem autorização de implementação.
+- QA, Security e UI/UX produziram evidência sobre o Functional Commit; QA e Security ainda precisam confirmar o Integration Candidate documental antes do merge.
+- A visão futura, o roadmap e os limites de personalidade/SelfKnowledge foram aprovados; a Phase 7 permanece somente em planejamento e sem implementação autorizada.
 
 [📖 Ver detalhes técnicos da Phase 6](docs/phase-6.md)
 
@@ -57,17 +57,17 @@ Assistentes tradicionais dependem principalmente do contexto imediato da convers
 | Busca | Recuperação híbrida de memória; Tavily e busca textual no Obsidian ficam disponíveis quando configurados. |
 | Voz | Ditado pela Web Speech API e TTS por ElevenLabs quando suportados e configurados. |
 | Integrações | Adapters para Anthropic, Tavily, ElevenLabs e Obsidian Local REST API; todos opcionais e protegidos pelo backend. |
-| Qualidade | 45 testes Python e 36 testes frontend, além de validação browser da matriz de viewports, WebGL/fallback, realtime, acessibilidade e cenários degradados. |
+| Qualidade | Evidência anterior de 45 testes Python e 36 testes frontend, além de validação browser da matriz de viewports, WebGL/fallback, realtime, acessibilidade e cenários degradados. |
 | Segurança | Segredos no backend, CSP restrita, conteúdo externo tratado como não confiável, consentimento de memória e confirmação destrutiva. Autenticação e hardening de produção permanecem pendentes. |
 
 ## 🚦 Status do projeto
 
 | Campo | Estado |
 |---|---|
-| Versão atual | `6.0.0-phase.5` |
+| Runtime API | `6.0.0-phase.5` — metadata legado e congelado do Functional Commit, independente do status operacional da fase |
 | Fase atual | Phase 6 — Target UI Convergence |
-| Estado técnico | Phase 6 `APPROVED_WITH_WARNINGS` no Functional Commit `0912e94`, consolidada em `ARCH-2026-09-19-001` |
-| Baseline aprovado | Fase 5 `APPROVED_WITH_WARNINGS` no commit `88e1947` |
+| Estado técnico | `WAITING_FOR_REVIEW` para integração; QA e Security devem confirmar o mesmo Integration Candidate |
+| Functional Commit | `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
 | Deploy público | Ainda não habilitado — autenticação, autorização e hardening de produção pendentes |
 
 A fundação local/controlada já conecta chat, memória persistente, PostgreSQL/pgvector, Memory Globe e eventos em tempo real. Isso não equivale a prontidão para produção pública.
@@ -76,7 +76,7 @@ O acompanhamento técnico detalhado permanece no [painel operacional](docs/hando
 
 ## 🗺️ Em desenvolvimento / Roadmap
 
-O roadmap posterior à Phase 6 está em reconciliação pelo Planner após nova direção de produto. A lista abaixo preserva o planejamento anterior como referência e não autoriza nenhuma próxima fase.
+O roadmap futuro foi aprovado como direção de produto, mas nenhuma implementação posterior à Phase 6 está autorizada. A ordem completa, os gates e os Required Reviews estão em [`docs/roadmap.md`](docs/roadmap.md).
 
 - [x] Backend FastAPI protegendo credenciais e integrações.
 - [x] Fundação PostgreSQL + pgvector com migrations versionadas.
@@ -86,19 +86,14 @@ O roadmap posterior à Phase 6 está em reconciliação pelo Planner após nova 
 - [x] Chat consciente de memória com consentimento explícito.
 - [x] Correção e esquecimento com confirmação vinculada ao alvo.
 - [x] Aprovação final independente da Fase 5.
-- [x] Phase 6 — Target UI Convergence aprovada com warnings no Functional Commit `0912e94`.
-- [ ] Single-User Security & Permissions para um único owner, com níveis de risco.
-- [ ] Tools e coding governados por permissões explícitas.
-- [ ] Agentes limitados pelo PermissionManager e sem autoelevação.
-- [ ] Production Hardening quando necessário para o ambiente de uso.
-- [ ] Provider semântico de produção e avaliação de qualidade vetorial.
-- [ ] Streaming de respostas e broker distribuído.
-- [ ] Skills governadas pelo mesmo modelo de permissões.
-- [ ] LLM & Memory Evaluation: relevância, recuperação, consolidação, regressão de prompts e context leakage.
-- [ ] Multimodalidade, geração de imagens e automações.
-- [ ] Desktop/PWA e implantação cloud pública.
+- [ ] Phase 6 — implementação em `0912e94`; integração final pendente de QA e Security.
+- [ ] Phase 7 — Conversational Presence Foundation; plano aguardando aprovação e implementação não autorizada.
+- [ ] Phase 8 — Single-User Security & Permissions.
+- [ ] Phase 9 — Realtime Voice Sessions.
+- [ ] Phases 10–14 — cloud/shared clients, Windows/wake word, Android/device context, speaker verification opcional e Model Router/Diagnostics.
+- [ ] Phases 15–22 — organização pessoal, tools/effects, coding, agents, learning, multimodalidade, automações e HOPE Bridge.
 
-O planejamento anterior e ainda não autorizado está em [docs/future-architecture.md](docs/future-architecture.md). A nova direção está registrada como entrada de coordenação e só será refletida aqui depois da consolidação do Planner.
+A visão aprovada está em [`docs/product-vision.md`](docs/product-vision.md); o desenho técnico futuro permanece em [`docs/future-architecture.md`](docs/future-architecture.md). Roadmap aprovado não equivale a autorização de implementação.
 
 ## Arquitetura resumida
 
@@ -245,6 +240,7 @@ tests/            testes Python e Node
 - O histórico ativo do chat ainda fica no navegador.
 - A resposta não usa streaming de tokens.
 - O asset conceitual do dashboard ainda exibe capacidades futuras omitidas corretamente pela implementação da Phase 6.
+- O runtime ainda reporta `6.0.0-phase.5`; esse rótulo legado foi preservado para não criar um novo Functional Commit apenas por metadata.
 - Web Speech API, providers externos e Obsidian dependem de suporte e configuração locais.
 
 ## Documentação
@@ -252,6 +248,9 @@ tests/            testes Python e Node
 - [Arquitetura atual](docs/architecture.md)
 - [Fase 5](docs/phase-5.md)
 - [Phase 6](docs/phase-6.md)
+- [Plano da Phase 7](docs/phase-7.md)
+- [Visão de produto](docs/product-vision.md)
+- [Roadmap oficial](docs/roadmap.md)
 - [Dashboard oficial e regras de uso](docs/design/official-dashboard.md)
 - [Handoff operacional](docs/handoff.md)
 - [Nova direção de produto — intake para o Planner](docs/coordination/product-direction-2026-09-19.md)

@@ -7,16 +7,16 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 ## Current Phase
 
 - Phase: 6 — Target UI Convergence
-- Phase status: APPROVED_WITH_WARNINGS
-- Feature status: APPROVED_WITH_WARNINGS — QA, Security e UI/UX concluíram sem blocker funcional; PLANNER consolidou em `ARCH-2026-09-19-001`
+- Phase status: WAITING_FOR_REVIEW
+- Feature status: WAITING_FOR_REVIEW — o Functional Commit possui evidência anterior, mas a branch limpa ainda exige confirmação final de QA e Security no mesmo Integration Candidate
 - Production readiness: BLOCKED — Security rejeitou deploy público
 - Branch: `codex/phase-6-target-ui`
-- Application version: 6.0 / Phase 6 aprovada para ambiente local/controlado
+- Runtime API version: `6.0.0-phase.5` — metadata legado congelado do Functional Commit, independente do status operacional da fase
 - Scope: convergência visual do HOPE Main Dashboard sobre capacidades reais, com acessibilidade, responsividade e preservação dos contratos funcionais existentes
 - Last approved Functional Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
-- Working tree expected: preservar a alteração preexistente em `AGENTS.md` e os assets não rastreados; os commits de review não incorporam código funcional
+- Working tree expected: incluir a reconciliação autorizada de `AGENTS.md` no Integration Candidate e preservar fora dos commits os assets não rastreados `Hope dashboard` e `hope-linkedin-hero*`
 - Database environment: o re-review de Database validou o gate de schema em ambientes descartáveis; PostgreSQL real permaneceu inacessível e a migration `20260903_0003` não foi aplicada nem validada no ambiente real
-- Active phase: Phase 6 concluída; `ARCH-2026-09-20-001` aprovado pela owner. Phase 7 foi selecionada somente para planejamento; implementação permanece não autorizada.
+- Active phase: Phase 6 — limpeza documental e integração; merge bloqueado até QA e Security confirmarem o Integration Candidate. Phase 7 permanece somente em planejamento e sem implementação autorizada.
 
 ## User Strategic Decision
 
@@ -33,22 +33,22 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 
 ## Product Direction Intake — 2026-09-19
 
-- Status: OWNER APPROVED — PLANNER PERSISTENCE PENDING
+- Status: APPROVED — PERSISTENCE COMPLETE
 - Source: decisão explícita da owner, persistida em [`docs/coordination/product-direction-2026-09-19.md`](coordination/product-direction-2026-09-19.md)
 - Preserved truths: `SINGLE_USER`, assistente pessoal, cloud-first, provider-agnostic, memória persistente e experiência centrada no Memory Globe/Core Orb
 - New future direction: voice presence, realtime voice, wake word `HOPE`, speaker verification, self knowledge, personalidade ampliada, modos combináveis, memória controlável, organização pessoal, integrações, diagnósticos, auditoria transparente, localização por dispositivo, apps instaláveis e Model Router
 - Personality decision: Dean Winchester foi aprovado como referência oficial de traços gerais junto de Lena Luthor e Tony Stark e pode integrar o `SelfKnowledge` público; identidade, diálogos, maneirismos e vozes não podem ser copiados
 - Reference exception: aprovada somente para reconhecimento ou homenagem original mediante pedido explícito; continuam proibidos citações famosas literais, diálogos copiados, imitação de identidade, clonagem de voz e atuação contínua
 - Roadmap impact: a owner aprovou `ARCH-2026-09-20-001` e a ordem de `docs/roadmap.md`; isso autoriza apenas o planejamento da Phase 7, não sua implementação
-- Documentation decision: PLANNER aprovou a separação entre `docs/product-vision.md`, `docs/roadmap.md` e `docs/future-architecture.md`; backlog/handoff permanecem em revisão documental futura
-- Routing boundary: PLANNER deve persistir a aprovação e desenhar a Phase 7; UI/UX e Development não estão autorizados
+- Documentation decision: `docs/product-vision.md`, `docs/roadmap.md` e `docs/future-architecture.md` são as fontes aprovadas para visão, ordem/gates e contratos futuros
+- Routing boundary: concluir o Integration Candidate, abrir PR em rascunho e obter os reviews finais de QA/Security antes do merge; UI/UX e Development da Phase 7 não estão autorizados
 
-Required Reviews:
+Required Reviews — Integration Candidate:
 
-- QA: YES — regressão, browser, responsividade, WebGL, teclado, console e Network
-- DATABASE: NO — desde que o diff permaneça estritamente visual e sem impacto de persistência
-- SECURITY: YES — não regressão de consentimento, confirmação destrutiva, conteúdo não confiável e claims de capacidade
-- UI/UX: YES — especificação pré-implementação e review final de fidelidade no mesmo Functional Commit
+- QA: YES — confirmar integridade da branch, coerência documental e ausência de drift funcional
+- DATABASE: NO — a limpeza não altera código, persistência, schema, migration ou contrato de banco
+- SECURITY: YES — confirmar preservação dos findings, limites de produção e artefato funcional revisado
+- UI/UX: NO — nenhuma implementação visual mudou; o parecer anterior permanece evidência sobre `0912e94`
 
 ## Official Visual Direction
 
@@ -58,7 +58,7 @@ Required Reviews:
 - Direction status: APPROVED
 - Decision ID: `UIUX-VIS-2026-09-10-001`
 - Persistence status: COMPLETE — decisão, asset canônico, especificação e matriz de gaps foram versionados em `aa440f8`
-- Implementation status: IMPLEMENTED — QA `APPROVED_WITH_WARNINGS`, Security `APPROVED_WITH_WARNINGS` e UI/UX `APPROVED` no candidate `0912e94`
+- Implementation status: IMPLEMENTED — QA `APPROVED_WITH_WARNINGS`, Security `APPROVED_WITH_WARNINGS` e UI/UX `APPROVED` produziram evidência anterior em `0912e94`; a integração final ainda aguarda QA e Security
 - Scope: interface principal, Memory Globe, Core Orb, navegação, chat, sessão atual, Memory Inspector, controles, hierarquia visual, estados, identidade visual e apresentação pública
 - Source of truth order: `docs/design/` → `docs/reviews/uiux-latest.md` → dashboard visual aprovado → documentação histórica anterior
 - Canonical reference: [`hope-dashboard-approved-2026-09-10.png`](design/assets/hope-dashboard-approved-2026-09-10.png)
@@ -73,20 +73,20 @@ Required Reviews:
 - Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
 - Phase: 6
 - Created by: DEV
-- Status: APPROVED_WITH_WARNINGS — consolidado pelo PLANNER em `ARCH-2026-09-19-001`
+- Status: READY_FOR_REVIEW — implementação entregue; aprovação final da integração ainda depende de QA e Security no Integration Candidate
 - Base approved: `88e194778b4399a6713f118470f9d861c553cd9e`
-- Notes: o commit contém frontend, testes e evidências da Phase 6; commits documentais posteriores não alteram sua identidade. QA, Security e UI/UX revisaram exatamente `0912e94` sem blocker funcional.
+- Notes: o commit contém frontend, testes e evidências da Phase 6; commits documentais posteriores não alteram sua identidade. QA, Security e UI/UX revisaram exatamente `0912e94` na rodada anterior, sem que isso substitua o gate final da branch.
 
 ## Review Matrix
 
 | Work | Required | Status | Commit |
 |---|---|---|---|
 | DEV | YES | READY_FOR_REVIEW | `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
-| QA | YES | APPROVED_WITH_WARNINGS | `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
+| QA | YES | WAITING_FOR_REVIEW | Integration Candidate pending |
 | DATABASE | NO | N/A | — |
-| SECURITY | YES | APPROVED_WITH_WARNINGS | `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
-| UI/UX | YES | APPROVED | `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
-| PLANNER | YES | APPROVED_WITH_WARNINGS | `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
+| SECURITY | YES | WAITING_FOR_REVIEW | Integration Candidate pending |
+| UI/UX | NO | N/A | prior evidence: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
+| PLANNER | YES | READY_FOR_REVIEW | `129b5a26c3b506e7f53dbb797048ee6788fcd976` |
 
 ## Development
 
@@ -196,16 +196,16 @@ Required Reviews:
 ## Coordinator
 
 - Autonomy level: 2.5
-- Status: APPROVED
-- Operational conclusion: Phase 6 foi consolidada pelo PLANNER como `APPROVED_WITH_WARNINGS` no Functional Commit `0912e94`. Database permanece `N/A`; Production Readiness continua `BLOCKED` separadamente.
-- Routing: LEVEL 2 — PLANNER deve persistir a decisão da owner e produzir o plano da Phase 7 sem iniciar UI/UX ou Development
+- Status: IN_PROGRESS
+- Operational conclusion: `0912e94` permanece o Functional Commit e os pareceres anteriores permanecem evidência, mas a owner exige QA e Security finais sobre o Integration Candidate antes do merge. Database e UI/UX são `N/A` para esta limpeza documental; Production Readiness continua `BLOCKED`.
+- Routing: LEVEL 1 — criar o Integration Candidate documental, registrar seu hash e abrir a rodada final de QA + Security no mesmo alvo
 - Boundary: COORDINATOR atualizou somente Current Phase, Current Functional Commit, Review Matrix, blockers, warnings, Next Action e histórico; não concedeu aprovação técnica nem alterou seções ou relatórios de ownership dos reviewers
 
 ## Current Blockers
 
 ### Feature Blockers
 
-- Nenhum blocker funcional permanece aberto para a Phase 6 no Functional Commit `0912e94`.
+- Nenhum blocker funcional conhecido permanece aberto em `0912e94`; integração continua bloqueada operacionalmente enquanto QA e Security finais estiverem pendentes.
 
 ### Production Blockers
 
@@ -223,34 +223,34 @@ Required Reviews:
 - Warnings de Database sobre ausência de PostgreSQL real, confiança na marca Alembic e limitações operacionais permanecem abertos.
 - O aviso de depreciação Starlette/TestClient permanece; a repetição independente confirmou 45 testes Python e 36 testes frontend aprovados.
 - PLANNER registrou os warnings aceitos em [`docs/backlog.md`](backlog.md); o registro não os considera resolvidos.
-- Reconhecimento seguro do owner está proposto para a Phase 8 no novo roadmap ainda não aprovado; o UUID fornecido pelo cliente continua sendo apenas namespace transitório, não prova do owner.
+- Reconhecimento seguro do owner está proposto para a Phase 8 no roadmap aprovado; o UUID fornecido pelo cliente continua sendo apenas namespace transitório, não prova do owner.
 - Commits locais ainda não enviados a `origin/main` exigem nova verificação antes de cada revisão.
 - Warnings aceitos para avanço devem ser copiados para [`docs/backlog.md`](backlog.md), sem removê-los do relatório original.
-- O README foi normalizado para a conclusão comprovada da Phase 6, mas ainda preserva o roadmap anterior até o PLANNER persistir a aprovação de `ARCH-2026-09-20-001`; a visão futura não deve ser publicada como capacidade atual.
-- Dean Winchester, o `SelfKnowledge` público das inspirações e a exceção estreita de referência explícita foram aprovados pela owner; a persistência nos documentos normativos continua pendente do PLANNER.
+- `6.0.0-phase.5` permanece como metadata legado do runtime; mudar apenas o rótulo exigiria novo Functional Commit e reviews, por isso a convenção foi documentada em vez de alterar código.
+- Dean Winchester, o `SelfKnowledge` público das inspirações e a exceção estreita de referência explícita foram aprovados pela owner e reconciliados nas fontes normativas.
 - Wake word, speaker verification, realtime voice, apps instaláveis, integrações, diagnóstico, auditoria ampliada e Model Router são `PLANNED/PROPOSED`, não capacidades implementadas.
 
 ## Next Action
 
-- Role: PLANNER
-- Status: WAITING_FOR_REVIEW
-- Task: persistir a aprovação da owner em `ARCH-2026-09-20-001` e desenhar a Phase 7 — Conversational Presence Foundation, sem autorizar implementação
+- Role: COORDINATOR
+- Status: IN_PROGRESS
+- Task: finalizar a limpeza documental, criar o Integration Candidate e registrar o hash exato para a rodada final de QA e Security
 - Target commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
 - Required inputs:
-  - decisão explícita da owner em 2026-09-20
+  - [`AGENTS.md`](../AGENTS.md)
+  - [`README.md`](../README.md)
+  - [`CHANGELOG.md`](../CHANGELOG.md)
+  - [`docs/architecture.md`](architecture.md)
+  - [`docs/handoff.md`](handoff.md)
   - [`docs/reviews/architecture-latest.md`](reviews/architecture-latest.md)
   - [`docs/product-vision.md`](product-vision.md)
   - [`docs/roadmap.md`](roadmap.md)
-  - [`docs/future-architecture.md`](future-architecture.md)
-  - [`docs/coordination/product-direction-2026-09-19.md`](coordination/product-direction-2026-09-19.md)
 - Expected output:
-  - status `APPROVED` persistido em `docs/product-vision.md`, `docs/roadmap.md`, `docs/reviews/architecture-latest.md` e contratos aplicáveis
-  - personalidade e `SelfKnowledge` reconciliados com os limites aprovados, sem copiar personagens ou citações famosas
-  - `docs/phase-7.md` com scope, non-goals, dependencies, architecture, acceptance criteria, test strategy, risks, Required Reviews e approval requirements
-  - Phase 7 explicitamente `PLANNING / NOT_STARTED / NOT_AUTHORIZED_FOR_IMPLEMENTATION`
-  - commit exclusivamente documental e devolução ao COORDINATOR
+  - commit documental exclusivo que preserve `0912e94` como Functional Commit
+  - hash exato registrado como Integration Candidate em commit operacional posterior
+  - QA e Security roteados para revisar o mesmo candidate
 - Blocking dependencies: nenhuma
-- Parallel work: somente leitura; UI/UX e Development não devem iniciar specs ou implementação durante o planejamento
+- Parallel work: somente leitura até o candidate; depois QA e Security podem revisar em paralelo em arquivos próprios
 - Escalation: NONE
 
 ## Recent History
@@ -283,3 +283,4 @@ Required Reviews:
 - 2026-09-19 — A owner apresentou nova direção futura para voz, wake word, speaker verification, personalidade/self knowledge, modos, apps, integrações, transparência e Model Router. COORDINATOR registrou o intake sem ampliar a Phase 6 e encaminhou a reconciliação arquitetural e o novo roadmap ao PLANNER.
 - 2026-09-20 — PLANNER publicou `ARCH-2026-09-20-001` em `de2242a`, criou `docs/product-vision.md` e `docs/roadmap.md`, separou presença conversacional local dos gates de segurança e devolveu a decisão à owner sem autorizar Phase 7, UI/UX ou Development.
 - 2026-09-20 — A owner aprovou `ARCH-2026-09-20-001`, visão, roadmap, Dean Winchester como referência de traços, `SelfKnowledge` público das inspirações e a exceção estreita de homenagem original sob pedido explícito; autorizou somente o planejamento da Phase 7 e manteve toda implementação não autorizada.
+- 2026-09-21 — A owner esclareceu que os pareceres anteriores de QA e Security sobre `0912e94` não aprovam a branch final para integração. COORDINATOR reabriu o gate como `WAITING_FOR_REVIEW`; PLANNER definiu Integration Candidate documental e manteve merge/Phase 7 bloqueados.
