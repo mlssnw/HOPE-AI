@@ -5,7 +5,7 @@
 - Date: 2026-09-20
 - Owner approval: 2026-09-20
 - Approval record: `f85b9bb775574b8a1340497e3e9e6d99b9b19c8c`
-- Completed phase: Phase 6 — `APPROVED_WITH_WARNINGS`
+- Implemented phase: Phase 6 — Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`; prior reviews remain evidence, operational integration status `WAITING_FOR_REVIEW`
 - Functional Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
 - Implementation authorization: NONE for Phase 7+
 
@@ -53,7 +53,8 @@ Recommendation: Option C.
 ## Dependency spine
 
 ```text
-Phase 6 — completed and frozen
+Phase 6 implementation — frozen at `0912e94`
+  → Integration Candidate → draft PR → QA + Security on the same hash → merge
   → 7 Conversational Presence Foundation
   → 8 Single-User Security & Permissions
   → 9 Realtime Voice Sessions

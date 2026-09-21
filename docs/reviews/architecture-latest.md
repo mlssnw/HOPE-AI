@@ -6,7 +6,7 @@
 - Product model: `SINGLE_USER`
 - Branch: `codex/phase-6-target-ui`
 - Functional Commit preserved: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
-- Repository HEAD analyzed: `284a4ac5ceec6d2df5edbd1a3cb0e5b8835d53c6`
+- Repository HEAD analyzed: `0da3030c696d10071b3fc9d9c92471999e2fc0ea`
 - `origin/main` analyzed: `0bcc25a5437cab8a326e64281579ead56274d8cb`
 - Integration Candidate: documentation-only HEAD produced by this cleanup; exact hash is the resulting commit
 - Phase 6 operational status: WAITING_FOR_REVIEW
@@ -16,9 +16,9 @@
 
 ## Problem
 
-The Phase 6 implementation exists at `0912e94` and received QA/Security/UI/UX reviews in the earlier round, but `docs/architecture.md` still described the pre-Phase 6 frontend and baseline. The branch also exposes `6.0.0-phase.5` as runtime metadata while the coordinated work is called Phase 6.
+The Phase 6 implementation exists at `0912e94` and received QA/Security/UI/UX reviews in the earlier round. The architecture cleanup already reconciled the implemented frontend and runtime-version convention, but `docs/roadmap.md` and `docs/product-vision.md` still described Phase 6 as completed, and the integration gate did not distinguish opening a draft PR from authorizing merge.
 
-Before integration, the project needs one documentation-only Integration Candidate that accurately describes the implemented dashboard, records the version convention and keeps Phase 7 unstarted. The previous QA and Security reports remain evidence for the Functional Commit but do not constitute final approval of the cleaned branch. QA and Security must confirm the same Integration Candidate before any PR/merge.
+Before integration, the project needs one documentation-only Integration Candidate that accurately describes the implemented dashboard, records the version convention and keeps Phase 7 unstarted. The previous QA and Security reports remain evidence for the Functional Commit but do not constitute final approval of the cleaned branch. The candidate must be published in a draft PR; QA and Security then confirm that same hash before merge.
 
 ## Current State
 
@@ -29,17 +29,17 @@ Before integration, the project needs one documentation-only Integration Candida
 - The runtime code and README expose `6.0.0-phase.5`; changing the runtime value requires editing `backend/main.py`.
 - Phase 7 is a plan with status `WAITING_FOR_APPROVAL`; implementation is `NOT_STARTED` and `NOT_AUTHORIZED`.
 - Production Readiness remains `BLOCKED` by the existing Security/Database/operational gates.
-- The working tree contains a preexisting owner change in `AGENTS.md` and untracked visual assets that must not enter the Planner commit.
+- The owner-approved `AGENTS.md` reconciliation is already versioned in `0da3030`; untracked visual assets remain outside this Planner commit.
 
 ## Constraints
 
 - Documentation only; no functional code, tests, migration, database, frontend, backend, README or CHANGELOG change.
 - Preserve `0912e94` as the Functional Commit and preserve all reviewer-owned reports unchanged.
-- Do not describe Phase 6 as approved for PR/merge before the final candidate reviews.
+- Do not describe Phase 6 as approved for merge before the final candidate reviews; a draft PR is the review vehicle, not an approval result.
 - QA and Security must review/confirm the same Integration Candidate hash.
 - UI/UX's earlier result may remain evidence but cannot replace final QA/Security confirmation.
 - Do not modify Current Phase, Review Matrix, Coordinator section or Next Action.
-- Preserve the owner change in `AGENTS.md` and all untracked assets.
+- Do not edit `AGENTS.md`; preserve all untracked assets outside the commit.
 - Do not start Phase 7, UI/UX or Development.
 
 ## Options
@@ -68,7 +68,7 @@ Before integration, the project needs one documentation-only Integration Candida
 
 Adopt Option A. Keep `6.0.0-phase.5` unchanged in code and treat it as the immutable legacy runtime label of Functional Commit `0912e94`, not as the source of truth for phase status. `docs/phase-6.md`, the exact Functional Commit, reviewer records and handoff define the operational phase.
 
-The integration decision remains `WAITING_FOR_REVIEW`. This cleanup creates the candidate; it does not approve it. QA and Security must confirm the resulting documentation-only HEAD before the Coordinator opens or merges the PR.
+The integration decision remains `WAITING_FOR_REVIEW`. This cleanup creates the candidate; it does not approve it. Coordinator opens a draft PR for that exact documentation-only HEAD, then QA and Security confirm the same hash before merge.
 
 ## Rationale
 
@@ -94,10 +94,10 @@ The current architecture records:
 ## Integration Candidate Gate
 
 1. Planner creates one documentation-only cleanup commit.
-2. Coordinator records that exact HEAD as the Integration Candidate without changing the Functional Commit.
-3. QA confirms branch/diff integrity, documentation consistency and absence of functional drift on the same candidate hash.
+2. Coordinator records that exact HEAD as the Integration Candidate and opens a draft PR without changing the Functional Commit.
+3. QA confirms branch/diff integrity, documentation consistency and absence of functional drift on the candidate hash shown by the draft PR.
 4. Security confirms the same candidate hash, preservation of findings/boundaries and absence of newly introduced exposure or misleading authorization.
-5. Only after both final confirmations may Coordinator prepare the PR/merge flow authorized by the owner.
+5. Only after both final confirmations may Coordinator merge the authorized PR.
 6. Production remains blocked and Phase 7 remains unstarted after merge unless separately approved and authorized.
 
 ## Required Reviews for Integration Candidate
@@ -115,7 +115,7 @@ The current architecture records:
 - Reviewers may accidentally review `0912e94` again instead of the Integration Candidate HEAD, or vice versa.
 - A dirty local working tree may be staged accidentally during integration.
 - Prior `APPROVED_WITH_WARNINGS` reports may be misrepresented as final branch approval.
-- PR/merge may be treated as Production Readiness or as Phase 7 authorization.
+- Draft PR or merge may be treated incorrectly as Production Readiness or as Phase 7 authorization.
 - README/CHANGELOG may remain less precise than the authoritative architecture documents until a separate owner/Coordinator-owned update.
 
 ## Acceptance Criteria
@@ -126,18 +126,20 @@ The current architecture records:
 - [x] The version options, trade-offs and chosen convention are explicit.
 - [x] No code change to `backend/main.py` or runtime version is made.
 - [x] Phase 7 remains `WAITING_FOR_APPROVAL`, `NOT_STARTED` and `NOT_AUTHORIZED`.
-- [x] The final-candidate QA/Security gate precedes PR/merge and Phase 7 implementation.
+- [x] The sequence Integration Candidate → draft PR → QA/Security on the same hash → merge precedes Phase 7 implementation.
 - [x] No reviewer-owned report, README, CHANGELOG, AGENTS, asset, code, test or migration is altered.
 - [ ] QA confirms the resulting Integration Candidate hash.
 - [ ] Security confirms the same Integration Candidate hash.
-- [ ] Coordinator opens/merges the PR only after both confirmations.
+- [ ] Coordinator opens the draft PR for the exact Integration Candidate.
+- [ ] Coordinator merges only after both confirmations.
 
 ## Implementation Phase
 
 - Documentation cleanup: READY_FOR_REVIEW in the resulting candidate commit.
 - Integration Candidate: to be identified by this cleanup commit hash.
 - Phase 6 operational status: WAITING_FOR_REVIEW.
-- PR/merge: BLOCKED pending QA and Security on the same candidate.
+- Draft PR: NOT_STARTED; it is the review vehicle for the resulting Integration Candidate.
+- Merge: BLOCKED pending QA and Security on the same candidate.
 - Phase 7 planning: WAITING_FOR_APPROVAL.
 - Phase 7 implementation: NOT_STARTED / NOT_AUTHORIZED.
 - Production Readiness: BLOCKED.
@@ -146,8 +148,9 @@ The current architecture records:
 
 - Any phase-independent runtime-version redesign or code change.
 - README/CHANGELOG normalization by their owner, if requested.
+- Draft PR creation by Coordinator for the exact candidate.
 - QA and Security final candidate reviews.
-- PR/merge execution by Coordinator after the review gate.
+- Merge execution by Coordinator after the review gate.
 - Phase 7 approval, UI/UX specification and implementation authorization.
 - All provider, credential, database, migration, cloud and production work.
 
@@ -155,6 +158,6 @@ The current architecture records:
 
 - Recommended next role: COORDINATOR.
 - Status: WAITING_FOR_REVIEW.
-- Task: record the resulting Planner commit as the Integration Candidate and route QA and Security to review that exact hash.
-- Do not route to: PR/merge, UI/UX, Development, Phase 7 implementation, providers, database, cloud or production before the required confirmations.
+- Task: record the resulting Planner commit as the Integration Candidate, open a draft PR and route QA and Security to review that exact hash.
+- Do not route to: merge, UI/UX, Development, Phase 7 implementation, providers, database, cloud or production before the required confirmations.
 - No architectural blocker is known in the documented scope; the mandatory review gate itself blocks integration until completed.

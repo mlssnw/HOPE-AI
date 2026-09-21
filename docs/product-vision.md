@@ -48,7 +48,7 @@ The long-term experience is continuous across text, voice and installed clients.
 
 ## Implemented boundary
 
-Phase 6 is complete as `APPROVED_WITH_WARNINGS` on Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`. The current product includes the approved dashboard, chat, optional persistent memory, Memory Globe/Core Orb, existing browser dictation, optional TTS, realtime events and current integrations documented in `docs/architecture.md`.
+The Phase 6 implementation exists on Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`. Earlier QA, Security and UI/UX results remain evidence for that artifact, but the operational integration status is `WAITING_FOR_REVIEW`: the documentation-only Integration Candidate must open a draft PR and receive final QA and Security confirmation on the same hash before merge. The current product implementation includes the dashboard, chat, optional persistent memory, Memory Globe/Core Orb, existing browser dictation, optional TTS, realtime events and current integrations documented in `docs/architecture.md`.
 
 Everything below is future direction. It does not re-open Phase 6, authorize Development, approve a provider or imply Production Readiness.
 
@@ -208,6 +208,7 @@ Still requiring a future owner decision:
 ## Acceptance criteria for this vision
 
 - Phase 6 remains frozen at `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`.
+- Phase 6 integration remains `WAITING_FOR_REVIEW`; draft PR, QA and Security confirmation on the same Integration Candidate precede merge.
 - Current, future and production-ready states remain distinct.
 - Voice, personality, memory, modes, organization, diagnostics, clients and cloud have explicit safety boundaries.
 - No provider, cost, credential, migration, deployment or implementation is authorized.

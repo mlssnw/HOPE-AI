@@ -1,6 +1,6 @@
 # Arquitetura do HOPE AI
 
-Este documento registra o estado arquitetural implementado no Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` e a reconciliação documental de 21 de setembro de 2026. Ele complementa o histórico de `docs/phase-1.md` a [`docs/phase-6.md`](phase-6.md) e separa explicitamente implementação atual de visão futura. Os reviews anteriores permanecem evidência do Functional Commit, mas o status operacional da Phase 6 para integração é `WAITING_FOR_REVIEW` até QA e Security confirmarem o mesmo Integration Candidate documental. Production Readiness permanece `BLOCKED`.
+Este documento registra o estado arquitetural implementado no Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` e a reconciliação documental de 21 de setembro de 2026. Ele complementa o histórico de `docs/phase-1.md` a [`docs/phase-6.md`](phase-6.md) e separa explicitamente implementação atual de visão futura. Os reviews anteriores permanecem evidência do Functional Commit, mas o status operacional da Phase 6 para integração é `WAITING_FOR_REVIEW`. A sequência obrigatória é Integration Candidate → PR em rascunho → QA e Security no mesmo hash → merge. Production Readiness permanece `BLOCKED`.
 
 A direção de produto `SINGLE_USER` continua válida. A visão aprovada está em [`docs/product-vision.md`](product-vision.md), a ordem e os gates em [`docs/roadmap.md`](roadmap.md) e os contratos-alvo em [`docs/future-architecture.md`](future-architecture.md). Nenhum desses documentos transforma capacidade planejada em capacidade atual.
 
@@ -19,7 +19,7 @@ Legenda:
 - Runtime API version: `6.0.0-phase.5`, valor preservado no código do Functional Commit aprovado.
 - Convenção: o runtime version identifica o artefato de código e não determina a fase operacional/documental. O status da fase é definido pelo Functional Commit, `docs/phase-6.md`, reviews e handoff.
 - `6.0.0-phase.5` é um rótulo legado congelado; mantê-lo evita alterar código após os reviews. Atualizá-lo para `6.0.0-phase.6` exigiria novo Functional Commit e análise/reviews proporcionais, por isso não faz parte desta limpeza documental.
-- Integration Candidate: o HEAD documental produzido por esta limpeza, mantendo `0912e94` como Functional Commit. QA e Security devem confirmar o mesmo hash do candidate antes de qualquer PR/merge.
+- Integration Candidate: o HEAD documental produzido por esta limpeza, mantendo `0912e94` como Functional Commit. O candidate abre um PR em rascunho; QA e Security confirmam esse mesmo hash antes do merge.
 - Phase 7: somente planejamento em [`docs/phase-7.md`](phase-7.md), com implementação `NOT_STARTED` e `NOT_AUTHORIZED`; integração da Phase 6 e reviews finais do candidate a precedem.
 
 ## CURRENT STATE
@@ -293,7 +293,7 @@ A descrição “cloud-ready” representa direção arquitetural, não implanta
 - Integrações pagas são simuladas nos testes automatizados.
 - `scripts/preflight_database.py` pode validar PostgreSQL/pgvector real e exercitar CRUD temporário.
 
-Esses resultados pertencem à rodada anterior no Functional Commit `0912e94`. A limpeza documental produz um Integration Candidate distinto que ainda exige confirmação final de QA e Security antes de PR/merge. Microfone/provider reais, leitor de tela manual, dispositivos físicos e banco PostgreSQL real continuam limites ambientais e Production Readiness não é inferida.
+Esses resultados pertencem à rodada anterior no Functional Commit `0912e94`. A limpeza documental produz um Integration Candidate distinto, publicado em PR em rascunho, que ainda exige confirmação final de QA e Security antes do merge. Microfone/provider reais, leitor de tela manual, dispositivos físicos e banco PostgreSQL real continuam limites ambientais e Production Readiness não é inferida.
 
 ## TARGET ARCHITECTURE
 
@@ -301,7 +301,7 @@ Os itens desta seção são direção futura e não devem ser interpretados como
 
 A intenção de produto está em [`docs/product-vision.md`](product-vision.md), a sequência aprovada e seus gates em [`docs/roadmap.md`](roadmap.md), e a especificação técnica futura em [`docs/future-architecture.md`](future-architecture.md). O princípio estrutural é adicionar capacidades em camadas pequenas e reversíveis: identidade e consentimento precedem execução; permissões precedem agentes; experiências precedem aprendizado avançado.
 
-[`docs/phase-7.md`](phase-7.md) é apenas um plano `WAITING_FOR_APPROVAL`. Sua implementação está `NOT_STARTED` e `NOT_AUTHORIZED`. Antes de qualquer implementação, a branch da Phase 6 deve ser limpa, transformada em um Integration Candidate único, confirmada por QA e Security no mesmo hash e integrada em `main` pelo fluxo autorizado.
+[`docs/phase-7.md`](phase-7.md) é apenas um plano `WAITING_FOR_APPROVAL`. Sua implementação está `NOT_STARTED` e `NOT_AUTHORIZED`. Antes de qualquer implementação, a branch da Phase 6 deve ser limpa, transformada em um Integration Candidate único, publicada em PR em rascunho, confirmada por QA e Security no mesmo hash e integrada em `main` pelo fluxo autorizado.
 
 O alvo assume um único owner. Reconhecer esse owner não exige cadastro público, organizações, RBAC complexo ou isolamento entre tenants. Exige apenas uma credencial adequada ao ambiente, sessão revogável, escopo explícito de recursos e decisões de risco que tools, agentes e conteúdo não confiável não possam ampliar.
 
