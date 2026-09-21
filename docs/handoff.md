@@ -14,6 +14,7 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 - Runtime API version: `6.0.0-phase.5` — metadata legado congelado do Functional Commit, independente do status operacional da fase
 - Scope: convergência visual do HOPE Main Dashboard sobre capacidades reais, com acessibilidade, responsividade e preservação dos contratos funcionais existentes
 - Last approved Functional Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
+- Integration Candidate: `cf9cd976549163d1f49cead7bc2f993254150708` — documentação consolidada; ainda não aprovado por QA nem Security
 - Working tree expected: incluir a reconciliação autorizada de `AGENTS.md` no Integration Candidate e preservar fora dos commits os assets não rastreados `Hope dashboard` e `hope-linkedin-hero*`
 - Database environment: o re-review de Database validou o gate de schema em ambientes descartáveis; PostgreSQL real permaneceu inacessível e a migration `20260903_0003` não foi aplicada nem validada no ambiente real
 - Active phase: Phase 6 — limpeza documental e integração; merge bloqueado até QA e Security confirmarem o Integration Candidate. Phase 7 permanece somente em planejamento e sem implementação autorizada.
@@ -82,9 +83,9 @@ Required Reviews — Integration Candidate:
 | Work | Required | Status | Commit |
 |---|---|---|---|
 | DEV | YES | READY_FOR_REVIEW | `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
-| QA | YES | WAITING_FOR_REVIEW | Integration Candidate pending |
+| QA | YES | READY_FOR_REVIEW | `cf9cd976549163d1f49cead7bc2f993254150708` |
 | DATABASE | NO | N/A | — |
-| SECURITY | YES | WAITING_FOR_REVIEW | Integration Candidate pending |
+| SECURITY | YES | READY_FOR_REVIEW | `cf9cd976549163d1f49cead7bc2f993254150708` |
 | UI/UX | NO | N/A | prior evidence: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
 | PLANNER | YES | READY_FOR_REVIEW | `129b5a26c3b506e7f53dbb797048ee6788fcd976` |
 
@@ -198,7 +199,8 @@ Required Reviews — Integration Candidate:
 - Autonomy level: 2.5
 - Status: IN_PROGRESS
 - Operational conclusion: `0912e94` permanece o Functional Commit e os pareceres anteriores permanecem evidência, mas a owner exige QA e Security finais sobre o Integration Candidate antes do merge. Database e UI/UX são `N/A` para esta limpeza documental; Production Readiness continua `BLOCKED`.
-- Routing: LEVEL 1 — criar o Integration Candidate documental, registrar seu hash e abrir a rodada final de QA + Security no mesmo alvo
+- Integration Candidate: `cf9cd976549163d1f49cead7bc2f993254150708`
+- Routing: LEVEL 1 — abrir PR em rascunho e executar a rodada final de QA + Security em paralelo sobre o mesmo candidate
 - Boundary: COORDINATOR atualizou somente Current Phase, Current Functional Commit, Review Matrix, blockers, warnings, Next Action e histórico; não concedeu aprovação técnica nem alterou seções ou relatórios de ownership dos reviewers
 
 ## Current Blockers
@@ -229,28 +231,28 @@ Required Reviews — Integration Candidate:
 - `6.0.0-phase.5` permanece como metadata legado do runtime; mudar apenas o rótulo exigiria novo Functional Commit e reviews, por isso a convenção foi documentada em vez de alterar código.
 - Dean Winchester, o `SelfKnowledge` público das inspirações e a exceção estreita de referência explícita foram aprovados pela owner e reconciliados nas fontes normativas.
 - Wake word, speaker verification, realtime voice, apps instaláveis, integrações, diagnóstico, auditoria ampliada e Model Router são `PLANNED/PROPOSED`, não capacidades implementadas.
+- Repetição do COORDINATOR em 2026-09-21: 45 testes Python, 36 testes frontend, `compileall` e sintaxe de 30 arquivos JavaScript passaram. O pacote browser não iniciou porque o binário Chromium do Playwright não está instalado neste ambiente; isso é limite ambiental e não substitui a validação independente de QA.
 
 ## Next Action
 
-- Role: COORDINATOR
-- Status: IN_PROGRESS
-- Task: finalizar a limpeza documental, criar o Integration Candidate e registrar o hash exato para a rodada final de QA e Security
-- Target commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
+- Role: QA + SECURITY
+- Status: READY_FOR_REVIEW
+- Task: revisar de forma independente o Integration Candidate e persistir os resultados finais em seus próprios arquivos, sem alterar código
+- Target commit: `cf9cd976549163d1f49cead7bc2f993254150708`
 - Required inputs:
-  - [`AGENTS.md`](../AGENTS.md)
-  - [`README.md`](../README.md)
-  - [`CHANGELOG.md`](../CHANGELOG.md)
+  - Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
+  - diff `0912e94..cf9cd97`
   - [`docs/architecture.md`](architecture.md)
   - [`docs/handoff.md`](handoff.md)
   - [`docs/reviews/architecture-latest.md`](reviews/architecture-latest.md)
   - [`docs/product-vision.md`](product-vision.md)
   - [`docs/roadmap.md`](roadmap.md)
 - Expected output:
-  - commit documental exclusivo que preserve `0912e94` como Functional Commit
-  - hash exato registrado como Integration Candidate em commit operacional posterior
-  - QA e Security roteados para revisar o mesmo candidate
+  - QA atualiza somente [`docs/reviews/qa-latest.md`](reviews/qa-latest.md) e sua seção no handoff, citando `cf9cd97`
+  - Security atualiza somente [`docs/reviews/security-review-latest.md`](reviews/security-review-latest.md) e sua seção no handoff, citando `cf9cd97`
+  - cada Work informa `APPROVED`, `APPROVED_WITH_WARNINGS` ou `REJECTED`, com blockers e limites ambientais explícitos
 - Blocking dependencies: nenhuma
-- Parallel work: somente leitura até o candidate; depois QA e Security podem revisar em paralelo em arquivos próprios
+- Parallel work: QA e Security podem revisar em paralelo porque usam o mesmo target e arquivos próprios distintos
 - Escalation: NONE
 
 ## Recent History
@@ -284,3 +286,4 @@ Required Reviews — Integration Candidate:
 - 2026-09-20 — PLANNER publicou `ARCH-2026-09-20-001` em `de2242a`, criou `docs/product-vision.md` e `docs/roadmap.md`, separou presença conversacional local dos gates de segurança e devolveu a decisão à owner sem autorizar Phase 7, UI/UX ou Development.
 - 2026-09-20 — A owner aprovou `ARCH-2026-09-20-001`, visão, roadmap, Dean Winchester como referência de traços, `SelfKnowledge` público das inspirações e a exceção estreita de homenagem original sob pedido explícito; autorizou somente o planejamento da Phase 7 e manteve toda implementação não autorizada.
 - 2026-09-21 — A owner esclareceu que os pareceres anteriores de QA e Security sobre `0912e94` não aprovam a branch final para integração. COORDINATOR reabriu o gate como `WAITING_FOR_REVIEW`; PLANNER definiu Integration Candidate documental e manteve merge/Phase 7 bloqueados.
+- 2026-09-21 — PLANNER concluiu a reconciliação documental em `cf9cd97`; COORDINATOR registrou esse hash como Integration Candidate, mantendo QA e Security pendentes e o merge bloqueado.
