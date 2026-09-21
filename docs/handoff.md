@@ -44,6 +44,15 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 - Documentation decision: `docs/product-vision.md`, `docs/roadmap.md` e `docs/future-architecture.md` são as fontes aprovadas para visão, ordem/gates e contratos futuros
 - Routing boundary: concluir o Integration Candidate, abrir PR em rascunho e obter os reviews finais de QA/Security antes do merge; UI/UX e Development da Phase 7 não estão autorizados
 
+## Owner Documentation Language Decision — 2026-09-21
+
+- Status: `APPROVED`
+- Canonical language: English for code, commits, README, documentation, architecture, roadmap, reviews, coordination and handoff content
+- PT-BR exceptions: localized product content, HOPE dialogue examples, language fixtures, linguistic tests and exact historical quotations
+- Migration boundary: prospective policy; no broad rewrite of frozen historical evidence is authorized inside the Phase 6 integration gate
+- Source: [`docs/coordination/documentation-language-policy.md`](coordination/documentation-language-policy.md)
+- Candidate impact: documentation-only; the previous Integration Candidate `cf9cd97` is superseded and QA/Security must receive a new exact hash
+
 Required Reviews — Integration Candidate:
 
 - QA: YES — confirmar integridade da branch, coerência documental e ausência de drift funcional

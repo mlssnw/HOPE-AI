@@ -6,6 +6,20 @@
 
 Este é o manual operacional compartilhado do projeto. Ele define como Works de desenvolvimento, validação, banco, segurança e arquitetura devem colaborar sem apagar decisões anteriores, extrapolar o escopo ou confundir visão futura com estado implementado.
 
+## 0. Canonical documentation language
+
+English is the canonical language for all new or materially revised human-authored project content, including:
+
+- source code identifiers, comments and developer-facing messages;
+- commit messages;
+- `README.md`;
+- active documentation, architecture and roadmap files;
+- review reports, coordination records and handoffs.
+
+PT-BR is permitted only when the content itself is intentionally localized for Brazilian Portuguese, including HOPE dialogue examples, user-facing product copy for PT-BR, language fixtures and linguistic tests. Examples such as `“Hope, espere.”` and `“Não registre esta conversa.”` may remain in Portuguese for that reason.
+
+This policy is effective for new work from 2026-09-21 onward. Do not rewrite frozen historical evidence merely to translate it. Active legacy documents should migrate to English when they are next materially revised or through a separately scoped documentation-only cleanup. When preserving an exact historical quote or test fixture, label its language when context is not obvious. See [`docs/coordination/documentation-language-policy.md`](docs/coordination/documentation-language-policy.md).
+
 ## 1. Identidade e objetivo
 
 HOPE é uma assistente pessoal cloud-first, multimodal e provider-agnostic. A marca exibida é sempre **HOPE**, tratada como nome próprio; `HOPE-AI` pode continuar como nome do repositório e “Holistic Operational Personal Engine” apenas como referência histórica de origem, nunca como expansão obrigatória da marca. A visão do produto reúne memória persistente e semântica, PostgreSQL, pgvector, Memory Globe WebGL, chat, voz, integrações, Event Bus, WebSockets, ferramentas e automações futuras.
