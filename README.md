@@ -36,14 +36,14 @@ A HOPE é um assistente pessoal experimental de IA com memória persistente e re
 
 Assistentes tradicionais dependem principalmente do contexto imediato da conversa. A HOPE nasceu para explorar uma abordagem em que memória, contexto, relações e histórico possam persistir e ser consultados de forma controlada ao longo do tempo.
 
-## ✨ Última atualização — Fase 5
+## ✨ Última atualização — Fase 6
 
 - Memória persistente passou a exigir consentimento explícito antes de recuperar, capturar ou alterar lembranças.
 - Esquecimento agora exige confirmação associada ao UUID exato da memória; ausência ou divergência é rejeitada.
 - O chat continua disponível em modo degradado quando a memória ou o banco não estão disponíveis.
 - O runtime agora desativa a memória de forma segura quando o schema não corresponde à migration exigida.
 
-[📖 Ver detalhes técnicos da Fase 5](docs/phase-5.md)
+[📖 Ver detalhes técnicos da Fase 6](docs/phase-6.md)
 
 ## ⚙️ Implementado atualmente
 
@@ -63,7 +63,7 @@ Assistentes tradicionais dependem principalmente do contexto imediato da convers
 
 | Campo | Estado |
 |---|---|
-| Versão atual | `6.0.0-phase.5` |
+| Versão atual | `6.0.0-phase.6` |
 | Fase atual | Phase 6 — Target UI Convergence |
 | Estado técnico | `IN_PROGRESS` — implementação autorizada; confirmação prévia da especificação por UI/UX em andamento |
 | Baseline funcional | Fase 5 `APPROVED_WITH_WARNINGS` no commit `88e1947` |
@@ -247,7 +247,7 @@ tests/            testes Python e Node
 ## Documentação
 
 - [Arquitetura atual](docs/architecture.md)
-- [Fase 5](docs/phase-5.md)
+- [Fase 5](docs/phase-6.md)
 - [Dashboard oficial e regras de uso](docs/design/official-dashboard.md)
 - [Handoff operacional](docs/handoff.md)
 - [Reviews técnicos](docs/reviews/README.md)
