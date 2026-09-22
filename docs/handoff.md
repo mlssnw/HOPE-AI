@@ -103,19 +103,16 @@ Required Reviews — Integration Candidate:
 ## Development
 
 - Status: READY_FOR_REVIEW
-- Phase: 6 — Target UI Convergence
-- Functional commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
-- Branch: `codex/phase-6-target-ui` — local, sem push ou merge
-- Baseline preserved: `88e194778b4399a6713f118470f9d861c553cd9e`; autorização `0bcc25a5437cab8a326e64281579ead56274d8cb`; spec UI/UX `3c10be208e4e4d6dcfc3329dd6207961c898d44c`
-- Delivered: shell responsivo chat-first, identidade HOPE, Globe/Core Orb em camadas, perfis gráficos e reduced motion, lista equivalente/fallback WebGL, inspector e busca, estados reais de chat/voz/realtime, fontes por resposta, consentimentos separados e confirmação destrutiva preservada; correções de apresentação `UIUX-F5-W01`, `UIUX-F5-W02`, `UIUX-F5-W03`
-- Validation reported by DEV: 45 testes Python e 36 frontend passaram; `compileall`, `node --check` e `git diff --cached --check` passaram. Cinco verificadores de navegador executados em harness novo/descartável: sete viewports, texto 130%, reflow equivalente a zoom 200%, landscape, teclado/foco, contraste, quatro perfis, fallback inicial/perda/recuperação WebGL, consentimento/histórico, cancelamento, voz com fixtures, esquecimento com UUID/428 e seis eventos realtime com heartbeat/fallback HTTP. Sem erros inesperados de console/página/assets.
-- Performance: HIGH 55,5 FPS com 3.000 nós e 2.999 relações sintéticas, 2.500 nós desenhados, Chrome 153/Windows/Radeon; método, p95 e demais perfis em `docs/evidence/phase-6/runtime-results.json`
-- Evidence: [`phase-6.md`](phase-6.md), [`Development Evidence Package`](evidence/phase-6/README.md)
-- Environmental limits: zoom por equivalência de reflow, sem automação do menu nativo; sem leitor de tela manual, teclado virtual/dispositivo físico, microfone real ou voz paga; fixtures não validam produção. Um warning preexistente Starlette/TestClient permanece. HTTP 428/500/503 em testes negativos são deliberados.
-- Impact analysis: QA YES pela mudança de interação/realtime/browser; SECURITY YES por consentimento, confirmação destrutiva e conteúdo não confiável; UI/UX YES para fidelidade final e acessibilidade. DATABASE NO: nenhum delta em backend/API/schema/persistência. Os três reviews devem usar exatamente `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`.
-- Boundary: nenhum PostgreSQL real, migration, provider pago, credencial, infraestrutura ou produção foi alterado; Phase 7 não iniciada. Mudanças preexistentes em `AGENTS.md`, `Hope dashboard` e `hope-linkedin-hero*` preservadas fora do commit. Relatórios de reviewers, Review Matrix, blockers e Next Action não foram alterados por DEV.
-- Handoff: devolvido ao COORDINATOR para roteamento dos reviews; nenhum review independente foi iniciado por Development. A interface não está declarada aprovada/concluída e Production Readiness continua BLOCKED.
-- Rule: DEV não pode marcar a fase como `APPROVED`
+- Phase: 6 — isolated correction of QA-IC-001 / SEC-020
+- Functional commit: `4d76f2433363a47a9d8fe29fef337de1dc79ac50`
+- Baseline: `91c77c1768aec511a253e19a22b32100a29bf342`; rejected integration candidate `20843a4568ca6eba67d66f93234412038ca79199`.
+- Delivered: the realtime chat test now injects explicit test settings and the existing disposable SQLite memory manager, with database cleanup. Its event assertions remain unchanged. No product/runtime/frontend/schema change.
+- Validation: reproduced the original failure in a clean Git export without .env or DATABASE_URL; after the correction, the full Python suite passed 45 tests in that export under an allowlisted environment. Frontend passed 36 tests; Python compileall, syntax checks for 30 JavaScript files and git diff --check passed.
+- Evidence: [Development correction record](phase-6.md#development-correction--qa-ic-001--sec-020--2026-09-22).
+- Environmental limits: one known Starlette/TestClient deprecation warning; no browser rerun for this test-only delta, real PostgreSQL, migration, paid provider or production validation.
+- Impact analysis: QA YES for clean-export reproducibility on the new hash; SECURITY YES for focused SEC-020/test-isolation re-review, with no runtime trust-boundary changes; DATABASE NO and UI/UX NO because their implementation surfaces did not change.
+- Boundary: no push, merge, PR-body edit or Phase 7 work. QA-IC-002 belongs to Coordinator/owner. Pre-existing untracked dashboard/hero assets remain excluded. Reviewer reports, Review Matrix, blockers and Next Action were not changed by Development.
+- Handoff: return to COORDINATOR for exact-hash review routing. Development does not approve the phase or close reviewer findings. Production Readiness remains BLOCKED.
 
 ## QA
 
@@ -129,6 +126,8 @@ Required Reviews — Integration Candidate:
 - Browser/API/realtime evidence: seven viewports, reflow/accessibility, WebGL/fallback, heartbeat/reconnect/HTTP fallback, invalid JSON close `1008`, cancellation, memory-aware flows, UUID/428 deletion, and relation removal passed in disposable state.
 - Re-review criteria: clean exported checkout completes the full Python suite without local `.env` dependence, and the draft PR review gate names exact candidate `20843a4568ca6eba67d66f93234412038ca79199`.
 - Review commit: this documentation-only QA commit
+- Parallel Obsidian environment check: `BLOCKED / NOT_TESTED` on commit `91c77c1768aec511a253e19a22b32100a29bf342`; credential and loopback endpoint configuration are present, but the local TCP listener is unreachable, so authentication and read/search were not exercised.
+- Obsidian gate impact: none; this check does not change the Phase 6 result or close/replace `QA-IC-001` and `QA-IC-002`. Owner action for a rerun: open Obsidian and confirm the existing Local REST API plugin is enabled/listening, without sharing secrets or private vault content.
 - Report: [`qa-latest.md`](reviews/qa-latest.md)
 
 ## Database Audit

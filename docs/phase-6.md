@@ -259,6 +259,7 @@ Este registro descreve a implementação entregue por Development. Não modifica
 
 ## Development Correction — QA-IC-001 / SEC-020 — 2026-09-22
 
+- Functional Commit: `4d76f2433363a47a9d8fe29fef337de1dc79ac50`. This follow-up hash record is documentation-only.
 - Status: `READY_FOR_REVIEW`; independent review is pending.
 - Baseline: `91c77c1768aec511a253e19a22b32100a29bf342`, a documentation-only descendant of the rejected integration candidate `20843a4568ca6eba67d66f93234412038ca79199`.
 - Root cause: the realtime chat test constructed the app without a memory manager. Local database configuration silently supplied one; a clean export emitted `thinking -> idle` instead of the expected `thinking -> searching -> idle`.
