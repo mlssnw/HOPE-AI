@@ -14,7 +14,7 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 - Runtime API version: `6.0.0-phase.5` — metadata legado congelado do Functional Commit, independente do status operacional da fase
 - Scope: convergência visual do HOPE Main Dashboard sobre capacidades reais, com acessibilidade, responsividade e preservação dos contratos funcionais existentes
 - Last approved Functional Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
-- Integration Candidate: `d83e57d237d1ddd10a0f64ae833aa92c0b2e9d71` — consolidated documentation plus the approved language policy; not yet approved by QA or Security
+- Integration Candidate: `20843a4568ca6eba67d66f93234412038ca79199` — README em PT-BR focado exclusivamente na Fase 6 e política de idioma reconciliada; ainda não aprovado por QA ou Security
 - Working tree expected: incluir a reconciliação autorizada de `AGENTS.md` no Integration Candidate e preservar fora dos commits os assets não rastreados `Hope dashboard` e `hope-linkedin-hero*`
 - Database environment: o re-review de Database validou o gate de schema em ambientes descartáveis; PostgreSQL real permaneceu inacessível e a migration `20260903_0003` não foi aplicada nem validada no ambiente real
 - Active phase: Phase 6 — limpeza documental e integração; merge bloqueado até QA e Security confirmarem o Integration Candidate. Phase 7 permanece somente em planejamento e sem implementação autorizada.
@@ -94,9 +94,9 @@ Required Reviews — Integration Candidate:
 | Work | Required | Status | Commit |
 |---|---|---|---|
 | DEV | YES | READY_FOR_REVIEW | `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
-| QA | YES | READY_FOR_REVIEW | `d83e57d237d1ddd10a0f64ae833aa92c0b2e9d71` |
+| QA | YES | READY_FOR_REVIEW | `20843a4568ca6eba67d66f93234412038ca79199` |
 | DATABASE | NO | N/A | — |
-| SECURITY | YES | READY_FOR_REVIEW | `d83e57d237d1ddd10a0f64ae833aa92c0b2e9d71` |
+| SECURITY | YES | READY_FOR_REVIEW | `20843a4568ca6eba67d66f93234412038ca79199` |
 | UI/UX | NO | N/A | prior evidence: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
 | PLANNER | YES | READY_FOR_REVIEW | `129b5a26c3b506e7f53dbb797048ee6788fcd976` |
 
@@ -210,7 +210,7 @@ Required Reviews — Integration Candidate:
 - Autonomy level: 2.5
 - Status: IN_PROGRESS
 - Operational conclusion: `0912e94` permanece o Functional Commit e os pareceres anteriores permanecem evidência, mas a owner exige QA e Security finais sobre o Integration Candidate antes do merge. Database e UI/UX são `N/A` para esta limpeza documental; Production Readiness continua `BLOCKED`.
-- Integration Candidate: `d83e57d237d1ddd10a0f64ae833aa92c0b2e9d71`
+- Integration Candidate: `20843a4568ca6eba67d66f93234412038ca79199`
 - Routing: LEVEL 1 — abrir PR em rascunho e executar a rodada final de QA + Security em paralelo sobre o mesmo candidate
 - Boundary: COORDINATOR atualizou somente Current Phase, Current Functional Commit, Review Matrix, blockers, warnings, Next Action e histórico; não concedeu aprovação técnica nem alterou seções ou relatórios de ownership dos reviewers
 
@@ -249,18 +249,18 @@ Required Reviews — Integration Candidate:
 - Role: QA + SECURITY
 - Status: READY_FOR_REVIEW
 - Task: independently review the Integration Candidate and persist final results in each Work's owned files without changing code
-- Target commit: `d83e57d237d1ddd10a0f64ae833aa92c0b2e9d71`
+- Target commit: `20843a4568ca6eba67d66f93234412038ca79199`
 - Required inputs:
   - Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
-  - diff `0912e94..d83e57d`
+  - diff `0912e94..20843a4`
   - [`docs/architecture.md`](architecture.md)
   - [`docs/handoff.md`](handoff.md)
   - [`docs/reviews/architecture-latest.md`](reviews/architecture-latest.md)
   - [`docs/product-vision.md`](product-vision.md)
   - [`docs/roadmap.md`](roadmap.md)
 - Expected output:
-  - QA updates only [`docs/reviews/qa-latest.md`](reviews/qa-latest.md) and its handoff section, citing `d83e57d`
-  - Security updates only [`docs/reviews/security-review-latest.md`](reviews/security-review-latest.md) and its handoff section, citing `d83e57d`
+  - QA updates only [`docs/reviews/qa-latest.md`](reviews/qa-latest.md) and its handoff section, citing `20843a4`
+  - Security updates only [`docs/reviews/security-review-latest.md`](reviews/security-review-latest.md) and its handoff section, citing `20843a4`
   - each Work reports `APPROVED`, `APPROVED_WITH_WARNINGS` or `REJECTED`, with explicit blockers and environmental limits
 - Blocking dependencies: nenhuma
 - Parallel work: QA e Security podem revisar em paralelo porque usam o mesmo target e arquivos próprios distintos
@@ -299,3 +299,4 @@ Required Reviews — Integration Candidate:
 - 2026-09-21 — A owner esclareceu que os pareceres anteriores de QA e Security sobre `0912e94` não aprovam a branch final para integração. COORDINATOR reabriu o gate como `WAITING_FOR_REVIEW`; PLANNER definiu Integration Candidate documental e manteve merge/Phase 7 bloqueados.
 - 2026-09-21 — PLANNER concluiu a reconciliação documental em `cf9cd97`; COORDINATOR registrou esse hash como Integration Candidate, mantendo QA e Security pendentes e o merge bloqueado.
 - 2026-09-21 — The owner established English as the canonical documentation language. Commit `d83e57d` superseded `cf9cd97` as the Integration Candidate; final QA and Security reviews remain pending.
+- 2026-09-22 — A owner definiu o README público em PT-BR e pediu foco exclusivo na Fase 6. O commit `20843a4` substituiu `d83e57d` como Integration Candidate; QA e Security finais continuam pendentes.
