@@ -125,3 +125,41 @@ The README is in PT-BR, identifies Phase 6 as the only active phase, keeps later
 `REJECTED`
 
 Do not merge the Phase 6 draft PR until both blockers are closed and QA re-reviews the resulting exact Integration Candidate. This result does not authorize Phase 7, production deployment, migration application, or real database changes.
+
+## Parallel Environmental Validation — Obsidian Local REST API
+
+- Result: `BLOCKED / NOT_TESTED`
+- Commit tested: `91c77c1768aec511a253e19a22b32100a29bf342`
+- Functional implementation lineage: Obsidian paths are unchanged from `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`.
+- Review date: 2026-09-22
+- QA persistence note: the evidence was collected before the unrelated test-only commits `4d76f24`/`7ba206f`; a post-test diff confirmed no change to the Obsidian configuration, adapter, models, service tests, or example environment contract.
+- Gate impact: `NONE`. This environmental check is separate from the Phase 6 integration decision and does not close, replace, approve, or reject `QA-IC-001` or `QA-IC-002`.
+
+### Contract Identified
+
+- `Settings.from_env()` loads `OBSIDIAN_API_KEY`, `OBSIDIAN_BASE_URL`, and `OBSIDIAN_VERIFY_TLS` on the backend.
+- `HopeServices.health()` performs an authenticated, read-only `GET /` and maps the result to `configured`/`available`.
+- `HopeServices.search_obsidian()` performs an authenticated `POST /search/simple/` with a bounded query and context length. It limits returned results, sanitizes filename/excerpt lengths, rejects suspicious traversal segments, and returns sources classified as `obsidian`.
+- The integration is used by chat only when `ChatRequest.use_vault=true`; collected Obsidian results are delimited as untrusted external data before model use.
+- The implemented adapter provides search/read context only. It does not create, update, move, or delete notes.
+
+### Sanitized Environment Evidence
+
+- Local `.env` file: present.
+- Obsidian API credential: present; value not read into logs or reported.
+- Base endpoint: present, HTTP scheme, loopback host; URL and port not reported.
+- TLS verification setting: enabled.
+- Adapter health: `configured=true`, `available=false`.
+- Transport diagnostic: local TCP listener unreachable; no HTTP request status or response body was available.
+- Authentication: `NOT_TESTED` because the listener was unreachable.
+- Functional read/search: `NOT_TESTED`; the sentinel search was deliberately skipped after failed health/connectivity.
+- Vault names, note names, note contents, excerpts, private paths, URL, port, and token were not logged or persisted.
+- Proportional mocked service regression: `tests/test_services.py` — `5 passed`.
+
+### Environmental Dependency
+
+The configured Obsidian Local REST API listener was not reachable on the local loopback endpoint. The available evidence cannot distinguish whether Obsidian is closed, the Local REST API plugin is disabled/not running, or its listener configuration differs from the backend configuration. This is an unavailable local dependency, not a reproduced functional defect in the HOPE adapter.
+
+### Owner Action Required
+
+If live Obsidian validation is desired, open Obsidian with the intended vault, confirm that the already-installed Local REST API plugin is enabled and listening under the existing configuration, and request a rerun. Do not send the token, private URL, vault name, or note content in chat. QA will then repeat health/authentication and one minimal non-sensitive read-only sentinel search.

@@ -126,6 +126,8 @@ Required Reviews — Integration Candidate:
 - Browser/API/realtime evidence: seven viewports, reflow/accessibility, WebGL/fallback, heartbeat/reconnect/HTTP fallback, invalid JSON close `1008`, cancellation, memory-aware flows, UUID/428 deletion, and relation removal passed in disposable state.
 - Re-review criteria: clean exported checkout completes the full Python suite without local `.env` dependence, and the draft PR review gate names exact candidate `20843a4568ca6eba67d66f93234412038ca79199`.
 - Review commit: this documentation-only QA commit
+- Parallel Obsidian environment check: `BLOCKED / NOT_TESTED` on commit `91c77c1768aec511a253e19a22b32100a29bf342`; credential and loopback endpoint configuration are present, but the local TCP listener is unreachable, so authentication and read/search were not exercised.
+- Obsidian gate impact: none; this check does not change the Phase 6 result or close/replace `QA-IC-001` and `QA-IC-002`. Owner action for a rerun: open Obsidian and confirm the existing Local REST API plugin is enabled/listening, without sharing secrets or private vault content.
 - Report: [`qa-latest.md`](reviews/qa-latest.md)
 
 ## Database Audit
