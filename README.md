@@ -56,7 +56,7 @@ Assistentes tradicionais dependem principalmente do contexto imediato da convers
 | Tempo real | Event Bus e WebSocket com eventos incrementais, heartbeat, reconnect e reconciliação HTTP. O barramento ainda é local ao processo. |
 | Busca | Recuperação híbrida de memória; Tavily e busca textual no Obsidian ficam disponíveis quando configurados. |
 | Voz | Ditado pela Web Speech API e TTS por ElevenLabs quando suportados e configurados. |
-| Integrações | Adapters para Anthropic, Tavily, ElevenLabs e Obsidian Local REST API; todos opcionais e protegidos pelo backend. |
+| Integrações | Adapters opcionais para Anthropic, Tavily, ElevenLabs e Obsidian Local REST API. As credenciais permanecem no backend, mas os endpoints ainda exigem autenticação do owner antes de qualquer exposição pública. |
 | Qualidade | Evidência anterior de 45 testes Python e 36 testes frontend, além de validação browser da matriz de viewports, WebGL/fallback, realtime, acessibilidade e cenários degradados. |
 | Segurança | Segredos no backend, CSP restrita, conteúdo externo tratado como não confiável, consentimento de memória e confirmação destrutiva. Autenticação e hardening de produção permanecem pendentes. |
 
@@ -203,9 +203,9 @@ Resultados, blockers e evidências detalhadas ficam em [`docs/reviews/`](docs/re
 | Obsidian | Consulta local e trechos selecionados |
 | ElevenLabs | Texto da resposta para síntese de voz |
 | Histórico local | Até 40 mensagens no `localStorage`, somente com opt-in separado |
-| Memória persistente | Conteúdo, metadados e embedding no PostgreSQL configurado, somente quando autorizada no chat |
+| Memória persistente | O opt-in do chat controla recuperação, captura e comandos de memória durante a conversa; memórias já armazenadas ainda podem ser carregadas pelo Memory Globe na interface local/controlada |
 
-Desativar **Memória no chat** impede novas recuperações, capturas e comandos persistentes; não apaga automaticamente memórias já armazenadas. A exclusão exige uma ação explícita e confirmação do alvo. **Histórico local** possui controle e limpeza separados.
+Desativar **Memória no chat** impede novas recuperações, capturas e comandos persistentes durante a conversa; não apaga automaticamente memórias já armazenadas nem desativa a leitura dessas memórias pelo Memory Globe atual. A exclusão exige uma ação explícita e confirmação do alvo. **Histórico local** possui controle e limpeza separados.
 
 Antes de qualquer deploy público, o projeto ainda requer autenticação, autorização, proteção de providers, rate limiting, hardening do WebSocket, role restrita de banco, TLS verificado e auditoria atribuível. Consulte o [Security Review](docs/reviews/security-review-latest.md) e o [Database Audit](docs/reviews/database-audit-latest.md).
 
