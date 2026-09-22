@@ -1,11 +1,10 @@
 <div align="center">
 
-# HOPE AI
+# HOPE
 
 **Assistente pessoal experimental de Inteligência Artificial com memória persistente, contexto explicável e visualização das relações que importam.**
 
 ![Status](https://img.shields.io/badge/status-em%20desenvolvimento-F2AE3D)
-![Runtime](https://img.shields.io/badge/runtime-6.0.0--phase.5-FFF8E9)
 ![Phase](https://img.shields.io/badge/phase-6-63BFD4)
 ![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-009688?logo=fastapi&logoColor=white)
@@ -16,12 +15,12 @@
 
 <p align="center">
   <img src="docs/design/assets/hope-dashboard-approved-2026-09-10.png"
-       alt="Target UI aprovado para a interface da HOPE AI"
+       alt="Target UI aprovado para a interface da HOPE"
        width="100%">
 </p>
 
 <p align="center">
-  <em>Target UI aprovado: a implementação da Fase 6 está presente no Functional Commit; a integração final aguarda confirmação de QA e Security.</em>
+  <em>Target UI aprovado: a implementação da Fase 6 foi entregue; a integração está em correção antes do novo QA.</em>
 </p>
 
 <p align="center">
@@ -41,7 +40,7 @@ Assistentes tradicionais dependem principalmente do contexto imediato da convers
 - O dashboard convergiu para a direção visual aprovada sem ativar capacidades futuras inexistentes.
 - Memory Globe/Core Orb, chat, inspector, responsividade chat-first, fallback sem WebGL e acessibilidade foram integrados ao novo shell.
 - Consentimento de memória, histórico local, cancelamento e confirmação destrutiva permanecem separados e operáveis.
-- QA, Security e UI/UX produziram evidência sobre o Functional Commit; QA e Security ainda precisam confirmar o Integration Candidate documental antes do merge.
+- QA solicitou uma correção no isolamento de um teste antes da integração; Security aprovou o candidate revisado com warnings e UI/UX aprovou a implementação visual.
 - Nenhuma fase posterior está ativa ou autorizada para implementação enquanto a integração da Fase 6 não for concluída.
 
 [📖 Ver detalhes técnicos da Fase 6](docs/phase-6.md)
@@ -64,9 +63,9 @@ Assistentes tradicionais dependem principalmente do contexto imediato da convers
 
 | Campo | Estado |
 |---|---|
-| Runtime API | `6.0.0-phase.5` — metadata legado e congelado do Functional Commit, independente do status operacional da fase |
+| Versão pública | Fase 6 — sem usar o rótulo legado do runtime como versão da fase |
 | Fase atual | Fase 6 — Target UI Convergence |
-| Estado técnico | `WAITING_FOR_REVIEW` para integração; QA e Security devem confirmar o mesmo Integration Candidate |
+| Estado técnico | `CHANGES_REQUESTED` para integração — uma correção de isolamento de teste deve ser concluída e revalidada pelo QA |
 | Functional Commit | `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
 | Deploy público | Ainda não habilitado — autenticação, autorização e hardening de produção pendentes |
 
@@ -80,8 +79,10 @@ A única fase ativa é a **Fase 6 — Target UI Convergence**.
 
 - [x] Implementação funcional entregue no commit `0912e94`.
 - [x] Direção visual validada pelo UI/UX no Functional Commit.
-- [ ] Integration Candidate documental confirmado pelo QA.
-- [ ] Integration Candidate documental confirmado pelo Security.
+- [x] Security revisou o candidate `20843a4` e aprovou com warnings.
+- [ ] Development corrigir o isolamento do teste realtime apontado pelo QA.
+- [ ] QA aprovar o novo Integration Candidate no hash exato.
+- [ ] Descrição do PR ser sincronizada com o candidate vigente.
 - [ ] Merge da branch `codex/phase-6-target-ui` em `main`.
 
 O roadmap futuro existe como direção aprovada, mas não representa trabalho ativo nem autorização de implementação. Ele permanece separado em [`docs/roadmap.md`](docs/roadmap.md), junto da [`visão de produto`](docs/product-vision.md) e da [`arquitetura futura`](docs/future-architecture.md).
@@ -231,7 +232,7 @@ tests/            testes Python e Node
 - O histórico ativo do chat ainda fica no navegador.
 - A resposta não usa streaming de tokens.
 - O asset conceitual do dashboard ainda exibe capacidades futuras omitidas corretamente pela implementação da Fase 6.
-- O runtime ainda reporta `6.0.0-phase.5`; esse rótulo legado foi preservado para não criar um novo Functional Commit apenas por metadata.
+- O runtime ainda reporta um rótulo técnico legado; o README usa a fase operacional vigente para evitar confundi-lo com a versão pública do projeto.
 - Web Speech API, providers externos e Obsidian dependem de suporte e configuração locais.
 
 ## Documentação
