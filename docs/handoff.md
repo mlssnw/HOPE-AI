@@ -149,15 +149,17 @@ Required Reviews — Integration Candidate:
 ## Security Review
 
 - Coordination status: APPROVED_WITH_WARNINGS
-- Current target: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
-- Last commit reviewed: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
-- Functional result: APPROVED_WITH_WARNINGS
-- Production readiness: REJECTED / BLOCKED
-- Confirmed for Phase 6 scope: consentimento, histórico local, confirmação destrutiva, conteúdo não confiável, CSP, voz, realtime e omission de capabilities futuras preservados
-- New non-blocking warning: `SEC-018` — harness herda ambiente e usa porta fixa/sentinel insuficiente para subprocessos destrutivos
-- Deploy blockers: `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-008` e `SEC-012`
-- Scope warning: exclusão continua física e sem recuperação; autenticação, autorização, auditoria e controles operacionais permanecem planejados e obrigatórios antes de exposição pública
-- Review commit: `f9c0ca8289f62596946d21441ba239dcd7777fd3`
+- Integration Candidate reviewed: `20843a4568ca6eba67d66f93234412038ca79199`
+- Functional Commit preserved: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
+- Superseded candidates not approved by this review: `cf9cd976549163d1f49cead7bc2f993254150708`, `d83e57d237d1ddd10a0f64ae833aa92c0b2e9d71`
+- Feature/integration result: APPROVED_WITH_WARNINGS
+- Production Readiness: REJECTED / BLOCKED
+- Confirmed: no functional drift; chat memory consent, exact-UUID destructive confirmation, untrusted-content boundaries, capability honesty and all historical findings remain effective
+- New non-blocking findings: `SEC-019` — the public README may overstate authenticated backend protection and the scope of chat memory consent; `SEC-020` — the realtime test result depends on ignored local database configuration
+- Carried non-blocking warning: `SEC-018` — browser harness environment and destructive-flow sentinel hardening remain open
+- Deploy blockers unchanged: `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-008`, `SEC-012`
+- Environmental limits: no real database, provider, credential, physical device or Security browser rerun; the workspace run passed 45 Python and 36 frontend tests, but QA's clean export failed one environment-dependent Python test
+- Recommendation to Coordinator: record this final Security result for `20843a4`, track `SEC-019` and `SEC-020`, keep the overall integration rejected/changes-requested while `QA-IC-001` and `QA-IC-002` remain open, preserve Production Readiness as blocked and do not merge or start a later phase
 - Report: [`security-review-latest.md`](reviews/security-review-latest.md)
 
 ## UI/UX
