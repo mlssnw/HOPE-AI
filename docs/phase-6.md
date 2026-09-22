@@ -256,3 +256,16 @@ Este registro descreve a implementação entregue por Development. Não modifica
 - Required Reviews preservados: QA YES; SECURITY YES; UI/UX YES; DATABASE NO.
 - Development não encerra findings de reviewers, não aprova a fase e não inicia os reviews finais. Entrega `READY_FOR_REVIEW` ao COORDINATOR no hash acima; este registro de hash é documental e não muda a identidade funcional.
 - Phase 7 e Production Readiness permanecem fora do escopo; produção continua `BLOCKED`.
+
+## Development Correction — QA-IC-001 / SEC-020 — 2026-09-22
+
+- Status: `READY_FOR_REVIEW`; independent review is pending.
+- Baseline: `91c77c1768aec511a253e19a22b32100a29bf342`, a documentation-only descendant of the rejected integration candidate `20843a4568ca6eba67d66f93234412038ca79199`.
+- Root cause: the realtime chat test constructed the app without a memory manager. Local database configuration silently supplied one; a clean export emitted `thinking -> idle` instead of the expected `thinking -> searching -> idle`.
+- Correction: only `tests/test_realtime.py` changed functionally. The affected test patches settings at its boundary with `Settings.for_tests()`, injects the existing in-memory SQLite fixture with a real MemoryManager and local embeddings, and disposes its database in `finally`. Event expectations are unchanged. No runtime, schema, API or frontend behavior changed.
+- Red evidence: before editing, the isolated test failed in a Git archive export without `.env` or `DATABASE_URL`: `1 failed, 1 warning`, with `idle != searching`.
+- Green evidence: the same clean export with only the test patch passed `python -m pytest -q -p no:cacheprovider`: `45 passed, 1 warning`. The child environment retained only Windows runtime variables (`SYSTEMROOT`, `WINDIR`, `TEMP`, `TMP`, `PATH`, `COMSPEC`, `PATHEXT`, `USERPROFILE`, `LOCALAPPDATA`, `APPDATA`, `SYSTEMDRIVE`); database/provider configuration was absent. Python dependencies came from the existing virtual environment, not its source tree.
+- Additional checks: `node --test tests/frontend/*.test.mjs` passed all 36 tests; `python -m compileall -q backend tests`, `node --check` for 30 JavaScript files and `git diff --check` passed. The known Starlette/TestClient deprecation warning remains.
+- Limits: no browser rerun for this test-only delta; no real PostgreSQL, migration, provider, credential or external infrastructure was used. SQLite evidence is not PostgreSQL or production validation.
+- Review impact: QA must revalidate the new exact hash, including the clean-export suite. Security should perform a focused re-review of SEC-020/test isolation; runtime trust boundaries are unchanged. Database and UI/UX have no new delta. Production blockers and QA-IC-002 remain outside this correction.
+- Delivery boundary: no push, merge, PR-body edit or Phase 7 work. Reviewer reports and coordination-owned handoff sections remain untouched. Pre-existing untracked dashboard/hero assets remain excluded. No public README capability claim changes are needed for a test-fixture correction.
