@@ -21,7 +21,7 @@
 </p>
 
 <p align="center">
-  <em>Target UI aprovado: a implementação da Phase 6 está presente no Functional Commit; a integração final aguarda confirmação de QA e Security.</em>
+  <em>Target UI aprovado: a implementação da Fase 6 está presente no Functional Commit; a integração final aguarda confirmação de QA e Security.</em>
 </p>
 
 <p align="center">
@@ -36,15 +36,15 @@ A HOPE é um assistente pessoal experimental de IA com memória persistente e re
 
 Assistentes tradicionais dependem principalmente do contexto imediato da conversa. A HOPE nasceu para explorar uma abordagem em que memória, contexto, relações e histórico possam persistir e ser consultados de forma controlada ao longo do tempo.
 
-## ✨ Última atualização — Phase 6
+## ✨ Última atualização — Fase 6
 
 - O dashboard convergiu para a direção visual aprovada sem ativar capacidades futuras inexistentes.
 - Memory Globe/Core Orb, chat, inspector, responsividade chat-first, fallback sem WebGL e acessibilidade foram integrados ao novo shell.
 - Consentimento de memória, histórico local, cancelamento e confirmação destrutiva permanecem separados e operáveis.
 - QA, Security e UI/UX produziram evidência sobre o Functional Commit; QA e Security ainda precisam confirmar o Integration Candidate documental antes do merge.
-- A visão futura, o roadmap e os limites de personalidade/SelfKnowledge foram aprovados; a Phase 7 permanece somente em planejamento e sem implementação autorizada.
+- Nenhuma fase posterior está ativa ou autorizada para implementação enquanto a integração da Fase 6 não for concluída.
 
-[📖 Ver detalhes técnicos da Phase 6](docs/phase-6.md)
+[📖 Ver detalhes técnicos da Fase 6](docs/phase-6.md)
 
 ## ⚙️ Implementado atualmente
 
@@ -52,7 +52,7 @@ Assistentes tradicionais dependem principalmente do contexto imediato da convers
 |---|---|
 | Memória | CRUD, classificação, consolidação, proveniência, entidades, relações e recuperação híbrida em PostgreSQL/pgvector. Ativação no chat é opt-in. |
 | IA | `HopeOrchestrator` com personalidade original, contexto delimitado e Claude como provider operacional atual. Abstração multi-LLM ainda é parcial. |
-| Visualização | Dashboard da Phase 6 aprovado dentro das capacidades reais, com Memory Globe/Core Orb, modos orbital, clusters e memória, responsividade e fallback textual/WebGL. |
+| Visualização | Dashboard da Fase 6 aprovado dentro das capacidades reais, com Memory Globe/Core Orb, modos orbital, clusters e memória, responsividade e fallback textual/WebGL. |
 | Tempo real | Event Bus e WebSocket com eventos incrementais, heartbeat, reconnect e reconciliação HTTP. O barramento ainda é local ao processo. |
 | Busca | Recuperação híbrida de memória; Tavily e busca textual no Obsidian ficam disponíveis quando configurados. |
 | Voz | Ditado pela Web Speech API e TTS por ElevenLabs quando suportados e configurados. |
@@ -65,7 +65,7 @@ Assistentes tradicionais dependem principalmente do contexto imediato da convers
 | Campo | Estado |
 |---|---|
 | Runtime API | `6.0.0-phase.5` — metadata legado e congelado do Functional Commit, independente do status operacional da fase |
-| Fase atual | Phase 6 — Target UI Convergence |
+| Fase atual | Fase 6 — Target UI Convergence |
 | Estado técnico | `WAITING_FOR_REVIEW` para integração; QA e Security devem confirmar o mesmo Integration Candidate |
 | Functional Commit | `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
 | Deploy público | Ainda não habilitado — autenticação, autorização e hardening de produção pendentes |
@@ -74,26 +74,17 @@ A fundação local/controlada já conecta chat, memória persistente, PostgreSQL
 
 O acompanhamento técnico detalhado permanece no [painel operacional](docs/handoff.md) e nos [reviews](docs/reviews/README.md).
 
-## 🗺️ Em desenvolvimento / Roadmap
+## 🗺️ Fase atual e próximo gate
 
-O roadmap futuro foi aprovado como direção de produto, mas nenhuma implementação posterior à Phase 6 está autorizada. A ordem completa, os gates e os Required Reviews estão em [`docs/roadmap.md`](docs/roadmap.md).
+A única fase ativa é a **Fase 6 — Target UI Convergence**.
 
-- [x] Backend FastAPI protegendo credenciais e integrações.
-- [x] Fundação PostgreSQL + pgvector com migrations versionadas.
-- [x] CRUD, classificação, consolidação, proveniência, entidades e relações de memória.
-- [x] Memory Globe WebGL usando nós e relações reais.
-- [x] Event Bus, WebSocket e atualização incremental do globo.
-- [x] Chat consciente de memória com consentimento explícito.
-- [x] Correção e esquecimento com confirmação vinculada ao alvo.
-- [x] Aprovação final independente da Fase 5.
-- [ ] Phase 6 — implementação em `0912e94`; integração final pendente de QA e Security.
-- [ ] Phase 7 — Conversational Presence Foundation; plano aguardando aprovação e implementação não autorizada.
-- [ ] Phase 8 — Single-User Security & Permissions.
-- [ ] Phase 9 — Realtime Voice Sessions.
-- [ ] Phases 10–14 — cloud/shared clients, Windows/wake word, Android/device context, speaker verification opcional e Model Router/Diagnostics.
-- [ ] Phases 15–22 — organização pessoal, tools/effects, coding, agents, learning, multimodalidade, automações e HOPE Bridge.
+- [x] Implementação funcional entregue no commit `0912e94`.
+- [x] Direção visual validada pelo UI/UX no Functional Commit.
+- [ ] Integration Candidate documental confirmado pelo QA.
+- [ ] Integration Candidate documental confirmado pelo Security.
+- [ ] Merge da branch `codex/phase-6-target-ui` em `main`.
 
-A visão aprovada está em [`docs/product-vision.md`](docs/product-vision.md); o desenho técnico futuro permanece em [`docs/future-architecture.md`](docs/future-architecture.md). Roadmap aprovado não equivale a autorização de implementação.
+O roadmap futuro existe como direção aprovada, mas não representa trabalho ativo nem autorização de implementação. Ele permanece separado em [`docs/roadmap.md`](docs/roadmap.md), junto da [`visão de produto`](docs/product-vision.md) e da [`arquitetura futura`](docs/future-architecture.md).
 
 ## Arquitetura resumida
 
@@ -181,9 +172,9 @@ As rotas principais incluem:
 - CRUD, busca, recuperação, entidades, relações, explicação e grafo em `/api/memories`;
 - `GET /ws/hope?user_id=<uuid>` para eventos em tempo real.
 
-Durante o desenvolvimento, `X-Hope-User-Id` separa dados por UUID, mas **não é autenticação**. Configuração e contratos detalhados estão em [docs/architecture.md](docs/architecture.md) e [docs/phase-5.md](docs/phase-5.md).
+Durante o desenvolvimento, `X-Hope-User-Id` separa dados por UUID, mas **não é autenticação**. Configuração e contratos detalhados estão em [docs/architecture.md](docs/architecture.md) e [docs/phase-6.md](docs/phase-6.md).
 
-## Quality & Testing
+## Qualidade e testes
 
 A HOPE trata qualidade como parte da arquitetura do produto:
 
@@ -239,23 +230,28 @@ tests/            testes Python e Node
 - O Event Bus é local ao processo; múltiplas réplicas exigem broker compartilhado.
 - O histórico ativo do chat ainda fica no navegador.
 - A resposta não usa streaming de tokens.
-- O asset conceitual do dashboard ainda exibe capacidades futuras omitidas corretamente pela implementação da Phase 6.
+- O asset conceitual do dashboard ainda exibe capacidades futuras omitidas corretamente pela implementação da Fase 6.
 - O runtime ainda reporta `6.0.0-phase.5`; esse rótulo legado foi preservado para não criar um novo Functional Commit apenas por metadata.
 - Web Speech API, providers externos e Obsidian dependem de suporte e configuração locais.
 
 ## Documentação
 
+Estado atual da Fase 6:
+
 - [Arquitetura atual](docs/architecture.md)
-- [Fase 5](docs/phase-5.md)
-- [Phase 6](docs/phase-6.md)
-- [Plano da Phase 7](docs/phase-7.md)
-- [Visão de produto](docs/product-vision.md)
-- [Roadmap oficial](docs/roadmap.md)
+- [Fase 6](docs/phase-6.md)
 - [Dashboard oficial e regras de uso](docs/design/official-dashboard.md)
 - [Handoff operacional](docs/handoff.md)
-- [Nova direção de produto — intake para o Planner](docs/coordination/product-direction-2026-09-19.md)
 - [Reviews técnicos](docs/reviews/README.md)
+
+Direção futura, sem autorização de implementação:
+
+- [Visão de produto](docs/product-vision.md)
+- [Roadmap oficial](docs/roadmap.md)
 - [Arquitetura futura](docs/future-architecture.md)
+
+Histórico e governança:
+
 - [Changelog](CHANGELOG.md)
 - [Instruções para Works](AGENTS.md)
 

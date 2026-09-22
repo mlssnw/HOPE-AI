@@ -8,18 +8,22 @@
 
 ## Decision
 
-English is the canonical documentation language for HOPE from this decision forward.
+English is the canonical language for HOPE technical documentation from this decision forward.
 
 The rule applies to:
 
 - source code identifiers, comments and developer-facing text;
 - commit messages;
-- `README.md`;
 - documentation;
 - architecture records;
 - roadmap documents;
 - review reports;
 - coordination and handoff records.
+
+Two owner-approved exceptions apply:
+
+- `README.md` is the public product presentation and must be written in PT-BR;
+- any status, decision, approval request, escalation or handoff delivered directly to the owner must also be available in PT-BR, even when the canonical technical record is in English.
 
 ## Allowed PT-BR content
 
@@ -32,7 +36,7 @@ Portuguese is allowed only when it is part of the product or test subject rather
 - linguistic, speech or intent-recognition tests;
 - exact historical quotations that must remain verbatim.
 
-These exceptions do not permit surrounding technical explanations, commit messages or review conclusions to default to Portuguese.
+These exceptions do not require canonical technical records, commit messages or review conclusions to default to Portuguese. They require a PT-BR presentation layer where the owner or the public README is the audience.
 
 ## Migration rule
 
@@ -40,7 +44,8 @@ This decision is prospective and does not authorize a broad rewrite of frozen hi
 
 - New files and new substantive sections must be written in English.
 - A materially revised active document should migrate its affected content to English.
-- `README.md`, active architecture, roadmap, handoff and current review templates have priority in a separately scoped documentation-only normalization.
+- Active architecture, roadmap, handoff and current review templates have priority in a separately scoped documentation-only normalization.
+- `README.md` remains in PT-BR and should describe one active phase clearly; future phases belong in the roadmap rather than competing with the current phase in the public summary.
 - Historical phase records and reviewer evidence may remain in their original language until a dedicated migration is authorized; their technical meaning must not be changed merely for translation.
 - Translation-only commits do not change the Functional Commit, but they remain reviewable documentation changes.
 

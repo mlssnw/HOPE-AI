@@ -8,15 +8,16 @@ Este é o manual operacional compartilhado do projeto. Ele define como Works de 
 
 ## 0. Canonical documentation language
 
-English is the canonical language for all new or materially revised human-authored project content, including:
+English is the canonical language for new or materially revised technical project content, including:
 
 - source code identifiers, comments and developer-facing messages;
 - commit messages;
-- `README.md`;
 - active documentation, architecture and roadmap files;
 - review reports, coordination records and handoffs.
 
-PT-BR is permitted only when the content itself is intentionally localized for Brazilian Portuguese, including HOPE dialogue examples, user-facing product copy for PT-BR, language fixtures and linguistic tests. Examples such as `“Hope, espere.”` and `“Não registre esta conversa.”` may remain in Portuguese for that reason.
+`README.md` is the public-facing exception and must be written in PT-BR. Any status, decision, approval request, escalation or handoff presented directly to the owner must also be available in PT-BR, even when its canonical technical record is in English.
+
+PT-BR is also permitted when the content itself is intentionally localized for Brazilian Portuguese, including HOPE dialogue examples, user-facing product copy for PT-BR, language fixtures and linguistic tests. Examples such as `“Hope, espere.”` and `“Não registre esta conversa.”` may remain in Portuguese for that reason.
 
 This policy is effective for new work from 2026-09-21 onward. Do not rewrite frozen historical evidence merely to translate it. Active legacy documents should migrate to English when they are next materially revised or through a separately scoped documentation-only cleanup. When preserving an exact historical quote or test fixture, label its language when context is not obvious. See [`docs/coordination/documentation-language-policy.md`](docs/coordination/documentation-language-policy.md).
 

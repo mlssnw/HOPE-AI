@@ -47,11 +47,13 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 ## Owner Documentation Language Decision — 2026-09-21
 
 - Status: `APPROVED`
-- Canonical language: English for code, commits, README, documentation, architecture, roadmap, reviews, coordination and handoff content
-- PT-BR exceptions: localized product content, HOPE dialogue examples, language fixtures, linguistic tests and exact historical quotations
+- Canonical technical language: English for code, commits, documentation, architecture, roadmap, reviews, coordination and canonical handoff records
+- Public README: PT-BR
+- Owner-facing communication: status, decisions, approval requests, escalations and handoffs must also be presented in PT-BR
+- Other PT-BR exceptions: localized product content, HOPE dialogue examples, language fixtures, linguistic tests and exact historical quotations
 - Migration boundary: prospective policy; no broad rewrite of frozen historical evidence is authorized inside the Phase 6 integration gate
 - Source: [`docs/coordination/documentation-language-policy.md`](coordination/documentation-language-policy.md)
-- Candidate impact: documentation-only; the previous Integration Candidate `cf9cd97` is superseded and QA/Security must receive a new exact hash
+- Candidate impact: documentation-only; Integration Candidate `d83e57d` is superseded by this cleanup and QA/Security must receive the resulting exact hash
 
 Required Reviews — Integration Candidate:
 
