@@ -7,17 +7,17 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 ## Current Phase
 
 - Phase: 6 — Target UI Convergence
-- Phase status: WAITING_FOR_REVIEW
-- Feature status: WAITING_FOR_REVIEW — o Functional Commit possui evidência anterior, mas a branch limpa ainda exige confirmação final de QA e Security no mesmo Integration Candidate
+- Phase status: CHANGES_REQUESTED
+- Feature status: CHANGES_REQUESTED — QA rejeitou o Integration Candidate `20843a4`; Security aprovou com warnings
 - Production readiness: BLOCKED — Security rejeitou deploy público
 - Branch: `codex/phase-6-target-ui`
 - Runtime API version: `6.0.0-phase.5` — metadata legado congelado do Functional Commit, independente do status operacional da fase
 - Scope: convergência visual do HOPE Main Dashboard sobre capacidades reais, com acessibilidade, responsividade e preservação dos contratos funcionais existentes
 - Last approved Functional Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
-- Integration Candidate: `20843a4568ca6eba67d66f93234412038ca79199` — README em PT-BR focado exclusivamente na Fase 6 e política de idioma reconciliada; ainda não aprovado por QA ou Security
+- Rejected Integration Candidate: `20843a4568ca6eba67d66f93234412038ca79199`
 - Working tree expected: incluir a reconciliação autorizada de `AGENTS.md` no Integration Candidate e preservar fora dos commits os assets não rastreados `Hope dashboard` e `hope-linkedin-hero*`
 - Database environment: o re-review de Database validou o gate de schema em ambientes descartáveis; PostgreSQL real permaneceu inacessível e a migration `20260903_0003` não foi aplicada nem validada no ambiente real
-- Active phase: Phase 6 — limpeza documental e integração; merge bloqueado até QA e Security confirmarem o Integration Candidate. Phase 7 permanece somente em planejamento e sem implementação autorizada.
+- Active phase: Phase 6 — correção de `QA-IC-001` e `QA-IC-002`; merge bloqueado. Nenhuma fase posterior está ativa ou autorizada.
 
 ## User Strategic Decision
 
@@ -93,10 +93,10 @@ Required Reviews — Integration Candidate:
 
 | Work | Required | Status | Commit |
 |---|---|---|---|
-| DEV | YES | READY_FOR_REVIEW | `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
-| QA | YES | READY_FOR_REVIEW | `20843a4568ca6eba67d66f93234412038ca79199` |
+| DEV | YES | CHANGES_REQUESTED | `QA-IC-001` against `20843a4568ca6eba67d66f93234412038ca79199` |
+| QA | YES | REJECTED | `20843a4568ca6eba67d66f93234412038ca79199` |
 | DATABASE | NO | N/A | — |
-| SECURITY | YES | READY_FOR_REVIEW | `20843a4568ca6eba67d66f93234412038ca79199` |
+| SECURITY | YES | APPROVED_WITH_WARNINGS | `20843a4568ca6eba67d66f93234412038ca79199` |
 | UI/UX | NO | N/A | prior evidence: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
 | PLANNER | YES | READY_FOR_REVIEW | `129b5a26c3b506e7f53dbb797048ee6788fcd976` |
 
@@ -210,17 +210,18 @@ Required Reviews — Integration Candidate:
 ## Coordinator
 
 - Autonomy level: 2.5
-- Status: IN_PROGRESS
-- Operational conclusion: `0912e94` permanece o Functional Commit e os pareceres anteriores permanecem evidência, mas a owner exige QA e Security finais sobre o Integration Candidate antes do merge. Database e UI/UX são `N/A` para esta limpeza documental; Production Readiness continua `BLOCKED`.
-- Integration Candidate: `20843a4568ca6eba67d66f93234412038ca79199`
-- Routing: LEVEL 1 — abrir PR em rascunho e executar a rodada final de QA + Security em paralelo sobre o mesmo candidate
+- Status: CHANGES_REQUESTED
+- Operational conclusion: QA rejeitou `20843a4` por falta de reprodutibilidade em checkout limpo e por metadata obsoleta no PR. Security aprovou o mesmo candidate com warnings e manteve Production Readiness `BLOCKED`.
+- Rejected Integration Candidate: `20843a4568ca6eba67d66f93234412038ca79199`
+- Routing: LEVEL 1 — Development corrige `QA-IC-001`; COORDINATOR corrige `QA-IC-002` somente após confirmação da owner para editar o PR público; depois um novo hash exato retorna ao QA
 - Boundary: COORDINATOR atualizou somente Current Phase, Current Functional Commit, Review Matrix, blockers, warnings, Next Action e histórico; não concedeu aprovação técnica nem alterou seções ou relatórios de ownership dos reviewers
 
 ## Current Blockers
 
 ### Feature Blockers
 
-- Nenhum blocker funcional conhecido permanece aberto em `0912e94`; integração continua bloqueada operacionalmente enquanto QA e Security finais estiverem pendentes.
+- `QA-IC-001` — `tests/test_realtime.py::test_chat_publishes_ai_state_for_same_user` depende implicitamente do `DATABASE_URL` local; checkout limpo produz `44 passed, 1 failed`.
+- `QA-IC-002` — o corpo do draft PR #1 ainda identifica o candidate substituído `cf9cd97` em vez de `20843a4`.
 
 ### Production Blockers
 
@@ -245,28 +246,28 @@ Required Reviews — Integration Candidate:
 - Dean Winchester, o `SelfKnowledge` público das inspirações e a exceção estreita de referência explícita foram aprovados pela owner e reconciliados nas fontes normativas.
 - Wake word, speaker verification, realtime voice, apps instaláveis, integrações, diagnóstico, auditoria ampliada e Model Router são `PLANNED/PROPOSED`, não capacidades implementadas.
 - Repetição do COORDINATOR em 2026-09-21: 45 testes Python, 36 testes frontend, `compileall` e sintaxe de 30 arquivos JavaScript passaram. O pacote browser não iniciou porque o binário Chromium do Playwright não está instalado neste ambiente; isso é limite ambiental e não substitui a validação independente de QA.
+- `SEC-019` foi corrigido documentalmente em `cee7004`: o README agora diferencia custódia server-side de credenciais de autenticação do owner e separa consentimento do chat da leitura de memórias existentes pelo Memory Globe. Re-review ainda pendente.
+- `SEC-020` acompanha `QA-IC-001`: configuração local ignorada não pode influenciar o resultado do teste realtime.
 
 ## Next Action
 
-- Role: QA + SECURITY
-- Status: READY_FOR_REVIEW
-- Task: independently review the Integration Candidate and persist final results in each Work's owned files without changing code
+- Role: DEVELOPMENT
+- Status: CHANGES_REQUESTED
+- Task: tornar o teste realtime autocontido e independente de `.env`/`DATABASE_URL`, sem alterar o comportamento funcional ou ampliar o escopo da Fase 6
 - Target commit: `20843a4568ca6eba67d66f93234412038ca79199`
 - Required inputs:
-  - Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
-  - diff `0912e94..20843a4`
-  - [`docs/architecture.md`](architecture.md)
-  - [`docs/handoff.md`](handoff.md)
-  - [`docs/reviews/architecture-latest.md`](reviews/architecture-latest.md)
-  - [`docs/product-vision.md`](product-vision.md)
-  - [`docs/roadmap.md`](roadmap.md)
+  - [`docs/reviews/qa-latest.md`](reviews/qa-latest.md), finding `QA-IC-001`
+  - [`docs/reviews/security-review-latest.md`](reviews/security-review-latest.md), finding `SEC-020`
+  - `tests/test_realtime.py`
+  - `backend/main.py` and test configuration boundaries only as required for diagnosis
 - Expected output:
-  - QA updates only [`docs/reviews/qa-latest.md`](reviews/qa-latest.md) and its handoff section, citing `20843a4`
-  - Security updates only [`docs/reviews/security-review-latest.md`](reviews/security-review-latest.md) and its handoff section, citing `20843a4`
-  - each Work reports `APPROVED`, `APPROVED_WITH_WARNINGS` or `REJECTED`, with explicit blockers and environmental limits
-- Blocking dependencies: nenhuma
-- Parallel work: QA e Security podem revisar em paralelo porque usam o mesmo target e arquivos próprios distintos
-- Escalation: NONE
+  - teste explicitamente injeta uma configuração descartável ou um manager controlado, sem depender do `.env` local
+  - suíte Python completa passa em export/check-out limpo sem `DATABASE_URL`
+  - frontend e sintaxe permanecem aprovados proporcionalmente ao delta
+  - novo commit exato, documentação Development atualizada e retorno ao COORDINATOR
+- Blocking dependencies: nenhuma para `QA-IC-001`; `QA-IC-002` depende de confirmação da owner para editar a descrição pública do PR
+- Parallel work: COORDINATOR pode preparar a correção do PR, mas não publicá-la sem confirmação; QA aguarda o novo commit
+- Escalation: USER — confirmação necessária apenas para editar a descrição pública do PR #1
 
 ## Recent History
 
@@ -302,3 +303,4 @@ Required Reviews — Integration Candidate:
 - 2026-09-21 — PLANNER concluiu a reconciliação documental em `cf9cd97`; COORDINATOR registrou esse hash como Integration Candidate, mantendo QA e Security pendentes e o merge bloqueado.
 - 2026-09-21 — The owner established English as the canonical documentation language. Commit `d83e57d` superseded `cf9cd97` as the Integration Candidate; final QA and Security reviews remain pending.
 - 2026-09-22 — A owner definiu o README público em PT-BR e pediu foco exclusivo na Fase 6. O commit `20843a4` substituiu `d83e57d` como Integration Candidate; QA e Security finais continuam pendentes.
+- 2026-09-22 — QA rejeitou `20843a4` em `531b34c` por `QA-IC-001` e `QA-IC-002`; Security aprovou com warnings em `16ccb65`, registrando `SEC-019` e `SEC-020`. COORDINATOR manteve o merge bloqueado e roteou `QA-IC-001` ao Development.
