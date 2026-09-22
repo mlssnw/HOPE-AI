@@ -1,113 +1,127 @@
-# QA Review — Latest
+# QA Review — Phase 6 Integration Candidate
 
-- Status: `APPROVED_WITH_WARNINGS`
-- Phase: 6 — Target UI Convergence
-- Functional Commit reviewed: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
-- Approved functional baseline: `88e194778b4399a6713f118470f9d861c553cd9e`
-- Review date: 2026-09-16
-- Branch during review: `codex/phase-6-target-ui`
-- Scope note: commits posteriores ao alvo são documentais; não há diferença funcional entre `0912e94` e o HEAD revisado.
+## QA Status
 
-## Result
+`REJECTED`
 
-Result: `APPROVED_WITH_WARNINGS`
+## Commit Tested
 
-Feature Status: aprovado com ressalvas. Nenhum blocker funcional de QA permanece para a Phase 6. O finding histórico `QA-003` foi encerrado pela reprodução do cancelamento sem estado visual obsoleto.
-
-Production Readiness: não aprovada por este review. PostgreSQL/pgvector real, providers pagos, microfone físico, dispositivos móveis reais, leitor de tela manual, zoom nativo e controles de produção permanecem fora desta validação.
+- Integration Candidate: `20843a4568ca6eba67d66f93234412038ca79199`
+- Functional Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
+- Branch: `codex/phase-6-target-ui`
+- Remote branch tip observed during review: `ee0de959eadd49eaccbdc6952781d5e403cb3761` (coordination-only descendant)
+- Superseded candidates not approved by this review: `d83e57d237d1ddd10a0f64ae833aa92c0b2e9d71`, `cf9cd976549163d1f49cead7bc2f993254150708`
+- Review date: 2026-09-22
 
 ## Test Summary
 
-- Backend: **PASSED** — 45 testes Python passaram; um warning preexistente Starlette/TestClient.
-- Focused API/realtime/E2E harness: **PASSED** — 11 testes passaram.
-- Frontend: **PASSED** — 36 testes Node passaram.
-- Python syntax: **PASSED** — 44 arquivos de `backend/` e `tests/` foram analisados por `ast.parse` sem geração de bytecode.
-- JavaScript syntax: **PASSED** — 30 módulos em `frontend/js/`, `tests/frontend/` e `tests/browser/` passaram em `node --check`.
-- Browser: **PASSED WITH ENVIRONMENTAL LIMITATIONS** — os cinco scripts oficiais passaram em Chrome 153 sobre harness descartável criado a partir do commit exato.
-- API: **PASSED** — validação, erros públicos, confirmação ausente/divergente 428 e confirmação exata foram exercitados.
-- Realtime: **PASSED** — seis eventos incrementais, PING/PONG, desconexão, sincronização HTTP, reconnect e reconciliação passaram sem recarga integral por evento.
-- Memory: **PASSED** — opt-in/out, recuperação, fontes por resposta, busca, lista, inspector, exclusão pelo UUID exato e remoção de relações passaram sobre dados sintéticos.
-- Security basic: **PASSED WITH PRODUCTION BOUNDARY** — HTML/SVG permaneceram inertes, protocolos executáveis foram rejeitados, não foi encontrado secret novo no delta e os fluxos destrutivos mantiveram confirmação inequívoca.
+The candidate is documentation-only and changes `AGENTS.md`, `README.md`, `docs/coordination/documentation-language-policy.md`, and `docs/handoff.md`. No drift was found in backend, frontend, tests, migrations, dependency files, or the reviewed Functional Commit.
 
-## Commands and Reproduced Evidence
+The README is in PT-BR, identifies Phase 6 as the only active phase, keeps later phases outside the active implementation gate, and links to future direction without presenting it as delivered work. The documentation language policy is internally consistent with the owner-approved README and owner-facing PT-BR exceptions.
 
-### Git and scope
+### Backend: FAILED
 
-- `git status --short --branch`, `git log`, `git show` e resolução dos hashes confirmaram branch, working tree e Functional Commit.
-- `git diff --check 88e1947..0912e94`: passou.
-- `git diff --quiet 0912e94..HEAD -- backend frontend tests migrations scripts requirements.txt package.json`: confirmou ausência de diferença funcional posterior.
-- `git show --stat 0912e94`: confirmou alterações de frontend, testes e evidências, sem backend, API, schema ou migration.
-- As alterações preexistentes em `AGENTS.md`, `Hope dashboard` e `docs/design/assets/hope-linkedin-hero*` foram preservadas.
+- Clean exported snapshot, full Python suite: `44 passed, 1 failed, 1 warning`.
+- Clean exported snapshot, focused E2E/API/realtime suite: `10 passed, 1 failed, 1 warning`.
+- Failing test: `tests/test_realtime.py::test_chat_publishes_ai_state_for_same_user`.
+- The failure reproduced three times in isolation: expected `thinking -> searching -> idle`, received `thinking -> idle`.
+- Python syntax: `49` files parsed successfully.
 
-### Automated suites
+### Frontend: PASSED
 
-- `.venv\\Scripts\\python.exe -m pytest -q -p no:cacheprovider`: **45 passed**, 1 warning, 7.50 s.
-- `.venv\\Scripts\\python.exe -m pytest -q -p no:cacheprovider tests/test_realtime.py tests/test_e2e_harness.py tests/test_api.py`: **11 passed**, 1 warning, 11.63 s.
-- `node --test tests/frontend/*.test.mjs`: **36 passed**, 0 failed.
-- Python AST syntax check: **44 files passed**.
-- `node --check` sobre frontend e testes JavaScript: **30 files passed**.
+- Node test suite: `36 passed, 0 failed`.
+- JavaScript syntax: `30` files passed `node --check`.
 
-### Browser package
+### Browser: PASSED
 
-O commit `0912e94` foi exportado para uma cópia temporária. O runner iniciou exclusivamente `tests.e2e_app` em loopback, com banco e chaves externas vazios. Nenhum arquivo versionado, banco real, provider ou dado pessoal foi usado.
+- Official Phase 6 browser package completed successfully in a disposable export using Chrome/Playwright.
+- Seven viewports, chat-first behavior, state/focus preservation, 200% equivalent reflow, 130% text, landscape reachability, contrast, focus, reduced motion, WebGL loss/fallback/recovery, Memory Globe states, realtime degradation, voice fixtures, cancellation, consent/history, and safe forgetting passed.
+- Generated disposable evidence: 39 PNG screenshots, three JSON result files, and one evidence README.
+- Console and asset checks reported no unexpected errors.
 
-- `node tests/browser/run.mjs`: **PASS complete Phase 6 browser package; disposable state only**.
-- Scripts executados: `globe-compositing`, `phase-6`, `phase-6-runtime`, `phase-6-accessibility` e `phase-6-flows`.
-- Chrome: `153.0.8010.47`; WebGL via ANGLE/AMD Radeon/Direct3D11; 16 processadores lógicos reportados.
-- Console/page/assets: nenhum erro inesperado; HTTP 428/500/503 dos cenários negativos eram deliberados e tratados.
-- Artefatos reproduzidos na cópia descartável: 39 screenshots e três JSONs de resultados.
+### API: PASSED WITH SUITE BLOCKER
 
-## Acceptance Matrix
+- Focused API, E2E harness, and malformed-WebSocket selection: `7 passed, 1 warning`.
+- Validation and negative cases exercised include HTTP `422`, missing/divergent delete confirmation `428`, exact UUID confirmation, relation removal, and memory-aware chat flows.
+- The full Python gate remains failed because of `QA-IC-001`.
 
-1. **Sete viewports: PASSED.** `320×568`, `390×844`, `768×1024`, `1024×768`, `1280×720`, `1440×900` e `1920×1080` passaram sem overflow horizontal; o composer permaneceu visível em `1280×720`.
-2. **Chat-first e preservação de estado/foco: PASSED.** Mobile/tablet iniciaram na conversa; alternância para memória e retorno preservaram estado, seleção e foco.
-3. **Reflow, texto e landscape: PASSED WITH LIMITATION.** Reflow equivalente a zoom 200%, texto 130% e `844×390` passaram. O menu nativo de zoom não foi automatizado; baixa altura exige rolagem vertical prevista.
-4. **Teclado, foco e Escape: PASSED.** Ordem de foco, confirmação com Cancelar inicial, Escape, fullscreen, inspector e retorno de foco passaram.
-5. **Contraste e touch targets: PASSED.** Razões reproduzidas: texto normal 13,56:1; secundário 6,54:1; primário 10,54:1; perigo 7,74:1; foco 13,99:1; borda de controle 4,30:1. Alvos móveis atenderam 44 px.
-6. **Reduced motion e perfis: PASSED.** LOW/MEDIUM/HIGH/ULTRA preservaram dados e controles; reduced motion removeu movimento contínuo e zoom automático.
-7. **WebGL/fallback: PASSED.** Renderização, composição alpha, perda de contexto, fallback textual, busca, lista, relações, inspector e recuperação WebGL passaram.
-8. **Realtime: PASSED.** Eventos incrementais não dispararam GET integral por evento; heartbeat PONG, queda, HTTP fallback de 30 s e reconnect passaram.
-9. **Chat/cancelamento/fontes: PASSED.** Opt-in de memória, opt-out, fontes vinculadas à resposta, HTML inerte, erro público e cancelamento seguro passaram. Evento remoto obsoleto não recolocou o globo em processamento.
-10. **Memory Globe: PASSED.** Loading, empty, ready, unavailable, error, degraded, busca sem retirar contexto, lista equivalente, inspector e atualização de relações passaram.
-11. **Esquecimento seguro: PASSED.** Alvo real, UUID exato, 428 ausente/divergente, Cancelar, Escape bloqueado em submitting, erro recuperável, sucesso e remoção das relações passaram.
-12. **Voz: PASSED WITH LIMITATION.** Estados unsupported/unavailable, callbacks reais da fixture e áudio PCM local passaram; microfone e provider TTS reais não foram exercitados.
-13. **Performance: PASSED no ambiente reproduzido.** Cena sintética com 3.000 nós/2.999 relações: LOW 59,91 FPS/400 nós, MEDIUM 59,91/1.000, HIGH 59,91/2.500 e ULTRA 59,35/3.000; p95 entre 16,8 e 17 ms.
-14. **Capability claims: PASSED.** Não foram encontrados controles funcionais para Visão, Arquivos, automação, tools, coding, skills, agents, perfil ou métricas sem fonte.
-15. **Regressão completa: PASSED.** Suítes Python/frontend, sintaxe e pacote browser permaneceram verdes.
+### Realtime: PASSED WITH SUITE BLOCKER
+
+- Invalid WebSocket JSON closed with code `1008` and reason `payload JSON inválido`; no unhandled traceback was observed.
+- Browser coverage passed heartbeat/PONG, disconnect, HTTP fallback, reconnect, incremental events, and stale-event cancellation behavior.
+- The clean-checkout realtime unit test dependency described in `QA-IC-001` remains blocking.
+
+### Memory: PASSED
+
+- E2E/API/browser coverage passed memory-aware chat, retrieval, real-target forgetting, exact UUID confirmation, `428` for missing/divergent confirmation, confirmed deletion, and relation removal.
+- Loading, empty, unavailable, error, search, list, inspector, and WebGL fallback states passed.
+
+### Security: PASSED WITH PRODUCTION LIMITATIONS
+
+- Candidate diff contained no recognized secret/key patterns.
+- Browser/frontend tests passed inert HTML/SVG handling and rejection of executable URL protocols.
+- No production database, migration, paid provider, credential, or deployment was touched.
+- Existing Production Readiness blockers remain outside this documentation-only feature gate.
+
+## Commands and Evidence
+
+- `git status --short --branch`, `git branch --show-current`, `git rev-parse HEAD`, and ancestry checks.
+- `git show --stat --summary 20843a...` and candidate patch review.
+- `git diff --check 0912e94..20843a4` — passed.
+- Functional-path diff across backend, frontend, tests, migrations, and dependency files — empty.
+- Markdown link validation in the exact exported snapshot — 49 Markdown files, 107 links checked, 0 broken.
+- `python -m pytest -q -p no:cacheprovider` — 44 passed, 1 failed, 1 warning.
+- Focused Python selection — 10 passed, 1 failed, 1 warning.
+- Malformed-WebSocket + E2E/API selection — 7 passed, 1 warning.
+- `node --test tests/frontend/*.test.mjs` — 36 passed.
+- Python AST syntax validation — 49 files passed.
+- `node --check` — 30 JavaScript files passed.
+- `node tests/browser/run.mjs` — complete browser package passed.
+- GitHub PR metadata read via the public API — draft PR #1 points to remote head `ee0de95`, but its body still names `cf9cd97` as the Integration Candidate.
 
 ## Regressions Found
 
-- Nenhuma regressão bloqueante ou nova regressão funcional foi reproduzida.
+### QA-IC-001 — Python suite is not reproducible in a clean checkout
 
-## Closed Findings
+- Severity: MEDIUM
+- Blocking: YES
+- Evidence: the clean candidate export has no local `.env`; `Settings.from_env().database_url` is false, so `create_app(FakeServices())` does not create a memory manager. The test nevertheless expects a `searching` event that is only published when a memory manager exists. It failed in the full suite, the focused suite, and three isolated repetitions. The same test passed when a disposable SQLite `DATABASE_URL` was explicitly supplied, and the workspace copy passed only because its local `.env` configures a database.
+- Impact: the advertised `45 passed` result depends on developer-local configuration and is not reproducible by a clean checkout or typical CI environment. The final integration gate cannot rely on the suite as currently written.
+- Acceptance criteria: make the realtime test self-contained and explicit about whether a memory manager is present; then demonstrate `45 passed` (or the updated complete count) from a clean exported checkout with no local `.env` dependency.
+- Recommendation: return the isolated test-fixture issue to Development; do not infer production behavior from a developer-local `.env`.
 
-### QA-003 — CLOSED
+### QA-IC-002 — Draft PR identifies a superseded Integration Candidate
 
-- Severity histórica: LOW.
-- Evidence: o teste frontend `cancel ignores stale remote processing until the next local request` passou; o browser confirmou cancelamento seguro, e o estado local voltou imediatamente a idle sem aceitar o evento remoto obsoleto.
-- Impact: a inconsistência visual temporária observada na Phase 5 não foi reproduzida no Functional Commit da Phase 6.
-- Recommendation: manter os testes de apresentação/cancelamento como cobertura de regressão.
+- Severity: MEDIUM
+- Blocking: YES
+- Evidence: draft PR #1 targets `main` from `codex/phase-6-target-ui` and its remote head is `ee0de959...`, which contains `20843a4`; however, the PR body still declares `cf9cd976...` as the Integration Candidate and still says final QA/Security are pending for that old hash.
+- Impact: reviewers and merge operators cannot determine the authoritative candidate from the PR itself, violating the exact-commit review gate and risking approval of the wrong artifact.
+- Acceptance criteria: update the draft PR body to identify `20843a4568ca6eba67d66f93234412038ca79199` as the Integration Candidate, preserve `0912e949...` as the Functional Commit, and reflect the current final review results before merge.
+- Recommendation: keep the PR in draft until its review gate and repository handoff agree on the exact candidate.
 
-## Open Blockers
+## Blockers
 
-- Nenhum blocker de QA.
+- `QA-IC-001` — clean-checkout Python suite failure caused by a test fixture that implicitly depends on local database configuration.
+- `QA-IC-002` — draft PR body still identifies superseded candidate `cf9cd97` instead of `20843a4`.
 
 ## Non-blocking Issues
 
-### QA-ENV-002 — Validações dependentes de ambiente real não executadas
+### QA-ENV-003 — Real environment validations not executed
 
-- Severity: INFO.
-- Evidence: a rodada usou Chrome headless, viewport/reflow controlado, reconhecimento de voz por callbacks, PCM local e harness sintético. Não houve leitor de tela manual, zoom pelo menu nativo, teclado virtual/dispositivo físico, microfone real, provider pago ou PostgreSQL/pgvector real.
-- Impact: o review comprova o comportamento funcional no ambiente descartável, mas não qualidade de voz, integração com hardware, experiência assistiva manual ou Production Readiness.
-- Recommendation: manter esses itens nos gates próprios de acessibilidade manual, providers, Database e Production Hardening.
+- Severity: INFO
+- Evidence: PostgreSQL/pgvector, migration `20260903_0003`, real microphone, paid providers, physical-device accessibility, and public deployment were not exercised.
+- Impact: this review validates the candidate in disposable/local test environments only and does not establish Production Readiness.
+- Recommendation: retain these checks in their Database, Security, provider, accessibility, and production gates.
 
-### QA-WARN-HTTPX — Integração TestClient obsoleta
+### QA-WARN-HTTPX — Deprecated TestClient integration
 
-- Severity: INFO.
-- Evidence: as duas execuções Python emitiram `StarletteDeprecationWarning` recomendando migração da integração atual com `httpx`.
-- Impact: nenhuma falha atual; uma atualização futura de dependências pode exigir manutenção.
-- Recommendation: tratar em manutenção técnica fora do escopo visual da Phase 6.
+- Severity: INFO
+- Evidence: Python runs emitted `StarletteDeprecationWarning` recommending migration from the current `httpx` integration.
+- Impact: no current functional failure, but future dependency updates may require maintenance.
+- Recommendation: track as technical maintenance outside the Phase 6 documentation gate.
 
 ## Recommendation
 
-`APPROVED_WITH_WARNINGS` para o Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`. Encerrar `QA-003`, manter os limites ambientais e o warning do TestClient como não bloqueantes, e encaminhar ao COORDINATOR para consolidação com Security e UI/UX. Production Readiness permanece `BLOCKED`.
+`REJECTED`
+
+Do not merge the Phase 6 draft PR until both blockers are closed and QA re-reviews the resulting exact Integration Candidate. This result does not authorize Phase 7, production deployment, migration application, or real database changes.

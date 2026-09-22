@@ -119,16 +119,16 @@ Required Reviews — Integration Candidate:
 
 ## QA
 
-- Coordination status: APPROVED_WITH_WARNINGS
-- Current target: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
-- Baseline: `88e194778b4399a6713f118470f9d861c553cd9e`
-- Last official result: APPROVED_WITH_WARNINGS
-- Commit reviewed: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
-- Validation: 45 Python, 11 focados, 36 frontend, sintaxe de 44 arquivos Python e 30 JavaScript e cinco verificadores browser passaram; sete viewports, acessibilidade automatizada, WebGL/fallback/realtime, voz por fixtures, consentimento, cancelamento e exclusão UUID/428 foram reproduzidos
-- Feature blockers: nenhum
-- Closed: `QA-003` — cancelamento restaura o estado visual imediatamente e ignora evento remoto obsoleto
-- Warnings: `QA-ENV-002` e `QA-WARN-HTTPX`, ambos INFO e não bloqueantes
-- Review commit: `5d5c2ddd18cfe12011bdd5f51503fbbfcc66904d`
+- Coordination status: REJECTED
+- Integration Candidate reviewed: `20843a4568ca6eba67d66f93234412038ca79199`
+- Functional Commit preserved: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
+- Result: REJECTED
+- Validation: documentation-only diff and functional-drift checks passed; 49 Markdown files/107 links had no broken relative links; frontend `36/36`, Python syntax `49/49`, JavaScript syntax `30/30`, focused API/E2E/malformed-WebSocket `7/7`, and the complete browser package passed. The clean-checkout Python suite failed with `44 passed, 1 failed, 1 warning`.
+- Blockers: `QA-IC-001` — realtime test implicitly depends on local `.env` database configuration and fails in a clean checkout; `QA-IC-002` — draft PR #1 still identifies superseded candidate `cf9cd97` instead of `20843a4`.
+- Non-blocking issues: `QA-ENV-003` (real PostgreSQL/migration/providers/devices/production not exercised) and `QA-WARN-HTTPX` (known TestClient deprecation warning).
+- Browser/API/realtime evidence: seven viewports, reflow/accessibility, WebGL/fallback, heartbeat/reconnect/HTTP fallback, invalid JSON close `1008`, cancellation, memory-aware flows, UUID/428 deletion, and relation removal passed in disposable state.
+- Re-review criteria: clean exported checkout completes the full Python suite without local `.env` dependence, and the draft PR review gate names exact candidate `20843a4568ca6eba67d66f93234412038ca79199`.
+- Review commit: this documentation-only QA commit
 - Report: [`qa-latest.md`](reviews/qa-latest.md)
 
 ## Database Audit
