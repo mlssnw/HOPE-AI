@@ -116,16 +116,17 @@ Required Reviews — Integration Candidate:
 
 ## QA
 
-- Coordination status: REJECTED
+- Coordination status: APPROVED_WITH_WARNINGS
 - Integration Candidate reviewed: `51f93d12740a6e0860856257ea761377b04c97fb`
 - Functional correction reviewed: `4d76f2433363a47a9d8fe29fef337de1dc79ac50`; Development evidence: `9e5764671d86121aedd88b926c05ccbc7c385131`.
 - QA-IC-001: `CLOSED / APPROVED` — exact clean export, no `.env`, no database URLs and no provider credentials; focused regression `1 passed`, complete Python suite `45 passed`, frontend `36 passed`, Python syntax `49/49`, JavaScript syntax `30/30`.
 - Functional impact: test-fixture-only. Runtime backend, frontend, API, schema, migrations, dependencies and production configuration are unchanged; only disposable in-memory SQLite was used.
-- Overall result: `REJECTED` solely because `QA-IC-002` remains open.
-- Open blocker: `QA-IC-002` — draft PR #1 points to remote head `51f93d1` but its body still declares superseded candidate `cf9cd97`; Coordinator/owner must update public PR metadata before merge.
+- Overall result: `APPROVED_WITH_WARNINGS` for Integration Candidate `51f93d12740a6e0860856257ea761377b04c97fb`.
+- QA-IC-002: `CLOSED / APPROVED` by metadata-only verification on 2026-09-24. PR #1 remains draft; base/head are `main` <- `codex/phase-6-target-ui`; its body identifies exact candidate `51f93d1`, correction `4d76f24`, QA-IC-001 closed, Security `APPROVED_WITH_WARNINGS`, SEC-019/SEC-020 closed, Production Readiness blocked and Phase 7 not authorized; obsolete candidate `cf9cd97` is absent.
+- QA blockers: none.
 - Non-blocking issues: `QA-ENV-003` (real production environments not exercised) and `QA-WARN-HTTPX` (known TestClient deprecation warning).
-- Re-review boundary: after a metadata-only correction of the PR body, QA may verify `QA-IC-002` without repeating the functional suite unless the Git candidate changes.
-- Re-review commit: `4497347b6440c03c305cbb54eaccc643d95ced3c` — QA-IC-001 closed; overall gate remains rejected solely for QA-IC-002.
+- Metadata verification boundary: functional suites were not repeated; the already reviewed Git candidate remained `51f93d1`.
+- QA evidence: `4497347b6440c03c305cbb54eaccc643d95ced3c` closed QA-IC-001; this metadata-only QA documentation commit closes QA-IC-002 and records the final integration result.
 - Parallel Obsidian live retest: `BLOCKED / NOT_TESTED`; configuration is present, but no Obsidian process or configured listener was visible in the current OS session, so health remained unavailable and authentication/read were not exercised.
 - Obsidian gate impact: none. The owner-reported active application/plugin state was not observable from this QA session; no secret or private vault content was exposed and no write occurred.
 - Report: [`qa-latest.md`](reviews/qa-latest.md)

@@ -2,9 +2,9 @@
 
 ## QA Status
 
-`REJECTED`
+`APPROVED_WITH_WARNINGS`
 
-The `QA-IC-001` functional correction is independently `APPROVED` and the finding is closed. The overall integration gate remains `REJECTED` only because `QA-IC-002` is still open in the public draft PR metadata.
+Both QA blockers are closed for Integration Candidate `51f93d12740a6e0860856257ea761377b04c97fb`. `QA-IC-001` was closed by independent clean-export validation, and `QA-IC-002` was closed by a metadata-only verification of the current public draft PR. No QA blocker remains; environmental and maintenance warnings remain non-blocking.
 
 ## Commits Reviewed
 
@@ -15,6 +15,7 @@ The `QA-IC-001` functional correction is independently `APPROVED` and the findin
 - Original Phase 6 Functional Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
 - Branch: `codex/phase-6-target-ui`
 - Review date: 2026-09-22
+- Metadata closure date: 2026-09-24
 
 The target is a merge candidate containing both `4d76f24` and `9e57646`. The only functional-path delta from `20843a4` is `tests/test_realtime.py`; runtime backend, frontend, API, schema, migrations, dependencies, and production configuration are unchanged.
 
@@ -75,16 +76,18 @@ No regression was reproduced from the `QA-IC-001` correction.
 - Impact: the realtime regression test is now deterministic and no longer depends on developer-local configuration.
 - Recommendation: retain the explicit fixture and clean-export validation as regression coverage.
 
+### QA-IC-002 — CLOSED
+
+- Historical severity: MEDIUM
+- Blocking: NO
+- Source verified: public GitHub PR #1 via fresh API metadata.
+- Evidence: the PR remains open and draft; base/head remain `main` <- `codex/phase-6-target-ui`; the body identifies exact Integration Candidate `51f93d12740a6e0860856257ea761377b04c97fb` and functional correction `4d76f2433363a47a9d8fe29fef337de1dc79ac50`; it records `QA-IC-001` closed/approved, Security `APPROVED_WITH_WARNINGS`, and `SEC-019`/`SEC-020` closed; it keeps merge blocked until this confirmation, Production Readiness `BLOCKED`, and Phase 7 not authorized.
+- Superseded candidate check: `cf9cd976549163d1f49cead7bc2f993254150708` is absent from the current PR body and is no longer presented as the active candidate.
+- Functional suites: not repeated, as explicitly required for this metadata-only closure. The Git candidate reviewed by QA remains `51f93d1`.
+
 ## Open Blockers
 
-### QA-IC-002 — Draft PR identifies a superseded Integration Candidate
-
-- Severity: MEDIUM
-- Blocking: YES
-- Evidence: public draft PR #1 has remote head `51f93d12740a6e0860856257ea761377b04c97fb`, but its body still declares `cf9cd976549163d1f49cead7bc2f993254150708` as the Integration Candidate and does not name `51f93d1`.
-- Impact: the PR review gate still directs reviewers and merge operators to the wrong artifact.
-- Acceptance criteria: update the PR body to identify `51f93d12740a6e0860856257ea761377b04c97fb` as the Integration Candidate, identify `4d76f2433363a47a9d8fe29fef337de1dc79ac50` as the functional correction, and reflect the current QA/Security review state before merge.
-- Owner/Coordinator boundary: this is a public PR metadata action and was not modified by QA.
+- None.
 
 ## Non-blocking Issues
 
@@ -104,9 +107,9 @@ No regression was reproduced from the `QA-IC-001` correction.
 
 ## Recommendation
 
-`REJECTED`
+`APPROVED_WITH_WARNINGS`
 
-Approve and close `QA-IC-001` for candidate `51f93d12740a6e0860856257ea761377b04c97fb`. Keep the overall Phase 6 integration gate rejected solely for `QA-IC-002`. Once the draft PR body is corrected to the exact candidate and review state, QA may verify that metadata-only closure without repeating the functional test suite unless the Git candidate changes.
+QA approves the Phase 6 integration candidate `51f93d12740a6e0860856257ea761377b04c97fb` with non-blocking warnings. `QA-IC-001` and `QA-IC-002` are closed. The PR may leave the QA gate, but merge remains subject to the owner/Coordinator workflow and must not imply Production Readiness or authorize Phase 7.
 
 ## Parallel Live Retest — Obsidian Local REST API
 
