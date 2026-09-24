@@ -1,81 +1,89 @@
 # Security Review
 
-Integration Candidate reviewed: `20843a4568ca6eba67d66f93234412038ca79199`
+Integration Candidate reviewed: `51f93d12740a6e0860856257ea761377b04c97fb`
 
-Functional Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
+Functional correction reviewed: `4d76f2433363a47a9d8fe29fef337de1dc79ac50`
 
-Functional baseline: `88e194778b4399a6713f118470f9d861c553cd9e`
+QA evidence: `4497347b6440c03c305cbb54eaccc643d95ced3c`
+
+Current branch tip observed: `62b54bcaed23a9a01292668b2190dc0c151a0bc3`
+
+Original Phase 6 Functional Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
+
+Rejected candidate baseline: `20843a4568ca6eba67d66f93234412038ca79199`
 
 Phase: 6 — Target UI Convergence
 
-Date: 2026-09-22
+Date: 2026-09-24
 
 ## Result
 
 APPROVED_WITH_WARNINGS
 
-The exact Integration Candidate `20843a4568ca6eba67d66f93234412038ca79199` is approved with warnings for Phase 6 integration in the local/controlled scope. The candidate is documentation-only and introduces no functional drift from the previously reviewed Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`.
+Security approves the exact Integration Candidate `51f93d12740a6e0860856257ea761377b04c97fb` with warnings for the Phase 6 local/controlled scope. The focused correction closes `SEC-020`: the realtime test no longer depends on an ignored `.env` or `DATABASE_URL`, uses explicit test settings and disposable in-memory SQLite, and disposes its database. The README correction also closes `SEC-019`: it now distinguishes server-side credential custody from owner authentication and clearly separates chat memory consent from loading already stored memories in the Memory Globe.
 
-The documentation preserves the existing trust boundaries, memory-consent behavior, UUID-bound destructive confirmation, honest capability classifications and production blockers. Two new LOW, non-blocking findings record public README wording broader than the implemented controls (`SEC-019`) and a Python realtime test whose result depends on local database configuration (`SEC-020`).
+No new Security finding or Security feature blocker was identified. This result does not approve the overall integration while QA's external operational blocker `QA-IC-002` remains open, and it does not authorize editing or merging the draft PR.
 
-This result does not accept any HIGH or CRITICAL risk and does not authorize public exposure, production deployment, merge, provider use, database changes or a later phase. Production Readiness remains `REJECTED / BLOCKED` by `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-008` and `SEC-012`.
-
-The superseded candidates `cf9cd976549163d1f49cead7bc2f993254150708` and `d83e57d237d1ddd10a0f64ae833aa92c0b2e9d71` are not approved by this report.
+Production Readiness remains `REJECTED / BLOCKED` by `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-008` and `SEC-012`. No HIGH or CRITICAL risk is accepted by this review.
 
 ## Scope and Commit Boundary
 
-- Exact candidate reviewed: `20843a4568ca6eba67d66f93234412038ca79199`.
-- Functional artifact preserved: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`.
-- Branch observed: `codex/phase-6-target-ui`.
-- HEAD observed before this report: `ee0de959eadd49eaccbdc6952781d5e403cb3761`, a coordination-only commit after the candidate.
-- During the review, HEAD advanced to QA's documentation-only review commit `531b34c`; that commit does not change the candidate or Functional Commit.
-- `0912e94..20843a4` changes 17 documentation files and no backend, frontend, test, migration, dependency, runtime configuration or secret-bearing file.
-- `15ebaea..20843a4` is limited to the README language/focus cleanup, language-policy reconciliation, `AGENTS.md` policy alignment and coordination handoff.
-- The four pre-existing untracked items (`Hope dashboard` and three `hope-linkedin-hero*` assets) were preserved and excluded from this review commit.
+- Exact Integration Candidate: `51f93d12740a6e0860856257ea761377b04c97fb`.
+- Functional correction: `4d76f2433363a47a9d8fe29fef337de1dc79ac50`, contained in the candidate.
+- QA evidence: `4497347b6440c03c305cbb54eaccc643d95ced3c`, contained in the current branch tip.
+- Current tip `62b54bc` adds QA documentation only after the candidate; it does not change the correction or runtime.
+- Relative to rejected candidate `20843a4`, the only functional-path change is `tests/test_realtime.py`.
+- No backend runtime, frontend, API, schema, migration, dependency manifest, production configuration or provider adapter changed.
+- README changes are documentation-only and address `SEC-019` without claiming that owner authentication already exists.
+- The four pre-existing untracked items (`Hope dashboard` and three `hope-linkedin-hero*` assets) were preserved and excluded.
 
 ## Independent Validation
 
-- `git diff --check 0912e94..20843a4`: passed.
-- Functional-tree comparison across `backend/`, `frontend/`, `tests/`, `migrations/`, dependency manifests and runtime configuration: no drift.
+- `git diff --check 20843a4..51f93d1`: passed.
+- Functional-path inventory: exactly one file, `tests/test_realtime.py`.
+- Runtime/backend/schema/migration/dependency comparison: no drift.
 - Candidate delta secret-pattern scan: no private-key marker, Anthropic secret prefix, GitHub token prefix, AWS access-key prefix or JWT-like value added.
-- Tracked environment files: only `.env.example`; no `.env` credential file is tracked in the candidate.
-- README relative-link check: 24 checked, 0 missing.
-- Workspace Python regression: 45 passed with one pre-existing Starlette/TestClient deprecation warning, but this result inherited the local ignored `.env`.
-- Independent QA clean-export regression: 44 passed, 1 failed and 1 warning. `tests/test_realtime.py::test_chat_publishes_ai_state_for_same_user` expects a memory-search event only produced when local database configuration causes `create_app()` to construct a memory manager.
-- The affected test path constructs a database engine from configuration but does not enter the application lifespan, open a session or execute a query. No database contact or mutation was observed in that path; the confirmed problem is environment coupling and non-reproducible assurance.
+- No tracked `.env` exists in the candidate.
+- Clean `git archive` export of exact candidate `51f93d1`: `.env` absent; database URLs and Anthropic, Tavily, ElevenLabs and Obsidian credentials removed from the child environment.
+- Focused SEC-020 regression: 1 passed, 1 known Starlette/TestClient deprecation warning.
+- Complete Python suite in the same clean export: 45 passed, 1 known warning.
 - Frontend regression: 36 passed.
-- Browser validation was not repeated because the candidate has no functional drift. The earlier Phase 6 browser evidence remains historical evidence for `0912e94`, not new production proof.
-- No paid provider, real PostgreSQL instance, migration, credential, personal content or external system was exercised.
-- Draft PR metadata could not be independently inspected from the current environment; the security decision is bound to the locally verified immutable commit hash, not to mutable PR state.
-- QA subsequently reported that draft PR #1 still names superseded candidate `cf9cd97`; this blocks the overall integration gate independently of the Security result.
+- The disposable export was removed after validation.
+- No real PostgreSQL connection, migration, paid provider, credential, external service or production environment was used.
 
 ## Controls Confirmed
 
-### Trust boundaries and authorization claims
+### SEC-020 test isolation
 
-- The README explicitly states that `X-Hope-User-Id` is a development namespace and **not authentication**.
-- `SINGLE_USER` remains a product model, not a substitute for owner authentication, authorization or privacy controls.
-- The documentation keeps owner recognition, protected sessions, resource authorization and permission management as planned work.
-- Public deployment remains explicitly disabled; draft PR or merge status is not represented as Production Readiness.
-- Phase 7 and later capabilities remain planned/not authorized and are not presented as implemented.
+- The corrected test replaces `Settings.from_env()` at the test boundary with `Settings.for_tests()`.
+- The test obtains its memory manager from the existing `make_app()` fixture, which uses `sqlite+aiosqlite:///:memory:` and local hash embeddings.
+- The disposable database is closed in `finally`.
+- The original assertions remain unchanged: HTTP 200 followed by `thinking`, `searching` and `idle` for the same user.
+- The test passes without `.env`, `DATABASE_URL`, `DATABASE_ADMIN_URL` or provider credentials.
+- No product/runtime branch was modified to make the test pass.
 
-### Memory consent and destructive actions
+### SEC-019 public security and consent claims
 
-- The implementation remains unchanged: `memory_enabled=false` blocks chat memory recovery, capture, correction and forget commands server-side.
-- Existing-memory browsing through the Memory Globe remains separate from chat memory consent and therefore still depends on the future authenticated owner boundary.
-- Memory deletion still requires the exact route UUID in `X-Hope-Confirm-Memory-Id`; absent or mismatched confirmation returns HTTP 428.
-- No documentation change weakens the requirement for an explicit, unambiguous destructive target.
+- README now states that credentials remain on the backend while owner authentication is still required before public exposure.
+- README still states that `X-Hope-User-Id` is not authentication.
+- Public deploy remains explicitly disabled pending authentication, authorization and production hardening.
+- Chat memory opt-in is accurately limited to recovery, capture and commands during the conversation.
+- README explicitly states that already stored memories may still be loaded by the Memory Globe in the current local/controlled interface.
+- The correction does not imply global consent coverage, authenticated endpoints or Production Readiness.
+
+### Preserved trust boundaries
+
+- Existing memory consent and exact-UUID destructive confirmation are unchanged.
 - `SEC-006` and `SEC-007` remain effective for the functional scope.
-
-### Untrusted content, secrets and capability honesty
-
-- Web, Obsidian, memory and external content remain classified as untrusted data rather than system instructions.
-- The candidate introduces no secret, credential, token, executable content, unsafe rendering claim or new integration permission.
-- Implemented, partial and planned capabilities remain separated in architecture, roadmap and public status material.
-- SelfKnowledge remains prohibited from exposing system prompts, protected rules, secrets, credentials, private chain-of-thought, owner data or nonexistent capabilities.
-- The language-policy change does not weaken security terminology or authorize translation to alter historical finding meaning. PT-BR remains required for the public README and owner-facing status while technical records may remain canonical in English.
+- Web, Obsidian, memory and other external content remain untrusted data rather than system authority.
+- Client-provided UUID remains a development namespace, not proof of owner identity.
+- Implemented, partial and planned capabilities remain separated; no later phase was activated.
 
 ## Findings
+
+No new finding was identified in `20843a4..51f93d1`.
+
+## Resolved Findings
 
 ### SEC-019
 
@@ -83,17 +91,19 @@ ID: SEC-019
 
 Severity: LOW
 
-Title: Public README contains security and consent wording broader than the implemented controls
+Title: Public README security and consent wording was broader than the implemented controls
 
-Description: The README states that provider adapters are “protected by the backend” and that persistent-memory data is processed “only when authorized in chat.” Credentials are kept server-side, but chat, TTS and Obsidian endpoints still lack authenticated owner protection (`SEC-002`). Separately, the chat opt-in correctly gates chat recovery, capture and commands, but the Memory Globe initializes and retrieves existing graph data independently of that toggle. Later README sections correctly state that public deploy is disabled, the UUID is not authentication, and disabling chat memory does not delete existing memories, which reduces but does not eliminate the ambiguity.
+Status: CLOSED
 
-Impact: A reader may infer authenticated provider protection or a global consent gate over every read of existing memory, creating an inaccurate privacy/security expectation. The implementation itself is unchanged and the explicit production warnings substantially limit the practical impact.
+Description: The prior README could be read as claiming authenticated backend protection and a global consent gate over existing memory reads. The candidate now distinguishes credential custody from owner authentication and chat consent from Memory Globe reads.
 
-Evidence: `README.md:59`, `README.md:71`, `README.md:175`, `README.md:206-210`; `frontend/js/app.js:5-7`; `frontend/js/memory-globe-controller.js:13-25`, `frontend/js/memory-globe-controller.js:157-169`; `frontend/js/chat.js:117-130`; `backend/ai/orchestrator.py:297-342`.
+Impact: The correction removes the identified public security/privacy ambiguity without changing runtime behavior.
+
+Evidence: `README.md:58`, `README.md:70`, `README.md:176`, `README.md:207-209`; documentation correction included in `51f93d12740a6e0860856257ea761377b04c97fb`.
 
 Affected component: Public security/privacy documentation and consent claims
 
-Recommendation: In a Coordinator-owned documentation cleanup, replace “protected by the backend” with a precise statement that credentials remain server-side while owner authentication is pending. Clarify that chat opt-in gates chat recovery/capture/commands, while already stored memories may still be loaded for the Memory Globe in the current local/controlled interface.
+Recommendation: Keep these distinctions in future README updates and continue treating authentication and production hardening as separate gates.
 
 Blocking: NO
 
@@ -103,61 +113,63 @@ ID: SEC-020
 
 Severity: LOW
 
-Title: Realtime test result depends on ignored local database configuration
+Title: Realtime test result depended on ignored local database configuration
 
-Description: `tests/test_realtime.py::test_chat_publishes_ai_state_for_same_user` calls `create_app(FakeServices())` without passing a disposable memory manager or explicitly clearing database configuration. `Settings.from_env()` loads the ignored local `.env`; when `DATABASE_URL` exists, `create_app()` constructs a database engine and memory manager and the expected `searching` event appears. In a clean export without that configuration, the manager is absent and the test fails. The observed test path does not enter lifespan or execute a query, so no real database access or mutation was demonstrated.
+Status: CLOSED
 
-Impact: Local secrets/configuration unnecessarily influence a test process and can turn a developer-local pass into a false integration guarantee. Future fixture changes could also make unintended external database access easier if environment isolation remains implicit.
+Description: The corrected test now injects `Settings.for_tests()`, a disposable in-memory SQLite manager and explicit cleanup. Independent validation reproduced the pass in a clean export with no `.env`, database URL or provider credential.
 
-Evidence: `tests/test_realtime.py:155-172`; `backend/config.py:84-95`; `backend/main.py:27-63`; QA clean-export evidence in `docs/reviews/qa-latest.md` (`QA-IC-001`).
+Impact: Developer-local configuration no longer changes this test result or creates a false integration guarantee. The closure does not validate PostgreSQL or production security.
+
+Evidence: `tests/test_realtime.py:34-38`, `tests/test_realtime.py:156-177`; clean-export focused result `1 passed`; clean-export suite `45 passed`; QA evidence `4497347b6440c03c305cbb54eaccc643d95ced3c`.
 
 Affected component: Python test isolation, secret hygiene and reproducibility
 
-Recommendation: Make the test self-contained by passing an explicit disposable manager or explicit no-memory configuration, and run the suite under an allowlisted test environment that clears database/provider credentials. Require a clean-export pass before the integration gate is reopened.
+Recommendation: Preserve the explicit test settings, disposable manager and credential-free clean-export gate.
 
-Blocking: NO for the independent Security verdict; QA has separately classified the reproducibility failure as a blocking integration defect.
+Blocking: NO
 
 ## Historical Findings Carried Forward
 
-- `SEC-001` — CRITICAL, Blocking: YES — identity/owner boundary still relies on a client-controlled UUID. Require server-side recognition of the single owner and resource authorization before remote exposure.
-- `SEC-002` — CRITICAL, Blocking: YES — chat, TTS and Obsidian lack an authenticated owner boundary. Protect provider-backed and private-content endpoints before exposure.
-- `SEC-003` — CRITICAL, Blocking: YES — least privilege for the real PostgreSQL runtime role remains unproven. Activate and validate a restricted runtime role operationally.
-- `SEC-004` — HIGH, Blocking: YES — WebSocket still lacks owner authentication, Origin enforcement and abuse controls. Require an authenticated handshake and connection/message limits.
+- `SEC-001` — CRITICAL, Blocking: YES — identity/owner boundary still relies on a client-controlled UUID.
+- `SEC-002` — CRITICAL, Blocking: YES — chat, TTS and Obsidian lack an authenticated owner boundary.
+- `SEC-003` — CRITICAL, Blocking: YES — least privilege for the real PostgreSQL runtime role remains unproven.
+- `SEC-004` — HIGH, Blocking: YES — WebSocket still lacks owner authentication, Origin enforcement and abuse controls.
 - `SEC-005` — HIGH, Blocking: YES — global rate limiting, quotas and provider-cost controls remain absent.
 - `SEC-008` — HIGH, Blocking: YES — real PostgreSQL TLS with certificate and hostname verification remains unproven.
 - `SEC-012` — MEDIUM, Blocking: YES — sensitive actions still lack audit attribution to an authenticated owner.
 - `SEC-009`, `SEC-010`, `SEC-011`, `SEC-013`, `SEC-014` — MEDIUM, Blocking: NO — prompt/memory poisoning, declared provenance, environment-dependent embedding safeguards, deployment trust contracts and supply-chain hardening remain open.
 - `SEC-015`, `SEC-016` — LOW, Blocking: NO — public health details and plaintext optional browser history remain open.
 - `SEC-017` — MEDIUM, Blocking: NO — schema activation evidence depends on lifespan and synthetic harnesses do not prove production schema/authentication/isolation.
-- `SEC-018` — LOW, Blocking: NO — the browser harness inherits a broad environment and its destructive flow relies on operational rather than cryptographic/sentinel isolation.
+- `SEC-018` — LOW, Blocking: NO — the browser harness still requires environment allowlisting and a mandatory destructive-flow sentinel.
 
 ## Security Status
 
-- Feature Status: APPROVED_WITH_WARNINGS.
-- Integration Candidate: APPROVED_WITH_WARNINGS.
+- Security Feature Status: APPROVED_WITH_WARNINGS.
+- Security result for Integration Candidate `51f93d1`: APPROVED_WITH_WARNINGS.
+- `SEC-019`: CLOSED.
+- `SEC-020`: CLOSED.
+- New Security findings: none.
+- New Security feature blockers: none.
+- Overall integration gate: still REJECTED by QA solely for external operational blocker `QA-IC-002`.
 - Production Readiness: REJECTED / BLOCKED.
-- New findings: `SEC-019` and `SEC-020` — LOW, Blocking: NO.
-- New HIGH/CRITICAL findings: none.
-- New feature blockers: none.
-- Existing production blockers closed: none.
 
 ## Critical Issues
 
-No new CRITICAL issue in the candidate. `SEC-001`, `SEC-002` and `SEC-003` remain production blockers.
+No new CRITICAL issue. `SEC-001`, `SEC-002` and `SEC-003` remain production blockers.
 
 ## High
 
-No new HIGH issue in the candidate. `SEC-004`, `SEC-005` and `SEC-008` remain production blockers.
+No new HIGH issue. `SEC-004`, `SEC-005` and `SEC-008` remain production blockers.
 
 ## Medium
 
-No new MEDIUM issue in the candidate. Existing non-blocking hardening findings remain open, including `SEC-017`.
+No new MEDIUM issue. `SEC-012` remains a production blocker; `SEC-009`, `SEC-010`, `SEC-011`, `SEC-013`, `SEC-014` and `SEC-017` remain non-blocking hardening items.
 
 ## Low
 
-- `SEC-019` — public README wording may overstate authenticated backend protection and global consent coverage.
-- `SEC-020` — realtime test behavior depends on ignored local database configuration and is not reproducible in a clean export.
-- `SEC-018`, `SEC-015` and `SEC-016` remain open historical warnings.
+- `SEC-019` and `SEC-020` are closed.
+- `SEC-015`, `SEC-016` and `SEC-018` remain open historical warnings.
 
 ## Deploy Blockers
 
@@ -169,46 +181,50 @@ No new MEDIUM issue in the candidate. Existing non-blocking hardening findings r
 - `SEC-008` — PostgreSQL TLS with complete certificate/hostname verification.
 - `SEC-012` — attributable audit for sensitive actions.
 
-No deploy blocker was introduced, accepted, closed or reclassified by the documentation-only candidate.
+No deploy blocker was introduced, accepted, closed or reclassified by this focused correction.
+
+## Operational Blocker Outside Security
+
+- `QA-IC-002` remains applicable according to official QA evidence `4497347b6440c03c305cbb54eaccc643d95ced3c`: draft PR #1 names a superseded candidate instead of `51f93d12740a6e0860856257ea761377b04c97fb` and does not identify correction `4d76f2433363a47a9d8fe29fef337de1dc79ac50`.
+- Security did not edit the PR and does not close or reclassify this QA-owned blocker.
+- PR metadata was not independently readable from the current Security environment; applicability is based on the current official QA report.
 
 ## Warnings
 
-- `SEC-019`: public wording should distinguish server-side secret custody from authenticated endpoint protection and chat consent from existing-memory browsing.
-- `SEC-020`: tests should clear database/provider credentials by default and inject only explicit disposable configuration.
-- `SEC-018`: destructive browser scripts should continue to run only through the documented disposable harness until environment allowlisting and a mandatory sentinel are implemented.
-- Client-provided UUID remains a transient namespace, not proof of owner identity.
-- Memory deletion remains physical and lacks recovery, reauthentication and one-time approval; exact-UUID confirmation reduces target error but does not replace production hardening.
-- Browser fixtures, synthetic WebGL data, local PCM and unit tests do not validate real providers, real PostgreSQL, physical devices or production infrastructure.
+- The correction validates test isolation with SQLite in memory; it does not validate real PostgreSQL, migrations, TLS, runtime roles or production data handling.
+- The client UUID remains a transient namespace rather than authenticated owner identity.
+- Physical deletion still lacks recovery, reauthentication and a one-time approval token.
+- The known Starlette/TestClient deprecation warning remains.
+- `SEC-018` remains open for the browser harness and is not closed by this Python test correction.
 
 ## Good Practices Found
 
-- The public README clearly labels deployment as unavailable and the client UUID as non-authenticating.
-- Phase 6 is the only active implementation scope; later phases are separated into roadmap documents and remain unauthorized.
-- The candidate preserves the exact Functional Commit and does not conceal the legacy runtime-version label.
-- Chat memory consent remains opt-in, explicit and separate from local history.
-- Destructive confirmation remains bound to the exact memory UUID.
-- Untrusted memory/web/Obsidian content remains delimited from system authority.
-- Planned capabilities, SelfKnowledge and personality references are constrained by explicit disclosure and non-impersonation rules.
-- The language policy preserves PT-BR for the public README and owner-facing decisions without allowing translation to change technical security meaning.
-- No secret pattern or functional file was added by the candidate.
+- The test explicitly patches configuration at its boundary instead of changing runtime behavior.
+- Disposable SQLite and local hash embeddings keep the focused regression independent of real infrastructure.
+- Cleanup occurs in `finally`, reducing leaked test resources.
+- Clean-export validation removes `.env`, database URLs and provider credentials.
+- README now uses precise language for credential custody, missing owner authentication and chat memory consent.
+- Candidate adds no secret and changes no runtime/backend/schema/migration/dependency surface.
+- QA keeps PR metadata correctness as a separate operational gate rather than conflating it with the functional correction.
+- The Obsidian live retest preserved secret and vault privacy and performed no write when the listener was unreachable.
 
 ## Environmental Limits
 
-- No real PostgreSQL/pgvector environment, managed database role, TLS chain, backup/restore or migration was validated.
-- No Anthropic, Tavily, ElevenLabs or Obsidian request was made.
-- No microphone, speaker, physical mobile device, screen reader or native browser zoom control was exercised.
-- Browser scenarios were not rerun because the candidate has no functional drift; prior browser results remain evidence only for `0912e94`.
-- Draft PR state was not independently observable from this environment; the immutable local candidate hash was verified directly.
-- The workspace Python pass inherited an ignored local `.env`; the clean-export QA run failed one test and is the authoritative reproducibility evidence.
+- No real PostgreSQL/pgvector environment, managed runtime role, TLS chain, backup/restore or migration was validated.
+- No Anthropic, Tavily, ElevenLabs or Obsidian content request was made by Security.
+- The QA Obsidian retest is `BLOCKED / NOT_TESTED` because the listener was unreachable; it has no Phase 6 gate impact and is not treated as a Security blocker.
+- No microphone, speaker, physical device, screen reader, public deployment or production infrastructure was exercised.
+- Browser scenarios were not repeated because the correction changes only a Python test fixture and documentation.
+- PR metadata was not independently observable from this environment; QA evidence remains authoritative for `QA-IC-002`.
 
 ## Recommendation
 
-Security approves Integration Candidate `20843a4568ca6eba67d66f93234412038ca79199` with warnings within its review domain. The overall integration must not proceed while QA blockers `QA-IC-001` and `QA-IC-002` remain open. Keep Production Readiness blocked, preserve every historical production blocker, route `SEC-019` to a Coordinator-owned documentation cleanup and address `SEC-020` alongside the QA test-isolation correction without expanding the Phase 6 functional scope.
+Record Security as `APPROVED_WITH_WARNINGS` for exact Integration Candidate `51f93d12740a6e0860856257ea761377b04c97fb`, close `SEC-019` and `SEC-020`, and preserve every historical production blocker. Keep the overall Phase 6 integration gate rejected until the Coordinator/owner corrects `QA-IC-002` and QA verifies the metadata-only closure. Do not edit or merge the PR, start a later phase, or infer Production Readiness from this review.
 
 Next Action:
 
 Role: COORDINATOR
 
-Task: record Security as `APPROVED_WITH_WARNINGS` for Integration Candidate `20843a4568ca6eba67d66f93234412038ca79199`; keep the overall integration rejected/changes-requested while `QA-IC-001` and `QA-IC-002` are open; preserve production blockers; track `SEC-019` and `SEC-020`; do not merge, start a later phase or infer deployment authorization.
+Task: persist the exact candidate/correction in coordination state, correct PR metadata only with the required authority, return `QA-IC-002` to QA for metadata-only verification, preserve Production Readiness as blocked, and do not route Phase 7 or deployment.
 
-Target commit: `20843a4568ca6eba67d66f93234412038ca79199`
+Target commit: `51f93d12740a6e0860856257ea761377b04c97fb`

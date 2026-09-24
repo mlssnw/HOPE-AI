@@ -148,17 +148,21 @@ Required Reviews — Integration Candidate:
 ## Security Review
 
 - Coordination status: APPROVED_WITH_WARNINGS
-- Integration Candidate reviewed: `20843a4568ca6eba67d66f93234412038ca79199`
-- Functional Commit preserved: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
-- Superseded candidates not approved by this review: `cf9cd976549163d1f49cead7bc2f993254150708`, `d83e57d237d1ddd10a0f64ae833aa92c0b2e9d71`
-- Feature/integration result: APPROVED_WITH_WARNINGS
+- Integration Candidate reviewed: `51f93d12740a6e0860856257ea761377b04c97fb`
+- Functional correction reviewed: `4d76f2433363a47a9d8fe29fef337de1dc79ac50`
+- QA evidence considered: `4497347b6440c03c305cbb54eaccc643d95ced3c`; current branch tip observed: `62b54bcaed23a9a01292668b2190dc0c151a0bc3`
+- Security result: APPROVED_WITH_WARNINGS
 - Production Readiness: REJECTED / BLOCKED
-- Confirmed: no functional drift; chat memory consent, exact-UUID destructive confirmation, untrusted-content boundaries, capability honesty and all historical findings remain effective
-- New non-blocking findings: `SEC-019` — the public README may overstate authenticated backend protection and the scope of chat memory consent; `SEC-020` — the realtime test result depends on ignored local database configuration
+- `SEC-019`: CLOSED — README now distinguishes credential custody from owner authentication and chat consent from existing-memory reads by the Memory Globe
+- `SEC-020`: CLOSED — clean exact-candidate export passed the focused regression and complete Python suite without `.env`, database URLs or provider credentials, using only disposable in-memory SQLite
+- Scope confirmed: only `tests/test_realtime.py` changed functionally; no runtime/backend/frontend/API/schema/migration/dependency or production-configuration drift
+- Validation: focused regression `1 passed`; Python `45 passed`; frontend `36 passed`; one known Starlette/TestClient warning
+- New Security findings/blockers: none
 - Carried non-blocking warning: `SEC-018` — browser harness environment and destructive-flow sentinel hardening remain open
 - Deploy blockers unchanged: `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-008`, `SEC-012`
-- Environmental limits: no real database, provider, credential, physical device or Security browser rerun; the workspace run passed 45 Python and 36 frontend tests, but QA's clean export failed one environment-dependent Python test
-- Recommendation to Coordinator: record this final Security result for `20843a4`, track `SEC-019` and `SEC-020`, keep the overall integration rejected/changes-requested while `QA-IC-001` and `QA-IC-002` remain open, preserve Production Readiness as blocked and do not merge or start a later phase
+- External operational blocker: `QA-IC-002` remains open per QA; Security did not edit the PR and does not close or reclassify this blocker
+- Obsidian environmental retest: `BLOCKED / NOT_TESTED`, no Phase 6 gate impact and no secret/private content exposure observed in the persisted QA evidence
+- Recommendation to Coordinator: record Security for `51f93d1`, keep the overall integration rejected until QA verifies `QA-IC-002`, preserve Production Readiness as blocked, and do not merge or start a later phase
 - Report: [`security-review-latest.md`](reviews/security-review-latest.md)
 
 ## UI/UX
