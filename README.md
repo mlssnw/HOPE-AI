@@ -5,7 +5,7 @@
 **Assistente pessoal experimental de Inteligência Artificial com memória persistente, contexto explicável e visualização das relações que importam.**
 
 ![Status](https://img.shields.io/badge/status-em%20desenvolvimento-F2AE3D)
-![Version](https://img.shields.io/badge/version-6.0.0--phase.5-FFF8E9)
+![Version](https://img.shields.io/badge/version-6.0.0--phase.6-FFF8E9)
 ![Phase](https://img.shields.io/badge/phase-6-63BFD4)
 ![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-009688?logo=fastapi&logoColor=white)
