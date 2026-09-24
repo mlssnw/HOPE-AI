@@ -1,14 +1,15 @@
-# QA Re-review — Phase 6 Integration Candidate
+# QA Final Confirmation — Phase 6 Integration Candidate
 
 ## QA Status
 
 `APPROVED_WITH_WARNINGS`
 
-Both QA blockers are closed for Integration Candidate `51f93d12740a6e0860856257ea761377b04c97fb`. `QA-IC-001` was closed by independent clean-export validation, and `QA-IC-002` was closed by a metadata-only verification of the current public draft PR. No QA blocker remains; environmental and maintenance warnings remain non-blocking.
+Both QA blockers remain closed and the final documentation/metadata candidate is confirmed. `QA-IC-001` was closed by independent clean-export validation, `QA-IC-002` was closed by public PR metadata verification, and the final candidate adds no functional drift. No QA blocker remains; environmental and maintenance warnings remain non-blocking.
 
 ## Commits Reviewed
 
-- Integration Candidate: `51f93d12740a6e0860856257ea761377b04c97fb`
+- Final Integration Candidate: `f819440a72f2e68368bcc0d3c1af6ec700d170bf`
+- Previously reviewed functional candidate: `51f93d12740a6e0860856257ea761377b04c97fb`
 - Functional correction commit: `4d76f2433363a47a9d8fe29fef337de1dc79ac50`
 - Development evidence commit: `9e5764671d86121aedd88b926c05ccbc7c385131`
 - Rejected candidate baseline: `20843a4568ca6eba67d66f93234412038ca79199`
@@ -16,8 +17,23 @@ Both QA blockers are closed for Integration Candidate `51f93d12740a6e0860856257e
 - Branch: `codex/phase-6-target-ui`
 - Review date: 2026-09-22
 - Metadata closure date: 2026-09-24
+- Final candidate confirmation date: 2026-09-24
 
-The target is a merge candidate containing both `4d76f24` and `9e57646`. The only functional-path delta from `20843a4` is `tests/test_realtime.py`; runtime backend, frontend, API, schema, migrations, dependencies, and production configuration are unchanged.
+The previously reviewed functional candidate contains both `4d76f24` and `9e57646`. The only functional-path delta from `20843a4` is `tests/test_realtime.py`; the final candidate adds documentation only, so runtime backend, frontend, API, schema, migrations, dependencies, and production configuration remain unchanged.
+
+## Final Metadata and Documentation Confirmation
+
+`APPROVED_WITH_WARNINGS`
+
+- Public PR #1 is open and remains draft.
+- Base/head remain `main` <- `codex/phase-6-target-ui`.
+- Public PR head is exactly `f819440a72f2e68368bcc0d3c1af6ec700d170bf`.
+- GitHub reports `mergeable=true` and mergeable state `clean`; no merge conflict remains.
+- The PR body identifies exact Final Integration Candidate `f819440a72f2e68368bcc0d3c1af6ec700d170bf`, reviewed functional candidate `51f93d12740a6e0860856257ea761377b04c97fb`, and functional correction `4d76f2433363a47a9d8fe29fef337de1dc79ac50`.
+- The PR preserves Production Readiness as `BLOCKED`, keeps Phase 7 unauthorized, and keeps merge dependent on this confirmation plus separate owner authorization.
+- `README.md` at `f819440` is PT-BR, uses the HOPE brand, identifies Phase 6, records `APPROVED_WITH_WARNINGS`, links to `docs/phase-6.md`, and does not contain a Phase 5/current-state reference, `IN_PROGRESS`, or a conflicting runtime-version badge.
+- Diff `51f93d1..f819440` changes only `README.md`, `docs/handoff.md`, and QA/Security review reports. Backend, frontend, tests, schema, migrations, dependencies, and runtime behavior are unchanged.
+- Functional suites were not repeated because no functional drift was detected.
 
 ## QA-IC-001 Result
 
@@ -109,7 +125,7 @@ No regression was reproduced from the `QA-IC-001` correction.
 
 `APPROVED_WITH_WARNINGS`
 
-QA approves the Phase 6 integration candidate `51f93d12740a6e0860856257ea761377b04c97fb` with non-blocking warnings. `QA-IC-001` and `QA-IC-002` are closed. The PR may leave the QA gate, but merge remains subject to the owner/Coordinator workflow and must not imply Production Readiness or authorize Phase 7.
+QA approves Final Integration Candidate `f819440a72f2e68368bcc0d3c1af6ec700d170bf` with non-blocking warnings. `QA-IC-001` and `QA-IC-002` are closed. The PR may leave the QA gate, but merge remains subject to separate owner authorization and must not imply Production Readiness or authorize Phase 7.
 
 ## Parallel Live Retest — Obsidian Local REST API
 
