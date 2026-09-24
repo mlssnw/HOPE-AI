@@ -108,12 +108,32 @@ No regression was reproduced from the `QA-IC-001` correction.
 
 Approve and close `QA-IC-001` for candidate `51f93d12740a6e0860856257ea761377b04c97fb`. Keep the overall Phase 6 integration gate rejected solely for `QA-IC-002`. Once the draft PR body is corrected to the exact candidate and review state, QA may verify that metadata-only closure without repeating the functional test suite unless the Git candidate changes.
 
-## Parallel Environmental Validation — Obsidian Local REST API
+## Parallel Live Retest — Obsidian Local REST API
 
 - Result: `BLOCKED / NOT_TESTED`
-- Commit tested: `91c77c1768aec511a253e19a22b32100a29bf342`
+- Execution commit: `4497347b6440c03c305cbb54eaccc643d95ced3c` (QA documentation descendant of candidate `51f93d12740a6e0860856257ea761377b04c97fb`; Obsidian implementation unchanged).
+- Owner-reported state: Obsidian open and Local REST API active.
 - Gate impact: `NONE`. This environmental check remains separate from the Phase 6 decision and from `QA-IC-001`/`QA-IC-002`.
-- Sanitized evidence: the credential and loopback endpoint configuration were present, but the local TCP listener was unreachable. Authentication and functional read/search were therefore not tested.
-- Safety: no vault names, note names, note contents, excerpts, private paths, URL, port, or token were logged; no note was created, changed, moved, or deleted.
+
+### Sanitized Evidence
+
+- Credential configuration: present.
+- Endpoint configuration: present.
+- TLS verification setting: enabled.
+- Configured TCP listener: unreachable.
+- Adapter health: `configured=true`, `available=false`.
+- Obsidian process visible in the current OS session: no.
+- Configured listener visible in the current OS session: no.
+- Authentication: `NOT_TESTED` because no listener accepted a connection.
+- Functional read/search: `NOT_TESTED`; the read-only sentinel query was deliberately skipped after failed health/connectivity.
 - Proportional mocked service regression: `tests/test_services.py` — `5 passed`.
-- Owner action for a live rerun: open Obsidian and confirm the existing Local REST API plugin is enabled/listening, without sharing secrets or private vault content.
+
+### Diagnosis and Safety
+
+The owner-reported application/plugin state is not observable from the current QA execution session. The evidence is consistent with Obsidian running in another machine/session, the application having exited, or the active plugin listening under configuration different from the backend endpoint. This is an environmental reachability blocker, not a reproduced adapter defect.
+
+No host, port, URL, token, vault name, private path, note name, note content, excerpt, or response body was logged or persisted. No note or Obsidian configuration was created, changed, moved, or deleted.
+
+### Owner Action for Another Live Attempt
+
+Keep Obsidian open in the same Windows session as the HOPE process and confirm locally that the existing Local REST API status indicates it is listening under the already configured endpoint. Do not share any secret or private vault information. QA can then repeat health, authentication, and one non-sensitive read-only sentinel search.

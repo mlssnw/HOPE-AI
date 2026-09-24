@@ -125,9 +125,9 @@ Required Reviews — Integration Candidate:
 - Open blocker: `QA-IC-002` — draft PR #1 points to remote head `51f93d1` but its body still declares superseded candidate `cf9cd97`; Coordinator/owner must update public PR metadata before merge.
 - Non-blocking issues: `QA-ENV-003` (real production environments not exercised) and `QA-WARN-HTTPX` (known TestClient deprecation warning).
 - Re-review boundary: after a metadata-only correction of the PR body, QA may verify `QA-IC-002` without repeating the functional suite unless the Git candidate changes.
-- Review commit: pending QA documentation commit
-- Parallel Obsidian environment check: `BLOCKED / NOT_TESTED` on commit `91c77c1768aec511a253e19a22b32100a29bf342`; credential and loopback endpoint configuration are present, but the local TCP listener is unreachable, so authentication and read/search were not exercised.
-- Obsidian gate impact: none; the owner has since confirmed that Obsidian and Local REST API are active, so QA will retest separately after persisting this re-review.
+- Re-review commit: `4497347b6440c03c305cbb54eaccc643d95ced3c` — QA-IC-001 closed; overall gate remains rejected solely for QA-IC-002.
+- Parallel Obsidian live retest: `BLOCKED / NOT_TESTED`; configuration is present, but no Obsidian process or configured listener was visible in the current OS session, so health remained unavailable and authentication/read were not exercised.
+- Obsidian gate impact: none. The owner-reported active application/plugin state was not observable from this QA session; no secret or private vault content was exposed and no write occurred.
 - Report: [`qa-latest.md`](reviews/qa-latest.md)
 
 ## Database Audit
