@@ -117,17 +117,17 @@ Required Reviews — Integration Candidate:
 ## QA
 
 - Coordination status: REJECTED
-- Integration Candidate reviewed: `20843a4568ca6eba67d66f93234412038ca79199`
-- Functional Commit preserved: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
-- Result: REJECTED
-- Validation: documentation-only diff and functional-drift checks passed; 49 Markdown files/107 links had no broken relative links; frontend `36/36`, Python syntax `49/49`, JavaScript syntax `30/30`, focused API/E2E/malformed-WebSocket `7/7`, and the complete browser package passed. The clean-checkout Python suite failed with `44 passed, 1 failed, 1 warning`.
-- Blockers: `QA-IC-001` — realtime test implicitly depends on local `.env` database configuration and fails in a clean checkout; `QA-IC-002` — draft PR #1 still identifies superseded candidate `cf9cd97` instead of `20843a4`.
-- Non-blocking issues: `QA-ENV-003` (real PostgreSQL/migration/providers/devices/production not exercised) and `QA-WARN-HTTPX` (known TestClient deprecation warning).
-- Browser/API/realtime evidence: seven viewports, reflow/accessibility, WebGL/fallback, heartbeat/reconnect/HTTP fallback, invalid JSON close `1008`, cancellation, memory-aware flows, UUID/428 deletion, and relation removal passed in disposable state.
-- Re-review criteria: clean exported checkout completes the full Python suite without local `.env` dependence, and the draft PR review gate names exact candidate `20843a4568ca6eba67d66f93234412038ca79199`.
-- Review commit: this documentation-only QA commit
+- Integration Candidate reviewed: `51f93d12740a6e0860856257ea761377b04c97fb`
+- Functional correction reviewed: `4d76f2433363a47a9d8fe29fef337de1dc79ac50`; Development evidence: `9e5764671d86121aedd88b926c05ccbc7c385131`.
+- QA-IC-001: `CLOSED / APPROVED` — exact clean export, no `.env`, no database URLs and no provider credentials; focused regression `1 passed`, complete Python suite `45 passed`, frontend `36 passed`, Python syntax `49/49`, JavaScript syntax `30/30`.
+- Functional impact: test-fixture-only. Runtime backend, frontend, API, schema, migrations, dependencies and production configuration are unchanged; only disposable in-memory SQLite was used.
+- Overall result: `REJECTED` solely because `QA-IC-002` remains open.
+- Open blocker: `QA-IC-002` — draft PR #1 points to remote head `51f93d1` but its body still declares superseded candidate `cf9cd97`; Coordinator/owner must update public PR metadata before merge.
+- Non-blocking issues: `QA-ENV-003` (real production environments not exercised) and `QA-WARN-HTTPX` (known TestClient deprecation warning).
+- Re-review boundary: after a metadata-only correction of the PR body, QA may verify `QA-IC-002` without repeating the functional suite unless the Git candidate changes.
+- Review commit: pending QA documentation commit
 - Parallel Obsidian environment check: `BLOCKED / NOT_TESTED` on commit `91c77c1768aec511a253e19a22b32100a29bf342`; credential and loopback endpoint configuration are present, but the local TCP listener is unreachable, so authentication and read/search were not exercised.
-- Obsidian gate impact: none; this check does not change the Phase 6 result or close/replace `QA-IC-001` and `QA-IC-002`. Owner action for a rerun: open Obsidian and confirm the existing Local REST API plugin is enabled/listening, without sharing secrets or private vault content.
+- Obsidian gate impact: none; the owner has since confirmed that Obsidian and Local REST API are active, so QA will retest separately after persisting this re-review.
 - Report: [`qa-latest.md`](reviews/qa-latest.md)
 
 ## Database Audit

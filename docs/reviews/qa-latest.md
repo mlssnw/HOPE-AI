@@ -1,165 +1,119 @@
-# QA Review — Phase 6 Integration Candidate
+# QA Re-review — Phase 6 Integration Candidate
 
 ## QA Status
 
 `REJECTED`
 
-## Commit Tested
+The `QA-IC-001` functional correction is independently `APPROVED` and the finding is closed. The overall integration gate remains `REJECTED` only because `QA-IC-002` is still open in the public draft PR metadata.
 
-- Integration Candidate: `20843a4568ca6eba67d66f93234412038ca79199`
-- Functional Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
+## Commits Reviewed
+
+- Integration Candidate: `51f93d12740a6e0860856257ea761377b04c97fb`
+- Functional correction commit: `4d76f2433363a47a9d8fe29fef337de1dc79ac50`
+- Development evidence commit: `9e5764671d86121aedd88b926c05ccbc7c385131`
+- Rejected candidate baseline: `20843a4568ca6eba67d66f93234412038ca79199`
+- Original Phase 6 Functional Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
 - Branch: `codex/phase-6-target-ui`
-- Remote branch tip observed during review: `ee0de959eadd49eaccbdc6952781d5e403cb3761` (coordination-only descendant)
-- Superseded candidates not approved by this review: `d83e57d237d1ddd10a0f64ae833aa92c0b2e9d71`, `cf9cd976549163d1f49cead7bc2f993254150708`
 - Review date: 2026-09-22
+
+The target is a merge candidate containing both `4d76f24` and `9e57646`. The only functional-path delta from `20843a4` is `tests/test_realtime.py`; runtime backend, frontend, API, schema, migrations, dependencies, and production configuration are unchanged.
+
+## QA-IC-001 Result
+
+`CLOSED — APPROVED`
+
+### Root Cause Confirmation
+
+The rejected test created `create_app(FakeServices())` without an explicit memory manager. A developer-local `DATABASE_URL` silently supplied one, so the test passed locally but failed in a clean checkout with `thinking -> idle` instead of the expected `thinking -> searching -> idle`.
+
+### Correction Review
+
+- The corrected test patches `Settings.from_env()` at the test boundary with `Settings.for_tests()`.
+- It reuses the existing disposable in-memory SQLite fixture and real `MemoryManager` with local hash embeddings.
+- It disposes the SQLite database in `finally`.
+- The original assertions remain unchanged: HTTP `200`, then `thinking`, `searching`, and `idle` for the same user.
+- No runtime or product behavior was modified.
+
+### Independent Clean-Export Evidence
+
+The exact candidate `51f93d12740a6e0860856257ea761377b04c97fb` was exported with `git archive` to a new disposable directory.
+
+- `.env` in export: absent.
+- `DATABASE_URL`: absent.
+- `DATABASE_ADMIN_URL`: absent.
+- Anthropic, Tavily, ElevenLabs, and Obsidian credentials: absent.
+- Focused regression: `1 passed, 1 warning`.
+- Complete Python suite: `45 passed, 1 warning`.
+- Frontend suite: `36 passed, 0 failed`.
+- Python syntax: `49` files passed AST parsing.
+- JavaScript syntax: `30` files passed `node --check`.
+- `git diff --check 20843a4..51f93d1`: passed.
+
+No real PostgreSQL connection, migration, provider, credential, network service, or production environment was used. The corrected test used only disposable SQLite in memory.
 
 ## Test Summary
 
-The candidate is documentation-only and changes `AGENTS.md`, `README.md`, `docs/coordination/documentation-language-policy.md`, and `docs/handoff.md`. No drift was found in backend, frontend, tests, migrations, dependency files, or the reviewed Functional Commit.
-
-The README is in PT-BR, identifies Phase 6 as the only active phase, keeps later phases outside the active implementation gate, and links to future direction without presenting it as delivered work. The documentation language policy is internally consistent with the owner-approved README and owner-facing PT-BR exceptions.
-
-### Backend: FAILED
-
-- Clean exported snapshot, full Python suite: `44 passed, 1 failed, 1 warning`.
-- Clean exported snapshot, focused E2E/API/realtime suite: `10 passed, 1 failed, 1 warning`.
-- Failing test: `tests/test_realtime.py::test_chat_publishes_ai_state_for_same_user`.
-- The failure reproduced three times in isolation: expected `thinking -> searching -> idle`, received `thinking -> idle`.
-- Python syntax: `49` files parsed successfully.
-
-### Frontend: PASSED
-
-- Node test suite: `36 passed, 0 failed`.
-- JavaScript syntax: `30` files passed `node --check`.
-
-### Browser: PASSED
-
-- Official Phase 6 browser package completed successfully in a disposable export using Chrome/Playwright.
-- Seven viewports, chat-first behavior, state/focus preservation, 200% equivalent reflow, 130% text, landscape reachability, contrast, focus, reduced motion, WebGL loss/fallback/recovery, Memory Globe states, realtime degradation, voice fixtures, cancellation, consent/history, and safe forgetting passed.
-- Generated disposable evidence: 39 PNG screenshots, three JSON result files, and one evidence README.
-- Console and asset checks reported no unexpected errors.
-
-### API: PASSED WITH SUITE BLOCKER
-
-- Focused API, E2E harness, and malformed-WebSocket selection: `7 passed, 1 warning`.
-- Validation and negative cases exercised include HTTP `422`, missing/divergent delete confirmation `428`, exact UUID confirmation, relation removal, and memory-aware chat flows.
-- The full Python gate remains failed because of `QA-IC-001`.
-
-### Realtime: PASSED WITH SUITE BLOCKER
-
-- Invalid WebSocket JSON closed with code `1008` and reason `payload JSON inválido`; no unhandled traceback was observed.
-- Browser coverage passed heartbeat/PONG, disconnect, HTTP fallback, reconnect, incremental events, and stale-event cancellation behavior.
-- The clean-checkout realtime unit test dependency described in `QA-IC-001` remains blocking.
-
-### Memory: PASSED
-
-- E2E/API/browser coverage passed memory-aware chat, retrieval, real-target forgetting, exact UUID confirmation, `428` for missing/divergent confirmation, confirmed deletion, and relation removal.
-- Loading, empty, unavailable, error, search, list, inspector, and WebGL fallback states passed.
-
-### Security: PASSED WITH PRODUCTION LIMITATIONS
-
-- Candidate diff contained no recognized secret/key patterns.
-- Browser/frontend tests passed inert HTML/SVG handling and rejection of executable URL protocols.
-- No production database, migration, paid provider, credential, or deployment was touched.
-- Existing Production Readiness blockers remain outside this documentation-only feature gate.
-
-## Commands and Evidence
-
-- `git status --short --branch`, `git branch --show-current`, `git rev-parse HEAD`, and ancestry checks.
-- `git show --stat --summary 20843a...` and candidate patch review.
-- `git diff --check 0912e94..20843a4` — passed.
-- Functional-path diff across backend, frontend, tests, migrations, and dependency files — empty.
-- Markdown link validation in the exact exported snapshot — 49 Markdown files, 107 links checked, 0 broken.
-- `python -m pytest -q -p no:cacheprovider` — 44 passed, 1 failed, 1 warning.
-- Focused Python selection — 10 passed, 1 failed, 1 warning.
-- Malformed-WebSocket + E2E/API selection — 7 passed, 1 warning.
-- `node --test tests/frontend/*.test.mjs` — 36 passed.
-- Python AST syntax validation — 49 files passed.
-- `node --check` — 30 JavaScript files passed.
-- `node tests/browser/run.mjs` — complete browser package passed.
-- GitHub PR metadata read via the public API — draft PR #1 points to remote head `ee0de95`, but its body still names `cf9cd97` as the Integration Candidate.
+- Backend: `PASSED` — 45 Python tests passed in the clean controlled export.
+- Frontend: `PASSED` — 36 Node tests passed.
+- Realtime correction: `PASSED` — the isolated event-order regression passed without local environment configuration.
+- Syntax: `PASSED` — 49 Python and 30 JavaScript files.
+- Browser: `NOT RE-RUN` — no runtime/frontend delta; the prior complete Phase 6 browser evidence remains applicable.
+- API/Memory/Security behavior: `UNCHANGED` — no runtime delta from the previously reviewed implementation.
+- Database: `NOT ACCESSED` — only in-memory SQLite test state was used.
 
 ## Regressions Found
 
-### QA-IC-001 — Python suite is not reproducible in a clean checkout
+No regression was reproduced from the `QA-IC-001` correction.
+
+## Closed Findings
+
+### QA-IC-001 — CLOSED
 
 - Severity: MEDIUM
-- Blocking: YES
-- Evidence: the clean candidate export has no local `.env`; `Settings.from_env().database_url` is false, so `create_app(FakeServices())` does not create a memory manager. The test nevertheless expects a `searching` event that is only published when a memory manager exists. It failed in the full suite, the focused suite, and three isolated repetitions. The same test passed when a disposable SQLite `DATABASE_URL` was explicitly supplied, and the workspace copy passed only because its local `.env` configures a database.
-- Impact: the advertised `45 passed` result depends on developer-local configuration and is not reproducible by a clean checkout or typical CI environment. The final integration gate cannot rely on the suite as currently written.
-- Acceptance criteria: make the realtime test self-contained and explicit about whether a memory manager is present; then demonstrate `45 passed` (or the updated complete count) from a clean exported checkout with no local `.env` dependency.
-- Recommendation: return the isolated test-fixture issue to Development; do not infer production behavior from a developer-local `.env`.
+- Blocking: NO
+- Evidence: isolated and full Python runs passed from an exact clean export without `.env`, database URLs, or provider credentials.
+- Impact: the realtime regression test is now deterministic and no longer depends on developer-local configuration.
+- Recommendation: retain the explicit fixture and clean-export validation as regression coverage.
+
+## Open Blockers
 
 ### QA-IC-002 — Draft PR identifies a superseded Integration Candidate
 
 - Severity: MEDIUM
 - Blocking: YES
-- Evidence: draft PR #1 targets `main` from `codex/phase-6-target-ui` and its remote head is `ee0de959...`, which contains `20843a4`; however, the PR body still declares `cf9cd976...` as the Integration Candidate and still says final QA/Security are pending for that old hash.
-- Impact: reviewers and merge operators cannot determine the authoritative candidate from the PR itself, violating the exact-commit review gate and risking approval of the wrong artifact.
-- Acceptance criteria: update the draft PR body to identify `20843a4568ca6eba67d66f93234412038ca79199` as the Integration Candidate, preserve `0912e949...` as the Functional Commit, and reflect the current final review results before merge.
-- Recommendation: keep the PR in draft until its review gate and repository handoff agree on the exact candidate.
-
-## Blockers
-
-- `QA-IC-001` — clean-checkout Python suite failure caused by a test fixture that implicitly depends on local database configuration.
-- `QA-IC-002` — draft PR body still identifies superseded candidate `cf9cd97` instead of `20843a4`.
+- Evidence: public draft PR #1 has remote head `51f93d12740a6e0860856257ea761377b04c97fb`, but its body still declares `cf9cd976549163d1f49cead7bc2f993254150708` as the Integration Candidate and does not name `51f93d1`.
+- Impact: the PR review gate still directs reviewers and merge operators to the wrong artifact.
+- Acceptance criteria: update the PR body to identify `51f93d12740a6e0860856257ea761377b04c97fb` as the Integration Candidate, identify `4d76f2433363a47a9d8fe29fef337de1dc79ac50` as the functional correction, and reflect the current QA/Security review state before merge.
+- Owner/Coordinator boundary: this is a public PR metadata action and was not modified by QA.
 
 ## Non-blocking Issues
-
-### QA-ENV-003 — Real environment validations not executed
-
-- Severity: INFO
-- Evidence: PostgreSQL/pgvector, migration `20260903_0003`, real microphone, paid providers, physical-device accessibility, and public deployment were not exercised.
-- Impact: this review validates the candidate in disposable/local test environments only and does not establish Production Readiness.
-- Recommendation: retain these checks in their Database, Security, provider, accessibility, and production gates.
 
 ### QA-WARN-HTTPX — Deprecated TestClient integration
 
 - Severity: INFO
-- Evidence: Python runs emitted `StarletteDeprecationWarning` recommending migration from the current `httpx` integration.
-- Impact: no current functional failure, but future dependency updates may require maintenance.
-- Recommendation: track as technical maintenance outside the Phase 6 documentation gate.
+- Evidence: Python runs emitted the known `StarletteDeprecationWarning` for the current TestClient/httpx integration.
+- Impact: no current test failure; future dependency maintenance may be required.
+- Recommendation: track outside the Phase 6 correction gate.
+
+### QA-ENV-003 — Production environments remain untested
+
+- Severity: INFO
+- Evidence: no real PostgreSQL/pgvector, migration, paid provider, physical device, or public deployment was used.
+- Impact: the result validates the test-fixture correction, not Production Readiness.
+- Recommendation: retain the existing Database, Security, provider, accessibility, and production gates.
 
 ## Recommendation
 
 `REJECTED`
 
-Do not merge the Phase 6 draft PR until both blockers are closed and QA re-reviews the resulting exact Integration Candidate. This result does not authorize Phase 7, production deployment, migration application, or real database changes.
+Approve and close `QA-IC-001` for candidate `51f93d12740a6e0860856257ea761377b04c97fb`. Keep the overall Phase 6 integration gate rejected solely for `QA-IC-002`. Once the draft PR body is corrected to the exact candidate and review state, QA may verify that metadata-only closure without repeating the functional test suite unless the Git candidate changes.
 
 ## Parallel Environmental Validation — Obsidian Local REST API
 
 - Result: `BLOCKED / NOT_TESTED`
 - Commit tested: `91c77c1768aec511a253e19a22b32100a29bf342`
-- Functional implementation lineage: Obsidian paths are unchanged from `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`.
-- Review date: 2026-09-22
-- QA persistence note: the evidence was collected before the unrelated test-only commits `4d76f24`/`7ba206f`; a post-test diff confirmed no change to the Obsidian configuration, adapter, models, service tests, or example environment contract.
-- Gate impact: `NONE`. This environmental check is separate from the Phase 6 integration decision and does not close, replace, approve, or reject `QA-IC-001` or `QA-IC-002`.
-
-### Contract Identified
-
-- `Settings.from_env()` loads `OBSIDIAN_API_KEY`, `OBSIDIAN_BASE_URL`, and `OBSIDIAN_VERIFY_TLS` on the backend.
-- `HopeServices.health()` performs an authenticated, read-only `GET /` and maps the result to `configured`/`available`.
-- `HopeServices.search_obsidian()` performs an authenticated `POST /search/simple/` with a bounded query and context length. It limits returned results, sanitizes filename/excerpt lengths, rejects suspicious traversal segments, and returns sources classified as `obsidian`.
-- The integration is used by chat only when `ChatRequest.use_vault=true`; collected Obsidian results are delimited as untrusted external data before model use.
-- The implemented adapter provides search/read context only. It does not create, update, move, or delete notes.
-
-### Sanitized Environment Evidence
-
-- Local `.env` file: present.
-- Obsidian API credential: present; value not read into logs or reported.
-- Base endpoint: present, HTTP scheme, loopback host; URL and port not reported.
-- TLS verification setting: enabled.
-- Adapter health: `configured=true`, `available=false`.
-- Transport diagnostic: local TCP listener unreachable; no HTTP request status or response body was available.
-- Authentication: `NOT_TESTED` because the listener was unreachable.
-- Functional read/search: `NOT_TESTED`; the sentinel search was deliberately skipped after failed health/connectivity.
-- Vault names, note names, note contents, excerpts, private paths, URL, port, and token were not logged or persisted.
+- Gate impact: `NONE`. This environmental check remains separate from the Phase 6 decision and from `QA-IC-001`/`QA-IC-002`.
+- Sanitized evidence: the credential and loopback endpoint configuration were present, but the local TCP listener was unreachable. Authentication and functional read/search were therefore not tested.
+- Safety: no vault names, note names, note contents, excerpts, private paths, URL, port, or token were logged; no note was created, changed, moved, or deleted.
 - Proportional mocked service regression: `tests/test_services.py` — `5 passed`.
-
-### Environmental Dependency
-
-The configured Obsidian Local REST API listener was not reachable on the local loopback endpoint. The available evidence cannot distinguish whether Obsidian is closed, the Local REST API plugin is disabled/not running, or its listener configuration differs from the backend configuration. This is an unavailable local dependency, not a reproduced functional defect in the HOPE adapter.
-
-### Owner Action Required
-
-If live Obsidian validation is desired, open Obsidian with the intended vault, confirm that the already-installed Local REST API plugin is enabled and listening under the existing configuration, and request a rerun. Do not send the token, private URL, vault name, or note content in chat. QA will then repeat health/authentication and one minimal non-sensitive read-only sentinel search.
+- Owner action for a live rerun: open Obsidian and confirm the existing Local REST API plugin is enabled/listening, without sharing secrets or private vault content.
