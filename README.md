@@ -20,7 +20,7 @@
 </p>
 
 <p align="center">
-  <em>Target UI aprovado: a implementação da Fase 6 foi entregue; a integração está em correção antes do novo QA.</em>
+  <em>Target UI aprovado: a implementação e os reviews técnicos da Fase 6 foram concluídos; o merge permanece sujeito à autorização da owner.</em>
 </p>
 
 <p align="center">
@@ -40,7 +40,8 @@ Assistentes tradicionais dependem principalmente do contexto imediato da convers
 - O dashboard convergiu para a direção visual aprovada sem ativar capacidades futuras inexistentes.
 - Memory Globe/Core Orb, chat, inspector, responsividade chat-first, fallback sem WebGL e acessibilidade foram integrados ao novo shell.
 - Consentimento de memória, histórico local, cancelamento e confirmação destrutiva permanecem separados e operáveis.
-- QA solicitou uma correção no isolamento de um teste antes da integração; Security aprovou o candidate revisado com warnings e UI/UX aprovou a implementação visual.
+- A correção de isolamento do teste realtime foi concluída e validada em ambiente limpo: 45 testes Python e 36 testes frontend passaram.
+- QA e Security aprovaram a integração com warnings; UI/UX aprovou a implementação visual.
 - Nenhuma fase posterior está ativa ou autorizada para implementação enquanto a integração da Fase 6 não for concluída.
 
 [📖 Ver detalhes técnicos da Fase 6](docs/phase-6.md)
@@ -65,8 +66,8 @@ Assistentes tradicionais dependem principalmente do contexto imediato da convers
 |---|---|
 | Versão pública | Fase 6 — sem usar o rótulo legado do runtime como versão da fase |
 | Fase atual | Fase 6 — Target UI Convergence |
-| Estado técnico | `CHANGES_REQUESTED` para integração — uma correção de isolamento de teste deve ser concluída e revalidada pelo QA |
-| Functional Commit | `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
+| Estado técnico | `APPROVED_WITH_WARNINGS` — reviews obrigatórios concluídos; integração aguarda autorização da owner |
+| Functional Commit | `4d76f2433363a47a9d8fe29fef337de1dc79ac50` — correção test-only sobre a implementação `0912e94` |
 | Deploy público | Ainda não habilitado — autenticação, autorização e hardening de produção pendentes |
 
 A fundação local/controlada já conecta chat, memória persistente, PostgreSQL/pgvector, Memory Globe e eventos em tempo real. Isso não equivale a prontidão para produção pública.
@@ -79,10 +80,10 @@ A única fase ativa é a **Fase 6 — Target UI Convergence**.
 
 - [x] Implementação funcional entregue no commit `0912e94`.
 - [x] Direção visual validada pelo UI/UX no Functional Commit.
-- [x] Security revisou o candidate `20843a4` e aprovou com warnings.
-- [ ] Development corrigir o isolamento do teste realtime apontado pelo QA.
-- [ ] QA aprovar o novo Integration Candidate no hash exato.
-- [ ] Descrição do PR ser sincronizada com o candidate vigente.
+- [x] Development corrigiu o isolamento do teste realtime no commit `4d76f24`.
+- [x] QA aprovou a correção e encerrou `QA-IC-001` e `QA-IC-002`.
+- [x] Security aprovou com warnings e encerrou `SEC-019` e `SEC-020`.
+- [x] Descrição do PR sincronizada com o candidate revisado.
 - [ ] Merge da branch `codex/phase-6-target-ui` em `main`.
 
 O roadmap futuro existe como direção aprovada, mas não representa trabalho ativo nem autorização de implementação. Ele permanece separado em [`docs/roadmap.md`](docs/roadmap.md), junto da [`visão de produto`](docs/product-vision.md) e da [`arquitetura futura`](docs/future-architecture.md).
