@@ -8,6 +8,7 @@ O dashboard escolhido pela usuária está **APPROVED** como `TARGET UI` da tela 
 
 - [Decisão e referência visual canônica](official-dashboard.md)
 - [Matriz de gaps entre o target e o frontend real](dashboard-gap-matrix.md)
+- [Contrato de implementação da Phase 6](phase-6-target-ui-spec.md) — mapeamento P0/P1, responsividade, acessibilidade, fallback e truthfulness
 - [Asset aprovado](assets/hope-dashboard-approved-2026-09-10.png)
 
 A aprovação é de direção visual, não da implementação atual. `TARGET UI` não altera o status funcional de nenhuma capacidade.

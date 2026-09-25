@@ -2,6 +2,16 @@
 
 Histórico verificável da evolução do HOPE AI. Commits documentais posteriores não substituem o Functional Commit de cada entrega.
 
+## Product Vision e Roadmap — decisões de 2026-09-19 a 2026-09-21
+
+- A owner registrou nova direção futura para voice presence, realtime voice, wake word `HOPE`, speaker verification, Core Orb reativo à amplitude local, self knowledge, personalidade ampliada, modos combináveis, memória controlável, organização pessoal, integrações, diagnósticos, auditoria, localização por dispositivo, apps instaláveis e Model Router.
+- O registro oficial de coordenação está em [`docs/coordination/product-direction-2026-09-19.md`](docs/coordination/product-direction-2026-09-19.md).
+- `ARCH-2026-09-20-001`, [`docs/product-vision.md`](docs/product-vision.md) e [`docs/roadmap.md`](docs/roadmap.md) foram aprovados pela owner como direção futura; nenhuma capacidade planejada foi declarada implementada.
+- Lena Luthor, Tony Stark e Dean Winchester foram aprovados somente como referências de traços gerais no `SelfKnowledge` público. Homenagem original e pontual é permitida quando solicitada explicitamente; cópia de citações famosas, diálogos, identidade, voz ou atuação contínua permanece proibida.
+- Phase 7 — Conversational Presence Foundation foi selecionada apenas para planejamento. Seu plano permanece `WAITING_FOR_APPROVAL` e a implementação não está autorizada.
+- O roadmap oficial posiciona segurança antes de cloud voice, wake word em background, speaker profile, dispositivos, dados sensíveis e efeitos.
+- Phase 6 permanece congelada no Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`, sem scope creep.
+
 ## Phase 6 — Target UI Convergence
 
 - **Data da decisão:** 2026-09-10
@@ -11,7 +21,12 @@ Histórico verificável da evolução do HOPE AI. Commits documentais posteriore
 - **PermissionManager futuro:** níveis `SAFE`, `WRITE`, `SENSITIVE` e `DESTRUCTIVE`, com confirmação crescente conforme o risco
 - **Resultado do Planner:** `ARCH-2026-09-10-003` e `docs/phase-6.md` aprovados como planejamento oficial
 - **Decisão da usuária:** implementação da Phase 6 autorizada em 2026-09-11, respeitando integralmente scope, non-goals, acceptance criteria e Required Reviews
-- **Primeira ação:** confirmação pré-implementação de UI/UX antes do encaminhamento ao Development
+- **UI/UX pré-implementação:** `APPROVED` em `3c10be2`, com Definition of Ready satisfeita e mapeamento P0/P1 fechado
+- **Implementação:** entregue pelo Development no Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`, com 45 testes Python e 36 testes frontend aprovados
+- **Reviews técnicos:** QA `APPROVED_WITH_WARNINGS`, Security `APPROVED_WITH_WARNINGS` e UI/UX `APPROVED` no mesmo Functional Commit; Database `N/A`
+- **Evidência anterior:** QA e Security registraram `APPROVED_WITH_WARNINGS` e UI/UX registrou `APPROVED` sobre o Functional Commit `0912e94`; esses pareceres não aprovam automaticamente a branch após a limpeza documental
+- **Estado operacional de integração:** `WAITING_FOR_REVIEW`
+- **Próximo gate:** criar um Integration Candidate documental, abrir o PR em rascunho e obter confirmação final de QA e Security no mesmo hash antes do merge
 - **Limite:** expansão funcional, banco, migrations, providers, produção, tools, agents e Phase 7 permanecem não autorizados
 - **Correção editorial:** concluída em `bd244bb`; `docs/phase-6.md` não existia antes de `ARCH-2026-09-10-003` e foi criado pelo registro dessa decisão
 

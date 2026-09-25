@@ -1,214 +1,163 @@
 # Architecture Review — Latest
 
-- Status: APPROVED
-- Decision ID: `ARCH-2026-09-10-003`
-- Date: 2026-09-10
+- Status: WAITING_FOR_REVIEW
+- Decision ID: `ARCH-2026-09-21-001`
+- Date: 2026-09-21
 - Product model: `SINGLE_USER`
-- Functional baseline analyzed: `88e194778b4399a6713f118470f9d861c553cd9e`
-- Repository HEAD analyzed: `3c8e978e2dc5d9c0deff62a8a5a9ebb1f7c4d2c6`
-- Planning approval recorded by COORDINATOR: `7494c2ed589e559a955934f8a1580d3867e2356b`
-- Superseded direction: autenticação multiusuário, RBAC complexo, tenants, organizações, SSO/federação e RLS orientado a tenants no roadmap imediato
-- Preserved decision: `ARCH-2026-09-10-002` e a Fase 5 `APPROVED_WITH_WARNINGS`
+- Branch: `codex/phase-6-target-ui`
+- Functional Commit preserved: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
+- Repository HEAD analyzed: `0da3030c696d10071b3fc9d9c92471999e2fc0ea`
+- `origin/main` analyzed: `0bcc25a5437cab8a326e64281579ead56274d8cb`
+- Integration Candidate: documentation-only HEAD produced by this cleanup; exact hash is the resulting commit
+- Phase 6 operational status: WAITING_FOR_REVIEW
+- Phase 7 planning: WAITING_FOR_APPROVAL
+- Phase 7 implementation: NOT_STARTED / NOT_AUTHORIZED
 - Production Readiness: BLOCKED
 
 ## Problem
 
-O roadmap anterior tratava identidade como fundação de uma plataforma multiusuário. A HOPE, porém, é uma assistente pessoal de uso individual. Manter tenants, RBAC complexo, organizações e identidade enterprise elevaria custo e manutenção sem proteger melhor o risco real: tools, agentes e integrações executando ações sobre dados e sistemas do único owner.
+The Phase 6 implementation exists at `0912e94` and received QA/Security/UI/UX reviews in the earlier round. The architecture cleanup already reconciled the implemented frontend and runtime-version convention, but `docs/roadmap.md` and `docs/product-vision.md` still described Phase 6 as completed, and the integration gate did not distinguish opening a draft PR from authorizing merge.
 
-Também é necessário decidir se o Target UI pode ser implementado antes da fundação de permissões sem mascarar lacunas de segurança ou apresentar capacidades futuras como existentes.
+Before integration, the project needs one documentation-only Integration Candidate that accurately describes the implemented dashboard, records the version convention and keeps Phase 7 unstarted. The previous QA and Security reports remain evidence for the Functional Commit but do not constitute final approval of the cleaned branch. The candidate must be published in a draft PR; QA and Security then confirm that same hash before merge.
 
 ## Current State
 
-- Fase 5: `APPROVED_WITH_WARNINGS` no Functional Commit `88e194778b4399a6713f118470f9d861c553cd9e`.
-- Production Readiness: `BLOCKED`.
-- Commits posteriores ao baseline são exclusivamente documentais.
-- Antes da decisão `ARCH-2026-09-10-003`, não existia `docs/phase-6.md`; o próprio registro documental da decisão criou esse plano. Nenhuma próxima fase foi implementada.
-- O navegador cria e envia um UUID arbitrário; isso é namespace transitório, não autenticação.
-- O schema preserva `user_id` em memórias, relações, entidades, conversas e eventos.
-- O HOPE Main Dashboard é Target UI aprovado, mas a implementação atual permanece parcial.
-- Findings de QA, Database, Security e UI/UX continuam sob ownership dos respectivos reviewers.
+- Functional implementation remains exactly `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`.
+- The earlier round recorded 45 passing Python tests, 36 passing frontend tests, five passing browser verifiers and no functional blocker on that Functional Commit.
+- UI/UX previously approved fidelity of the implemented HOPE Main Dashboard on `0912e94`; that result remains visual evidence only.
+- Commits after `0912e94` are documentation/review/coordination changes and do not create a new Functional Commit.
+- The runtime code and README expose `6.0.0-phase.5`; changing the runtime value requires editing `backend/main.py`.
+- Phase 7 is a plan with status `WAITING_FOR_APPROVAL`; implementation is `NOT_STARTED` and `NOT_AUTHORIZED`.
+- Production Readiness remains `BLOCKED` by the existing Security/Database/operational gates.
+- The owner-approved `AGENTS.md` reconciliation is already versioned in `0da3030`; untracked visual assets remain outside this Planner commit.
 
 ## Constraints
 
-- Planejamento e documentação somente.
-- Não implementar, criar migration, acessar banco real, configurar provider, usar credencial, aceitar custo ou autorizar produção.
-- Não encerrar nem reescrever findings de outros Works.
-- Não alterar o Functional Commit nem o status consolidado da Fase 5.
-- Preservar prioridade visual sem esconder consentimento, ações sensíveis ou limitações reais.
-- Evitar arquitetura multiusuário/enterprise sem demanda.
+- Documentation only; no functional code, tests, migration, database, frontend, backend, README or CHANGELOG change.
+- Preserve `0912e94` as the Functional Commit and preserve all reviewer-owned reports unchanged.
+- Do not describe Phase 6 as approved for merge before the final candidate reviews; a draft PR is the review vehicle, not an approval result.
+- QA and Security must review/confirm the same Integration Candidate hash.
+- UI/UX's earlier result may remain evidence but cannot replace final QA/Security confirmation.
+- Do not modify Current Phase, Review Matrix, Coordinator section or Next Action.
+- Do not edit `AGENTS.md`; preserve all untracked assets outside the commit.
+- Do not start Phase 7, UI/UX or Development.
 
 ## Options
 
-### Option A — Manter o roadmap multiusuário anterior
+### Option A — Preserve `6.0.0-phase.5` as immutable runtime metadata of the approved Functional Commit
 
-- Pros: prepara uma futura plataforma SaaS e permite múltiplas identidades/roles.
-- Cons: resolve um problema inexistente, amplia schema, UX, operação e threat model.
-- Cost: alto, incluindo provider, suporte e manutenção contínua.
-- Complexity: alta.
-- Security impact: mais superfícies de account takeover, recuperação, RBAC e tenant isolation.
-- Database impact: identities, sessions, tenant RLS, backfills e policies adicionais.
-- Maintenance impact: alto e permanente.
+- Pros: keeps functional code and review identity unchanged; avoids a version-only Functional Commit; permits the integration candidate to remain documentation-only.
+- Cons: the suffix can be mistaken for the operational Phase 5 unless the convention is explicit.
+- Cost: none beyond documentation and future release hygiene.
+- Complexity: low.
+- Security impact: none; no runtime surface changes.
+- Database impact: none.
+- Maintenance impact: establishes that runtime version and planning phase are independent; the legacy label remains until a future authorized functional release.
 
-### Option B — Confiar implicitamente em localhost e remover identidade/permissões
+### Option B — Change runtime metadata to `6.0.0-phase.6` before integration
 
-- Pros: menor esforço imediato e nenhuma dependência externa.
-- Cons: não protege secrets, filesystem, Git, banco, providers ou ações de tools/agentes; não suporta acesso remoto seguro.
-- Cost: baixo agora, alto após incidente ou expansão.
-- Complexity: baixa.
-- Security impact: fail-open; prompt injection ou conteúdo malicioso poderia acionar efeitos sem um principal confiável.
-- Database impact: nenhum imediato.
-- Maintenance impact: dívida crítica antes de tools/agentes.
-
-### Option C — Single-owner boundary + autorização de recurso + PermissionManager por risco
-
-- Pros: protege o risco real com poucos componentes; funciona localmente e admite evolução cloud sem virar plataforma de contas.
-- Cons: ainda exige sessão, confirmação, revogação e UX própria; o mecanismo remoto precisará decisão futura.
-- Cost: baixo a médio no modo local; custo cloud somente se acesso remoto for escolhido.
-- Complexity: moderada e proporcional.
-- Security impact: fail-closed, grants mínimos e nenhuma autoelevação.
-- Database impact: preserva `user_id`; migrations só se inventário/sessão/audit exigir.
-- Maintenance impact: contratos pequenos e substituíveis, sem RBAC/tenant matrix.
+- Pros: visually aligns the API label with the coordinated phase number.
+- Cons: edits `backend/main.py`, creates a new Functional Commit after the completed review round and requires fresh impact analysis/reviews for a cosmetic synchronization.
+- Cost: low engineering effort but material coordination/review overhead.
+- Complexity: low in code, medium in governance.
+- Security impact: no intended behavioral change, but the reviewed artifact identity changes.
+- Database impact: none.
+- Maintenance impact: continues coupling semantic/runtime releases to project-management phases.
 
 ## Recommendation
 
-Adotar a Option C.
+Adopt Option A. Keep `6.0.0-phase.5` unchanged in code and treat it as the immutable legacy runtime label of Functional Commit `0912e94`, not as the source of truth for phase status. `docs/phase-6.md`, the exact Functional Commit, reviewer records and handoff define the operational phase.
 
-Confirmar a prioridade visual com um ajuste mínimo de segurança na sequência:
-
-1. Phase 6 — Target UI Convergence, estritamente visual e local/controlada.
-2. Phase 7 — Single-User Security & Permissions.
-3. Phase 8 — Read-Only Tool Registry.
-4. Phase 9 — Permissioned Effects & Ephemeral Coding.
-5. Phase 10 — Ephemeral Agent Runtime.
-6. Production Hardening como gate condicional antes de qualquer acesso remoto/cloud escolhido, não como pacote enterprise antecipado.
-
-Tools/coding foram divididos em duas fases porque leitura e efeitos têm riscos materialmente diferentes. Agents permanecem depois do PermissionManager e do executor controlado.
+The integration decision remains `WAITING_FOR_REVIEW`. This cleanup creates the candidate; it does not approve it. Coordinator opens a draft PR for that exact documentation-only HEAD, then QA and Security confirm the same hash before merge.
 
 ## Rationale
 
-O dashboard pode vir primeiro porque a Fase 6 proposta não adiciona credenciais, efeitos ou novas capacidades; ela apenas converge a apresentação de fluxos existentes e continua bloqueada para produção. Exigir QA, Security e UI/UX reduz o risco de esconder consentimento, confirmação destrutiva ou estados reais.
-
-O controle relevante para uma assistente pessoal não é “qual tenant pode acessar qual tenant”, mas “quem é o único owner, qual recurso esta execução pode tocar e qual risco esta ação representa”. Separar essas perguntas evita tanto o fail-open de localhost quanto o excesso de uma plataforma enterprise.
+Changing a static metadata string after the reviewed functional commit would produce more governance churn than product value. The inconsistency is contained and explainable, while a code edit would invalidate the clean separation between the reviewed implementation and the documentation cleanup. A future authorized functional release can adopt a phase-independent semantic/build version without blocking this branch.
 
 ## Architecture
 
-```text
-OwnerAuthenticator → OwnerSession → OwnerContext
-                                      ↓
-                              ResourceAuthorizer
-                                      ↓
-                              PermissionManager
-                        ALLOW | DENY | CONFIRM
-                                      ↓
-                           Tool / Agent / Effect
-                                      ↓
-                              Minimal Audit
-```
+`docs/architecture.md` now distinguishes three identities:
 
-- Reconhecimento do owner prova o principal humano único.
-- Autorização por recurso limita path, repositório, memória, banco, integração e destino.
-- PermissionManager decide risco e confirmação; não autentica e não substitui resource checks.
-- Tools e agentes recebem interseção de grants, nunca permissão igual ou maior por herança.
-- Aprovação é vinculada a owner session, ação, alvo, fingerprint, parâmetros, ambiente, execution ID, nonce e expiração.
-- Conteúdo não confiável não cria grants nem confirma ações.
+1. **Functional artifact:** `0912e94`, containing the implemented dashboard and tests.
+2. **Integration Candidate:** the documentation-only HEAD produced by this cleanup, which QA and Security must confirm on the same hash.
+3. **Runtime metadata:** `6.0.0-phase.5`, a frozen legacy label that does not determine operational phase status.
 
-## Permission Levels
+The current architecture records:
 
-| Level | Default decision | Confirmation | Scope/expiry | Examples |
-|---|---|---|---|---|
-| SAFE | ALLOW somente em allowlist | não, dentro da tarefa | requisição/tarefa e recursos enumerados | leitura de memória própria, docs permitidas, status |
-| WRITE | ALLOW somente com task envelope; senão CONFIRM | contextual | uma tarefa ou até 30 min, alvo/ação exatos | editar workspace, salvar rascunho, commit local autorizado |
-| SENSITIVE | REQUIRE_CONFIRMATION | owner em UI confiável | uso único, até 5 min, destino/parâmetros/budget | provider externo, secret handle, mensagem, custo, integração privada |
-| DESTRUCTIVE | REQUIRE_STRONG_CONFIRMATION | owner + alvo/consequência inequívocos | uso único, até 2 min, nonce e fingerprint | excluir, sobrescrever, force push, DDL/migration destrutiva |
+- implemented responsive HOPE Main Dashboard and chat-first surfaces;
+- `SurfaceController`, `MemoryGlobeController` and presentation-state separation;
+- accessible list/inspector, WebGL fallback/recovery, LOD profiles and truthful operational states;
+- 45 Python and 36 frontend tests from the prior Functional Commit review, plus browser evidence and its environmental limits;
+- exact links to product vision, roadmap, future architecture, Phase 6 and Phase 7;
+- Phase 7 as planning only, behind integration and a separate authorization.
 
-Invariantes comuns:
+## Integration Candidate Gate
 
-- policy ausente, alvo ambíguo, erro de classificação ou mudança de parâmetros resulta em `DENY`.
-- grants são revogáveis e não sobrevivem além do escopo definido.
-- retry de efeito incerto não é automático.
-- agents não confirmam em nome do owner nem modificam a policy que os governa.
-- audit omite secrets, tokens, prompts brutos e conteúdo privado completo.
+1. Planner creates one documentation-only cleanup commit.
+2. Coordinator records that exact HEAD as the Integration Candidate and opens a draft PR without changing the Functional Commit.
+3. QA confirms branch/diff integrity, documentation consistency and absence of functional drift on the candidate hash shown by the draft PR.
+4. Security confirms the same candidate hash, preservation of findings/boundaries and absence of newly introduced exposure or misleading authorization.
+5. Only after both final confirmations may Coordinator merge the authorized PR.
+6. Production remains blocked and Phase 7 remains unstarted after merge unless separately approved and authorized.
 
-## Owner and Legacy Identity
+## Required Reviews for Integration Candidate
 
-- Desenvolvimento local: pareamento da instalação e sessão opaca server-side; segredo no cofre do SO quando necessário.
-- Remoto/cloud: passkey/WebAuthn ou OIDC allowlisted para um único subject, escolhidos somente quando houver objetivo de acesso remoto.
-- `X-Hope-User-Id` e `?user_id=` deixam de ser autoridade na Phase 7.
-- `user_id` do banco permanece como namespace canônico do owner por compatibilidade.
-- Nenhum UUID legado é autoassociado pela simples posse no browser.
-- Vínculo, quarentena ou descarte dependem de inventário do Database, dry-run, backup, rollback e autorização específica.
-- RLS por tenant sai do roadmap imediato; RLS simples fica como defesa opcional condicionada ao perfil de deploy.
-
-## Required Reviews
-
-### Phase 6 — Target UI Convergence
-
-- QA: YES — browser, regressão, responsividade, WebGL e controles existentes.
-- DATABASE: NO — escopo não altera schema, query ou persistência; mudança funcional de dados exige retorno ao Planner e reclassificação.
-- SECURITY: YES — consentimento, confirmação destrutiva, claims e ausência de capacidades falsas.
-- UI/UX: YES — especificação prévia e review de fidelidade no mesmo Functional Commit.
-
-### Phase 7 — Single-User Security & Permissions
-
-- QA: YES — sessão, revogação, HTTP/WS e negativas de permissão.
-- DATABASE: YES se houver migration, vínculo de namespace ou persistência de sessão/audit; o impacto deve ser fechado antes do DEV.
-- SECURITY: YES — review obrigatório da fronteira de owner, grants, secrets e prompt injection.
-- UI/UX: YES — pareamento, expiração, confirmação, revogação e estados acessíveis.
-
-### Phases 8–10
-
-- Phase 8: QA YES; DATABASE NO porque exclui tool de banco/persistência; SECURITY YES; UI/UX YES.
-- Phase 9: QA YES; DATABASE NO porque migration e banco real são non-goals; SECURITY YES; UI/UX YES.
-- Phase 10: QA YES; DATABASE NO porque o runtime inicial é efêmero; SECURITY YES; UI/UX YES.
-- Regra de reclassificação: qualquer proposta que introduza persistência, query relevante, migration ou tool de banco volta ao Planner antes do DEV e torna Database `YES`.
+| Work | Required | Justification |
+|---|---|---|
+| QA | YES | final branch/candidate integrity and documentation-to-functional-commit consistency must be confirmed |
+| DATABASE | NO | cleanup changes no code, persistence, schema, migration or database contract |
+| SECURITY | YES | final candidate must preserve blockers, production boundary and the exact reviewed functional artifact |
+| UI/UX | NO | no visual implementation changed; the prior UI/UX approval remains evidence on `0912e94` |
 
 ## Risks
 
-- A Phase 6 visual pode esconder controles de segurança ou criar botões inertes para capacidades futuras.
-- “Single-user” pode ser confundido com “sem autenticação” e resultar em acesso remoto inseguro.
-- Grants WRITE amplos podem virar autorização permanente por conveniência.
-- Confirmações frequentes podem gerar fadiga e cliques automáticos.
-- Dados legados podem ser atribuídos ao owner errado sem inventário.
-- Manter `user_id` pode ser confundido com suporte multi-tenant, embora seja apenas namespace compatível.
-- Adiar Production Hardening não pode significar expor antes do gate.
+- The runtime suffix may be misread as current phase status.
+- Reviewers may accidentally review `0912e94` again instead of the Integration Candidate HEAD, or vice versa.
+- A dirty local working tree may be staged accidentally during integration.
+- Prior `APPROVED_WITH_WARNINGS` reports may be misrepresented as final branch approval.
+- Draft PR or merge may be treated incorrectly as Production Readiness or as Phase 7 authorization.
+- README/CHANGELOG may remain less precise than the authoritative architecture documents until a separate owner/Coordinator-owned update.
 
 ## Acceptance Criteria
 
-- [x] A usuária aprovou `ARCH-2026-09-10-003` e `docs/phase-6.md` como planejamento oficial; a implementação permanece não autorizada.
-- [x] Modelo `SINGLE_USER` está explícito e complexidade multiusuário/enterprise saiu do roadmap imediato.
-- [x] Findings de reviewers permanecem históricos e não foram encerrados pelo Planner.
-- [x] Target UI é a próxima fase proposta, não uma implementação autorizada.
-- [x] Dashboard não pode apresentar tools, agents, métricas ou rotas futuras como funcionais.
-- [x] Owner recognition, resource authorization e risk permissions estão separados.
-- [x] SAFE, WRITE, SENSITIVE e DESTRUCTIVE possuem regras de confirmação, escopo, expiração, revogação, auditoria e fail-closed.
-- [x] Tools/agents não podem autoelevar, reutilizar approval ou herdar grants maiores.
-- [x] UUID transitório e `user_id` possuem estratégia segura e não destrutiva.
-- [x] RLS por tenant foi removido do roadmap imediato sem alterar schema.
-- [x] Local/controlado e remoto/cloud têm requisitos distintos.
-- [x] Required Reviews estão definidos para a fase proposta.
-- [x] Nenhum código, migration, banco, provider, credencial, custo ou produção foi autorizado.
+- [x] `docs/architecture.md` reflects the implementation at `0912e94`, not the pre-Phase 6 frontend.
+- [x] Phase 6 functionality, dashboard, test counts and validation boundaries are recorded without claiming production readiness.
+- [x] Product vision, roadmap and future architecture have correct source-of-truth links.
+- [x] The version options, trade-offs and chosen convention are explicit.
+- [x] No code change to `backend/main.py` or runtime version is made.
+- [x] Phase 7 remains `WAITING_FOR_APPROVAL`, `NOT_STARTED` and `NOT_AUTHORIZED`.
+- [x] The sequence Integration Candidate → draft PR → QA/Security on the same hash → merge precedes Phase 7 implementation.
+- [x] No reviewer-owned report, README, CHANGELOG, AGENTS, asset, code, test or migration is altered.
+- [ ] QA confirms the resulting Integration Candidate hash.
+- [ ] Security confirms the same Integration Candidate hash.
+- [ ] Coordinator opens the draft PR for the exact Integration Candidate.
+- [ ] Coordinator merges only after both confirmations.
 
 ## Implementation Phase
 
-- Planning status: `APPROVED`.
-- Phase 6 implementation status: `NOT_STARTED / NOT_AUTHORIZED`.
-- Phase 7+ implementation status: `NOT_STARTED / NOT_AUTHORIZED`.
-- Functional Commit for next phase: `NONE`.
-- Current functional baseline remains `88e194778b4399a6713f118470f9d861c553cd9e`.
+- Documentation cleanup: READY_FOR_REVIEW in the resulting candidate commit.
+- Integration Candidate: to be identified by this cleanup commit hash.
+- Phase 6 operational status: WAITING_FOR_REVIEW.
+- Draft PR: NOT_STARTED; it is the review vehicle for the resulting Integration Candidate.
+- Merge: BLOCKED pending QA and Security on the same candidate.
+- Phase 7 planning: WAITING_FOR_APPROVAL.
+- Phase 7 implementation: NOT_STARTED / NOT_AUTHORIZED.
+- Production Readiness: BLOCKED.
 
 ## Deferred Items
 
-- Escolha do mecanismo de owner recognition para Phase 7.
-- Inventário e decisão sobre namespaces UUID legados.
-- Qualquer provider, custo, credencial, migration ou acesso remoto.
-- RLS simples como defesa adicional, somente se o deploy justificar.
-- Model Router, memória semântica, skills, learning, imagens, multimodalidade, agentes persistentes, automações e HOPE Bridge.
-- Production Hardening real e go-live.
+- Any phase-independent runtime-version redesign or code change.
+- README/CHANGELOG normalization by their owner, if requested.
+- Draft PR creation by Coordinator for the exact candidate.
+- QA and Security final candidate reviews.
+- Merge execution by Coordinator after the review gate.
+- Phase 7 approval, UI/UX specification and implementation authorization.
+- All provider, credential, database, migration, cloud and production work.
 
 ## Coordinator Handoff
 
-- Recommended Next Role: COORDINATOR.
-- Status: WAITING_FOR_APPROVAL.
-- Task: manter o workflow aguardando autorização explícita da usuária para implementar a Phase 6.
-- Do not route to: Development.
-- Boundary: a aprovação do planejamento não autoriza UI/UX adicional, Development, código, migration, provider, credencial, custo, produção ou implementação do dashboard; essa autorização ainda não existe.
+- Recommended next role: COORDINATOR.
+- Status: WAITING_FOR_REVIEW.
+- Task: record the resulting Planner commit as the Integration Candidate, open a draft PR and route QA and Security to review that exact hash.
+- Do not route to: merge, UI/UX, Development, Phase 7 implementation, providers, database, cloud or production before the required confirmations.
+- No architectural blocker is known in the documented scope; the mandatory review gate itself blocks integration until completed.

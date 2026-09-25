@@ -1,15 +1,13 @@
-import { ApiError, deleteMemory, getMemoryExplanation, getMemoryGraph, retrieveMemories } from "./api-client.js";
-import { normalizeMemoryDeleteConfirmation } from "./memory-confirmation.js";
-import { getOrCreateUserId } from "./storage.js";
-import { aiStateLabel, applyGraphEvent, layoutGraph, normalizeAiState, normalizeGraph, relatedNodes, RING_ORDER, visibleScene } from "./memory-globe-core.js";
-import { HopeRealtimeClient } from "./realtime.js";
+import { layoutGraph, normalizeAiState, normalizeGraph, relatedNodes, RING_ORDER, visibleScene } from "./memory-globe-core.js";
 
 const QUALITY = {
-  low: { particles: 90, nodes: 400, segments: 48 },
-  medium: { particles: 220, nodes: 1000, segments: 72 },
-  high: { particles: 480, nodes: 2500, segments: 96 },
-  ultra: { particles: 900, nodes: 6000, segments: 128 },
+  low: { particles: 90, nodes: 400, segments: 48, dpr: 1 },
+  medium: { particles: 220, nodes: 1000, segments: 72, dpr: 1.5 },
+  high: { particles: 480, nodes: 2500, segments: 96, dpr: 2 },
+  ultra: { particles: 900, nodes: 6000, segments: 128, dpr: 2 },
 };
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+const DEFAULT_CAMERA = { yaw: -.35, pitch: -.13, zoom: 5.8, panX: 0, panY: 0 };
 
 const VERTEX_SHADER = `
 attribute vec3 a_position;
@@ -50,9 +48,18 @@ void main() {
     ? abs(point.x) + abs(point.y)
     : length(point);
   float edge = v_shape > 0.5 && v_shape < 1.5 ? 0.48 : 0.5;
-  float alpha = smoothstep(edge, edge * 0.18, distanceToCenter);
-  float core = smoothstep(edge * 0.46, 0.0, distanceToCenter);
-  gl_FragColor = vec4(v_color.rgb + core * vec3(0.42, 0.31, 0.12), v_color.a * alpha);
+  float alpha = 1.0 - smoothstep(edge * 0.18, edge, distanceToCenter);
+  float core = 1.0 - smoothstep(0.0, edge * 0.46, distanceToCenter);
+  if (v_shape > 3.5) {
+    alpha = 1.0 - smoothstep(0.018, 0.05, abs(length(point) - 0.39));
+    core = 0.0;
+  } else if (v_shape > 1.5 && v_shape < 2.5) {
+    vec2 p = point * vec2(1.03, 0.88);
+    float contour = length(p) * (1.0 + 0.12 * sin(atan(p.y, p.x) * 3.0 + 0.9));
+    alpha = pow(max(0.0, 1.0 - contour * 2.0), 2.4);
+    core = 0.0;
+  }
+  gl_FragColor = vec4(v_color.rgb + core * vec3(0.20, 0.17, 0.11), v_color.a * alpha);
 }`;
 
 function compile(gl, type, source) {
@@ -73,15 +80,15 @@ function createProgram(gl) {
 function particleCloud(count) {
   const points = [];
   for (let index = 0; index < count; index += 1) {
-    const u = ((index * 16807) % 2147483647) / 2147483647;
-    const v = ((index * 48271 + 31) % 2147483647) / 2147483647;
-    const angle = u * Math.PI * 2; const radius = 3.1 + v * 2.8;
+    const u = (index * .61803398875) % 1;
+    const v = (index * .754877666 + .17) % 1;
+    const angle = u * Math.PI * 2; const radius = index % 3 ? .34 + v * .56 : 1.3 + v * 2.8;
     points.push({
       x: Math.cos(angle) * radius,
-      y: (v - .5) * 3.4,
+      y: (v - .5) * radius * .9,
       z: Math.sin(angle) * radius,
-      size: .8 + (index % 4) * .35,
-      color: [1, .58 + v * .25, .16, .16 + v * .24], shape: 3,
+      size: .7 + v * .9,
+      color: [1, .61 + v * .16, .23, index % 3 ? .12 + v * .18 : .08], shape: 3,
     });
   }
   return points;
@@ -90,14 +97,15 @@ function particleCloud(count) {
 export class MemoryGlobeRenderer {
   constructor(canvas, callbacks = {}) {
     this.canvas = canvas; this.callbacks = callbacks;
-    this.gl = canvas.getContext("webgl", { alpha: true, antialias: true, premultipliedAlpha: false });
+    this.gl = canvas.getContext("webgl", { alpha: true, antialias: true, premultipliedAlpha: true });
     if (!this.gl) throw new Error("WebGL não está disponível neste navegador.");
     this.program = createProgram(this.gl); this.layout = layoutGraph({});
     this.mode = "orbital"; this.quality = "high"; this.selectedId = null;
     this.highlightedIds = new Set(); this.hoveredId = null; this.drag = null;
     this.graphSnapshot = normalizeGraph({}); this.transitions = new Map(); this.aiState = "idle";
-    this.camera = { yaw: -.35, pitch: -.13, zoom: 5.8, panX: 0, panY: 0 };
-    this.reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    this.camera = { ...DEFAULT_CAMERA }; this.cameraTransition = null;
+    this.motionPreference = matchMedia("(prefers-reduced-motion: reduce)");
+    this.reducedMotion = this.motionPreference.matches; this.lastInteraction = 0; this.pointers = new Map();
     this.lastTime = 0; this.projected = []; this.particles = particleCloud(QUALITY.high.particles);
     this.locations = Object.fromEntries(["yaw", "pitch", "zoom", "pan", "viewport", "pixel_ratio", "points"].map(name => [name, this.gl.getUniformLocation(this.program, `u_${name}`)]));
     this.attributes = Object.fromEntries(["position", "color", "size", "shape"].map(name => [name, this.gl.getAttribLocation(this.program, `a_${name}`)]));
@@ -105,43 +113,89 @@ export class MemoryGlobeRenderer {
     this.bind(); this.resize(); this.frame = requestAnimationFrame(time => this.draw(time));
   }
 
+  interact() { this.lastInteraction = performance.now(); this.cameraTransition = null; }
+  orbit(dx, dy) { this.interact(); this.camera.yaw += dx; this.camera.pitch = clamp(this.camera.pitch + dy, -1.15, 1.15); }
+  pan(dx, dy) { this.interact(); this.camera.panX = clamp(this.camera.panX + dx, -.9, .9); this.camera.panY = clamp(this.camera.panY + dy, -.8, .8); }
+  zoomBy(factor) { if (!Number.isFinite(factor) || factor <= 0) return; this.interact(); this.camera.zoom = clamp(this.camera.zoom * factor, 3.2, 12); }
+  setReducedMotion(value) { this.reducedMotion = Boolean(value); this.cameraTransition = null; this.transitions.clear(); }
+  setInspectorOpen(value) {
+    this.inspectorOpen = Boolean(value); this.interact();
+    const node = this.layout.nodeMap.get(this.selectedId);
+    if (!this.inspectorOpen || !node || this.canvas.clientWidth < 560) return;
+    const screen = this.project(node);
+    const available = this.canvas.clientWidth - Math.min(356, this.canvas.clientWidth * .46);
+    if (screen.x < 24 || screen.x > available - 24 || screen.y < 24 || screen.y > this.canvas.clientHeight - 24) this.focusOn(node.id);
+  }
+
   bind() {
-    addEventListener("resize", () => this.resize());
+    this.resizeListener = () => this.resize();
+    this.motionListener = event => this.setReducedMotion(event.matches);
+    addEventListener("resize", this.resizeListener);
+    this.motionPreference.addEventListener("change", this.motionListener);
+    this.canvas.addEventListener("webglcontextlost", event => {
+      event.preventDefault(); this.contextLost = true; cancelAnimationFrame(this.frame);
+      this.callbacks.onContextLost?.();
+    });
     this.canvas.addEventListener("contextmenu", event => event.preventDefault());
+    this.canvas.addEventListener("pointerenter", () => { this.pointerInside = true; });
+    this.canvas.addEventListener("focus", () => { this.canvasFocused = true; });
+    this.canvas.addEventListener("blur", () => { this.canvasFocused = false; this.interact(); });
     this.canvas.addEventListener("pointerdown", event => {
-      this.canvas.setPointerCapture(event.pointerId);
-      this.drag = { x: event.clientX, y: event.clientY, pan: event.shiftKey || event.button === 2, moved: false };
+      this.interact(); this.canvas.setPointerCapture(event.pointerId);
+      this.pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      this.drag = { x: event.clientX, y: event.clientY, pan: event.shiftKey || event.button === 2, moved: this.pointers.size > 1 };
     });
     this.canvas.addEventListener("pointermove", event => {
-      if (this.drag) {
-        const dx = event.clientX - this.drag.x; const dy = event.clientY - this.drag.y;
-        this.drag.x = event.clientX; this.drag.y = event.clientY; this.drag.moved ||= Math.abs(dx) + Math.abs(dy) > 2;
-        if (this.drag.pan) { this.camera.panX += dx / this.canvas.clientWidth * 2; this.camera.panY -= dy / this.canvas.clientHeight * 2; }
-        else { this.camera.yaw += dx * .006; this.camera.pitch = Math.max(-1.15, Math.min(1.15, this.camera.pitch + dy * .005)); }
+      if (this.drag && this.pointers.has(event.pointerId)) {
+        const before = [...this.pointers.values()];
+        this.pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+        const after = [...this.pointers.values()];
+        if (after.length > 1) {
+          const distance = points => Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
+          this.zoomBy(Math.max(1, distance(before)) / Math.max(1, distance(after)));
+          this.pan((after[0].x + after[1].x - before[0].x - before[1].x) / this.canvas.clientHeight,
+            -(after[0].y + after[1].y - before[0].y - before[1].y) / this.canvas.clientHeight);
+          this.drag.moved = true;
+        } else {
+          const dx = event.clientX - this.drag.x; const dy = event.clientY - this.drag.y;
+          this.drag.moved ||= Math.abs(dx) + Math.abs(dy) > 2;
+          if (this.drag.pan) this.pan(dx / this.canvas.clientHeight * 2, -dy / this.canvas.clientHeight * 2);
+          else this.orbit(dx * .006, dy * .005);
+        }
+        this.drag.x = event.clientX; this.drag.y = event.clientY;
         return;
       }
       const node = this.pick(event.offsetX, event.offsetY);
       if (node?.id !== this.hoveredId) { this.hoveredId = node?.id || null; this.callbacks.onHover?.(node, event); }
     });
-    this.canvas.addEventListener("pointerup", event => {
-      const wasMoved = this.drag?.moved; this.drag = null;
-      if (!wasMoved) this.callbacks.onSelect?.(this.pick(event.offsetX, event.offsetY));
-    });
-    this.canvas.addEventListener("pointerleave", () => { if (!this.drag) this.callbacks.onHover?.(null); });
-    this.canvas.addEventListener("wheel", event => {
-      event.preventDefault(); this.camera.zoom = Math.max(3.2, Math.min(12, this.camera.zoom + event.deltaY * .006));
-    }, { passive: false });
+    const release = (event, cancelled = false) => {
+      const moved = this.drag?.moved; this.pointers.delete(event.pointerId);
+      this.drag = this.pointers.size ? { ...this.drag, ...this.pointers.values().next().value, moved: true } : null;
+      this.interact();
+      if (!cancelled && !moved) this.callbacks.onSelect?.(this.pick(event.offsetX, event.offsetY));
+    };
+    this.canvas.addEventListener("pointerup", event => release(event));
+    this.canvas.addEventListener("pointercancel", event => release(event, true));
+    this.canvas.addEventListener("pointerleave", () => { this.pointerInside = false; this.hoveredId = null; this.callbacks.onHover?.(null); });
+    this.canvas.addEventListener("dblclick", event => { const node = this.pick(event.offsetX, event.offsetY); if (node) this.focusOn(node.id); });
+    this.canvas.addEventListener("wheel", event => { event.preventDefault(); this.zoomBy(Math.exp(clamp(event.deltaY, -300, 300) * .001)); }, { passive: false });
     this.canvas.addEventListener("keydown", event => {
       const actions = { ArrowLeft: [-.12, 0], ArrowRight: [.12, 0], ArrowUp: [0, -.10], ArrowDown: [0, .10] };
-      if (actions[event.key]) { event.preventDefault(); this.camera.yaw += actions[event.key][0]; this.camera.pitch += actions[event.key][1]; }
-      if (["+", "="].includes(event.key)) { event.preventDefault(); this.camera.zoom = Math.max(3.2, this.camera.zoom - .4); }
-      if (event.key === "-") { event.preventDefault(); this.camera.zoom = Math.min(12, this.camera.zoom + .4); }
-      if (event.key === "Escape") this.callbacks.onSelect?.(null);
+      if (actions[event.key]) { event.preventDefault(); this.orbit(...actions[event.key]); }
+      if (["+", "="].includes(event.key)) { event.preventDefault(); this.zoomBy(.92); }
+      if (event.key === "-") { event.preventDefault(); this.zoomBy(1.08); }
+      if (event.key === "Enter") {
+        event.preventDefault();
+        const node = this.layout.nodeMap.get(this.hoveredId || this.selectedId) || this.projected[0]?.node;
+        if (node) this.callbacks.onSelect?.(node);
+      }
+      // Escape is coordinated by the controller, which owns overlay order.
     });
   }
 
   resize() {
-    const ratio = Math.min(devicePixelRatio || 1, 2);
+    if (this.contextLost || this.disposed) return;
+    const ratio = Math.min(devicePixelRatio || 1, QUALITY[this.quality].dpr);
     const width = Math.max(1, this.canvas.clientWidth); const height = Math.max(1, this.canvas.clientHeight);
     if (this.canvas.width !== Math.round(width * ratio) || this.canvas.height !== Math.round(height * ratio)) {
       this.canvas.width = Math.round(width * ratio); this.canvas.height = Math.round(height * ratio);
@@ -149,43 +203,63 @@ export class MemoryGlobeRenderer {
     this.ratio = ratio; this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
   }
 
-  setGraph(graph) { this.graphSnapshot = normalizeGraph(graph); this.layout = layoutGraph(this.graphSnapshot); this.transitions.clear(); }
-  applyGraphMutation(graph, event) {
-    this.graphSnapshot = normalizeGraph(graph);
-    const now = performance.now(); const memoryId = event?.payload?.memory_id || event?.payload?.node?.id;
-    if (event?.type === "MEMORY_DELETED" && memoryId && this.layout.nodeMap.has(memoryId)) {
-      this.transitions.set(memoryId, { kind: "delete", startedAt: now, duration: 460 });
-      setTimeout(() => {
-        const transition = this.transitions.get(memoryId);
-        if (transition?.kind === "delete") this.transitions.delete(memoryId);
-        this.layout = layoutGraph(this.graphSnapshot);
-      }, 480);
-      return;
+  dispose() {
+    this.disposed = true; cancelAnimationFrame(this.frame);
+    removeEventListener("resize", this.resizeListener);
+    this.motionPreference.removeEventListener("change", this.motionListener);
+    if (!this.contextLost) {
+      Object.values(this.buffers).forEach(buffer => this.gl.deleteBuffer(buffer));
+      this.gl.deleteProgram(this.program);
     }
-    this.layout = layoutGraph(this.graphSnapshot);
-    if (event?.type === "MEMORY_CREATED" && memoryId) this.transitions.set(memoryId, { kind: "birth", startedAt: now, duration: 720 });
-    if (event?.type === "MEMORY_UPDATED" && memoryId) this.transitions.set(memoryId, { kind: "update", startedAt: now, duration: 520 });
   }
-  setAiState(state) { this.aiState = normalizeAiState(state); }
-  setMode(mode) { this.mode = ["orbital", "cluster", "memory"].includes(mode) ? mode : "orbital"; }
-  setSelected(id) { this.selectedId = id || null; if (!id && this.mode === "memory") this.mode = "orbital"; }
-  setHighlights(ids) { this.highlightedIds = new Set(ids || []); }
-  setQuality(value) { this.quality = QUALITY[value] ? value : "high"; this.particles = particleCloud(QUALITY[this.quality].particles); }
-  resetCamera() { Object.assign(this.camera, { yaw: -.35, pitch: -.13, zoom: 5.8, panX: 0, panY: 0 }); }
+
+  setGraph(graph) {
+    this.graphSnapshot = normalizeGraph(graph); this.layout = layoutGraph(this.graphSnapshot);
+    this.transitions.clear(); this.sceneCache = null;
+  }
+  applyGraphMutation(graph, event) {
+    const memoryId = event?.payload?.memory_id || event?.payload?.node?.id;
+    const deleted = event?.type === "MEMORY_DELETED" ? this.layout.nodeMap.get(memoryId) : null;
+    const removedEdges = deleted ? this.layout.connections.filter(edge => edge.source === memoryId || edge.target === memoryId)
+      .map(edge => [this.layout.nodeMap.get(edge.source), this.layout.nodeMap.get(edge.target)]) : [];
+    this.graphSnapshot = normalizeGraph(graph); this.layout = layoutGraph(this.graphSnapshot); this.sceneCache = null;
+    // A removed memory leaves interaction immediately; only a cosmetic afterimage remains.
+    if (this.reducedMotion) { this.transitions.clear(); return; }
+    const kind = { MEMORY_CREATED: "birth", MEMORY_UPDATED: "update", MEMORY_DELETED: "delete" }[event?.type];
+    if (kind && memoryId) this.transitions.set(memoryId, {
+      kind, node: deleted, removedEdges, startedAt: performance.now(), duration: kind === "birth" ? 720 : kind === "delete" ? 460 : 520,
+    });
+  }
+  setAiState(state) { this.aiState = state === "listening" ? state : normalizeAiState(state); }
+  setMode(mode) { this.mode = ["orbital", "cluster", "memory"].includes(mode) ? mode : "orbital"; this.sceneCache = null; this.interact(); }
+  setSelected(id) { this.selectedId = this.layout.nodeMap.has(id) ? id : null; if (!this.selectedId && this.mode === "memory") this.mode = "orbital"; this.sceneCache = null; }
+  setHighlights(ids) { this.highlightedIds = new Set(ids || []); this.sceneCache = null; }
+  setQuality(value) { this.quality = QUALITY[value] ? value : "high"; this.particles = particleCloud(QUALITY[this.quality].particles); this.sceneCache = null; this.ringCache = null; this.resize(); }
+  resetCamera() { this.interact(); Object.assign(this.camera, DEFAULT_CAMERA); }
   focusOn(id) {
     const node = this.layout.nodeMap.get(id); if (!node) return;
-    this.camera.yaw = -Math.atan2(node.x, node.z || .001);
-    this.camera.pitch = Math.max(-.8, Math.min(.8, Math.atan2(node.y, Math.hypot(node.x, node.z))));
-    this.camera.zoom = 4.25; this.camera.panX = 0; this.camera.panY = 0;
+    this.interact();
+    const target = { yaw: -Math.atan2(node.x, node.z || .001), pitch: clamp(Math.atan2(node.y, Math.hypot(node.x, node.z)), -.8, .8),
+      zoom: this.reducedMotion ? this.camera.zoom : 4.8, panX: 0, panY: 0 };
+    target.yaw = this.camera.yaw + Math.atan2(Math.sin(target.yaw - this.camera.yaw), Math.cos(target.yaw - this.camera.yaw));
+    if (this.reducedMotion) Object.assign(this.camera, target);
+    else this.cameraTransition = { from: { ...this.camera }, to: target, startedAt: performance.now(), duration: 400 };
+  }
+
+  viewPan() {
+    const width = Math.max(1, this.canvas.clientWidth), height = Math.max(1, this.canvas.clientHeight);
+    // Desktop inspector occupies the right 340px; mobile bottom sheet uses DOM layout.
+    const offset = this.inspectorOpen && width >= 560 ? Math.min(356, width * .46) / height : 0;
+    return { x: this.camera.panX - offset, y: this.camera.panY };
   }
 
   project(node) {
-    const { yaw, pitch, zoom, panX, panY } = this.camera;
+    const { yaw, pitch, zoom } = this.camera; const pan = this.viewPan();
     const cy = Math.cos(yaw), sy = Math.sin(yaw); const cp = Math.cos(pitch), sp = Math.sin(pitch);
     const rx = cy * node.x + sy * node.z; const rz = -sy * node.x + cy * node.z;
     const ry = cp * node.y - sp * rz; const z = sp * node.y + cp * rz;
     const depth = Math.max(1.2, zoom - z); const aspect = this.canvas.clientHeight / this.canvas.clientWidth;
-    const ndcX = (rx * 2.55 / depth + panX) * aspect; const ndcY = ry * 2.55 / depth + panY;
+    const ndcX = (rx * 2.55 / depth + pan.x) * aspect; const ndcY = ry * 2.55 / depth + pan.y;
     return { x: (ndcX * .5 + .5) * this.canvas.clientWidth, y: (1 - (ndcY * .5 + .5)) * this.canvas.clientHeight, depth, size: node.size * Math.max(.55, Math.min(1.9, 7 / depth)) };
   }
 
@@ -217,302 +291,151 @@ export class MemoryGlobeRenderer {
     this.gl.drawArrays(mode, 0, items.length);
   }
 
-  ring(index, time) {
-    const items = []; const segments = QUALITY[this.quality].segments;
-    const radius = 1.22 + index * .52; const tilt = index % 2 ? -.22 : .19;
-    const drift = this.reducedMotion ? 0 : time * .000015 * (index % 2 ? -1 : 1);
-    for (let step = 0; step < segments; step += 1) {
-      const angle = step / segments * Math.PI * 2 + drift;
-      items.push({ x: Math.cos(angle) * radius, y: Math.sin(angle) * radius * Math.sin(.38 + tilt), z: Math.sin(angle) * radius * Math.cos(.38 + tilt), color: [1, .60 + index * .025, .14, index === 0 ? .45 : .24], size: index === 0 ? 1.7 : 1.15, shape: 0 });
+  ring(index) {
+    this.ringCache ||= new Map();
+    if (!this.ringCache.has(index)) {
+      const points = []; const segments = QUALITY[this.quality].segments;
+      const radius = 1.22 + index * .52; const tilt = index % 2 ? -.22 : .19;
+      for (let step = 0; step < segments; step += 1) {
+        const angle = step / segments * Math.PI * 2;
+        points.push({ x: Math.cos(angle) * radius, y: Math.sin(angle) * radius * Math.sin(.38 + tilt),
+          z: Math.sin(angle) * radius * Math.cos(.38 + tilt), color: [1, .65, .26, .10 + (Math.sin(angle) + 1) * .025] });
+      }
+      this.ringCache.set(index, points);
     }
-    this.drawItems(items, this.gl.LINE_LOOP);
-    this.drawItems(items.filter((_, step) => step % 4 === index % 4), this.gl.POINTS, true);
+    this.drawItems(this.ringCache.get(index), this.gl.LINE_LOOP);
+  }
+
+  scene() {
+    if (this.sceneCache) return this.sceneCache;
+    // Search emphasizes matches without removing their surrounding context.
+    const scene = visibleScene(this.layout, this.mode, this.selectedId);
+    const selected = this.layout.nodeMap.get(this.selectedId);
+    if (selected && !scene.nodes.some(node => node.id === selected.id)) scene.nodes.push(selected);
+    const neighbors = new Set(relatedNodes(this.layout, this.selectedId).map(node => node.id));
+    const priority = node => node.id === this.selectedId ? 4 : this.highlightedIds.has(node.id) ? 3 : neighbors.has(node.id) ? 2 : 1;
+    const nodes = [...scene.nodes].sort((a, b) => priority(b) - priority(a) || b.importance - a.importance
+      || String(b.data.updated_at || b.data.created_at || "").localeCompare(String(a.data.updated_at || a.data.created_at || "")) || a.id.localeCompare(b.id))
+      .slice(0, QUALITY[this.quality].nodes);
+    const ids = new Set(nodes.map(node => node.id));
+    this.sceneCache = { nodes, connections: scene.connections.filter(edge => ids.has(edge.source) && ids.has(edge.target)) };
+    return this.sceneCache;
+  }
+
+  drawCore(time) {
+    const simple = this.reducedMotion || this.quality === "low";
+    const motion = simple ? 0 : time * .00035;
+    const state = this.aiState;
+    const activity = { thinking: 1.15, searching: 1.10, speaking: 1.12, listening: 1.04, error: .88 }[state] || 1;
+    const birthPulse = !simple && [...this.transitions.values()].some(item => item.kind === "birth" && time - item.startedAt < 180) ? 1.08 : 1;
+    const pulse = activity * birthPulse * (simple ? 1 : 1 + Math.sin(motion * (state === "speaking" ? 7 : 2)) * .035);
+    const tint = state === "error" ? [1, .30, .35] : [1, .69, .24];
+    const sprite = (size, alpha, x = 0, y = 0) => ({ x, y, z: 0, size: size * pulse, color: [...tint, alpha], shape: 2 });
+    this.drawItems([sprite(150, .12), sprite(104, .37, -.035, .025), sprite(74, .40, .035, -.022)], this.gl.POINTS, true);
+    // Bounded filaments and incomplete arcs belong to the core, never to graph data.
+    const filaments = [];
+    const count = simple ? 2 : this.quality === "ultra" ? 8 : 5;
+    const segments = Math.min(QUALITY[this.quality].segments, simple ? 24 : 72);
+    for (let strand = 0; strand < count; strand += 1) {
+      let previous;
+      for (let step = 0; step <= segments; step += 1) {
+        const progress = step / segments;
+        const angle = progress * Math.PI * (1.35 + strand * .09) + strand * 1.8 + motion * (strand % 2 ? -.15 : .12);
+        const radius = (.20 + Math.sin(progress * Math.PI) * .20 + strand * .011) * pulse;
+        const point = { x: Math.cos(angle) * radius, y: Math.sin(angle) * radius * (.60 + strand * .075),
+          z: Math.sin(angle * 1.4 + strand) * radius * .65, color: [...tint, .20 + Math.sin(progress * Math.PI) * .27] };
+        if (previous) filaments.push(previous, point);
+        previous = point;
+      }
+    }
+    this.drawItems(filaments, this.gl.LINES);
+    const arcs = [];
+    const arcCount = state === "searching" ? 3 : state === "error" ? 1 : 2;
+    for (let arc = 0; arc < arcCount; arc += 1) {
+      let previous;
+      for (let step = 0; step <= segments; step += 1) {
+        const angle = step / segments * Math.PI * (state === "listening" ? 1.05 : 1.32) + arc * 2.2 + .3;
+        const radius = (.48 + arc * .055) * pulse;
+        const point = { x: Math.cos(angle) * radius, y: Math.sin(angle) * radius * (arc % 2 ? .8 : .32),
+          z: Math.sin(angle) * radius * (arc % 2 ? -.36 : .72), color: [...tint, .27] };
+        if (previous) arcs.push(previous, point);
+        previous = point;
+      }
+    }
+    this.drawItems(arcs, this.gl.LINES);
+    if (!simple) this.drawItems(this.particles, this.gl.POINTS, true);
+    this.drawItems([{ x: 0, y: 0, z: .02, size: 20 * pulse, shape: 0, color: [1, .91, .68, .92] },
+      { x: .005, y: .003, z: .025, size: 7 * pulse, shape: 0, color: [1, .99, .94, 1] }], this.gl.POINTS, true);
   }
 
   draw(time) {
-    this.resize(); const gl = this.gl; const elapsed = this.lastTime ? time - this.lastTime : 0; this.lastTime = time;
-    if (!this.reducedMotion && !this.drag && this.mode !== "memory") this.camera.yaw += elapsed * .000035;
+    if (this.contextLost || this.disposed) return;
+    this.resize(); const gl = this.gl;
+    const elapsed = this.lastTime ? Math.min(50, time - this.lastTime) : 0; this.lastTime = time;
+    if (this.cameraTransition && !this.reducedMotion) {
+      const transition = this.cameraTransition; const progress = clamp((time - transition.startedAt) / transition.duration, 0, 1);
+      const eased = 1 - (1 - progress) ** 3;
+      for (const key of Object.keys(transition.to)) this.camera[key] = transition.from[key] + (transition.to[key] - transition.from[key]) * eased;
+      if (progress === 1) this.cameraTransition = null;
+    } else if (!this.reducedMotion && this.quality !== "low" && !this.drag && !this.pointerInside && !this.canvasFocused
+      && !this.inspectorOpen && this.mode !== "memory" && time - (this.lastInteraction || 0) > 4000) this.camera.yaw += elapsed * .000018;
     gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.useProgram(this.program); gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+    gl.useProgram(this.program); gl.enable(gl.BLEND);
+    // RGB is additive/premultiplied; coverage must not square source opacity.
+    gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    const pan = this.viewPan();
     gl.uniform1f(this.locations.yaw, this.camera.yaw); gl.uniform1f(this.locations.pitch, this.camera.pitch);
-    gl.uniform1f(this.locations.zoom, this.camera.zoom); gl.uniform2f(this.locations.pan, this.camera.panX, this.camera.panY);
+    gl.uniform1f(this.locations.zoom, this.camera.zoom); gl.uniform2f(this.locations.pan, pan.x, pan.y);
     gl.uniform2f(this.locations.viewport, this.canvas.width, this.canvas.height); gl.uniform1f(this.locations.pixel_ratio, this.ratio || 1);
-    RING_ORDER.forEach((_, index) => this.ring(index, time));
-
-    const scene = visibleScene(this.layout, this.mode, this.selectedId, this.highlightedIds);
-    const maxNodes = QUALITY[this.quality].nodes;
-    const nodes = [...scene.nodes].sort((a, b) => b.importance - a.importance).slice(0, maxNodes).map(node => {
+    const scene = this.scene();
+    const occupied = new Set(this.layout.memories.map(node => node.ringIndex));
+    if (this.mode !== "memory") RING_ORDER.forEach((_, index) => { if (occupied.has(index)) this.ring(index); });
+    const nodes = scene.nodes.map(node => {
       const selected = node.id === this.selectedId; const hovered = node.id === this.hoveredId;
-      const transition = this.transitions.get(node.id); let scale = 1; let positionScale = 1;
-      if (transition) {
-        const progress = Math.max(0, Math.min(1, (time - transition.startedAt) / transition.duration));
-        if (transition.kind === "birth") { scale = progress; positionScale = 1 - ((1 - progress) ** 3); }
-        if (transition.kind === "delete") { scale = 1 - progress; positionScale = 1 - progress; }
-        if (transition.kind === "update") scale = 1 + Math.sin(progress * Math.PI) * .48;
-        if (progress >= 1 && transition.kind !== "delete") this.transitions.delete(node.id);
+      const transition = this.transitions.get(node.id); let scale = 1;
+      if (transition && !this.reducedMotion) {
+        const progress = clamp((time - transition.startedAt) / transition.duration, 0, 1);
+        if (transition.kind === "birth") scale = .75 + .25 * progress;
+        if (transition.kind === "update") scale = 1 + Math.sin(progress * Math.PI) * .35;
       }
-      const color = selected ? [1, .98, .78, 1] : [...node.color]; color[3] *= Math.max(.04, scale);
-      return { ...node, x: node.x * positionScale, y: node.y * positionScale, z: node.z * positionScale,
-        size: node.size * (selected ? 1.65 : hovered ? 1.28 : 1) * Math.max(.04, scale),
-        shape: node.source === "entity" ? 1 : 0, color };
+      const dim = this.highlightedIds.size && !this.highlightedIds.has(node.id) && !selected;
+      const color = selected ? [1, .98, .78, 1] : [...node.color]; color[3] *= dim ? .45 : 1;
+      return { ...node, size: node.size * (selected ? 1.55 : hovered ? 1.2 : 1) * scale, shape: node.source === "entity" ? 1 : 0, color };
     });
-    const visibleIds = new Set(nodes.map(node => node.id));
     const lines = [];
-    scene.connections.filter(edge => visibleIds.has(edge.source) && visibleIds.has(edge.target)).forEach(edge => {
-      const source = this.layout.nodeMap.get(edge.source); const target = this.layout.nodeMap.get(edge.target);
-      const alpha = .20 + Math.max(0, Math.min(1, edge.weight)) * .46;
-      lines.push({ ...source, color: [1, .61, .15, alpha] }, { ...target, color: [1, .77, .32, alpha] });
-    });
-    this.drawItems(lines, gl.LINES);
-    this.drawItems(this.particles, gl.POINTS, true);
-    const activity = this.aiState === "thinking" ? 1.24 : this.aiState === "searching" ? 1.18 : this.aiState === "speaking" ? 1.12 : this.aiState === "error" ? .88 : 1;
-    const active = ["thinking", "searching", "speaking"].includes(this.aiState);
-    const pulse = (this.reducedMotion ? 1 : 1 + Math.sin(time * (active ? .006 : .0022)) * .09) * activity;
-    const coreColor = this.aiState === "error" ? [1, .22, .17, .96] : [1, .76, .24, .96];
-    this.drawItems([{ x: 0, y: 0, z: 0, size: 154 * pulse, color: [1, .54, .08, .10], shape: 2 }], gl.POINTS, true);
-    this.drawItems([{ x: 0, y: 0, z: 0, size: 88 * pulse, color: coreColor, shape: 2 }], gl.POINTS, true);
+    for (const edge of scene.connections) {
+      const focal = edge.source === this.selectedId || edge.target === this.selectedId;
+      const alpha = (focal ? .36 : .11) + clamp(edge.weight, 0, 1) * .12;
+      lines.push({ ...this.layout.nodeMap.get(edge.source), color: [1, .65, .26, alpha] },
+        { ...this.layout.nodeMap.get(edge.target), color: [1, .80, .45, alpha] });
+    }
+    this.drawItems(lines, gl.LINES); this.drawCore(time);
+    const afterimages = [], transientLines = [], arrivals = [];
+    for (const [id, transition] of this.transitions) {
+      const progress = clamp((time - transition.startedAt) / transition.duration, 0, 1);
+      if (progress >= 1 || this.reducedMotion) { this.transitions.delete(id); continue; }
+      if (transition.kind === "delete" && transition.node) afterimages.push({ ...transition.node, id: undefined,
+        size: transition.node.size * (1 - progress), color: [1, .7, .3, (1 - progress) * .55] });
+      if (transition.kind === "delete") for (const [source,target] of transition.removedEdges || []) {
+        const color = [1,.7,.3,(1-progress)*.35];
+        transientLines.push({...source,color},{x:source.x+(target.x-source.x)*(1-progress),y:source.y+(target.y-source.y)*(1-progress),z:source.z+(target.z-source.z)*(1-progress),color});
+      }
+      if (transition.kind === "birth") {
+        const node = this.layout.nodeMap.get(id); if (!node) continue;
+        const travel = Math.min(1, progress / .75), tail = Math.max(0,travel-.12);
+        const color = [1,.8,.4,(1-progress)*.8];
+        const position = value => ({x:node.x*value,y:node.y*value,z:node.z*value,color});
+        arrivals.push({...position(travel),size:4,shape:3});
+        transientLines.push(position(tail),position(travel));
+        // The semantic node stays at its final position and is pickable throughout.
+      }
+    }
+    this.drawItems(transientLines, gl.LINES); this.drawItems(arrivals, gl.POINTS, true);
+    this.drawItems(afterimages, gl.POINTS, true);
+    this.drawItems(nodes.filter(node => node.id === this.selectedId || this.highlightedIds.has(node.id))
+      .map(node => ({ ...node, size: node.size * 2.25, shape: 4, color: [1, .84, .49, .75] })), gl.POINTS, true);
     this.drawItems(nodes, gl.POINTS, true);
     this.projected = nodes.map(node => ({ node, screen: this.project(node) })).sort((a, b) => a.screen.depth - b.screen.depth);
     this.frame = requestAnimationFrame(next => this.draw(next));
   }
-}
-
-function setText(element, text) { if (element) element.textContent = text; }
-function countLabel(count, singular, plural) { return `${count} ${count === 1 ? singular : plural}`; }
-
-export class MemoryGlobeController {
-  constructor() {
-    this.canvas = document.querySelector("#memory-globe"); if (!this.canvas) return;
-    this.userId = getOrCreateUserId(); this.abortController = null; this.graph = normalizeGraph({}); this.layout = layoutGraph({});
-    this.fallbackTimer = null; this.hasConnected = false; this.realtimeState = "idle";
-    this.pendingDeletion = null; this.deleteReturnFocus = null;
-    this.elements = {
-      shell: document.querySelector("#memory-globe-shell"), status: document.querySelector("#globe-data-status"),
-      count: document.querySelector("#globe-count"), empty: document.querySelector("#globe-empty"),
-      tooltip: document.querySelector("#globe-tooltip"), inspector: document.querySelector("#memory-inspector"),
-      inspectorTitle: document.querySelector("#memory-inspector-title"), inspectorKind: document.querySelector("#memory-inspector-kind"),
-      inspectorBody: document.querySelector("#memory-inspector-body"), inspectorMeta: document.querySelector("#memory-inspector-meta"),
-      related: document.querySelector("#memory-related"), search: document.querySelector("#globe-search-form"),
-      query: document.querySelector("#globe-search"), expand: document.querySelector("#globe-expand"),
-      quality: document.querySelector("#globe-quality"), memoryStatus: document.querySelector("#memory-status"),
-      forget: document.querySelector("#memory-forget"), deleteDialog: document.querySelector("#memory-delete-dialog"),
-      deleteTarget: document.querySelector("#memory-delete-target"), deleteConsequence: document.querySelector("#memory-delete-consequence"),
-      deleteError: document.querySelector("#memory-delete-error"), deleteCancel: document.querySelector("#memory-delete-cancel"),
-      deleteConfirm: document.querySelector("#memory-delete-confirm"),
-    };
-    try {
-      this.renderer = new MemoryGlobeRenderer(this.canvas, {
-        onHover: (node, event) => this.hover(node, event), onSelect: node => this.select(node),
-      });
-    } catch (error) { this.unavailable(error.message); return; }
-    this.bind();
-    this.realtime = new HopeRealtimeClient({
-      userId: this.userId,
-      onEvent: event => this.handleRealtimeEvent(event),
-      onState: state => this.handleRealtimeState(state),
-    });
-    this.load().finally(() => this.realtime.start());
-    addEventListener("beforeunload", () => this.realtime.stop(), { once: true });
-  }
-
-  bind() {
-    document.querySelector("#globe-refresh")?.addEventListener("click", () => this.load());
-    document.querySelector("#globe-reset")?.addEventListener("click", () => { this.renderer.resetCamera(); this.clearSelection(); });
-    document.querySelector("#memory-inspector-close")?.addEventListener("click", () => this.clearSelection());
-    document.querySelector("#memory-focus")?.addEventListener("click", () => { if (this.renderer.selectedId) { this.renderer.setMode("memory"); this.renderer.focusOn(this.renderer.selectedId); this.updateModeButtons("memory"); } });
-    document.querySelector("#memory-ask")?.addEventListener("click", () => {
-      const selected = this.layout.nodeMap.get(this.renderer.selectedId); if (!selected || selected.source !== "memory") return;
-      const prompt = document.querySelector("#prompt"); prompt.value = `Explique o contexto e as relações desta memória: ${selected.data.title || selected.data.content}`; prompt.focus();
-    });
-    this.elements.forget?.addEventListener("click", () => {
-      const selected = this.layout.nodeMap.get(this.renderer.selectedId);
-      if (selected?.source === "memory") this.openDeleteConfirmation({
-        memory_id: selected.id,
-        label: selected.data.title || selected.data.content,
-      }, this.elements.forget);
-    });
-    this.elements.deleteCancel?.addEventListener("click", () => this.closeDeleteConfirmation());
-    this.elements.deleteConfirm?.addEventListener("click", () => this.confirmDeletion());
-    this.elements.deleteDialog?.addEventListener("cancel", event => {
-      event.preventDefault(); this.closeDeleteConfirmation();
-    });
-    document.querySelectorAll("[data-globe-view]").forEach(button => button.addEventListener("click", () => {
-      const mode = button.dataset.globeView;
-      if (mode === "memory" && !this.renderer.selectedId) return setText(this.elements.status, "Selecione uma memória primeiro");
-      this.renderer.setMode(mode); this.updateModeButtons(mode);
-    }));
-    this.elements.search?.addEventListener("submit", event => { event.preventDefault(); this.search(this.elements.query.value.trim()); });
-    this.elements.query?.addEventListener("input", () => { if (!this.elements.query.value.trim()) { this.renderer.setHighlights([]); setText(this.elements.status, "Grafo sincronizado"); } });
-    this.elements.quality?.addEventListener("change", () => this.renderer.setQuality(this.elements.quality.value));
-    this.elements.expand?.addEventListener("click", () => {
-      const expanded = this.elements.shell.classList.toggle("expanded");
-      this.elements.expand.setAttribute("aria-pressed", String(expanded));
-      this.elements.expand.textContent = expanded ? "Recolher" : "Expandir";
-      setTimeout(() => this.renderer.resize(), 80);
-    });
-    document.addEventListener("keydown", event => { if (event.key === "Escape" && this.elements.shell.classList.contains("expanded")) this.elements.expand.click(); });
-    addEventListener("hope:ui-event", event => this.handleUiEvent(event.detail));
-    addEventListener("hope:confirm-memory-delete", event => this.openDeleteConfirmation(event.detail));
-  }
-
-  openDeleteConfirmation(value, returnFocus = document.querySelector("#prompt")) {
-    const confirmation = normalizeMemoryDeleteConfirmation(value);
-    if (!confirmation || !this.elements.deleteDialog) return;
-    this.pendingDeletion = confirmation; this.deleteReturnFocus = returnFocus;
-    setText(this.elements.deleteTarget, `Alvo: ${confirmation.label}`);
-    setText(this.elements.deleteConsequence, confirmation.consequence);
-    this.elements.deleteError.hidden = true; this.elements.deleteConfirm.disabled = false;
-    this.elements.deleteCancel.disabled = false;
-    if (!this.elements.deleteDialog.open) this.elements.deleteDialog.showModal();
-    this.elements.deleteCancel.focus();
-  }
-
-  closeDeleteConfirmation() {
-    if (this.elements.deleteDialog?.open) this.elements.deleteDialog.close();
-    const returnFocus = this.deleteReturnFocus;
-    this.pendingDeletion = null; this.deleteReturnFocus = null;
-    returnFocus?.focus();
-  }
-
-  async confirmDeletion() {
-    const confirmation = this.pendingDeletion;
-    if (!confirmation || this.elements.deleteConfirm.disabled) return;
-    this.elements.deleteConfirm.disabled = true; this.elements.deleteCancel.disabled = true;
-    this.elements.deleteError.hidden = true;
-    try {
-      await deleteMemory(this.userId, confirmation.memory_id);
-      this.handleRealtimeEvent({ type: "MEMORY_DELETED", payload: { memory_id: confirmation.memory_id } });
-      this.closeDeleteConfirmation();
-      setText(this.elements.status, "Memória esquecida e relações removidas");
-    } catch (error) {
-      setText(this.elements.deleteError, error instanceof ApiError ? error.message : "Não foi possível esquecer a memória.");
-      this.elements.deleteError.hidden = false;
-      this.elements.deleteConfirm.disabled = false; this.elements.deleteCancel.disabled = false;
-      this.elements.deleteCancel.focus();
-    }
-  }
-
-  async load() {
-    this.abortController?.abort(); this.abortController = new AbortController();
-    setText(this.elements.status, "Sincronizando memória…"); this.elements.empty.hidden = true;
-    try {
-      const graph = await getMemoryGraph(this.userId, this.abortController.signal);
-      this.graph = normalizeGraph(graph); this.layout = layoutGraph(this.graph); this.renderer.setGraph(this.graph);
-      this.updateReadout();
-      setText(this.elements.status, this.layout.memories.length ? "Grafo sincronizado" : "Memória vazia");
-      this.elements.empty.hidden = this.layout.memories.length > 0;
-      this.elements.empty.dataset.state = "empty";
-      setText(this.elements.empty.querySelector("strong"), "Nenhuma memória persistente ainda");
-      setText(this.elements.empty.querySelector("span"), "Quando dados forem salvos, os nós aparecerão aqui.");
-      if (!["disconnected", "reconnecting"].includes(this.realtimeState)) {
-        this.elements.memoryStatus.dataset.state = "online"; this.elements.memoryStatus.title = "Memória conectada";
-      }
-    } catch (error) {
-      const unavailable = error instanceof ApiError && error.status === 503;
-      this.elements.empty.hidden = false; this.elements.empty.dataset.state = "offline";
-      setText(this.elements.empty.querySelector("strong"), unavailable ? "Memória cloud não configurada" : "Não foi possível carregar o grafo");
-      setText(this.elements.empty.querySelector("span"), unavailable ? "Configure DATABASE_URL e aplique as migrações para ativar os nós reais." : "Tente sincronizar novamente.");
-      setText(this.elements.status, unavailable ? "Banco desconectado" : "Falha de sincronização");
-      this.elements.memoryStatus.dataset.state = "offline"; this.elements.memoryStatus.title = "Memória indisponível";
-    }
-  }
-
-  updateReadout() {
-    const memoryCount = countLabel(this.layout.memories.length, "memória", "memórias");
-    const entityCount = countLabel(this.layout.entities.length, "entidade", "entidades");
-    setText(this.elements.count, `${memoryCount} · ${entityCount}`);
-    this.canvas.setAttribute("aria-label", `Memory Globe com ${memoryCount} e ${entityCount}.`);
-  }
-
-  handleRealtimeEvent(event) {
-    if (event.type === "AI_STATE_CHANGED") {
-      this.renderer.setAiState(event.payload?.state);
-      setText(this.elements.status, aiStateLabel(event.payload?.state));
-      return;
-    }
-    const nextGraph = applyGraphEvent(this.graph, event);
-    this.graph = nextGraph; this.layout = layoutGraph(nextGraph);
-    this.renderer.applyGraphMutation(nextGraph, event);
-    if (event.type === "MEMORY_DELETED" && this.renderer.selectedId === event.payload?.memory_id) this.clearSelection();
-    this.updateReadout(); this.elements.empty.hidden = this.layout.memories.length > 0;
-    setText(this.elements.status, "Atualização em tempo real");
-  }
-
-  handleUiEvent(event) {
-    if (event?.type !== "FOCUS_MEMORIES" || !Array.isArray(event.ids)) return;
-    const ids = event.ids.filter(id => this.layout.nodeMap.has(id));
-    if (!ids.length) return;
-    this.renderer.setHighlights(ids); this.renderer.setMode("orbital");
-    this.renderer.focusOn(ids[0]); this.updateModeButtons("orbital");
-    setText(this.elements.status, countLabel(ids.length, "memória em foco", "memórias em foco"));
-  }
-
-  handleRealtimeState({ state }) {
-    this.realtimeState = state;
-    if (state === "connected") {
-      const reconnect = this.hasConnected; this.hasConnected = true;
-      clearInterval(this.fallbackTimer); this.fallbackTimer = null;
-      this.elements.memoryStatus.dataset.state = "online";
-      this.elements.memoryStatus.title = "Memória em tempo real conectada";
-      setText(this.elements.status, "Tempo real conectado");
-      if (reconnect) this.load();
-      return;
-    }
-    if (["disconnected", "reconnecting"].includes(state)) {
-      this.elements.memoryStatus.dataset.state = "degraded";
-      this.elements.memoryStatus.title = "Tempo real desconectado; sincronização HTTP ativa";
-      setText(this.elements.status, "Tempo real desconectado · HTTP disponível");
-      if (!this.fallbackTimer) this.fallbackTimer = setInterval(() => this.load(), 30000);
-    }
-  }
-
-  async search(query) {
-    if (!query) { this.renderer.setHighlights([]); return; }
-    setText(this.elements.status, "Buscando relações…");
-    try {
-      const hits = await retrieveMemories(this.userId, query);
-      const ids = hits.map(hit => hit.memory?.id).filter(Boolean); this.renderer.setHighlights(ids);
-      setText(this.elements.status, ids.length ? `${countLabel(ids.length, "memória encontrada", "memórias encontradas")}` : "Nenhuma memória relacionada");
-      if (ids.length) { this.renderer.setMode("orbital"); this.renderer.focusOn(ids[0]); this.updateModeButtons("orbital"); }
-    } catch (error) { setText(this.elements.status, error instanceof ApiError ? error.message : "Busca indisponível"); }
-  }
-
-  hover(node, event) {
-    if (!node) { this.elements.tooltip.hidden = true; return; }
-    this.elements.tooltip.hidden = false;
-    this.elements.tooltip.style.left = `${event.offsetX + 14}px`; this.elements.tooltip.style.top = `${event.offsetY + 14}px`;
-    setText(this.elements.tooltip, node.source === "entity" ? node.data.name : node.data.title || node.data.content);
-  }
-
-  async select(node) {
-    if (!node) return this.clearSelection();
-    this.renderer.setSelected(node.id); this.elements.inspector.hidden = false;
-    setText(this.elements.inspectorTitle, node.source === "entity" ? node.data.name : node.data.title || "Memória");
-    setText(this.elements.inspectorKind, node.source === "entity" ? `ENTIDADE · ${node.data.entity_type}` : `${node.data.kind} · ${node.data.memory_type}`);
-    setText(this.elements.inspectorBody, node.source === "entity" ? "Cluster semântico ligado às memórias abaixo." : node.data.content);
-    setText(this.elements.inspectorMeta, node.source === "entity" ? "" : `Importância ${Math.round(node.data.importance * 100)}% · confiança ${Math.round(node.data.confidence * 100)}% · ${node.data.mention_count} menções`);
-    this.elements.forget.hidden = node.source !== "memory";
-    this.renderRelated(node.id);
-    if (node.source === "memory") {
-      try {
-        const explanation = await getMemoryExplanation(this.userId, node.id);
-        const sourceCount = explanation.sources?.length || 0; const entityCount = explanation.entities?.length || 0;
-        setText(this.elements.inspectorMeta, `${this.elements.inspectorMeta.textContent} · ${sourceCount} fontes · ${entityCount} entidades`);
-      } catch { /* O resumo local continua disponível. */ }
-    }
-  }
-
-  renderRelated(id) {
-    this.elements.related.replaceChildren();
-    relatedNodes(this.layout, id).slice(0, 8).forEach(node => {
-      const button = document.createElement("button"); button.type = "button";
-      button.textContent = node.source === "entity" ? node.data.name : node.data.title || node.data.content;
-      button.addEventListener("click", () => { this.select(node); this.renderer.focusOn(node.id); });
-      this.elements.related.append(button);
-    });
-  }
-
-  clearSelection() { this.renderer.setSelected(null); this.elements.inspector.hidden = true; }
-  updateModeButtons(mode) { document.querySelectorAll("[data-globe-view]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.globeView === mode))); }
-  unavailable(message) { this.elements.empty.hidden = false; setText(this.elements.empty.querySelector("strong"), "WebGL indisponível"); setText(this.elements.empty.querySelector("span"), message); }
 }

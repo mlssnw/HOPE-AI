@@ -1,0 +1,49 @@
+{
+  "browser": "153.0.8010.47",
+  "results": [
+    {
+      "name": "opt-in/out, local history, message sources and keyboard",
+      "status": "PASS"
+    },
+    {
+      "name": "search, list, inspector, Escape and fullscreen focus",
+      "status": "PASS"
+    },
+    {
+      "name": "mobile chat-first, state/focus preservation and touch targets",
+      "status": "PASS"
+    },
+    {
+      "name": "fallback without WebGL retains search, relations and chat",
+      "status": "PASS"
+    },
+    {
+      "name": "memory loading",
+      "status": "PASS"
+    },
+    {
+      "name": "memory empty",
+      "status": "PASS"
+    },
+    {
+      "name": "memory unavailable",
+      "status": "PASS"
+    },
+    {
+      "name": "memory error",
+      "status": "PASS"
+    },
+    {
+      "name": "voice unavailable and unsupported have clear text",
+      "status": "PASS"
+    },
+    {
+      "name": "listening begins/ends only with actual recognition callbacks",
+      "status": "PASS"
+    },
+    {
+      "name": "safe forgetting: 428, cancel, error, submitting, exact UUID, relations removed",
+      "status": "PASS"
+    }
+  ]
+}

@@ -1,9 +1,7 @@
 import { ChatController } from "./chat.js";
-import { MemoryGlobeController } from "./memory-globe.js";
-import { elements } from "./ui.js";
+import { MemoryGlobeController } from "./memory-globe-controller.js";
+import { SurfaceController } from "./surface.js";
 
-new ChatController();
+new SurfaceController();
 new MemoryGlobeController();
-
-const updateClock = () => { elements.clock.textContent = new Date().toLocaleTimeString("pt-BR"); };
-updateClock(); setInterval(updateClock, 1000);
+new ChatController();

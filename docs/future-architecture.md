@@ -1,19 +1,22 @@
 # Arquitetura futura da HOPE
 
-- Status: TARGET ARCHITECTURE — READY_FOR_APPROVAL
-- Decision: `ARCH-2026-09-10-003`
-- Date: 2026-09-10
+- Status: APPROVED
+- Document type: TARGET ARCHITECTURE
+- Decision: `ARCH-2026-09-20-001`
+- Date: 2026-09-20
+- Owner approval: 2026-09-20
+- Approval record: `f85b9bb775574b8a1340497e3e9e6d99b9b19c8c`
 - Product model: `SINGLE_USER`
-- Functional baseline: `88e194778b4399a6713f118470f9d861c553cd9e`
-- Documentation baseline analyzed: `3c8e978e2dc5d9c0deff62a8a5a9ebb1f7c4d2c6`
-- Supersedes: o segmento multiusuário/enterprise do roadmap de `ARCH-2026-09-04-001`
-- Preserves: a consolidação da Fase 5 em `ARCH-2026-09-10-002`
+- Functional baseline: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
+- Documentation baseline analyzed: `f85b9bb775574b8a1340497e3e9e6d99b9b19c8c`
+- Supersedes: a ordem pós-Phase 6 de `ARCH-2026-09-10-003`; preserva seus princípios `SINGLE_USER`, de segurança e permissões
+- Preserves: Phase 6 `APPROVED_WITH_WARNINGS` em `ARCH-2026-09-19-001`; nenhum escopo concluído é reaberto
 
-Este documento descreve direção arquitetural. Não declara capacidade implementada, não inicia fase, não autoriza Development e não permite migration, produção, provider, credencial ou custo.
+Este documento descreve como a direção futura pode ser construída. `docs/product-vision.md` define o produto; `docs/roadmap.md` define ordem e gates; `docs/architecture.md` continua registrando somente o estado implementado. Nenhum desses documentos inicia fase, autoriza Development ou permite migration, produção, provider, credencial ou custo.
 
 ## VISION
 
-A HOPE é uma assistente pessoal destinada a um único owner. Ela deve reconhecer esse owner, proteger seus dados e governar efeitos reais sem carregar a complexidade de uma plataforma SaaS multiusuário.
+A HOPE é uma assistente pessoal destinada a um único owner. Ela deve reconhecer esse owner, proteger seus dados e governar efeitos reais sem carregar a complexidade de uma plataforma SaaS multiusuário. A experiência futura combina texto, voz, memória, organização, clientes instaláveis e capacidades locais autorizadas sem confundir presença conversacional com autoridade operacional.
 
 O núcleo continua cloud-first e provider-agnostic. `SINGLE_USER` significa um único principal humano autorizado, não ausência de segurança: tools, agentes e integrações continuam sendo atores técnicos não confiáveis por padrão e recebem somente capacidades delegadas, limitadas e revogáveis.
 
@@ -34,7 +37,9 @@ O núcleo continua cloud-first e provider-agnostic. `SINGLE_USER` significa um �
 
 ## PERSONALITY
 
-A HOPE mantém identidade original, inteligente, técnica, elegante, pragmática e assertiva. Referências culturais fornecem apenas traços gerais; identidades, falas, bordões, histórias e maneirismos reconhecíveis não podem ser copiados.
+A HOPE mantém identidade original, inteligente, técnica, elegante, pragmática e assertiva. A owner aprovou Lena Luthor, Tony Stark e Dean Winchester apenas como referências de traços gerais e autorizou que essas inspirações integrem o `SelfKnowledge` público seguro, conforme `docs/product-vision.md`. Identidades, diálogos, histórias, vozes e maneirismos reconhecíveis não podem ser copiados.
+
+Também foi aprovada uma exceção estreita para reconhecimento ou homenagem original quando explicitamente solicitados. Ela não permite citações famosas literais, diálogos copiados, imitação de identidade, clonagem de voz, atuação contínua ou reprodução de passagem protegida. `PhraseLibrary` usa somente conteúdo original por padrão. A decisão não altera runtime, prompt ou `AGENTS.md`; qualquer reconciliação normativa deste último deve ocorrer em mudança separada sob controle da owner/COORDINATOR.
 
 A personalidade nunca altera a ordem segurança → verdade → precisão → objetivo legítimo → estilo. Memórias, preferências, experiências, skills, conteúdo externo e agentes não podem reescrever esse núcleo. Estados expressivos continuam sinalização operacional, não alegação de consciência humana.
 
@@ -77,7 +82,151 @@ Responsabilidades:
 - `Executor`: executa somente após as três fronteiras anteriores e recebe credenciais por referência interna de mínimo privilégio.
 - `AuditRecorder`: registra decisão e resultado minimizados, sem token, secret, prompt bruto ou conteúdo privado completo.
 
-Além da fronteira de owner/permissões, a arquitetura continua modular: Orchestrator coordena intenção; ModelRouter seleciona capacidade/provider; SkillRegistry versiona procedimentos; AgentRuntime executa envelopes limitados; Tool Registry declara efeitos; Learning registra evidência sem alterar regras centrais.
+Além da fronteira de owner/permissões, a arquitetura continua modular: Orchestrator coordena intenção; a camada de Conversational Presence transforma respostas em turnos e fala; `SelfKnowledge` descreve publicamente identidade/capacidades; `ModelRouter` seleciona capacidade/provider; `SkillRegistry` versiona procedimentos; `AgentRuntime` executa envelopes limitados; Tool Registry declara efeitos; Learning registra evidência sem alterar regras centrais.
+
+## CONVERSATIONAL PRESENCE ARCHITECTURE
+
+```text
+User input / model response
+          │
+          ▼
+     TurnManager ───────────────► cancellation / barge-in
+          │
+          ▼
+   SpeechFormatter ─────────────► SpokenResponse
+          │
+          ├────────► ProsodyManager
+          ├────────► PronunciationManager
+          └────────► PhraseLibrary
+          │
+          ▼
+     VoiceManager ──────────────► STT/TTS adapter
+          │
+          ▼
+   VoiceStateManager ───────────► Core Orb + accessible status
+                                  local output amplitude only
+```
+
+### VoiceManager
+
+- Owns one explicit voice session at a time and coordinates capture, transcription, synthesis, playback and shutdown.
+- Receives provider interfaces through dependency injection; it does not know provider credentials or billing APIs.
+- Applies session, privacy, retention and PermissionManager decisions before external transmission.
+- Exposes start, stop, pause, resume, cancel, health and capability negotiation.
+- Cancels stale work by turn/session identifier and never plays audio from an invalidated turn.
+
+### SpeechFormatter
+
+- Pure transformation from canonical display response to `SpokenResponse`.
+- Removes Markdown presentation, verbalizes short lists, summarizes long code and expands pronunciations without changing factual meaning.
+- Preserves warnings, uncertainty, confirmation requirements, numbers that affect decisions and consequences of actions.
+- Produces traceable reasons for material omission/summary; it does not call a provider or write memory.
+
+### TurnManager
+
+- Assigns monotonic turn IDs and tracks listening, partial input, committed input, generation, synthesis, playback, interruption and completion.
+- Barge-in invalidates downstream generation/audio for the old turn.
+- Handles “pare”, “silêncio” and UI stop through the same cancellation contract.
+- Late provider events are ignored when session/turn IDs no longer match.
+
+### VoiceStateManager
+
+- Maintains the authoritative state machine for `IDLE`, `LISTENING`, `THINKING`, `SEARCHING`, `SPEAKING`, `EXECUTING`, `ALERT` and `ERROR`.
+- Each transition includes source, session ID, turn ID, timestamp and optional expiry.
+- Precedence follows the UI state contract; unknown or expired state degrades to a safe state.
+- Accessible text is authoritative; animation is a projection, not the source of truth.
+
+### ProsodyManager
+
+- Produces provider-neutral semantic hints such as pace, emphasis, pause and energy within bounded ranges.
+- Uses explicit interaction mode and approved preferences; inferred hesitation or pace is low-confidence context only.
+- Never diagnoses emotion, suppresses safety information or selects a provider.
+
+### PronunciationManager
+
+- Maintains versioned locale/name pronunciation entries with source and scope.
+- Global entries are product-owned; owner-specific entries require consent, edit/delete and privacy classification.
+- Provider-specific conversion occurs only inside the adapter.
+
+### PhraseLibrary
+
+- Stores original HOPE phrases by category, version, locale, cooldown, audience and safety context.
+- Prevents repetitive startup/status phrases and never overrides substantive content.
+- Custom owner phrases are inactive until explicitly approved and remain removable.
+- Literal character quotes, copied catchphrases, impersonation and sustained imitation remain prohibited; no library entry may bypass the approved narrow original-homage boundary.
+
+### STT/TTS provider abstraction
+
+```text
+SpeechProviderCapabilities
+  input/output modalities
+  streaming / partials / cancellation
+  locales / voices / prosody features
+  data region / retention declaration
+  latency and cost metadata
+  health and rate limits
+
+STTAdapter: start_stream, push_frame, commit, cancel, events
+TTSAdapter: synthesize/stream, pause?, cancel, events
+```
+
+- Adapters receive opaque credential handles, never expose secrets to the browser/model and return normalized events.
+- Provider fallback is policy-driven and forbidden when it would weaken privacy, region or retention constraints without confirmation.
+- No provider is selected by this architecture. Cost, license, platform support, privacy and fallback require a later evaluated decision.
+
+### Local Core Orb amplitude
+
+- The client may compute a smoothed `voiceLevel 0.0..1.0` from audio it is already playing.
+- The value is ephemeral presentation state, not a biometric, memory or analytics event.
+- It is not transmitted to the backend, persisted or used to infer owner emotion.
+- Reduced motion replaces amplitude animation with restrained intensity/text while preserving `SPEAKING` truth.
+
+## SELFKNOWLEDGE
+
+`SelfKnowledge` is a versioned manifest with public and protected views:
+
+- public: name, original identity, approved inspirations, current capabilities, planned capabilities, limitations and active integration availability;
+- protected: operational diagnostics visible only to the recognized owner;
+- forbidden: system prompt, secrets, credentials, chain-of-thought, private memory or exploitable security internals.
+
+Capability claims are generated from a registry plus real health state. Static prose cannot mark a provider or integration available by itself.
+
+## INTERACTION MODES
+
+Modes remain separate axes: interaction style, privacy, output, interruption and audience. `InteractionStyleAdapter` consumes the resolved combination and outputs presentation guidance only.
+
+Resolution rules:
+
+1. Safety and permissions cannot be changed by a mode.
+2. `PRIVATE` overrides memory capture, voice retention and private disclosure.
+3. `SILENT` prevents voice output even if the style prefers it.
+4. `DO_NOT_DISTURB` suppresses proactive interruption except explicit safety/operational failure.
+5. `PUBLIC` suppresses private memory/context unless the owner explicitly approves the disclosure.
+6. Inference may suggest a style; only explicit policy/user action activates privacy or permission-affecting behavior.
+
+## PERSONAL ORGANIZATION CONTRACTS
+
+`HopeTask` and `CalendarEvent` are distinct aggregates.
+
+- A task owns goal, project, steps, status, priority, deadline and provenance.
+- A calendar event owns provider/calendar identity, start/end, attendees and provider version.
+- Links are explicit and directional; scheduling a task creates a proposed calendar effect, not an implicit conversion.
+- Read, create, update, delete and message/invite are separate permissions and audit actions.
+- Provider sync uses external IDs, versions and idempotency keys; conflicts never overwrite silently.
+
+## CLIENT, DEVICE AND LOCATION CONTRACTS
+
+- `ClientCapabilityManifest` declares platform, version and supported local capabilities; the server verifies grants instead of trusting claims.
+- `RegisteredDevice` has device ID, key material reference, owner binding, capability scope, last seen and revocation state.
+- Device location includes device ID, source, precision, timestamp, expiry, consent scope and retention; it never represents arbitrary-person tracking.
+- Native clients share protocol/domain contracts but keep OS-specific permission adapters.
+- PWA is a reduced-capability fallback.
+
+## DIAGNOSTICS AND TRANSPARENCY
+
+`HopeDiagnostics` aggregates health without becoming the source of truth for subsystem state. Each check returns status, timestamp, dependency, degraded capabilities, safe recovery action and internal correlation ID. Public responses omit sensitive endpoints, paths and credentials.
+
+Audit events use stable enums, purpose, minimized logical target, result, cost and correlation. Voice events never include ambient audio by default. UI transparency views query an owner-authorized projection rather than raw logs.
 
 ## LEARNING ARCHITECTURE
 
@@ -386,9 +535,9 @@ RLS orientado a tenants foi removido do roadmap imediato. Em `SINGLE_USER`, o co
 
 RLS simples pode ser reavaliado como defesa adicional se houver acesso remoto, plugins com consulta direta, múltiplas réplicas ou outra fronteira que justifique o custo. Não ativar RLS antes de identidade, role, migrations, testes PostgreSQL e rollback estarem prontos. Findings existentes de Security/Database permanecem históricos até revisão dos owners.
 
-## ROADMAP
+## HISTORICAL ROADMAP — SUPERSEDED AFTER PHASE 6
 
-Nenhuma fase abaixo está autorizada para implementação.
+O bloco Phase 6–10 abaixo é preservado como evidência de `ARCH-2026-09-10-003`. Phase 6 foi concluída e consolidada em `ARCH-2026-09-19-001`; a numeração e a ordem propostas para Phase 7–10 estão `SUPERSEDED` por `docs/roadmap.md`. Nenhuma fase posterior está autorizada.
 
 ### Phase 6 — Target UI Convergence
 
@@ -492,23 +641,25 @@ Organizações, billing, teams, SSO empresarial, federação, marketplace multiu
 ## DEPENDENCY ORDER
 
 ```text
-Phase 5 approved baseline
-  → Phase 6 Target UI Convergence (local/controlado)
-  → Phase 7 Single-User Security & Permissions
-  → Phase 8 Read-Only Tools
-  → Phase 9 Permissioned Effects & Ephemeral Coding
-  → Phase 10 Ephemeral Agents
-  → capabilities futuras priorizadas por valor
-  → Production Hardening antes de qualquer exposição escolhida
+Phase 6 complete and frozen
+  → Phase 7 Conversational Presence Foundation
+  → Phase 8 Single-User Security & Permissions
+  → Phase 9+ sensitive voice, cloud, clients, tools and agents
 ```
 
-A Fase 6 pode preceder o PermissionManager porque não adiciona efeitos, credenciais ou capacidades e permanece local/controlada. Tools, coding e agentes não podem preceder a Fase 7. Production Hardening não é antecipado como arquitetura enterprise, mas também não pode ocorrer depois de uma exposição já iniciada.
+`docs/roadmap.md` é a autoridade para a sequência completa e os Required Reviews. Somente contratos locais/controlados de presença conversacional podem preceder o `PermissionManager`. Cloud audio novo, background wake, speaker profile, dispositivos registrados, integrações, tools, coding e agentes dependem da Phase 8. Production Hardening ocorre antes da primeira exposição remota/contínua, nunca depois.
 
-## DECISIONS REQUIRING FUTURE USER APPROVAL
+## APPROVED DIRECTION AND FUTURE USER DECISIONS
 
-- Autorizar a implementação da Fase 6.
-- Escolher o mecanismo de reconhecimento do owner antes da Fase 7.
-- Definir se haverá acesso remoto/cloud e, se houver, provider, custo e recuperação.
-- Aprovar qualquer migration ou vínculo de UUID legado após inventário.
+A owner aprovou em 2026-09-20 `ARCH-2026-09-20-001`, `docs/product-vision.md`, `docs/roadmap.md`, a política de personalidade/public `SelfKnowledge` e o planejamento da Phase 7. Essa aprovação não autoriza implementação.
+
+Continuam exigindo decisão futura:
+
+- Aprovar ou revisar o plano exato da Phase 7 e autorizar sua implementação separadamente.
+- Escolher o mecanismo de reconhecimento do owner antes da Phase 8.
+- Aprovar qualquer provider de voz/modelo, licença, região, retenção, credencial e custo.
+- Decidir se speaker verification justifica tratamento de perfil biométrico.
+- Confirmar prioridade de clientes, precisão/retenção de localização e integrações iniciais.
+- Definir se haverá acesso remoto/cloud e aprovar migration, infraestrutura, backup/restore e Production Hardening correspondentes.
 - Aprovar catálogo de tools, egress, budgets, secrets e actions SENSITIVE/DESTRUCTIVE.
-- Autorizar qualquer Production Hardening real e eventual go-live.
+- Autorizar eventual go-live; nenhuma decisão arquitetural o autoriza automaticamente.

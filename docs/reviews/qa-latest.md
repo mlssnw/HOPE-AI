@@ -1,108 +1,158 @@
-# QA Review — Latest
+# QA Final Confirmation — Phase 6 Integration Candidate
 
-- Status: APPROVED_WITH_WARNINGS
-- Phase: 5
-- Functional commit reviewed: `88e194778b4399a6713f118470f9d861c553cd9e`
-- Previous functional baseline: `19e573893aba09da990256da05e7dab5af165ce1`
-- Review date: 2026-09-10
-- Branch during review: `main`
-- HEAD at review start: `03049a5106ddd0ff1e7cea390452a621ba09cd29`
-- Scope note: no functional diff was found between the reviewed commit and HEAD; later commits are documentation-only.
+## QA Status
 
-## Result
+`APPROVED_WITH_WARNINGS`
 
-Result: APPROVED_WITH_WARNINGS
+Both QA blockers remain closed and the final documentation/metadata candidate is confirmed. `QA-IC-001` was closed by independent clean-export validation, `QA-IC-002` was closed by public PR metadata verification, and the final candidate adds no functional drift. No QA blocker remains; environmental and maintenance warnings remain non-blocking.
 
-Feature status: APPROVED_WITH_WARNINGS. `QA-001` is closed. No QA blocker remains for this functional commit.
+## Commits Reviewed
 
-Production readiness: not approved by this review. Authentication, real PostgreSQL/pgvector validation, migration execution and other production controls remain under their respective owners.
+- Final Integration Candidate: `f819440a72f2e68368bcc0d3c1af6ec700d170bf`
+- Previously reviewed functional candidate: `51f93d12740a6e0860856257ea761377b04c97fb`
+- Functional correction commit: `4d76f2433363a47a9d8fe29fef337de1dc79ac50`
+- Development evidence commit: `9e5764671d86121aedd88b926c05ccbc7c385131`
+- Rejected candidate baseline: `20843a4568ca6eba67d66f93234412038ca79199`
+- Original Phase 6 Functional Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
+- Branch: `codex/phase-6-target-ui`
+- Review date: 2026-09-22
+- Metadata closure date: 2026-09-24
+- Final candidate confirmation date: 2026-09-24
+
+The previously reviewed functional candidate contains both `4d76f24` and `9e57646`. The only functional-path delta from `20843a4` is `tests/test_realtime.py`; the final candidate adds documentation only, so runtime backend, frontend, API, schema, migrations, dependencies, and production configuration remain unchanged.
+
+## Final Metadata and Documentation Confirmation
+
+`APPROVED_WITH_WARNINGS`
+
+- Public PR #1 is open and remains draft.
+- Base/head remain `main` <- `codex/phase-6-target-ui`.
+- Public PR head is exactly `f819440a72f2e68368bcc0d3c1af6ec700d170bf`.
+- GitHub reports `mergeable=true` and mergeable state `clean`; no merge conflict remains.
+- The PR body identifies exact Final Integration Candidate `f819440a72f2e68368bcc0d3c1af6ec700d170bf`, reviewed functional candidate `51f93d12740a6e0860856257ea761377b04c97fb`, and functional correction `4d76f2433363a47a9d8fe29fef337de1dc79ac50`.
+- The PR preserves Production Readiness as `BLOCKED`, keeps Phase 7 unauthorized, and keeps merge dependent on this confirmation plus separate owner authorization.
+- `README.md` at `f819440` is PT-BR, uses the HOPE brand, identifies Phase 6, records `APPROVED_WITH_WARNINGS`, links to `docs/phase-6.md`, and does not contain a Phase 5/current-state reference, `IN_PROGRESS`, or a conflicting runtime-version badge.
+- Diff `51f93d1..f819440` changes only `README.md`, `docs/handoff.md`, and QA/Security review reports. Backend, frontend, tests, schema, migrations, dependencies, and runtime behavior are unchanged.
+- Functional suites were not repeated because no functional drift was detected.
+
+## QA-IC-001 Result
+
+`CLOSED — APPROVED`
+
+### Root Cause Confirmation
+
+The rejected test created `create_app(FakeServices())` without an explicit memory manager. A developer-local `DATABASE_URL` silently supplied one, so the test passed locally but failed in a clean checkout with `thinking -> idle` instead of the expected `thinking -> searching -> idle`.
+
+### Correction Review
+
+- The corrected test patches `Settings.from_env()` at the test boundary with `Settings.for_tests()`.
+- It reuses the existing disposable in-memory SQLite fixture and real `MemoryManager` with local hash embeddings.
+- It disposes the SQLite database in `finally`.
+- The original assertions remain unchanged: HTTP `200`, then `thinking`, `searching`, and `idle` for the same user.
+- No runtime or product behavior was modified.
+
+### Independent Clean-Export Evidence
+
+The exact candidate `51f93d12740a6e0860856257ea761377b04c97fb` was exported with `git archive` to a new disposable directory.
+
+- `.env` in export: absent.
+- `DATABASE_URL`: absent.
+- `DATABASE_ADMIN_URL`: absent.
+- Anthropic, Tavily, ElevenLabs, and Obsidian credentials: absent.
+- Focused regression: `1 passed, 1 warning`.
+- Complete Python suite: `45 passed, 1 warning`.
+- Frontend suite: `36 passed, 0 failed`.
+- Python syntax: `49` files passed AST parsing.
+- JavaScript syntax: `30` files passed `node --check`.
+- `git diff --check 20843a4..51f93d1`: passed.
+
+No real PostgreSQL connection, migration, provider, credential, network service, or production environment was used. The corrected test used only disposable SQLite in memory.
 
 ## Test Summary
 
-- Backend: PASSED — 45 Python tests passed with one pre-existing Starlette TestClient/httpx deprecation warning.
-- Frontend: PASSED — 19 Node tests passed.
-- Python syntax: PASSED — 44 Python files in `backend/` and `tests/` parsed successfully with `ast.parse` without creating bytecode.
-- JavaScript syntax: PASSED — every module under `frontend/js/` passed `node --check`.
-- Browser: PASSED WITH WARNING — official E2E harness loaded, WebGL Memory Globe rendered, memory-aware chat retrieved the expected memory, the destructive dialog named the target and focused Cancel, realtime removed the confirmed memory incrementally, and browser console contained zero errors or warnings. `QA-003` remains reproducible.
-- API: PASSED — missing and mismatched delete confirmation returned HTTP 428; exact UUID confirmation returned HTTP 204.
-- Memory: PASSED — retrieval with `memory_enabled=true`, exact-target forget confirmation, confirmed deletion, relation cleanup and isolated mock state were verified.
-- Realtime/regression: PASSED — the deletion event updated the open Memory Globe from three to two memories; full automated coverage for existing realtime and frontend flows remained green.
-
-## Commands and Evidence
-
-### Git and scope
-
-- `git status --short --branch`, `git branch --show-current`, `git rev-parse HEAD` and `git log -1` were executed before testing.
-- `git show --format=fuller --stat --summary 88e1947...` confirmed the corrective commit.
-- `git diff 19e5738...88e1947 -- tests/e2e_app.py tests/test_e2e_harness.py` was inspected.
-- `git diff --quiet 88e1947..HEAD -- backend frontend tests migrations scripts requirements.txt package.json` returned no functional difference.
-- Pre-existing work was limited to modified `AGENTS.md` and untracked dashboard/hero assets; none was changed or staged by QA.
-
-### Automated tests
-
-- `python -m pytest -q -p no:cacheprovider tests/test_e2e_harness.py tests/test_ai_orchestrator.py tests/test_api.py`: 16 passed in 3.72s.
-- `python -m pytest -q -p no:cacheprovider`: 45 passed, 1 warning in 4.99s.
-- `node --test tests/frontend/*.test.mjs`: 19 passed.
-- Python AST syntax check: 44 files passed.
-- `node --check` over `frontend/js/*.js`: passed.
-
-### QA-001 acceptance matrix
-
-1. Typed domain models: PASSED — the harness now uses `MemoryView`, `MemorySearchHit`, `MemoryExplanation`, `MemoryGraph`, `MemoryRelationView`, `EntityView` and related view models.
-2. Isolated mock state: PASSED — two independently created browser apps started with three memories/two relations; deleting from one left it with two memories/one relation while the other remained at three/two.
-3. Retrieval with `memory_enabled=true`: PASSED — browser chat `Mostre a Arquitetura da HOPE.` completed with memory available and the focused automated contract returned `memories_used=[20000000-0000-4000-8000-000000000001]` plus `memory_retriever`.
-4. Forget identifies a real memory: PASSED — `Esqueça essa memória` opened confirmation for `Arquitetura da HOPE`.
-5. Confirmation bound to exact UUID: PASSED — response and client contract used `20000000-0000-4000-8000-000000000001` for both target and confirmation header.
-6. Missing/divergent confirmation: PASSED — both requests returned HTTP 428 without mutation.
-7. Confirmed deletion and relations: PASSED — exact confirmation returned HTTP 204; graph then contained two memories, one remaining unrelated edge and no entity link for the deleted memory.
-8. Existing flows: PASSED — full Python and frontend suites remained green; ordinary chat, API, realtime update and WebGL load were exercised.
-9. Focused/full suites: PASSED — results recorded above.
-10. Browser/console/network: PASSED WITH LIMITATION — recovery and destructive confirmation were exercised in browser; the exact confirmed DELETE was issued against the same disposable harness through HTTP, and its realtime event updated the open browser. Access logs showed `428`, `428`, `204`, then graph `200`; browser console showed zero errors/warnings. The destructive button itself was not clicked by QA automation.
+- Backend: `PASSED` — 45 Python tests passed in the clean controlled export.
+- Frontend: `PASSED` — 36 Node tests passed.
+- Realtime correction: `PASSED` — the isolated event-order regression passed without local environment configuration.
+- Syntax: `PASSED` — 49 Python and 30 JavaScript files.
+- Browser: `NOT RE-RUN` — no runtime/frontend delta; the prior complete Phase 6 browser evidence remains applicable.
+- API/Memory/Security behavior: `UNCHANGED` — no runtime delta from the previously reviewed implementation.
+- Database: `NOT ACCESSED` — only in-memory SQLite test state was used.
 
 ## Regressions Found
 
-- No new blocking regression was found.
-- `QA-003` remains reproducible and unchanged by this backend/test-harness correction.
+No regression was reproduced from the `QA-IC-001` correction.
 
-## Closed Blockers
+## Closed Findings
 
-### QA-001 — CLOSED
+### QA-IC-001 — CLOSED
 
-- Severity: MEDIUM (historical)
-- Evidence: typed retrieval objects replaced dictionaries; focused tests passed; the browser retrieved the mocked memory and opened exact-target confirmation; API negative and positive delete paths passed; graph state and relations were updated.
-- Impact: the official Phase 5 harness can now validate the memory-aware flow that was blocked in the previous review.
-- Recommendation: close `QA-001`; retain the new harness tests as regression coverage.
+- Severity: MEDIUM
+- Blocking: NO
+- Evidence: isolated and full Python runs passed from an exact clean export without `.env`, database URLs, or provider credentials.
+- Impact: the realtime regression test is now deterministic and no longer depends on developer-local configuration.
+- Recommendation: retain the explicit fixture and clean-export validation as regression coverage.
+
+### QA-IC-002 — CLOSED
+
+- Historical severity: MEDIUM
+- Blocking: NO
+- Source verified: public GitHub PR #1 via fresh API metadata.
+- Evidence: the PR remains open and draft; base/head remain `main` <- `codex/phase-6-target-ui`; the body identifies exact Integration Candidate `51f93d12740a6e0860856257ea761377b04c97fb` and functional correction `4d76f2433363a47a9d8fe29fef337de1dc79ac50`; it records `QA-IC-001` closed/approved, Security `APPROVED_WITH_WARNINGS`, and `SEC-019`/`SEC-020` closed; it keeps merge blocked until this confirmation, Production Readiness `BLOCKED`, and Phase 7 not authorized.
+- Superseded candidate check: `cf9cd976549163d1f49cead7bc2f993254150708` is absent from the current PR body and is no longer presented as the active candidate.
+- Functional suites: not repeated, as explicitly required for this metadata-only closure. The Git candidate reviewed by QA remains `51f93d1`.
 
 ## Open Blockers
 
 - None.
 
-## Non-blocking Findings
-
-### QA-003 — Memory Globe state lags after cancellation
-
-- Severity: LOW
-- Blocking: no
-- Evidence: after cancelling the delayed `aguarde` request, chat immediately displayed `Solicitação cancelada.`, while the globe remained `Consultando memórias…` for approximately three seconds before returning to `Tempo real conectado`.
-- Impact: transient visual inconsistency; controls recover and the chat remains usable.
-- Recommendation: Development should make the client-side abort transition the Core Orb/globe to idle immediately or correlate and discard the stale server state event. Track as backlog warning if accepted for phase advancement.
+## Non-blocking Issues
 
 ### QA-WARN-HTTPX — Deprecated TestClient integration
 
 - Severity: INFO
-- Blocking: no
-- Evidence: the complete Python suite emitted one `StarletteDeprecationWarning` advising migration from the current httpx TestClient integration.
-- Impact: no current functional failure; future dependency upgrades may require maintenance.
-- Recommendation: schedule dependency/test-client maintenance outside this corrective scope.
+- Evidence: Python runs emitted the known `StarletteDeprecationWarning` for the current TestClient/httpx integration.
+- Impact: no current test failure; future dependency maintenance may be required.
+- Recommendation: track outside the Phase 6 correction gate.
 
-### QA-ENV-001 — Real infrastructure not exercised
+### QA-ENV-003 — Production environments remain untested
 
 - Severity: INFO
-- Blocking: no for QA feature approval
-- Evidence: tests used mocks, SQLite/disposable state and the in-memory browser harness. No PostgreSQL/pgvector instance, migration, paid provider, credential or real user data was accessed.
-- Impact: this review does not establish production database or provider readiness.
-- Recommendation: preserve the existing Database/Security production gates and perform their authorized environment validations separately.
+- Evidence: no real PostgreSQL/pgvector, migration, paid provider, physical device, or public deployment was used.
+- Impact: the result validates the test-fixture correction, not Production Readiness.
+- Recommendation: retain the existing Database, Security, provider, accessibility, and production gates.
 
 ## Recommendation
 
-APPROVED_WITH_WARNINGS. Close `QA-001` for Functional Commit `88e194778b4399a6713f118470f9d861c553cd9e`. The COORDINATOR should update the Review Matrix and Feature Blockers accordingly, retain `QA-003` as a LOW non-blocking warning, and continue waiting for the other required reviewers before consolidating Phase 5.
+`APPROVED_WITH_WARNINGS`
+
+QA approves Final Integration Candidate `f819440a72f2e68368bcc0d3c1af6ec700d170bf` with non-blocking warnings. `QA-IC-001` and `QA-IC-002` are closed. The PR may leave the QA gate, but merge remains subject to separate owner authorization and must not imply Production Readiness or authorize Phase 7.
+
+## Parallel Live Retest — Obsidian Local REST API
+
+- Result: `BLOCKED / NOT_TESTED`
+- Execution commit: `4497347b6440c03c305cbb54eaccc643d95ced3c` (QA documentation descendant of candidate `51f93d12740a6e0860856257ea761377b04c97fb`; Obsidian implementation unchanged).
+- Owner-reported state: Obsidian open and Local REST API active.
+- Gate impact: `NONE`. This environmental check remains separate from the Phase 6 decision and from `QA-IC-001`/`QA-IC-002`.
+
+### Sanitized Evidence
+
+- Credential configuration: present.
+- Endpoint configuration: present.
+- TLS verification setting: enabled.
+- Configured TCP listener: unreachable.
+- Adapter health: `configured=true`, `available=false`.
+- Obsidian process visible in the current OS session: no.
+- Configured listener visible in the current OS session: no.
+- Authentication: `NOT_TESTED` because no listener accepted a connection.
+- Functional read/search: `NOT_TESTED`; the read-only sentinel query was deliberately skipped after failed health/connectivity.
+- Proportional mocked service regression: `tests/test_services.py` — `5 passed`.
+
+### Diagnosis and Safety
+
+The owner-reported application/plugin state is not observable from the current QA execution session. The evidence is consistent with Obsidian running in another machine/session, the application having exited, or the active plugin listening under configuration different from the backend endpoint. This is an environmental reachability blocker, not a reproduced adapter defect.
+
+No host, port, URL, token, vault name, private path, note name, note content, excerpt, or response body was logged or persisted. No note or Obsidian configuration was created, changed, moved, or deleted.
+
+### Owner Action for Another Live Attempt
+
+Keep Obsidian open in the same Windows session as the HOPE process and confirm locally that the existing Local REST API status indicates it is listening under the already configured endpoint. Do not share any secret or private vault information. QA can then repeat health, authentication, and one non-sensitive read-only sentinel search.

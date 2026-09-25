@@ -21,13 +21,27 @@ export function addMessage(role, text) {
   if (role === "assistant") renderMarkdown(body, text); else renderPlainText(body, text);
   article.append(meta, body); elements.messages.append(article);
   elements.messages.scrollTop = elements.messages.scrollHeight;
+  return article;
 }
 
 export function resetMessages() {
   elements.messages.querySelectorAll(".message").forEach(node => node.remove());
-  elements.empty.hidden = false; renderSources(elements.sources, elements.sourceList, []);
+  elements.empty.hidden = false;
 }
-export function showSources(sources) { renderSources(elements.sources, elements.sourceList, sources); }
+export function showSources(sources, article, memoryIds = []) {
+  if (!article || (!sources.length && !memoryIds.length)) return;
+  const panel = document.createElement("details"); panel.className = "message-context";
+  const summary = document.createElement("summary"); summary.textContent = "Fontes e memórias desta resposta";
+  const list = document.createElement("ul"); panel.append(summary,list);
+  renderSources(panel,list,sources);
+  for (const id of memoryIds) {
+    const item=document.createElement("li"),button=document.createElement("button");button.type="button";
+    button.textContent="Ver memória usada";
+    button.addEventListener("click",()=>dispatchEvent(new CustomEvent("hope:inspect-memory",{detail:id})));
+    item.append(button);list.append(item);
+  }
+  panel.hidden=false;article.append(panel);
+}
 export function setBusy(busy) {
   elements.send.disabled = busy; elements.prompt.disabled = busy; elements.cancel.hidden = !busy;
   elements.web.disabled = busy; elements.vault.disabled = busy; elements.memory.disabled = busy;
@@ -35,10 +49,12 @@ export function setBusy(busy) {
 }
 export function announce(message, error = false) {
   elements.live.textContent = message; elements.live.classList.toggle("error", error);
+  document.querySelector("#urgent-status").textContent = error ? message : "";
 }
 export function setServiceStatus(id, configured, available = null) {
   const element = document.querySelector(`#${id}`);
   const online = configured && available !== false;
   element.dataset.state = online ? "online" : "offline";
   element.title = !configured ? "Não configurado" : available === false ? "Indisponível" : "Configurado";
+  element.textContent = ({ "claude-status":"Chat", "vault-status":"Obsidian", "web-status":"Web" }[id] || id) + ": " + (online ? "disponível" : "indisponível");
 }

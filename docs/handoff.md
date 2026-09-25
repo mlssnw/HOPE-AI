@@ -7,16 +7,18 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 ## Current Phase
 
 - Phase: 6 — Target UI Convergence
-- Phase status: IN_PROGRESS
-- Feature status: NOT_STARTED — autorização concedida; UI/UX deve confirmar a especificação pré-implementação antes do DEV
+- Phase status: READY_FOR_MERGE
+- Feature status: APPROVED_WITH_WARNINGS — all required Phase 6 reviews are complete and no feature blocker remains
 - Production readiness: BLOCKED — Security rejeitou deploy público
-- Branch: `main`
-- Application version: 6.0 / Phase 5 baseline; Phase 6 ainda sem Functional Commit
+- Branch: `codex/phase-6-target-ui`
+- Runtime API version: `6.0.0-phase.5` — metadata legado congelado do Functional Commit, independente do status operacional da fase
 - Scope: convergência visual do HOPE Main Dashboard sobre capacidades reais, com acessibilidade, responsividade e preservação dos contratos funcionais existentes
-- Last approved commit: `88e194778b4399a6713f118470f9d861c553cd9e`
-- Working tree expected: preservar a alteração preexistente em `AGENTS.md` e os assets não rastreados; os commits de review não incorporam código funcional
+- Functional Commit: `4d76f2433363a47a9d8fe29fef337de1dc79ac50` — isolated test correction over the Phase 6 implementation `0912e94`
+- Final Integration Candidate: `f819440a72f2e68368bcc0d3c1af6ec700d170bf`
+- Final QA confirmation: `611cd630cdcb44e59d0515ac46c91f82ee6a472a`
+- Working tree expected: incluir a reconciliação autorizada de `AGENTS.md` no Integration Candidate e preservar fora dos commits os assets não rastreados `Hope dashboard` e `hope-linkedin-hero*`
 - Database environment: o re-review de Database validou o gate de schema em ambientes descartáveis; PostgreSQL real permaneceu inacessível e a migration `20260903_0003` não foi aplicada nem validada no ambiente real
-- Active phase: Phase 6 — Target UI Convergence, planejamento `APPROVED`, implementação `IN_PROGRESS` a partir da confirmação prévia de UI/UX
+- Active phase: Phase 6 — integration is ready for the owner's explicit merge decision. No later phase is active or authorized.
 
 ## User Strategic Decision
 
@@ -26,17 +28,40 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 - Removed from immediate roadmap: autenticação multiusuário, RBAC complexo, isolamento entre múltiplos usuários, RLS orientado a tenants, organizações/teams e infraestrutura de identidade enterprise
 - Future security objective: Single-User Security & Permissions para tools, agentes, filesystem, código, Git, banco, integrações, ações externas e operações destrutivas
 - Permission model direction: `SAFE` permite execução automática; `WRITE` depende do contexto; `SENSITIVE` exige confirmação do owner; `DESTRUCTIVE` exige confirmação explícita forte
-- Planner recommendation: 1) Phase 6 Target UI Convergence; 2) Phase 7 Single-User Security & Permissions; 3) Phase 8 Read-Only Tools; 4) Phase 9 Permissioned Effects & Ephemeral Coding; 5) Phase 10 Ephemeral Agents; 6) Production Hardening antes de qualquer exposição escolhida
+- Historical Planner recommendation: `SUPERSEDED` para ordem futura por `ARCH-2026-09-20-001`; preservada aqui como evidência da decisão que orientou a Phase 6
 - Rationale: segurança deve proteger o único owner e governar efeitos reais sem importar complexidade de tenants, organizações ou identidade enterprise
-- Visual boundary: o Target UI permanece aprovado e é o alvo oficial da Phase 6; UI/UX confirma a spec antes de o DEV alterar a interface
+- Visual boundary: o Target UI permanece aprovado e é o alvo oficial da Phase 6; UI/UX fechou a spec em `3c10be2` e o DEV deve implementá-la sem improvisar outra identidade
 - Authorization boundary: somente a Phase 6 está autorizada. Permanecem fora de escopo expansão funcional, banco, migrations, providers, produção, tools, agents e Phase 7
 
-Required Reviews:
+## Product Direction Intake — 2026-09-19
 
-- QA: YES — regressão, browser, responsividade, WebGL, teclado, console e Network
-- DATABASE: NO — desde que o diff permaneça estritamente visual e sem impacto de persistência
-- SECURITY: YES — não regressão de consentimento, confirmação destrutiva, conteúdo não confiável e claims de capacidade
-- UI/UX: YES — especificação pré-implementação e review final de fidelidade no mesmo Functional Commit
+- Status: APPROVED — PERSISTENCE COMPLETE
+- Source: decisão explícita da owner, persistida em [`docs/coordination/product-direction-2026-09-19.md`](coordination/product-direction-2026-09-19.md)
+- Preserved truths: `SINGLE_USER`, assistente pessoal, cloud-first, provider-agnostic, memória persistente e experiência centrada no Memory Globe/Core Orb
+- New future direction: voice presence, realtime voice, wake word `HOPE`, speaker verification, self knowledge, personalidade ampliada, modos combináveis, memória controlável, organização pessoal, integrações, diagnósticos, auditoria transparente, localização por dispositivo, apps instaláveis e Model Router
+- Personality decision: Dean Winchester foi aprovado como referência oficial de traços gerais junto de Lena Luthor e Tony Stark e pode integrar o `SelfKnowledge` público; identidade, diálogos, maneirismos e vozes não podem ser copiados
+- Reference exception: aprovada somente para reconhecimento ou homenagem original mediante pedido explícito; continuam proibidos citações famosas literais, diálogos copiados, imitação de identidade, clonagem de voz e atuação contínua
+- Roadmap impact: a owner aprovou `ARCH-2026-09-20-001` e a ordem de `docs/roadmap.md`; isso autoriza apenas o planejamento da Phase 7, não sua implementação
+- Documentation decision: `docs/product-vision.md`, `docs/roadmap.md` e `docs/future-architecture.md` são as fontes aprovadas para visão, ordem/gates e contratos futuros
+- Routing boundary: concluir o Integration Candidate, abrir PR em rascunho e obter os reviews finais de QA/Security antes do merge; UI/UX e Development da Phase 7 não estão autorizados
+
+## Owner Documentation Language Decision — 2026-09-21
+
+- Status: `APPROVED`
+- Canonical technical language: English for code, commits, documentation, architecture, roadmap, reviews, coordination and canonical handoff records
+- Public README: PT-BR
+- Owner-facing communication: status, decisions, approval requests, escalations and handoffs must also be presented in PT-BR
+- Other PT-BR exceptions: localized product content, HOPE dialogue examples, language fixtures, linguistic tests and exact historical quotations
+- Migration boundary: prospective policy; no broad rewrite of frozen historical evidence is authorized inside the Phase 6 integration gate
+- Source: [`docs/coordination/documentation-language-policy.md`](coordination/documentation-language-policy.md)
+- Candidate impact: documentation-only; Integration Candidate `d83e57d` is superseded by this cleanup and QA/Security must receive the resulting exact hash
+
+Required Reviews — Integration Candidate:
+
+- QA: YES — confirmar integridade da branch, coerência documental e ausência de drift funcional
+- DATABASE: NO — a limpeza não altera código, persistência, schema, migration ou contrato de banco
+- SECURITY: YES — confirmar preservação dos findings, limites de produção e artefato funcional revisado
+- UI/UX: NO — nenhuma implementação visual mudou; o parecer anterior permanece evidência sobre `0912e94`
 
 ## Official Visual Direction
 
@@ -46,7 +71,7 @@ Required Reviews:
 - Direction status: APPROVED
 - Decision ID: `UIUX-VIS-2026-09-10-001`
 - Persistence status: COMPLETE — decisão, asset canônico, especificação e matriz de gaps foram versionados em `aa440f8`
-- Implementation status: PARTIAL — o frontend atual implementa partes do chat, Memory Globe, Core Orb, inspector e estados, mas a composição-alvo não comprova as demais capacidades mostradas
+- Implementation status: IMPLEMENTED — QA `APPROVED_WITH_WARNINGS`, Security `APPROVED_WITH_WARNINGS` e UI/UX `APPROVED` produziram evidência anterior em `0912e94`; a integração final ainda aguarda QA e Security
 - Scope: interface principal, Memory Globe, Core Orb, navegação, chat, sessão atual, Memory Inspector, controles, hierarquia visual, estados, identidade visual e apresentação pública
 - Source of truth order: `docs/design/` → `docs/reviews/uiux-latest.md` → dashboard visual aprovado → documentação histórica anterior
 - Canonical reference: [`hope-dashboard-approved-2026-09-10.png`](design/assets/hope-dashboard-approved-2026-09-10.png)
@@ -54,52 +79,60 @@ Required Reviews:
 - Gap matrix: [`dashboard-gap-matrix.md`](design/dashboard-gap-matrix.md)
 - Rule: `VISUAL TARGET` não significa `IMPLEMENTED FEATURE`; áreas exibidas continuam classificadas pelo código e por `docs/architecture.md`
 - Public presentation: pode ser usado como hero, portfólio, apresentação ou LinkedIn somente como interface conceitual/alvo enquanto houver partes não implementadas
-- Implementation gate: OPEN — autorização explícita concedida em 2026-09-11; a sequência obrigatória começa por UI/UX e só depois segue ao DEV
+- Implementation gate: OPEN — autorização explícita concedida em 2026-09-11; UI/UX pré-implementação concluído em `3c10be2` e Development liberado
 
 ## Current Functional Commit
 
-- Commit: `88e194778b4399a6713f118470f9d861c553cd9e`
-- Phase: 5
+- Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
+- Phase: 6
 - Created by: DEV
-- Status: APPROVED_WITH_WARNINGS
-- Base corrected: `19e573893aba09da990256da05e7dab5af165ce1`
-- Notes: `88e1947` corrige `QA-001` e `DB-005`. QA, Database, Security e UI/UX emitiram e persistiram `APPROVED_WITH_WARNINGS` contra o hash exato; nenhum blocker funcional desses quatro domínios permanece aberto.
+- Status: READY_FOR_REVIEW — implementação entregue; aprovação final da integração ainda depende de QA e Security no Integration Candidate
+- Base approved: `88e194778b4399a6713f118470f9d861c553cd9e`
+- Notes: o commit contém frontend, testes e evidências da Phase 6; commits documentais posteriores não alteram sua identidade. QA, Security e UI/UX revisaram exatamente `0912e94` na rodada anterior, sem que isso substitua o gate final da branch.
 
 ## Review Matrix
 
 | Work | Required | Status | Commit |
 |---|---|---|---|
-| DEV | YES | NOT_STARTED | — |
-| QA | YES | NOT_STARTED | — |
+| DEV | YES | READY_FOR_REVIEW | `4d76f2433363a47a9d8fe29fef337de1dc79ac50` |
+| QA | YES | APPROVED_WITH_WARNINGS | `f819440a72f2e68368bcc0d3c1af6ec700d170bf` |
 | DATABASE | NO | N/A | — |
-| SECURITY | YES | NOT_STARTED | — |
-| UI/UX | YES | IN_PROGRESS | `88e194778b4399a6713f118470f9d861c553cd9e` (baseline) |
-| PLANNER | YES | APPROVED | — (plan approved) |
+| SECURITY | YES | APPROVED_WITH_WARNINGS | `51f93d12740a6e0860856257ea761377b04c97fb`; no later functional drift |
+| UI/UX | YES | APPROVED | `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
+| PLANNER | YES | APPROVED | `129b5a26c3b506e7f53dbb797048ee6788fcd976` |
 
 ## Development
 
 - Status: READY_FOR_REVIEW
-- Functional commit: `88e194778b4399a6713f118470f9d861c553cd9e`
-- Baseline corrected: `19e573893aba09da990256da05e7dab5af165ce1`
-- Delivered: `QA-001` corrigido com harness E2E tipado, estado isolado, recuperação funcional e fluxo completo de esquecimento vinculado ao UUID; `DB-005` corrigido com gate fail-safe de schema no startup, diagnóstico explícito e desativação segura da memória quando `alembic_version` não corresponde a `20260903_0003`, preservando o chat degradado
-- Validation reported by DEV: 12 testes focados, 45 testes Python completos, 19 frontend, `compileall`, `node --check`, navegador no harness com memória habilitada, recuperação e confirmação destrutiva completas, UUID exato e zero erros de console/página/rede; `git diff --check` sem erros
-- Impact analysis: QA e DATABASE precisam revisar `88e194778b4399a6713f118470f9d861c553cd9e`; SECURITY também precisa revisar porque o novo gate altera a fronteira de inicialização/ativação da memória; UI/UX não é impactado porque não houve alteração funcional de frontend
-- Boundary: nenhum PostgreSQL real, migration, provider pago, dado, role, credencial, TLS ou infraestrutura externa foi acessado ou alterado; `DB-001`, `DB-003`, `DB-004`, blockers exclusivos de produção e dashboard visual permanecem fora do escopo
-- Rule: DEV não pode marcar a fase como `APPROVED`
+- Phase: 6 — isolated correction of QA-IC-001 / SEC-020
+- Functional commit: `4d76f2433363a47a9d8fe29fef337de1dc79ac50`
+- Baseline: `91c77c1768aec511a253e19a22b32100a29bf342`; rejected integration candidate `20843a4568ca6eba67d66f93234412038ca79199`.
+- Delivered: the realtime chat test now injects explicit test settings and the existing disposable SQLite memory manager, with database cleanup. Its event assertions remain unchanged. No product/runtime/frontend/schema change.
+- Validation: reproduced the original failure in a clean Git export without .env or DATABASE_URL; after the correction, the full Python suite passed 45 tests in that export under an allowlisted environment. Frontend passed 36 tests; Python compileall, syntax checks for 30 JavaScript files and git diff --check passed.
+- Evidence: [Development correction record](phase-6.md#development-correction--qa-ic-001--sec-020--2026-09-22).
+- Environmental limits: one known Starlette/TestClient deprecation warning; no browser rerun for this test-only delta, real PostgreSQL, migration, paid provider or production validation.
+- Impact analysis: QA YES for clean-export reproducibility on the new hash; SECURITY YES for focused SEC-020/test-isolation re-review, with no runtime trust-boundary changes; DATABASE NO and UI/UX NO because their implementation surfaces did not change.
+- Boundary: no push, merge, PR-body edit or Phase 7 work. QA-IC-002 belongs to Coordinator/owner. Pre-existing untracked dashboard/hero assets remain excluded. Reviewer reports, Review Matrix, blockers and Next Action were not changed by Development.
+- Handoff: return to COORDINATOR for exact-hash review routing. Development does not approve the phase or close reviewer findings. Production Readiness remains BLOCKED.
 
 ## QA
 
 - Coordination status: APPROVED_WITH_WARNINGS
-- Current target: `88e194778b4399a6713f118470f9d861c553cd9e`
-- Last official result: APPROVED_WITH_WARNINGS
-- Commit reviewed: `88e194778b4399a6713f118470f9d861c553cd9e`
-- Baseline: `19e573893aba09da990256da05e7dab5af165ce1`
-- Feature blocker resolved: `QA-001` — o harness E2E usa modelos tipados, isola estado, recupera memória com opt-in e valida confirmação/exclusão vinculada ao UUID exato com remoção das relações
-- Open QA blockers: nenhum
-- Validation: 16 testes focados, 45 Python completos, 19 frontend e sintaxe Python/JavaScript passaram; browser, console, API e atualização realtime foram validados no harness descartável
-- Warning carried: `QA-003` — após cancelamento, o chat muda imediatamente, mas o Memory Globe pode permanecer em processamento por aproximadamente três segundos
-- Environment boundary: nenhum PostgreSQL/pgvector real, migration, provider pago, credencial ou dado real foi acessado; Production Readiness permanece sob os gates dos reviewers responsáveis
-- Review commit: `934b7f1696285182a6f8e4bc1dc9d535ab7d08eb`
+- Final Integration Candidate confirmed: `f819440a72f2e68368bcc0d3c1af6ec700d170bf`
+- Previously reviewed functional candidate: `51f93d12740a6e0860856257ea761377b04c97fb`
+- Functional correction reviewed: `4d76f2433363a47a9d8fe29fef337de1dc79ac50`; Development evidence: `9e5764671d86121aedd88b926c05ccbc7c385131`.
+- QA-IC-001: `CLOSED / APPROVED` — exact clean export, no `.env`, no database URLs and no provider credentials; focused regression `1 passed`, complete Python suite `45 passed`, frontend `36 passed`, Python syntax `49/49`, JavaScript syntax `30/30`.
+- Functional impact: test-fixture-only. Runtime backend, frontend, API, schema, migrations, dependencies and production configuration are unchanged; only disposable in-memory SQLite was used.
+- Overall result: `APPROVED_WITH_WARNINGS` for Final Integration Candidate `f819440a72f2e68368bcc0d3c1af6ec700d170bf`.
+- QA-IC-002: `CLOSED / APPROVED` by metadata-only verification on 2026-09-24. PR #1 remains draft; base/head are `main` <- `codex/phase-6-target-ui`; its body identifies exact candidate `51f93d1`, correction `4d76f24`, QA-IC-001 closed, Security `APPROVED_WITH_WARNINGS`, SEC-019/SEC-020 closed, Production Readiness blocked and Phase 7 not authorized; obsolete candidate `cf9cd97` is absent.
+- QA blockers: none.
+- Final metadata/documentation confirmation: PR #1 remains open/draft with `codex/phase-6-target-ui` -> `main`, head `f819440`, and GitHub mergeability `clean`; its body cites `f819440`, `51f93d1`, and `4d76f24`, while preserving owner authorization, Production Readiness `BLOCKED`, and Phase 7 not authorized.
+- Final README confirmation: PT-BR, HOPE/Fase 6, `APPROVED_WITH_WARNINGS`, Phase 6 documentation link, no Phase 5/`IN_PROGRESS` current-state claim, and no conflicting runtime badge.
+- Non-blocking issues: `QA-ENV-003` (real production environments not exercised) and `QA-WARN-HTTPX` (known TestClient deprecation warning).
+- Metadata verification boundary: functional suites were not repeated because `51f93d1..f819440` contains no backend, frontend, tests, schema, migration, dependency, or runtime delta.
+- QA evidence: `4497347b6440c03c305cbb54eaccc643d95ced3c` closed QA-IC-001; this metadata-only QA documentation commit closes QA-IC-002 and records the final integration result.
+- Parallel Obsidian live retest: `BLOCKED / NOT_TESTED`; configuration is present, but no Obsidian process or configured listener was visible in the current OS session, so health remained unavailable and authentication/read were not exercised.
+- Obsidian gate impact: none. The owner-reported active application/plugin state was not observable from this QA session; no secret or private vault content was exposed and no write occurred.
 - Report: [`qa-latest.md`](reviews/qa-latest.md)
 
 ## Database Audit
@@ -120,71 +153,82 @@ Required Reviews:
 ## Security Review
 
 - Coordination status: APPROVED_WITH_WARNINGS
-- Current target: `88e194778b4399a6713f118470f9d861c553cd9e`
-- Last commit reviewed: `88e194778b4399a6713f118470f9d861c553cd9e`
-- Functional result: APPROVED_WITH_WARNINGS
-- Production readiness: REJECTED / BLOCKED
-- Confirmed for Phase 5 scope: schema gate fail-safe, chat degradado sem memória, `SEC-006` e `SEC-007`
-- New non-blocking warning: `SEC-017` — gate depende do lifespan; harness sintético não valida schema, autenticação ou isolamento
-- Deploy blockers: `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-008` e `SEC-012`
-- Scope warning: exclusão continua física e sem recuperação; autenticação, autorização, auditoria e controles operacionais permanecem planejados e obrigatórios antes de exposição pública
+- Integration Candidate reviewed: `51f93d12740a6e0860856257ea761377b04c97fb`
+- Functional correction reviewed: `4d76f2433363a47a9d8fe29fef337de1dc79ac50`
+- QA evidence considered: `4497347b6440c03c305cbb54eaccc643d95ced3c`; current branch tip observed: `62b54bcaed23a9a01292668b2190dc0c151a0bc3`
+- Security result: APPROVED_WITH_WARNINGS
+- Production Readiness: REJECTED / BLOCKED
+- `SEC-019`: CLOSED — README now distinguishes credential custody from owner authentication and chat consent from existing-memory reads by the Memory Globe
+- `SEC-020`: CLOSED — clean exact-candidate export passed the focused regression and complete Python suite without `.env`, database URLs or provider credentials, using only disposable in-memory SQLite
+- Scope confirmed: only `tests/test_realtime.py` changed functionally; no runtime/backend/frontend/API/schema/migration/dependency or production-configuration drift
+- Validation: focused regression `1 passed`; Python `45 passed`; frontend `36 passed`; one known Starlette/TestClient warning
+- New Security findings/blockers: none
+- Carried non-blocking warning: `SEC-018` — browser harness environment and destructive-flow sentinel hardening remain open
+- Deploy blockers unchanged: `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-008`, `SEC-012`
+- External operational blocker: `QA-IC-002` remains open per QA; Security did not edit the PR and does not close or reclassify this blocker
+- Obsidian environmental retest: `BLOCKED / NOT_TESTED`, no Phase 6 gate impact and no secret/private content exposure observed in the persisted QA evidence
+- Recommendation to Coordinator: record Security for `51f93d1`, keep the overall integration rejected until QA verifies `QA-IC-002`, preserve Production Readiness as blocked, and do not merge or start a later phase
 - Report: [`security-review-latest.md`](reviews/security-review-latest.md)
 
 ## UI/UX
 
-- Coordination status: APPROVED_WITH_WARNINGS
-- Current target: `88e194778b4399a6713f118470f9d861c553cd9e`
-- Review type: PHASE 5 FUNCTIONAL UX REVIEW
-- Scope decision: `ARCH-2026-09-10-002`
-- Last official result: APPROVED_WITH_WARNINGS
-- Criteria approved: clareza e padrão seguro de “Memória no chat”; separação do histórico local; comunicação do opt-out; confirmação de esquecimento com alvo/consequência; foco inicial em “Cancelar”, Escape e recuperação de foco/erro; `FOCUS_MEMORIES` e Core Orb ligados a dados/eventos reais; teclado, foco, contraste, reduced motion e responsividade funcional dos controles; ausência de alegações sobre dashboard e capacidades futuras
+- Coordination status: APPROVED
+- Current target: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
+- Review type: PHASE 6 POST-IMPLEMENTATION REVIEW
+- Scope decision: `ARCH-2026-09-10-003`
+- Coordinator authorization: `0bcc25a5437cab8a326e64281579ead56274d8cb`
+- Last official result: APPROVED
+- Specification: [`docs/design/phase-6-target-ui-spec.md`](design/phase-6-target-ui-spec.md)
+- P0/P1 implementation: APPROVED contra o contrato fechado
+- Fidelity: APPROVED dentro das capabilities reais do baseline
 - Feature blockers: nenhum
-- Warnings: `UIUX-F5-W01` — badge “Memória” pode confundir disponibilidade do serviço com consentimento ativo; `UIUX-F5-W02` — status normal usa região assertiva; `UIUX-F5-W03` — toggles/Enviar e texto auxiliar ficam abaixo dos alvos dimensionais do contrato visual
+- Closed: `UIUX-F5-W01`, `UIUX-F5-W02` e `UIUX-F5-W03`
+- Guardrails: chat-first em tablet/mobile; fallback textual sem WebGL; reduced motion; perfis LOW/MEDIUM/HIGH/ULTRA sem perda funcional; Core Orb e métricas somente com fonte real; capacidades futuras omitidas
 - Visual direction: APPROVED
 - Decision ID: `UIUX-VIS-2026-09-10-001`
-- Persistence: COMPLETE em `aa440f8a4660d1bb1530d3d3b9a08aacd28c092e`
-- Visual target: HOPE Main Dashboard
-- Deferred visual scope: `UIUX-001` a `UIUX-005`, fidelidade completa e matriz P0/P1/P2/P3 permanecem requisitos de fase visual futura e não são blockers retroativos da Fase 5
-- Recommendation: devolver ao COORDINATOR para encaminhamento ao PLANNER e consolidação final da Fase 5; não autoriza dashboard, próxima fase ou produção
+- Implementation status: APPROVED por UI/UX no Functional Commit `0912e94`
+- Recommendation: consolidar com QA e Security; nenhuma correção visual adicional é necessária neste gate
+- Review commit: `7122d25`
 - Report: [`uiux-latest.md`](reviews/uiux-latest.md)
 - Design source: [`docs/design/`](design/README.md)
 
 ## Planner
 
-- Status: APPROVED
-- Decision ID: `ARCH-2026-09-10-003`
-- Planning approval record: a usuária aprovou a decisão e `docs/phase-6.md` como planejamento oficial; o COORDINATOR registrou o resultado em `7494c2ed589e559a955934f8a1580d3867e2356b`
-- Product model: `SINGLE_USER`; a direção multiusuário/enterprise está `SUPERSEDED` no roadmap imediato
-- Phase 5 boundary: permanece `APPROVED_WITH_WARNINGS` no Functional Commit `88e194778b4399a6713f118470f9d861c553cd9e`; nenhum finding de reviewer foi reescrito ou encerrado por esta decisão
-- Production Readiness: `BLOCKED`
-- Recommended order: Phase 6 Target UI Convergence → Phase 7 Single-User Security & Permissions → Phase 8 Read-Only Tools → Phase 9 Permissioned Effects & Ephemeral Coding → Phase 10 Ephemeral Agents → Production Hardening antes de qualquer exposição escolhida
-- Next phase proposal: `docs/phase-6.md`, planejamento `APPROVED`, implementação `NOT_STARTED / NOT_AUTHORIZED`, Functional Commit `NONE`
-- Phase 6 scope: convergência visual do HOPE Main Dashboard sobre capacidades reais, com acessibilidade, responsividade, não regressão de consentimento/esquecimento e correção de `UIUX-F5-W01` a `UIUX-F5-W03`
-- Phase 6 non-goals: owner authentication, permissions, tools, coding, agents, métricas/capacidades futuras, banco, migration, provider, produção e acesso remoto
-- Phase 6 Required Reviews: QA YES; DATABASE NO enquanto o diff permanecer estritamente visual; SECURITY YES; UI/UX YES
-- Owner architecture: `OwnerAuthenticator` → `OwnerSession` → `OwnerContext`; autorização por recurso ocorre antes do `PermissionManager` por risco
-- Permission model: `SAFE` automático somente em allowlist; `WRITE` limitado e recuperável; `SENSITIVE` com confirmação única do owner; `DESTRUCTIVE` com confirmação forte, alvo/fingerprint exatos e uso único
-- Permission invariants: fail-closed; grants curtos/revogáveis; nenhuma autoelevação; nenhum grant ampliado por herança; approval não reutilizável em outro alvo; prompt/memória/web/tool output nunca concedem autorização
-- Legacy identity: `X-Hope-User-Id` e `?user_id=` deixam de ser autoridade na Phase 7; campos `user_id` permanecem como namespace do owner; vínculo/descarte exige inventário, backup, rollback e autorização
-- RLS: RLS por tenant removido do roadmap imediato; RLS simples fica opcional como defesa adicional se o perfil remoto/cloud justificar
-- Pending user decisions: autorizar explicitamente a implementação da Phase 6; o mecanismo de owner recognition será escolhido somente antes da Phase 7; qualquer provider, custo, credencial, migration ou produção exige decisão separada
+- Status: WAITING_FOR_REVIEW
+- Decision ID: `ARCH-2026-09-21-001`
+- Functional Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` permanece a identidade da implementação da Phase 6
+- Integration Candidate: o HEAD exclusivamente documental produzido por esta limpeza; o COORDINATOR deve registrar o hash resultante e rotear QA + Security sobre esse mesmo candidate
+- Phase 6 operational status: `WAITING_FOR_REVIEW`; os pareceres anteriores sobre `0912e94` permanecem evidência, mas não aprovam automaticamente a branch limpa para PR/merge
+- UI/UX evidence: `APPROVED` anteriormente sobre `0912e94`; não substitui as confirmações finais de QA e Security
+- Architecture cleanup: [`docs/architecture.md`](architecture.md) atualizado para o dashboard implementado, módulos Phase 6, 45 testes Python, 36 frontend, validação browser e limites ambientais
+- Version decision: manter `6.0.0-phase.5` sem editar código; é metadata legado e imutável do Functional Commit, não fonte do status operacional da fase
+- Rejected version option: mudar para `6.0.0-phase.6` tocaria `backend/main.py`, criaria novo Functional Commit e exigiria nova análise/reviews por uma sincronização cosmética
+- Integration gate: QA `YES`, SECURITY `YES`, DATABASE `NO`, UI/UX `NO`; PR/merge somente depois de QA e Security confirmarem o mesmo candidate
+- Merge status: `BLOCKED` até os reviews finais; esta decisão não aprova integração
+- Phase 7 plan: [`docs/phase-7.md`](phase-7.md) permanece `WAITING_FOR_APPROVAL`, implementation `NOT_STARTED`, authorization `NONE` / `NOT_AUTHORIZED`
+- Sequencing: limpeza documental → Integration Candidate → QA + Security no mesmo hash → PR/merge autorizado → somente depois eventual decisão separada sobre Phase 7
+- Production Readiness: `BLOCKED`; merge local/repositório não autoriza deploy ou exposição pública
+- Working tree boundary: alteração preexistente em `AGENTS.md`, `Hope dashboard` e assets `hope-linkedin-hero*` deve permanecer fora do candidate
 - Architecture record: [`docs/reviews/architecture-latest.md`](reviews/architecture-latest.md)
-- Phase plan: [`docs/phase-6.md`](phase-6.md)
-- Coordinator handoff: manter o workflow em `WAITING_FOR_APPROVAL` da implementação; não encaminhar ao DEV nem interpretar a aprovação do planejamento como autorização de execução
+- Product vision: [`docs/product-vision.md`](product-vision.md)
+- Roadmap: [`docs/roadmap.md`](roadmap.md)
+- Future architecture: [`docs/future-architecture.md`](future-architecture.md)
+- Coordinator handoff: registrar o commit documental resultante como Integration Candidate e encaminhar primeiro a QA e Security; não abrir/mesclar PR nem iniciar Phase 7 antes das duas confirmações
 
 ## Coordinator
 
 - Autonomy level: 2.5
-- Status: APPROVED
-- Operational conclusion: a usuária autorizou a implementação da Phase 6 dentro do scope, non-goals, acceptance criteria e Required Reviews aprovados. A correção editorial já foi concluída pelo PLANNER em `bd244bb`.
-- Routing: LEVEL 1 — UI/UX deve executar a confirmação pré-implementação e mapear os gaps P0/P1 ao baseline real; DEV permanece aguardando essa entrega
+- Status: READY_FOR_MERGE
+- Operational conclusion: QA approved final candidate `f819440` with warnings and no blockers. Security approved the reviewed functional candidate with warnings; `SEC-019` and `SEC-020` are closed and no later functional drift exists. The PR is draft, synchronized with `main` and conflict-free.
+- Final Integration Candidate: `f819440a72f2e68368bcc0d3c1af6ec700d170bf`
+- Routing: LEVEL 2.5 — return the explicit merge decision to the owner; do not merge, deploy or start a later phase without that decision
 - Boundary: COORDINATOR atualizou somente Current Phase, Current Functional Commit, Review Matrix, blockers, warnings, Next Action e histórico; não concedeu aprovação técnica nem alterou seções ou relatórios de ownership dos reviewers
 
 ## Current Blockers
 
 ### Feature Blockers
 
-- Nenhum blocker funcional permanece aberto nos quatro reviews obrigatórios contra `88e1947`. A Fase 5 está funcionalmente concluída com warnings.
+- None. `QA-IC-001` and `QA-IC-002` are closed by QA.
 
 ### Production Blockers
 
@@ -194,40 +238,40 @@ Required Reviews:
 
 ## Warnings
 
-- A direção visual foi persistida e aprovada; `UIUX-001` a `UIUX-005` são gaps para implementação futura do dashboard e não ampliam automaticamente o escopo corretivo atual da Fase 5.
-- `QA-003` permanece LOW e não bloqueante; o re-review de QA o confirmou no novo Functional Commit.
+- UI/UX não registrou blocker ou warning no review pós-implementação; `UIUX-F5-W01`, `UIUX-F5-W02` e `UIUX-F5-W03` foram encerrados.
+- `QA-003` foi encerrado; `QA-ENV-002` e `QA-WARN-HTTPX` permanecem INFO/non-blocking.
+- `SEC-018` permanece LOW/non-blocking e deve seguir para o backlog de hardening do harness.
 - `SEC-017` permanece MEDIUM e não bloqueante: o gate depende do lifespan e o harness sintético não valida schema, autenticação ou isolamento.
-- `UIUX-F5-W01` permanece MEDIUM e não bloqueante: o badge “Memória” pode confundir disponibilidade do serviço com consentimento ativo.
-- `UIUX-F5-W02` permanece LOW e não bloqueante: atualizações normais usam uma região `aria-live` assertiva.
-- `UIUX-F5-W03` permanece MEDIUM e não bloqueante: alguns alvos de toque e textos auxiliares ficam abaixo do contrato visual.
-- Correção editorial concluída: `architecture-latest.md` registra que `docs/phase-6.md` não existia antes de `ARCH-2026-09-10-003`; planejamento `APPROVED` e implementação `NOT_STARTED / NOT_AUTHORIZED` foram persistidos em `bd244bb`.
+- Correção editorial concluída: `architecture-latest.md` registra que `docs/phase-6.md` não existia antes de `ARCH-2026-09-10-003`; o estado histórico de `bd244bb` foi supersedido pela autorização e pela entrega atual `0912e94`.
 - Warnings de Database sobre ausência de PostgreSQL real, confiança na marca Alembic e limitações operacionais permanecem abertos.
-- O aviso de depreciação Starlette/TestClient permanece; a repetição independente confirmou 45 testes Python e 19 testes frontend aprovados.
+- O aviso de depreciação Starlette/TestClient permanece; a repetição independente confirmou 45 testes Python e 36 testes frontend aprovados.
 - PLANNER registrou os warnings aceitos em [`docs/backlog.md`](backlog.md); o registro não os considera resolvidos.
-- Reconhecimento seguro do owner permanece planejado para a Phase 7; o UUID fornecido pelo cliente continua sendo apenas namespace transitório, não prova do owner.
+- Reconhecimento seguro do owner está proposto para a Phase 8 no roadmap aprovado; o UUID fornecido pelo cliente continua sendo apenas namespace transitório, não prova do owner.
 - Commits locais ainda não enviados a `origin/main` exigem nova verificação antes de cada revisão.
 - Warnings aceitos para avanço devem ser copiados para [`docs/backlog.md`](backlog.md), sem removê-los do relatório original.
+- `6.0.0-phase.5` permanece como metadata legado do runtime; mudar apenas o rótulo exigiria novo Functional Commit e reviews, por isso a convenção foi documentada em vez de alterar código.
+- Dean Winchester, o `SelfKnowledge` público das inspirações e a exceção estreita de referência explícita foram aprovados pela owner e reconciliados nas fontes normativas.
+- Wake word, speaker verification, realtime voice, apps instaláveis, integrações, diagnóstico, auditoria ampliada e Model Router são `PLANNED/PROPOSED`, não capacidades implementadas.
+- Repetição do COORDINATOR em 2026-09-21: 45 testes Python, 36 testes frontend, `compileall` e sintaxe de 30 arquivos JavaScript passaram. O pacote browser não iniciou porque o binário Chromium do Playwright não está instalado neste ambiente; isso é limite ambiental e não substitui a validação independente de QA.
+- `SEC-019` is closed: the README distinguishes server-side credential custody from owner authentication and chat consent from existing-memory reads.
+- `SEC-020` is closed: the realtime test is explicit, disposable and independent from ignored local configuration.
 
 ## Next Action
 
-- Role: UI/UX
-- Status: IN_PROGRESS
-- Task: confirmar a spec pré-implementação da Phase 6 e mapear cada gap P0/P1 aceito ao baseline funcional real, sem alterar código nem ampliar capacidades
-- Target commit: `88e194778b4399a6713f118470f9d861c553cd9e` (baseline funcional preservado)
+- Role: OWNER
+- Status: READY_FOR_DECISION
+- Task: explicitly authorize or decline merging draft PR #1 into `main`
+- Target commit: `f819440a72f2e68368bcc0d3c1af6ec700d170bf`
 - Required inputs:
-  - [`AGENTS.md`](../AGENTS.md)
-  - [`docs/phase-6.md`](phase-6.md)
-  - [`docs/design/`](design/README.md)
-  - [`docs/reviews/uiux-latest.md`](reviews/uiux-latest.md)
-  - [`docs/design/dashboard-gap-matrix.md`](design/dashboard-gap-matrix.md)
+  - draft PR #1: `https://github.com/mlssnw/HOPE-AI/pull/1`
+  - [`docs/reviews/qa-latest.md`](reviews/qa-latest.md)
+  - [`docs/reviews/security-review-latest.md`](reviews/security-review-latest.md)
+  - final candidate `f819440a72f2e68368bcc0d3c1af6ec700d170bf`
 - Expected output:
-  - confirmação objetiva de que a spec existente é suficiente para implementação, ou lista fechada de ajustes documentais necessários
-  - mapeamento P0/P1 para componentes, estados e capacidades reais do baseline `88e1947`
-  - atualização exclusiva dos arquivos de ownership de UI/UX e commit somente documental
-  - devolução ao COORDINATOR para encaminhar o pacote fechado ao DEV
-- Blocking dependencies: nenhuma
-- Parallel work: QA e SECURITY podem apenas preparar checklists em modo read-only; DEV não deve iniciar até a confirmação de UI/UX
-- Escalation: NONE
+  - explicit owner decision: merge authorized or merge declined/deferred
+- Blocking dependencies: none
+- Parallel work: none; later-phase implementation remains unauthorized
+- Escalation: USER — explicit merge authorization is required
 
 ## Recent History
 
@@ -252,3 +296,18 @@ Required Reviews:
 - 2026-09-10 — A usuária aprovou `ARCH-2026-09-10-003` e `docs/phase-6.md` como planejamento oficial, manteve a implementação não autorizada e solicitou ao PLANNER somente a correção editorial sobre a criação do arquivo da fase.
 - 2026-09-11 — PLANNER corrigiu a formulação histórica, registrou o planejamento como `APPROVED` e manteve a implementação `NOT_STARTED / NOT_AUTHORIZED` no commit `bd244bb`; COORDINATOR colocou o workflow em espera pela autorização explícita da usuária.
 - 2026-09-11 — A usuária autorizou a implementação da Phase 6 dentro do plano aprovado, manteve fora de escopo expansão funcional, banco, migrations, providers, produção, tools, agents e Phase 7; COORDINATOR abriu o gate e roteou a primeira ação pré-implementação ao UI/UX.
+- 2026-09-11 — UI/UX aprovou a especificação pré-implementação e fechou o mapeamento P0/P1 em `3c10be2`; PLANNER sincronizou a autorização e roteou a implementação ao Development em `a9b888b`; COORDINATOR liberou o DEV no escopo fechado.
+- 2026-09-15 — Development entregou a Phase 6 como `READY_FOR_REVIEW` no Functional Commit `0912e94`, com registro documental `efe0ce8`; COORDINATOR abriu QA, Security e UI/UX em paralelo no mesmo hash e manteve Database `N/A`.
+- 2026-09-19 — QA concluiu `APPROVED_WITH_WARNINGS` em `5d5c2dd`, Security concluiu `APPROVED_WITH_WARNINGS` em `f9c0ca8` e UI/UX concluiu `APPROVED` em `7122d25`, todos contra `0912e94`; COORDINATOR encaminhou a consolidação final ao Planner.
+- 2026-09-19 — PLANNER consolidou a Phase 6 como `APPROVED_WITH_WARNINGS` em `ARCH-2026-09-19-001`/`5ca95f4`, manteve Production Readiness `BLOCKED` e não iniciou a Phase 7.
+- 2026-09-19 — A owner apresentou nova direção futura para voz, wake word, speaker verification, personalidade/self knowledge, modos, apps, integrações, transparência e Model Router. COORDINATOR registrou o intake sem ampliar a Phase 6 e encaminhou a reconciliação arquitetural e o novo roadmap ao PLANNER.
+- 2026-09-20 — PLANNER publicou `ARCH-2026-09-20-001` em `de2242a`, criou `docs/product-vision.md` e `docs/roadmap.md`, separou presença conversacional local dos gates de segurança e devolveu a decisão à owner sem autorizar Phase 7, UI/UX ou Development.
+- 2026-09-20 — A owner aprovou `ARCH-2026-09-20-001`, visão, roadmap, Dean Winchester como referência de traços, `SelfKnowledge` público das inspirações e a exceção estreita de homenagem original sob pedido explícito; autorizou somente o planejamento da Phase 7 e manteve toda implementação não autorizada.
+- 2026-09-21 — A owner esclareceu que os pareceres anteriores de QA e Security sobre `0912e94` não aprovam a branch final para integração. COORDINATOR reabriu o gate como `WAITING_FOR_REVIEW`; PLANNER definiu Integration Candidate documental e manteve merge/Phase 7 bloqueados.
+- 2026-09-21 — PLANNER concluiu a reconciliação documental em `cf9cd97`; COORDINATOR registrou esse hash como Integration Candidate, mantendo QA e Security pendentes e o merge bloqueado.
+- 2026-09-21 — The owner established English as the canonical documentation language. Commit `d83e57d` superseded `cf9cd97` as the Integration Candidate; final QA and Security reviews remain pending.
+- 2026-09-22 — A owner definiu o README público em PT-BR e pediu foco exclusivo na Fase 6. O commit `20843a4` substituiu `d83e57d` como Integration Candidate; QA e Security finais continuam pendentes.
+- 2026-09-22 — QA rejeitou `20843a4` em `531b34c` por `QA-IC-001` e `QA-IC-002`; Security aprovou com warnings em `16ccb65`, registrando `SEC-019` e `SEC-020`. COORDINATOR manteve o merge bloqueado e roteou `QA-IC-001` ao Development.
+- 2026-09-24 — Development delivered `4d76f24`; QA closed `QA-IC-001` in `4497347`; Security closed `SEC-019` and `SEC-020` in `7e6ea4a`.
+- 2026-09-24 — With owner authorization, COORDINATOR updated draft PR #1; QA closed `QA-IC-002` in `765769a`.
+- 2026-09-24 — COORDINATOR synchronized the branch with `main`, resolved the README conflict in `f819440`, and QA approved the final conflict-free candidate in `611cd63` with no blockers.

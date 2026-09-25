@@ -1,6 +1,8 @@
 # Arquitetura do HOPE AI
 
-Este documento registra o estado arquitetural observado no working tree em 3 de setembro de 2026. Ele complementa o histórico de `docs/phase-1.md` a `docs/phase-5.md` e separa explicitamente implementação atual de visão futura. A direção de produto foi corrigida em 10 de setembro de 2026 pela decisão `ARCH-2026-09-10-003`: a HOPE é `SINGLE_USER`, destinada a um único owner; isso não altera retroativamente o código nem os findings dos reviewers.
+Este documento registra o estado arquitetural implementado no Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` e a reconciliação documental de 21 de setembro de 2026. Ele complementa o histórico de `docs/phase-1.md` a [`docs/phase-6.md`](phase-6.md) e separa explicitamente implementação atual de visão futura. Os reviews anteriores permanecem evidência do Functional Commit, mas o status operacional da Phase 6 para integração é `WAITING_FOR_REVIEW`. A sequência obrigatória é Integration Candidate → PR em rascunho → QA e Security no mesmo hash → merge. Production Readiness permanece `BLOCKED`.
+
+A direção de produto `SINGLE_USER` continua válida. A visão aprovada está em [`docs/product-vision.md`](product-vision.md), a ordem e os gates em [`docs/roadmap.md`](roadmap.md) e os contratos-alvo em [`docs/future-architecture.md`](future-architecture.md). Nenhum desses documentos transforma capacidade planejada em capacidade atual.
 
 Legenda:
 
@@ -8,16 +10,29 @@ Legenda:
 - **PARTIAL:** existe, mas ainda tem limitações importantes ou não cobre todo o fluxo pretendido.
 - **PLANNED:** faz parte da visão, porém não foi implementado no repositório.
 
+### Baseline, fase e versão
+
+- Functional Commit atual: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`.
+- Phase 6 — Target UI Convergence: implementação presente no Functional Commit; status operacional `WAITING_FOR_REVIEW` para integração.
+- Reviews anteriores: QA e Security emitiram `APPROVED_WITH_WARNINGS` sobre `0912e94`, e UI/UX emitiu `APPROVED`; esses resultados não aprovam automaticamente o novo Integration Candidate documental.
+- HOPE Main Dashboard: **IMPLEMENTED** dentro das capacidades reais; a aprovação visual anterior de UI/UX permanece evidência, sem substituir a confirmação final de QA/Security para a branch.
+- Runtime API version: `6.0.0-phase.5`, valor preservado no código do Functional Commit aprovado.
+- Convenção: o runtime version identifica o artefato de código e não determina a fase operacional/documental. O status da fase é definido pelo Functional Commit, `docs/phase-6.md`, reviews e handoff.
+- `6.0.0-phase.5` é um rótulo legado congelado; mantê-lo evita alterar código após os reviews. Atualizá-lo para `6.0.0-phase.6` exigiria novo Functional Commit e análise/reviews proporcionais, por isso não faz parte desta limpeza documental.
+- Integration Candidate: o HEAD documental produzido por esta limpeza, mantendo `0912e94` como Functional Commit. O candidate abre um PR em rascunho; QA e Security confirmam esse mesmo hash antes do merge.
+- Phase 7: somente planejamento em [`docs/phase-7.md`](phase-7.md), com implementação `NOT_STARTED` e `NOT_AUTHORIZED`; integração da Phase 6 e reviews finais do candidate a precedem.
+
 ## CURRENT STATE
 
 ### Visão geral
 
 ```text
 Browser (HTML/CSS/JavaScript)
+  ├─ HOPE Main Dashboard responsivo e chat-first em mobile/tablet
   ├─ Chat + histórico opcional no localStorage
   ├─ ditado via Web Speech API
   ├─ áudio TTS recebido do backend
-  ├─ Memory Globe WebGL
+  ├─ Memory Globe WebGL + lista/inspector acessíveis + fallback
   ├─ HTTP /api/*
   └─ WebSocket /ws/hope
           │
@@ -42,26 +57,32 @@ O backend serve o frontend e as APIs na mesma origem. Quando `DATABASE_URL` não
 
 A aplicação atual ainda usa um UUID criado no navegador e controlado pelo cliente. O alvo revisado não é uma plataforma de contas: existe um único owner, reconhecido por uma fronteira server-side proporcional ao ambiente. Em desenvolvimento local controlado, essa fronteira pode usar pareamento da instalação e sessão local; acesso remoto ou cloud exige credencial forte e sessão protegida antes da exposição.
 
-O baseline funcional preservado é `88e194778b4399a6713f118470f9d861c553cd9e`. As mudanças de direção registradas em `ARCH-2026-09-10-003` são exclusivamente documentais.
+O Functional Commit atual é `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`; seu baseline aprovado é `88e194778b4399a6713f118470f9d861c553cd9e`. A Phase 6 alterou frontend, testes e evidências, sem modificar backend, API, schema, migration ou persistência.
 
 Os campos `user_id` existentes permanecem no estado atual e serão preservados como namespace interno do owner até que uma migration específica seja justificada. Eles não provam identidade. Autenticação multiusuário, RBAC organizacional, tenants, teams, SSO empresarial, federação e RLS orientado a tenants foram removidos do roadmap imediato.
 
 ### Frontend — IMPLEMENTED
 
-O frontend é uma aplicação web modular sem framework, em `frontend/`, composta por HTML, CSS e módulos JavaScript nativos.
+O frontend é uma aplicação web modular sem framework, em `frontend/`, composta por HTML, CSS e módulos JavaScript nativos. A Phase 6 implementou a composição oficial do HOPE Main Dashboard sobre as capacidades reais existentes, sem ativar destinos ou métricas futuras.
 
-- `app.js` inicializa chat e Memory Globe.
+- `app.js` inicializa `SurfaceController`, `MemoryGlobeController` e chat.
 - `chat.js` coordena envio, cancelamento, fontes, preferências, TTS e eventos de UI.
 - `api-client.js` centraliza HTTP e envia o identificador transitório do usuário.
 - `storage.js` mantém preferências, UUID local e, quando habilitado, até 40 mensagens no `localStorage`.
 - `renderer.js`/`renderer-core.js` renderizam conteúdo sem depender de `innerHTML` para conteúdo não confiável.
 - `voice.js` usa Web Speech API do navegador para ditado em `pt-BR`.
 - `realtime.js` implementa WebSocket, ping/pong, timeout e reconexão exponencial limitada.
+- `surface.js` controla as superfícies de conversa/memória, expansão, foco e ordem responsiva sem descartar o estado do DOM.
+- `presentation-state.js` resolve o estado operacional apresentado e impede que evento realtime obsoleto reative processamento após cancelamento local.
+- `memory-globe-controller.js` separa dados, interação, busca, lista acessível, inspector, fallback e sincronização do renderer WebGL.
+
+O dashboard atual inclui shell contínuo, hierarquia Globe/conversa, controles reais, inspector, fontes por resposta, consentimentos separados, confirmação destrutiva, estados negativos e responsividade. Tablet e mobile iniciam na conversa e alternam para uma superfície de memória dedicada preservando rascunho, seleção e foco.
 
 Limitações atuais:
 
 - **PARTIAL:** o histórico de conversa fica no navegador; as tabelas de conversas e mensagens ainda não formam o histórico ativo do chat.
 - **PARTIAL:** STT depende da Web Speech API e do suporte/permissão do navegador.
+- **PARTIAL:** a versão de runtime permanece `6.0.0-phase.5`; trata-se de metadata legado do artefato aprovado, não do status da Phase 6.
 - **PLANNED:** PWA/aplicativo desktop e armazenamento local criptografado.
 - **PLANNED:** streaming de tokens.
 
@@ -73,13 +94,16 @@ O fluxo atual inclui:
 
 - carga inicial e sincronização por `GET /api/memories/graph`;
 - normalização defensiva de nós, entidades, relações e vínculos;
+- separação entre `MemoryGlobeController` e renderer WebGL;
 - modos Orbital, Clusters e Memória;
 - rotação, pan, zoom, foco, hover, seleção e inspetor;
-- perfis visuais Low, Medium, High e Ultra;
-- suporte a movimento reduzido;
+- busca que preserva contexto, lista textual sincronizada e inspector DOM semântico;
+- perfis visuais Low, Medium, High e Ultra com limites de LOD/DPR sem perder lista, seleção ou contagem do payload;
+- suporte a movimento reduzido, controles por teclado e câmera alternativa;
+- fallback textual quando WebGL falha e recuperação do renderer sem perder o payload/seleção;
 - aplicação incremental de criação, atualização e remoção de memórias e relações;
 - foco seletivo por evento de UI `FOCUS_MEMORIES`;
-- estados do Core Orb derivados de `AI_STATE_CHANGED`.
+- estados do Core Orb derivados de operações locais e `AI_STATE_CHANGED`, com proteção contra estado remoto obsoleto após cancelamento.
 
 Limitações atuais:
 
@@ -263,18 +287,21 @@ A descrição “cloud-ready” representa direção arquitetural, não implanta
 
 ### Testes — IMPLEMENTED
 
-- Python: `pytest` cobre API, banco, memória, serviços, realtime e Orchestrator.
-- JavaScript: o runner nativo do Node cobre storage, renderer, realtime, Memory Globe e eventos de UI.
+- Python: 45 testes passaram no review da Phase 6, cobrindo API, banco, memória, serviços, realtime e Orchestrator; permanece um warning não bloqueante de depreciação Starlette/TestClient.
+- JavaScript: 36 testes Node passaram, cobrindo storage, renderer, realtime, Memory Globe, apresentação, cancelamento e eventos de UI.
+- Browser: os cinco verificadores oficiais passaram em harness descartável sobre o Functional Commit, cobrindo sete viewports, chat-first, foco/teclado, contraste, reduced motion, perfis LOW/MEDIUM/HIGH/ULTRA, fallback/recuperação WebGL, consentimento, exclusão confirmada, voz com fixtures e realtime.
 - Integrações pagas são simuladas nos testes automatizados.
 - `scripts/preflight_database.py` pode validar PostgreSQL/pgvector real e exercitar CRUD temporário.
 
-Validação visual de browser e banco PostgreSQL real continuam tarefas ambientais e não são implicitamente comprovadas pela suíte unitária.
+Esses resultados pertencem à rodada anterior no Functional Commit `0912e94`. A limpeza documental produz um Integration Candidate distinto, publicado em PR em rascunho, que ainda exige confirmação final de QA e Security antes do merge. Microfone/provider reais, leitor de tela manual, dispositivos físicos e banco PostgreSQL real continuam limites ambientais e Production Readiness não é inferida.
 
 ## TARGET ARCHITECTURE
 
 Os itens desta seção são direção futura e não devem ser interpretados como autorização para iniciar uma nova fase.
 
-A especificação detalhada de plataforma, personalidade, Learning, Experience Memory, Agents, Skills, Tools, Permissions, Coding, Model Router, imagens, multimodalidade, avaliação, observabilidade, custos, limites de autonomia e roadmap está em [`docs/future-architecture.md`](future-architecture.md). O princípio estrutural é adicionar capacidades em camadas pequenas e reversíveis: identidade e consentimento precedem execução; permissões precedem agentes; experiências precedem aprendizado avançado.
+A intenção de produto está em [`docs/product-vision.md`](product-vision.md), a sequência aprovada e seus gates em [`docs/roadmap.md`](roadmap.md), e a especificação técnica futura em [`docs/future-architecture.md`](future-architecture.md). O princípio estrutural é adicionar capacidades em camadas pequenas e reversíveis: identidade e consentimento precedem execução; permissões precedem agentes; experiências precedem aprendizado avançado.
+
+[`docs/phase-7.md`](phase-7.md) é apenas um plano `WAITING_FOR_APPROVAL`. Sua implementação está `NOT_STARTED` e `NOT_AUTHORIZED`. Antes de qualquer implementação, a branch da Phase 6 deve ser limpa, transformada em um Integration Candidate único, publicada em PR em rascunho, confirmada por QA e Security no mesmo hash e integrada em `main` pelo fluxo autorizado.
 
 O alvo assume um único owner. Reconhecer esse owner não exige cadastro público, organizações, RBAC complexo ou isolamento entre tenants. Exige apenas uma credencial adequada ao ambiente, sessão revogável, escopo explícito de recursos e decisões de risco que tools, agentes e conteúdo não confiável não possam ampliar.
 

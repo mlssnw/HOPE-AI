@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 from starlette.websockets import WebSocketDisconnect
 from httpx import ASGITransport, AsyncClient
 
+from backend.config import Settings
 from backend.database.session import Database
 from backend.main import create_app
 from backend.memory.embeddings import LocalHashEmbeddingProvider
@@ -153,8 +154,9 @@ async def test_memory_api_publishes_incremental_lifecycle_events() -> None:
 
 
 @pytest.mark.asyncio
-async def test_chat_publishes_ai_state_for_same_user() -> None:
-    app = create_app(FakeServices())  # type: ignore[arg-type]
+async def test_chat_publishes_ai_state_for_same_user(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(Settings, "from_env", lambda: Settings.for_tests())
+    database, app = await make_app()
     user_id = uuid.uuid4()
     subscription = await app.state.event_bus.subscribe(user_id)
     try:
@@ -172,6 +174,7 @@ async def test_chat_publishes_ai_state_for_same_user() -> None:
         assert (await subscription.get()).payload["state"] == "idle"
     finally:
         await app.state.event_bus.unsubscribe(subscription)
+        await database.dispose()
 
 
 def test_websocket_connects_and_answers_ping() -> None:
