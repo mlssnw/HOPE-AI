@@ -1,6 +1,6 @@
 # Arquitetura do HOPE AI
 
-Este documento registra o estado arquitetural implementado no Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` e a reconciliação documental de 21 de setembro de 2026. Ele complementa o histórico de `docs/phase-1.md` a [`docs/phase-6.md`](phase-6.md) e separa explicitamente implementação atual de visão futura. Os reviews anteriores permanecem evidência do Functional Commit, mas o status operacional da Phase 6 para integração é `WAITING_FOR_REVIEW`. A sequência obrigatória é Integration Candidate → PR em rascunho → QA e Security no mesmo hash → merge. Production Readiness permanece `BLOCKED`.
+This document records the implemented architecture integrated into `main` through `ce2bde4a0792fa6a8c0a79e56781add162bff2d2` on 2026-09-25. It complements the history in `docs/phase-1.md` through [`docs/phase-6.md`](phase-6.md) and explicitly separates current implementation from future direction. Phase 6 is complete. Phase 7 is authorized but `NOT_STARTED`, has no Functional Commit and changes no implemented-state claim in this document. Production Readiness remains `BLOCKED`.
 
 A direção de produto `SINGLE_USER` continua válida. A visão aprovada está em [`docs/product-vision.md`](product-vision.md), a ordem e os gates em [`docs/roadmap.md`](roadmap.md) e os contratos-alvo em [`docs/future-architecture.md`](future-architecture.md). Nenhum desses documentos transforma capacidade planejada em capacidade atual.
 
@@ -12,15 +12,16 @@ Legenda:
 
 ### Baseline, fase e versão
 
-- Functional Commit atual: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`.
-- Phase 6 — Target UI Convergence: implementação presente no Functional Commit; status operacional `WAITING_FOR_REVIEW` para integração.
-- Reviews anteriores: QA e Security emitiram `APPROVED_WITH_WARNINGS` sobre `0912e94`, e UI/UX emitiu `APPROVED`; esses resultados não aprovam automaticamente o novo Integration Candidate documental.
-- HOPE Main Dashboard: **IMPLEMENTED** dentro das capacidades reais; a aprovação visual anterior de UI/UX permanece evidência, sem substituir a confirmação final de QA/Security para a branch.
+- Implemented baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2` on `main`, integrating Phase 6 through PR #1.
+- Phase 6 — Target UI Convergence: `COMPLETE` and integrated.
+- Phase 6 evidence: implementation `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`, isolated test correction `4d76f2433363a47a9d8fe29fef337de1dc79ac50`, final integration candidate `cb8dc774cc396f3aff0ef40e79753761fbf3b49b` and merge `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`.
+- Reviews: QA and Security concluded `APPROVED_WITH_WARNINGS` and UI/UX concluded `APPROVED` for the applicable Phase 6 artifacts. These results do not approve Phase 7.
+- HOPE Main Dashboard: **IMPLEMENTED** within real capabilities; Phase 6 QA, Security and UI/UX evidence is complete and integrated.
 - Runtime API version: `6.0.0-phase.5`, valor preservado no código do Functional Commit aprovado.
-- Convenção: o runtime version identifica o artefato de código e não determina a fase operacional/documental. O status da fase é definido pelo Functional Commit, `docs/phase-6.md`, reviews e handoff.
-- `6.0.0-phase.5` é um rótulo legado congelado; mantê-lo evita alterar código após os reviews. Atualizá-lo para `6.0.0-phase.6` exigiria novo Functional Commit e análise/reviews proporcionais, por isso não faz parte desta limpeza documental.
-- Integration Candidate: o HEAD documental produzido por esta limpeza, mantendo `0912e94` como Functional Commit. O candidate abre um PR em rascunho; QA e Security confirmam esse mesmo hash antes do merge.
-- Phase 7: somente planejamento em [`docs/phase-7.md`](phase-7.md), com implementação `NOT_STARTED` e `NOT_AUTHORIZED`; integração da Phase 6 e reviews finais do candidate a precedem.
+- Convention: runtime version identifies a code artifact and does not determine operational or documentation phase. Current status comes from the applicable phase document, exact Functional Commit, reviews and handoff.
+- `6.0.0-phase.5` is a frozen legacy label. Changing it would create a new functional delta and require proportional review, so Phase 7 does not alter it before implementation.
+- Phase 7: plan `APPROVED` and implementation authorization `APPROVED` by the owner on 2026-09-25 under `ARCH-2026-09-25-001`; implementation `NOT_STARTED`; Functional Commit `NONE`.
+- Phase 7 boundary: the next gate is the Coordinator-routed pre-implementation UI/UX specification. Every exact `PhraseLibrary` proposal requires an individual owner decision before it can enter code, fixtures, tests, defaults or active product content.
 
 ## CURRENT STATE
 
@@ -57,7 +58,7 @@ O backend serve o frontend e as APIs na mesma origem. Quando `DATABASE_URL` não
 
 A aplicação atual ainda usa um UUID criado no navegador e controlado pelo cliente. O alvo revisado não é uma plataforma de contas: existe um único owner, reconhecido por uma fronteira server-side proporcional ao ambiente. Em desenvolvimento local controlado, essa fronteira pode usar pareamento da instalação e sessão local; acesso remoto ou cloud exige credencial forte e sessão protegida antes da exposição.
 
-O Functional Commit atual é `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`; seu baseline aprovado é `88e194778b4399a6713f118470f9d861c553cd9e`. A Phase 6 alterou frontend, testes e evidências, sem modificar backend, API, schema, migration ou persistência.
+The implemented baseline is `ce2bde4a0792fa6a8c0a79e56781add162bff2d2` on `main`. Phase 6 changed frontend, tests and evidence without changing backend runtime, API, schema, migrations or persistence. Phase 7 has no Functional Commit and has not changed any runtime surface.
 
 Os campos `user_id` existentes permanecem no estado atual e serão preservados como namespace interno do owner até que uma migration específica seja justificada. Eles não provam identidade. Autenticação multiusuário, RBAC organizacional, tenants, teams, SSO empresarial, federação e RLS orientado a tenants foram removidos do roadmap imediato.
 
@@ -293,15 +294,15 @@ A descrição “cloud-ready” representa direção arquitetural, não implanta
 - Integrações pagas são simuladas nos testes automatizados.
 - `scripts/preflight_database.py` pode validar PostgreSQL/pgvector real e exercitar CRUD temporário.
 
-Esses resultados pertencem à rodada anterior no Functional Commit `0912e94`. A limpeza documental produz um Integration Candidate distinto, publicado em PR em rascunho, que ainda exige confirmação final de QA e Security antes do merge. Microfone/provider reais, leitor de tela manual, dispositivos físicos e banco PostgreSQL real continuam limites ambientais e Production Readiness não é inferida.
+These Phase 6 results remain evidence for the integrated baseline. Real microphone/provider operation, manual screen-reader testing, physical devices and a real PostgreSQL environment remain environmental limits; Production Readiness is not inferred. Phase 7 must produce its own exact Functional Commit and required reviews after implementation.
 
 ## TARGET ARCHITECTURE
 
-Os itens desta seção são direção futura e não devem ser interpretados como autorização para iniciar uma nova fase.
+The items in this section are future direction. The only current implementation authorization is Phase 7 within the exact boundaries of [`docs/phase-7.md`](phase-7.md); nothing here authorizes Phase 8 or a later phase.
 
 A intenção de produto está em [`docs/product-vision.md`](product-vision.md), a sequência aprovada e seus gates em [`docs/roadmap.md`](roadmap.md), e a especificação técnica futura em [`docs/future-architecture.md`](future-architecture.md). O princípio estrutural é adicionar capacidades em camadas pequenas e reversíveis: identidade e consentimento precedem execução; permissões precedem agentes; experiências precedem aprendizado avançado.
 
-[`docs/phase-7.md`](phase-7.md) é apenas um plano `WAITING_FOR_APPROVAL`. Sua implementação está `NOT_STARTED` e `NOT_AUTHORIZED`. Antes de qualquer implementação, a branch da Phase 6 deve ser limpa, transformada em um Integration Candidate único, publicada em PR em rascunho, confirmada por QA e Security no mesmo hash e integrada em `main` pelo fluxo autorizado.
+[`docs/phase-7.md`](phase-7.md) is an `APPROVED` plan with implementation explicitly authorized by the owner on 2026-09-25. Implementation remains `NOT_STARTED` and no Phase 7 Functional Commit exists. Before Development can be routed, UI/UX must persist the complete pre-implementation specification and present every exact phrase proposal separately with context, intended tone and `PENDING_OWNER_APPROVAL`. Approval of one phrase does not approve variants or other phrases, and no unapproved phrase may enter code, fixtures, tests, defaults or active product content.
 
 O alvo assume um único owner. Reconhecer esse owner não exige cadastro público, organizações, RBAC complexo ou isolamento entre tenants. Exige apenas uma credencial adequada ao ambiente, sessão revogável, escopo explícito de recursos e decisões de risco que tools, agentes e conteúdo não confiável não possam ampliar.
 

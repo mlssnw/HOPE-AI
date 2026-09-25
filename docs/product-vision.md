@@ -6,9 +6,9 @@
 - Owner approval: 2026-09-20
 - Approval record: `f85b9bb775574b8a1340497e3e9e6d99b9b19c8c`
 - Product model: `SINGLE_USER`
-- Functional baseline: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
+- Functional baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2` on `main`
 - Product-direction intake: `ff1309f71cd4aaac0a096a9760abfb37e353177b`
-- Scope: future product direction only; no implementation authorization
+- Scope: future product direction; Phase 7 authorization is governed by `docs/phase-7.md` and `ARCH-2026-09-25-001`
 
 ## Source-of-truth role
 
@@ -48,9 +48,9 @@ The long-term experience is continuous across text, voice and installed clients.
 
 ## Implemented boundary
 
-The Phase 6 implementation exists on Functional Commit `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`. Earlier QA, Security and UI/UX results remain evidence for that artifact, but the operational integration status is `WAITING_FOR_REVIEW`: the documentation-only Integration Candidate must open a draft PR and receive final QA and Security confirmation on the same hash before merge. The current product implementation includes the dashboard, chat, optional persistent memory, Memory Globe/Core Orb, existing browser dictation, optional TTS, realtime events and current integrations documented in `docs/architecture.md`.
+Phase 6 is complete and integrated into `main` through `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`. Its reviewed implementation artifacts and reviewer reports remain historical evidence. The current product implementation includes the dashboard, chat, optional persistent memory, Memory Globe/Core Orb, existing browser dictation, optional TTS, realtime events and current integrations documented in `docs/architecture.md`.
 
-Everything below is future direction. It does not re-open Phase 6, authorize Development, approve a provider or imply Production Readiness.
+Everything below remains product direction. The owner separately authorized Phase 7 implementation on 2026-09-25, but implementation has not started and no Phase 7 Functional Commit exists. That authorization does not approve a provider, database change, later phase or Production Readiness.
 
 ## Conversational presence and voice
 
@@ -102,7 +102,7 @@ The owner approved Dean Winchester as a general-trait reference together with Le
 
 This exception never permits literal famous quotes, copied dialogue, identity imitation, recognizable character performance, voice cloning, sustained acting or copyrighted passage reproduction. The resulting response must remain original and identify only as HOPE. The product decision does not modify runtime code or prompts. Any normative reconciliation of `AGENTS.md` belongs in a separate owner/Coordinator-controlled change and must not be mixed with this Planner commit.
 
-The `PhraseLibrary` may contain original HOPE phrases. Owner-provided custom phrases require provenance, explicit activation and deletion controls; they do not become global personality rules.
+The `PhraseLibrary` may contain only original HOPE phrases individually approved by the owner. UI/UX presents every exact proposal separately with its context and intended tone, initially marked `PENDING_OWNER_APPROVAL`. Approval applies only to that exact text and context: it never approves a variant, another phrase or a later rewrite. Unapproved phrases cannot enter code, fixtures, tests, defaults or active product content. Owner-provided custom phrases also require provenance, explicit activation and deletion controls; they do not become global personality rules.
 
 ## SelfKnowledge
 
@@ -193,11 +193,12 @@ Approved on 2026-09-20:
 2. `ARCH-2026-09-20-001` and the phase order in `docs/roadmap.md`.
 3. Dean Winchester as a general-trait reference and the public-safe disclosure of the approved inspirations.
 4. The narrow, explicitly requested recognition/original-homage boundary described above.
-5. Phase 7 as the next planning target only.
+5. Phase 7 as the next planned phase.
+6. On 2026-09-25, the exact Phase 7 plan and implementation strictly within it, with the individual phrase-approval gate.
 
 Still requiring a future owner decision:
 
-1. Approve or revise the exact Phase 7 plan and separately authorize implementation.
+1. Approve, edit or reject each exact Phase 7 phrase proposal individually.
 2. Select acceptable voice privacy/retention boundaries before any new cloud audio flow.
 3. Approve any STT/TTS/wake/speaker provider, license, credential, region and cost after evaluation.
 4. Decide whether a speaker profile is valuable enough to justify biometric processing and retention.
@@ -207,9 +208,9 @@ Still requiring a future owner decision:
 
 ## Acceptance criteria for this vision
 
-- Phase 6 remains frozen at `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`.
-- Phase 6 integration remains `WAITING_FOR_REVIEW`; draft PR, QA and Security confirmation on the same Integration Candidate precede merge.
+- Phase 6 remains complete and integrated at `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`.
+- Phase 7 authorization is explicit, its implementation remains `NOT_STARTED` and its Functional Commit remains `NONE`.
 - Current, future and production-ready states remain distinct.
 - Voice, personality, memory, modes, organization, diagnostics, clients and cloud have explicit safety boundaries.
-- No provider, cost, credential, migration, deployment or implementation is authorized.
+- No provider, cost, credential, migration, deployment, production action or Phase 8+ implementation is authorized.
 - Approved and pending owner decisions are explicit and cannot be inferred from this document.

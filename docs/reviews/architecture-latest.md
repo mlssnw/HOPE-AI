@@ -1,163 +1,173 @@
 # Architecture Review — Latest
 
-- Status: WAITING_FOR_REVIEW
-- Decision ID: `ARCH-2026-09-21-001`
-- Date: 2026-09-21
+- Status: `APPROVED`
+- Decision ID: `ARCH-2026-09-25-001`
+- Date: 2026-09-25
 - Product model: `SINGLE_USER`
-- Branch: `codex/phase-6-target-ui`
-- Functional Commit preserved: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
-- Repository HEAD analyzed: `0da3030c696d10071b3fc9d9c92471999e2fc0ea`
-- `origin/main` analyzed: `0bcc25a5437cab8a326e64281579ead56274d8cb`
-- Integration Candidate: documentation-only HEAD produced by this cleanup; exact hash is the resulting commit
-- Phase 6 operational status: WAITING_FOR_REVIEW
-- Phase 7 planning: WAITING_FOR_APPROVAL
-- Phase 7 implementation: NOT_STARTED / NOT_AUTHORIZED
-- Production Readiness: BLOCKED
+- Branch: `main`
+- Repository HEAD analyzed: `cdb40098489d28dd476a2b9c211cd6289a325888`
+- `origin/main` analyzed: `122505f25a7e91eca1f9a5e3aadd15c6a25715b9`
+- Implemented baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`
+- Coordinator authorization record: `cdb40098489d28dd476a2b9c211cd6289a325888`
+- Phase 7 planning: `APPROVED`
+- Phase 7 implementation authorization: `APPROVED`
+- Phase 7 implementation: `NOT_STARTED`
+- Phase 7 Functional Commit: `NONE`
+- Production Readiness: `BLOCKED`
 
 ## Problem
 
-The Phase 6 implementation exists at `0912e94` and received QA/Security/UI/UX reviews in the earlier round. The architecture cleanup already reconciled the implemented frontend and runtime-version convention, but `docs/roadmap.md` and `docs/product-vision.md` still described Phase 6 as completed, and the integration gate did not distinguish opening a draft PR from authorizing merge.
+The owner explicitly authorized implementation of Phase 7 — Conversational Presence Foundation on 2026-09-25, strictly within the already approved plan. The Coordinator persisted that decision in `cdb4009`, but active canonical planning sources still described Phase 7 as `WAITING_FOR_APPROVAL` or `NOT_AUTHORIZED` and still treated Phase 6 integration as pending.
 
-Before integration, the project needs one documentation-only Integration Candidate that accurately describes the implemented dashboard, records the version convention and keeps Phase 7 unstarted. The previous QA and Security reports remain evidence for the Functional Commit but do not constitute final approval of the cleaned branch. The candidate must be published in a draft PR; QA and Security then confirm that same hash before merge.
+The authorization also introduced a mandatory owner gate for every exact `PhraseLibrary` phrase. Without one canonical protocol, a phase-level approval could be misread as approval of unwritten variants, or unapproved product language could leak into code, fixtures, tests or defaults.
 
 ## Current State
 
-- Functional implementation remains exactly `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`.
-- The earlier round recorded 45 passing Python tests, 36 passing frontend tests, five passing browser verifiers and no functional blocker on that Functional Commit.
-- UI/UX previously approved fidelity of the implemented HOPE Main Dashboard on `0912e94`; that result remains visual evidence only.
-- Commits after `0912e94` are documentation/review/coordination changes and do not create a new Functional Commit.
-- The runtime code and README expose `6.0.0-phase.5`; changing the runtime value requires editing `backend/main.py`.
-- Phase 7 is a plan with status `WAITING_FOR_APPROVAL`; implementation is `NOT_STARTED` and `NOT_AUTHORIZED`.
-- Production Readiness remains `BLOCKED` by the existing Security/Database/operational gates.
-- The owner-approved `AGENTS.md` reconciliation is already versioned in `0da3030`; untracked visual assets remain outside this Planner commit.
+- Phase 6 is complete and integrated into `main` through `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`.
+- The owner approved the exact Phase 7 plan and authorized implementation within its boundaries.
+- No Phase 7 functional implementation or Functional Commit exists.
+- The immediate workflow step is a pre-implementation UI/UX specification routed by the Coordinator.
+- Development, QA, Security and Database are not active for Phase 7.
+- The current runtime still exposes the frozen legacy metadata `6.0.0-phase.5`; this is not the Phase 7 status.
+- Production Readiness remains `BLOCKED` by inherited security, database and operational findings.
+- No provider, cloud audio, wake word, speaker verification, persistence, database, migration, integration, tool, agent, deployment, production action or Phase 8 work is authorized.
 
 ## Constraints
 
-- Documentation only; no functional code, tests, migration, database, frontend, backend, README or CHANGELOG change.
-- Preserve `0912e94` as the Functional Commit and preserve all reviewer-owned reports unchanged.
-- Do not describe Phase 6 as approved for merge before the final candidate reviews; a draft PR is the review vehicle, not an approval result.
-- QA and Security must review/confirm the same Integration Candidate hash.
-- UI/UX's earlier result may remain evidence but cannot replace final QA/Security confirmation.
-- Do not modify Current Phase, Review Matrix, Coordinator section or Next Action.
-- Do not edit `AGENTS.md`; preserve all untracked assets outside the commit.
-- Do not start Phase 7, UI/UX or Development.
+- Documentation-only reconciliation; no code, tests, frontend, backend, schema, migrations, database operations, secrets or infrastructure changes.
+- Preserve every existing Phase 7 non-goal and the `SINGLE_USER` direction.
+- Do not treat authorization as implementation, verification, Functional Commit creation or feature approval.
+- Do not start UI/UX, Development, QA, Security or Database from the Planner Work; return routing to the Coordinator.
+- Do not edit reviewer-owned reports or Coordinator-owned handoff sections.
+- Create no phrase and infer no phrase approval.
+- Keep every exact phrase blocked until the owner decides that exact item.
 
 ## Options
 
-### Option A — Preserve `6.0.0-phase.5` as immutable runtime metadata of the approved Functional Commit
+### Option A — Record the phase authorization as a broad implementation approval
 
-- Pros: keeps functional code and review identity unchanged; avoids a version-only Functional Commit; permits the integration candidate to remain documentation-only.
-- Cons: the suffix can be mistaken for the operational Phase 5 unless the convention is explicit.
-- Cost: none beyond documentation and future release hygiene.
-- Complexity: low.
-- Security impact: none; no runtime surface changes.
-- Database impact: none.
-- Maintenance impact: establishes that runtime version and planning phase are independent; the legacy label remains until a future authorized functional release.
+- Pros: minimal documentation; fewer explicit gates.
+- Cons: makes phrase approval ambiguous; can be misread as permission for variants, future copy or scope expansion.
+- Cost: low documentation cost, potentially high correction and review cost.
+- Complexity: low initially, high when provenance and wording disputes emerge.
+- Security impact: weakens the human approval boundary for product language and makes prompt/content-derived phrase expansion harder to detect.
+- Database impact: none directly, but the broad wording may obscure the existing no-persistence boundary.
+- Maintenance impact: approval scope becomes difficult to audit.
 
-### Option B — Change runtime metadata to `6.0.0-phase.6` before integration
+### Option B — Record scoped phase authorization plus an exact-item phrase protocol
 
-- Pros: visually aligns the API label with the coordinated phase number.
-- Cons: edits `backend/main.py`, creates a new Functional Commit after the completed review round and requires fresh impact analysis/reviews for a cosmetic synchronization.
-- Cost: low engineering effort but material coordination/review overhead.
-- Complexity: low in code, medium in governance.
-- Security impact: no intended behavioral change, but the reviewed artifact identity changes.
-- Database impact: none.
-- Maintenance impact: continues coupling semantic/runtime releases to project-management phases.
+- Pros: preserves the approved implementation scope, creates traceable phrase decisions, supports natural UI/UX review and prevents inferred batch approval.
+- Cons: UI/UX must maintain one record per proposed phrase and the owner must decide each item.
+- Cost: low documentation and review overhead; no provider or infrastructure cost.
+- Complexity: low to medium and bounded to specification/approval records.
+- Security impact: fail-closed for unapproved copy; content cannot self-authorize or broaden an approval.
+- Database impact: none; phrase persistence remains outside Phase 7.
+- Maintenance impact: explicit provenance and exact-text decisions simplify later review.
 
 ## Recommendation
 
-Adopt Option A. Keep `6.0.0-phase.5` unchanged in code and treat it as the immutable legacy runtime label of Functional Commit `0912e94`, not as the source of truth for phase status. `docs/phase-6.md`, the exact Functional Commit, reviewer records and handoff define the operational phase.
+Adopt Option B.
 
-The integration decision remains `WAITING_FOR_REVIEW`. This cleanup creates the candidate; it does not approve it. Coordinator opens a draft PR for that exact documentation-only HEAD, then QA and Security confirm the same hash before merge.
+Record Phase 7 planning and implementation authorization as `APPROVED` while preserving implementation as `NOT_STARTED` and Functional Commit as `NONE`. The next route is Coordinator → UI/UX for the complete pre-implementation specification. UI/UX must present every exact phrase separately with context, intended tone and `PENDING_OWNER_APPROVAL`. Development remains blocked until that specification is persisted and every phrase intended for the implementation package has an explicit owner decision.
 
 ## Rationale
 
-Changing a static metadata string after the reviewed functional commit would produce more governance churn than product value. The inconsistency is contained and explainable, while a code edit would invalidate the clean separation between the reviewed implementation and the documentation cleanup. A future authorized functional release can adopt a phase-independent semantic/build version without blocking this branch.
+The owner decision is explicit, so retaining `NOT_AUTHORIZED` would be false. Treating the phase authorization as evidence of implementation would also be false. Separate fields preserve both truths.
+
+Exact-item approval is the smallest sufficient control for language that directly represents HOPE's identity. It avoids a new service, database or policy engine while ensuring a single accepted phrase cannot silently authorize paraphrases, localizations or future variants.
 
 ## Architecture
 
-`docs/architecture.md` now distinguishes three identities:
+```text
+Owner authorization (Phase 7 scope)
+                │
+                ▼
+Planner canonical reconciliation
+                │
+                ▼
+Coordinator routes UI/UX specification
+                │
+                ├── non-phrase experience contracts
+                │
+                └── exact phrase proposal records
+                           │
+                           ▼
+                 PENDING_OWNER_APPROVAL
+                           │
+                  owner decision per item
+                           │
+                           ▼
+             approved exact items only
+                           │
+                           ▼
+Coordinator may route Development
+```
 
-1. **Functional artifact:** `0912e94`, containing the implemented dashboard and tests.
-2. **Integration Candidate:** the documentation-only HEAD produced by this cleanup, which QA and Security must confirm on the same hash.
-3. **Runtime metadata:** `6.0.0-phase.5`, a frozen legacy label that does not determine operational phase status.
+The implementation architecture remains the component model in [`docs/phase-7.md`](../phase-7.md): `DisplayResponse`/`SpokenResponse` separation, `SpeechFormatter`, `TurnManager`, `VoiceStateManager`, `VoiceManager`, provider-neutral hints, modes, public-safe `SelfKnowledge` and local ephemeral output amplitude.
 
-The current architecture records:
+Phrase records are specification evidence, not runtime authority. Each record contains exact text, locale/category, usage context, intended tone, safety eligibility and status. The owner decision is exact-text and exact-context scoped. Any edited or derived text is a new proposal.
 
-- implemented responsive HOPE Main Dashboard and chat-first surfaces;
-- `SurfaceController`, `MemoryGlobeController` and presentation-state separation;
-- accessible list/inspector, WebGL fallback/recovery, LOD profiles and truthful operational states;
-- 45 Python and 36 frontend tests from the prior Functional Commit review, plus browser evidence and its environmental limits;
-- exact links to product vision, roadmap, future architecture, Phase 6 and Phase 7;
-- Phase 7 as planning only, behind integration and a separate authorization.
+## Required Reviews
 
-## Integration Candidate Gate
-
-1. Planner creates one documentation-only cleanup commit.
-2. Coordinator records that exact HEAD as the Integration Candidate and opens a draft PR without changing the Functional Commit.
-3. QA confirms branch/diff integrity, documentation consistency and absence of functional drift on the candidate hash shown by the draft PR.
-4. Security confirms the same candidate hash, preservation of findings/boundaries and absence of newly introduced exposure or misleading authorization.
-5. Only after both final confirmations may Coordinator merge the authorized PR.
-6. Production remains blocked and Phase 7 remains unstarted after merge unless separately approved and authorized.
-
-## Required Reviews for Integration Candidate
-
-| Work | Required | Justification |
+| Work | Required | Reason |
 |---|---|---|
-| QA | YES | final branch/candidate integrity and documentation-to-functional-commit consistency must be confirmed |
-| DATABASE | NO | cleanup changes no code, persistence, schema, migration or database contract |
-| SECURITY | YES | final candidate must preserve blockers, production boundary and the exact reviewed functional artifact |
-| UI/UX | NO | no visual implementation changed; the prior UI/UX approval remains evidence on `0912e94` |
+| QA | YES | future functional behavior, cancellation, races, accessibility and phrase-gate enforcement require regression testing |
+| DATABASE | NO | Phase 7 prohibits persistence, schema, migrations and query changes; any data impact reopens the plan |
+| SECURITY | YES | voice state, privacy modes, untrusted content, `SelfKnowledge` and truthful claims are security boundaries |
+| UI/UX | YES | pre-implementation specification and post-implementation fidelity review are mandatory; UI/UX prepares but does not approve phrases |
 
 ## Risks
 
-- The runtime suffix may be misread as current phase status.
-- Reviewers may accidentally review `0912e94` again instead of the Integration Candidate HEAD, or vice versa.
-- A dirty local working tree may be staged accidentally during integration.
-- Prior `APPROVED_WITH_WARNINGS` reports may be misrepresented as final branch approval.
-- Draft PR or merge may be treated incorrectly as Production Readiness or as Phase 7 authorization.
-- README/CHANGELOG may remain less precise than the authoritative architecture documents until a separate owner/Coordinator-owned update.
+- Authorization could be mistaken for completed implementation or Feature Approval.
+- A phrase approved once could be reused as implicit approval for a variant.
+- UI/UX could present phrases in a batch without sufficient context for an informed decision.
+- Unapproved text could enter fixtures or tests and later be promoted to product defaults.
+- Personality language could become robotic, repetitive or imitate a referenced character.
+- The Phase 7 boundary could expand into providers, cloud audio, persistence or Phase 8 security work.
+- The local `main` branch is ahead of `origin/main` by documentation; later work must verify its exact baseline.
 
 ## Acceptance Criteria
 
-- [x] `docs/architecture.md` reflects the implementation at `0912e94`, not the pre-Phase 6 frontend.
-- [x] Phase 6 functionality, dashboard, test counts and validation boundaries are recorded without claiming production readiness.
-- [x] Product vision, roadmap and future architecture have correct source-of-truth links.
-- [x] The version options, trade-offs and chosen convention are explicit.
-- [x] No code change to `backend/main.py` or runtime version is made.
-- [x] Phase 7 remains `WAITING_FOR_APPROVAL`, `NOT_STARTED` and `NOT_AUTHORIZED`.
-- [x] The sequence Integration Candidate → draft PR → QA/Security on the same hash → merge precedes Phase 7 implementation.
-- [x] No reviewer-owned report, README, CHANGELOG, AGENTS, asset, code, test or migration is altered.
-- [ ] QA confirms the resulting Integration Candidate hash.
-- [ ] Security confirms the same Integration Candidate hash.
-- [ ] Coordinator opens the draft PR for the exact Integration Candidate.
-- [ ] Coordinator merges only after both confirmations.
+- [x] Phase 6 is recorded as complete and integrated at `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`.
+- [x] Phase 7 planning and implementation authorization are recorded as `APPROVED`.
+- [x] Phase 7 implementation remains `NOT_STARTED` and Functional Commit remains `NONE`.
+- [x] Production Readiness remains `BLOCKED`.
+- [x] All Phase 7 non-goals remain in force.
+- [x] UI/UX is identified as the next pre-implementation specification role, subject to Coordinator routing.
+- [x] Every exact phrase proposal starts `PENDING_OWNER_APPROVAL` and includes context and intended tone.
+- [x] Approval of one phrase does not approve another phrase, variant, localization or future rewrite.
+- [x] Unapproved phrases are prohibited from code, fixtures, tests, snapshots, defaults, seeded content and active product content.
+- [x] No phrase is created by this decision.
+- [x] No provider, database, migration, cloud, deployment, production, Phase 8 or later-phase work is authorized.
+- [x] No functional code or reviewer-owned record is changed.
 
 ## Implementation Phase
 
-- Documentation cleanup: READY_FOR_REVIEW in the resulting candidate commit.
-- Integration Candidate: to be identified by this cleanup commit hash.
-- Phase 6 operational status: WAITING_FOR_REVIEW.
-- Draft PR: NOT_STARTED; it is the review vehicle for the resulting Integration Candidate.
-- Merge: BLOCKED pending QA and Security on the same candidate.
-- Phase 7 planning: WAITING_FOR_APPROVAL.
-- Phase 7 implementation: NOT_STARTED / NOT_AUTHORIZED.
-- Production Readiness: BLOCKED.
+1. `COMPLETE` — owner approval of the exact Phase 7 plan and scoped implementation authorization.
+2. `COMPLETE` — Planner canonical reconciliation and phrase-gate definition.
+3. `NEXT / NOT_STARTED` — Coordinator routes UI/UX pre-implementation specification.
+4. `OWNER GATE` — owner decides every proposed exact phrase separately.
+5. `BLOCKED UNTIL GATES COMPLETE` — Development routing.
+6. Future Development produces one exact Phase 7 Functional Commit.
+7. QA, Security and UI/UX review that same hash; Database remains `N/A` only if the no-persistence boundary holds.
+8. Planner consolidates without starting Phase 8.
 
 ## Deferred Items
 
-- Any phase-independent runtime-version redesign or code change.
-- README/CHANGELOG normalization by their owner, if requested.
-- Draft PR creation by Coordinator for the exact candidate.
-- QA and Security final candidate reviews.
-- Merge execution by Coordinator after the review gate.
-- Phase 7 approval, UI/UX specification and implementation authorization.
-- All provider, credential, database, migration, cloud and production work.
+- Any Phase 7 code or test implementation.
+- UI/UX phrase proposals and all exact owner phrase decisions.
+- Provider evaluation, cloud STT/TTS, streaming, wake word and speaker verification.
+- Authentication, `PermissionManager` and all Phase 8 work.
+- Database, migrations, persistence and real PostgreSQL operations.
+- Tools, agents, coding, integrations, external effects and automations.
+- Deployment, public exposure, Production Readiness and acceptance of HIGH/CRITICAL risk.
+- Phase 8 and every later phase.
 
 ## Coordinator Handoff
 
-- Recommended next role: COORDINATOR.
-- Status: WAITING_FOR_REVIEW.
-- Task: record the resulting Planner commit as the Integration Candidate, open a draft PR and route QA and Security to review that exact hash.
-- Do not route to: merge, UI/UX, Development, Phase 7 implementation, providers, database, cloud or production before the required confirmations.
-- No architectural blocker is known in the documented scope; the mandatory review gate itself blocks integration until completed.
+- Recommended next role: `COORDINATOR`.
+- Status: `APPROVED` for this architecture reconciliation; Phase 7 implementation remains `NOT_STARTED`.
+- Task: normalize the public coordination panel, then route the complete Phase 7 pre-implementation specification to `UI/UX` against baseline `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`.
+- UI/UX must present every exact phrase proposal separately with context, intended tone and `PENDING_OWNER_APPROVAL`.
+- Do not route Development until the UI/UX specification is persisted and every exact phrase intended for implementation has an explicit owner decision.
+- Do not route providers, Database, migrations, cloud, deployment, production or Phase 8.

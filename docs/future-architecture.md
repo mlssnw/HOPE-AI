@@ -7,12 +7,13 @@
 - Owner approval: 2026-09-20
 - Approval record: `f85b9bb775574b8a1340497e3e9e6d99b9b19c8c`
 - Product model: `SINGLE_USER`
-- Functional baseline: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
+- Functional baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2` on `main`
+- Phase 7 authorization: `APPROVED` on 2026-09-25 under `ARCH-2026-09-25-001`; implementation `NOT_STARTED`
 - Documentation baseline analyzed: `f85b9bb775574b8a1340497e3e9e6d99b9b19c8c`
 - Supersedes: a ordem pós-Phase 6 de `ARCH-2026-09-10-003`; preserva seus princípios `SINGLE_USER`, de segurança e permissões
 - Preserves: Phase 6 `APPROVED_WITH_WARNINGS` em `ARCH-2026-09-19-001`; nenhum escopo concluído é reaberto
 
-Este documento descreve como a direção futura pode ser construída. `docs/product-vision.md` define o produto; `docs/roadmap.md` define ordem e gates; `docs/architecture.md` continua registrando somente o estado implementado. Nenhum desses documentos inicia fase, autoriza Development ou permite migration, produção, provider, credencial ou custo.
+Este documento descreve como a direção futura pode ser construída. `docs/product-vision.md` define o produto; `docs/roadmap.md` define ordem e gates; `docs/architecture.md` continua registrando somente o estado implementado. A autorização explícita da Phase 7 está registrada em `docs/phase-7.md` e `ARCH-2026-09-25-001`; ela não inicia Development por este documento nem permite migration, produção, provider, credencial, custo ou fase posterior.
 
 ## VISION
 
@@ -152,7 +153,10 @@ User input / model response
 
 - Stores original HOPE phrases by category, version, locale, cooldown, audience and safety context.
 - Prevents repetitive startup/status phrases and never overrides substantive content.
-- Custom owner phrases are inactive until explicitly approved and remain removable.
+- UI/UX presents every exact proposal separately with context and intended tone, starting as `PENDING_OWNER_APPROVAL`.
+- Owner approval is exact-item only. It does not approve another phrase, a paraphrase, localization, punctuation variant or future rewrite.
+- Unapproved phrases cannot enter code, fixtures, tests, defaults, seeded content or the active product.
+- Approved phrases and custom owner phrases retain provenance, are removable and cannot become global personality rules.
 - Literal character quotes, copied catchphrases, impersonation and sustained imitation remain prohibited; no library entry may bypass the approved narrow original-homage boundary.
 
 ### STT/TTS provider abstraction
@@ -651,11 +655,11 @@ Phase 6 complete and frozen
 
 ## APPROVED DIRECTION AND FUTURE USER DECISIONS
 
-A owner aprovou em 2026-09-20 `ARCH-2026-09-20-001`, `docs/product-vision.md`, `docs/roadmap.md`, a política de personalidade/public `SelfKnowledge` e o planejamento da Phase 7. Essa aprovação não autoriza implementação.
+A owner aprovou em 2026-09-20 `ARCH-2026-09-20-001`, `docs/product-vision.md`, `docs/roadmap.md`, a política de personalidade/public `SelfKnowledge` e o planejamento da Phase 7. Em 2026-09-25, autorizou a implementação da Phase 7 estritamente dentro do plano, sob `ARCH-2026-09-25-001`. A implementação continua `NOT_STARTED` e nenhuma fase posterior foi autorizada.
 
 Continuam exigindo decisão futura:
 
-- Aprovar ou revisar o plano exato da Phase 7 e autorizar sua implementação separadamente.
+- Aprovar, editar ou rejeitar individualmente cada frase exata proposta para a Phase 7.
 - Escolher o mecanismo de reconhecimento do owner antes da Phase 8.
 - Aprovar qualquer provider de voz/modelo, licença, região, retenção, credencial e custo.
 - Decidir se speaker verification justifica tratamento de perfil biométrico.

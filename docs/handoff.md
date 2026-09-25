@@ -201,26 +201,23 @@ Required Reviews — Integration Candidate:
 
 ## Planner
 
-- Status: WAITING_FOR_REVIEW
-- Decision ID: `ARCH-2026-09-21-001`
-- Functional Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` permanece a identidade da implementação da Phase 6
-- Integration Candidate: o HEAD exclusivamente documental produzido por esta limpeza; o COORDINATOR deve registrar o hash resultante e rotear QA + Security sobre esse mesmo candidate
-- Phase 6 operational status: `WAITING_FOR_REVIEW`; os pareceres anteriores sobre `0912e94` permanecem evidência, mas não aprovam automaticamente a branch limpa para PR/merge
-- UI/UX evidence: `APPROVED` anteriormente sobre `0912e94`; não substitui as confirmações finais de QA e Security
-- Architecture cleanup: [`docs/architecture.md`](architecture.md) atualizado para o dashboard implementado, módulos Phase 6, 45 testes Python, 36 frontend, validação browser e limites ambientais
-- Version decision: manter `6.0.0-phase.5` sem editar código; é metadata legado e imutável do Functional Commit, não fonte do status operacional da fase
-- Rejected version option: mudar para `6.0.0-phase.6` tocaria `backend/main.py`, criaria novo Functional Commit e exigiria nova análise/reviews por uma sincronização cosmética
-- Integration gate: QA `YES`, SECURITY `YES`, DATABASE `NO`, UI/UX `NO`; PR/merge somente depois de QA e Security confirmarem o mesmo candidate
-- Merge status: `BLOCKED` até os reviews finais; esta decisão não aprova integração
-- Phase 7 plan: [`docs/phase-7.md`](phase-7.md) permanece `WAITING_FOR_APPROVAL`, implementation `NOT_STARTED`, authorization `NONE` / `NOT_AUTHORIZED`
-- Sequencing: limpeza documental → Integration Candidate → QA + Security no mesmo hash → PR/merge autorizado → somente depois eventual decisão separada sobre Phase 7
-- Production Readiness: `BLOCKED`; merge local/repositório não autoriza deploy ou exposição pública
-- Working tree boundary: alteração preexistente em `AGENTS.md`, `Hope dashboard` e assets `hope-linkedin-hero*` deve permanecer fora do candidate
-- Architecture record: [`docs/reviews/architecture-latest.md`](reviews/architecture-latest.md)
-- Product vision: [`docs/product-vision.md`](product-vision.md)
-- Roadmap: [`docs/roadmap.md`](roadmap.md)
-- Future architecture: [`docs/future-architecture.md`](future-architecture.md)
-- Coordinator handoff: registrar o commit documental resultante como Integration Candidate e encaminhar primeiro a QA e Security; não abrir/mesclar PR nem iniciar Phase 7 antes das duas confirmações
+- Status: `APPROVED`
+- Decision ID: `ARCH-2026-09-25-001`
+- Baseline analyzed: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2` on `main`; Coordinator authorization record `cdb40098489d28dd476a2b9c211cd6289a325888`
+- Phase 6 status: complete and integrated through PR #1
+- Phase 7 planning: `APPROVED`
+- Phase 7 implementation authorization: `APPROVED` by the owner on 2026-09-25, strictly within [`docs/phase-7.md`](phase-7.md)
+- Phase 7 implementation: `NOT_STARTED`; Functional Commit `NONE`
+- Phrase gate: UI/UX must present every exact proposal separately with context, intended tone and `PENDING_OWNER_APPROVAL`
+- Approval scope: one owner-approved exact phrase does not approve variants, localizations, other phrases or future rewrites
+- Implementation restriction: no unapproved phrase may enter source code, `PhraseLibrary`, fixtures, tests, snapshots, defaults, seeded content or the active product
+- Phrase quality: proposals must be natural, non-robotic, original to HOPE and consistent with the approved personality without character imitation
+- Required Reviews after a future Functional Commit: QA `YES`, DATABASE `NO` while the no-persistence boundary holds, SECURITY `YES`, UI/UX `YES`
+- Production Readiness: `BLOCKED`; Phase 7 authorization does not approve deployment, public exposure or inherited HIGH/CRITICAL risk
+- Unchanged non-goals: providers, cloud voice, wake word, speaker verification, database, migrations, persistence, tools, agents, integrations, deployment, production and Phase 8+
+- Records: [`architecture-latest.md`](reviews/architecture-latest.md), [`phase-7.md`](phase-7.md), [`roadmap.md`](roadmap.md), [`product-vision.md`](product-vision.md), [`future-architecture.md`](future-architecture.md) and [`architecture.md`](architecture.md)
+- Coordinator handoff: normalize the public coordination panel and route the Phase 7 pre-implementation specification to UI/UX against `ce2bde4`; Development remains inactive until UI/UX persists the complete specification and every exact phrase intended for implementation has an explicit owner decision
+- Boundary: this Planner record starts no Work, changes no functional code, creates no phrase and authorizes no later phase
 
 ## Coordinator
 
