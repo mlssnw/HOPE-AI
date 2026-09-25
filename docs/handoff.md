@@ -1,25 +1,21 @@
 # HOPE — Handoff
 
-Painel central de coordenação. Todo Work deve ler [`AGENTS.md`](../AGENTS.md), [`architecture.md`](architecture.md), a [fase vigente](phase-6.md), o [manual de reviews](reviews/README.md) e os relatórios `latest` aplicáveis antes de agir.
+Central coordination panel. Every Work must read [`AGENTS.md`](../AGENTS.md), [`architecture.md`](architecture.md), the [current phase](phase-7.md), the [review manual](reviews/README.md) and the applicable `latest` reports before acting.
 
 Commits exclusivamente documentais não substituem o Functional Commit. Resultados técnicos permanecem nos arquivos próprios de cada reviewer.
 
 ## Current Phase
 
-- Phase: 6 — Target UI Convergence
-- Phase status: COMPLETE
-- Feature status: APPROVED_WITH_WARNINGS — all required Phase 6 reviews are complete and no feature blocker remains
-- Production readiness: BLOCKED — Security rejeitou deploy público
-- Integrated branch: `codex/phase-6-target-ui` -> `main` through PR #1
-- Runtime API version: `6.0.0-phase.5` — metadata legado congelado do Functional Commit, independente do status operacional da fase
-- Scope: convergência visual do HOPE Main Dashboard sobre capacidades reais, com acessibilidade, responsividade e preservação dos contratos funcionais existentes
-- Functional Commit: `4d76f2433363a47a9d8fe29fef337de1dc79ac50` — isolated test correction over the Phase 6 implementation `0912e94`
-- Final Integration Candidate: `cb8dc774cc396f3aff0ef40e79753761fbf3b49b`
-- Main integration commit: `ce2bde4` — PR #1 merged on 2026-09-25
-- Final QA confirmation: `611cd630cdcb44e59d0515ac46c91f82ee6a472a`
-- Working tree expected: preserve the pre-existing untracked `Hope dashboard` and `hope-linkedin-hero*` assets outside project commits
-- Database environment: o re-review de Database validou o gate de schema em ambientes descartáveis; PostgreSQL real permaneceu inacessível e a migration `20260903_0003` não foi aplicada nem validada no ambiente real
-- Active phase: none. Phase 6 is complete and integrated. Phase 7 planning is approved, but implementation remains unauthorized pending a separate owner decision.
+- Phase: 7 — Conversational Presence Foundation
+- Phase status: IN_PROGRESS — implementation authorized by the owner; a Planner authorization/phrase-gate reconciliation must precede the UI/UX specification
+- Feature status: NOT_STARTED — no Phase 7 functional implementation or Functional Commit exists yet
+- Production readiness: BLOCKED — Phase 7 does not authorize public deployment or resolve the inherited production blockers
+- Baseline: `ce2bde4` on `main`, with Phase 6 complete and integrated through PR #1
+- Runtime API version: `6.0.0-phase.5` — frozen legacy metadata from the approved Phase 6 artifact; Phase 7 has not changed it
+- Authorized scope: only the contracts and local deterministic behavior defined in [`docs/phase-7.md`](phase-7.md)
+- Phrase approval gate: every exact PhraseLibrary phrase must receive individual owner approval before it is added to code, fixtures or active product content
+- Working tree boundary: preserve the pre-existing untracked `Hope dashboard` and `hope-linkedin-hero*` assets outside project commits
+- Database boundary: no schema, migration, persistence or real-database operation is authorized in Phase 7
 
 ## User Strategic Decision
 
@@ -32,7 +28,7 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 - Historical Planner recommendation: `SUPERSEDED` para ordem futura por `ARCH-2026-09-20-001`; preservada aqui como evidência da decisão que orientou a Phase 6
 - Rationale: segurança deve proteger o único owner e governar efeitos reais sem importar complexidade de tenants, organizações ou identidade enterprise
 - Visual boundary: o Target UI permanece aprovado e é o alvo oficial da Phase 6; UI/UX fechou a spec em `3c10be2` e o DEV deve implementá-la sem improvisar outra identidade
-- Authorization boundary: somente a Phase 6 está autorizada. Permanecem fora de escopo expansão funcional, banco, migrations, providers, produção, tools, agents e Phase 7
+- Historical authorization boundary: this applied to the Phase 6 delivery and is superseded for Phase 7 only by the explicit owner authorization recorded on 2026-09-25. Database, migrations, providers, production, tools, agents and later phases remain unauthorized.
 
 ## Product Direction Intake — 2026-09-19
 
@@ -42,9 +38,20 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 - New future direction: voice presence, realtime voice, wake word `HOPE`, speaker verification, self knowledge, personalidade ampliada, modos combináveis, memória controlável, organização pessoal, integrações, diagnósticos, auditoria transparente, localização por dispositivo, apps instaláveis e Model Router
 - Personality decision: Dean Winchester foi aprovado como referência oficial de traços gerais junto de Lena Luthor e Tony Stark e pode integrar o `SelfKnowledge` público; identidade, diálogos, maneirismos e vozes não podem ser copiados
 - Reference exception: aprovada somente para reconhecimento ou homenagem original mediante pedido explícito; continuam proibidos citações famosas literais, diálogos copiados, imitação de identidade, clonagem de voz e atuação contínua
-- Roadmap impact: a owner aprovou `ARCH-2026-09-20-001` e a ordem de `docs/roadmap.md`; isso autoriza apenas o planejamento da Phase 7, não sua implementação
+- Roadmap impact: the owner approved `ARCH-2026-09-20-001` and the order in `docs/roadmap.md`; its former planning-only boundary was superseded by the explicit Phase 7 implementation authorization on 2026-09-25
 - Documentation decision: `docs/product-vision.md`, `docs/roadmap.md` e `docs/future-architecture.md` são as fontes aprovadas para visão, ordem/gates e contratos futuros
-- Routing boundary: concluir o Integration Candidate, abrir PR em rascunho e obter os reviews finais de QA/Security antes do merge; UI/UX e Development da Phase 7 não estão autorizados
+- Historical routing boundary: the Phase 6 integration sequence is complete. Phase 7 UI/UX specification is now authorized; Development remains gated by that specification and by the phrase-approval protocol below.
+
+## Phase 7 Owner Authorization — 2026-09-25
+
+- Status: `APPROVED` — implementation of Phase 7 — Conversational Presence Foundation may proceed strictly within the approved plan
+- Authorization source: explicit owner instruction in the current coordination thread
+- Immediate route: Planner performs a documentation-only authorization and phrase-gate reconciliation, then the Coordinator routes the pre-implementation specification to UI/UX; Development is not the active Work yet
+- Phrase quality rule: proposed phrases must sound natural, non-robotic and consistent with HOPE's original approved personality traits
+- Individual approval rule: UI/UX must identify every proposed exact phrase separately. Each phrase remains `PENDING_OWNER_APPROVAL` until the owner explicitly approves, edits or rejects it.
+- Implementation restriction: Development must not add an unapproved phrase to `PhraseLibrary`, source code, fixtures, default content or active product copy. Approval of one phrase does not approve any other phrase or a future variation.
+- Safe progress boundary: active planning sources must be reconciled first. Non-phrase experience may then be specified by UI/UX, but no functional implementation begins before the complete pre-implementation UI/UX gate is persisted and the Coordinator routes Development.
+- Unchanged non-goals: cloud STT/TTS, provider work, wake word, speaker verification, always-on recording, database, migrations, persistence, tools, agents, integrations, deployment, production and Phase 8+
 
 ## Owner Documentation Language Decision — 2026-09-21
 
@@ -84,22 +91,21 @@ Required Reviews — Integration Candidate:
 
 ## Current Functional Commit
 
-- Commit: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
-- Phase: 6
-- Created by: DEV
-- Status: READY_FOR_REVIEW — implementação entregue; aprovação final da integração ainda depende de QA e Security no Integration Candidate
-- Base approved: `88e194778b4399a6713f118470f9d861c553cd9e`
-- Notes: o commit contém frontend, testes e evidências da Phase 6; commits documentais posteriores não alteram sua identidade. QA, Security e UI/UX revisaram exatamente `0912e94` na rodada anterior, sem que isso substitua o gate final da branch.
+- Commit: NONE — Phase 7 implementation has not started
+- Phase: 7
+- Target baseline: `ce2bde4` on `main`
+- Previous phase evidence: Phase 6 implementation `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`, isolated test correction `4d76f2433363a47a9d8fe29fef337de1dc79ac50`, integrated through `ce2bde4`
+- Status: NOT_STARTED — UI/UX pre-implementation specification and owner approval of every exact PhraseLibrary phrase precede Development
 
 ## Review Matrix
 
 | Work | Required | Status | Commit |
 |---|---|---|---|
-| DEV | YES | READY_FOR_REVIEW | `4d76f2433363a47a9d8fe29fef337de1dc79ac50` |
-| QA | YES | APPROVED_WITH_WARNINGS | `f819440a72f2e68368bcc0d3c1af6ec700d170bf` |
+| DEV | YES | NOT_STARTED | — |
+| QA | YES | NOT_STARTED | — |
 | DATABASE | NO | N/A | — |
-| SECURITY | YES | APPROVED_WITH_WARNINGS | `51f93d12740a6e0860856257ea761377b04c97fb`; no later functional drift |
-| UI/UX | YES | APPROVED | `0912e9492370f6bce8c51762d1a8a87b5bd16aa8` |
+| SECURITY | YES | NOT_STARTED | — |
+| UI/UX | YES | NOT_STARTED | baseline `ce2bde4` |
 | PLANNER | YES | APPROVED | `129b5a26c3b506e7f53dbb797048ee6788fcd976` |
 
 ## Development
@@ -219,18 +225,19 @@ Required Reviews — Integration Candidate:
 ## Coordinator
 
 - Autonomy level: 2.5
-- Status: COMPLETE / WAITING_FOR_OWNER_DECISION
-- Operational conclusion: the owner authorized Phase 6 integration. The branch was reconciled with the latest `main` in `cb8dc77`, the merged result passed 45 Python tests and 36 frontend tests, and PR #1 was merged and closed as `ce2bde4`.
+- Status: IN_PROGRESS
+- Operational conclusion: Phase 6 is integrated. The owner authorized Phase 7 implementation within its approved scope and imposed individual approval for every exact PhraseLibrary phrase.
 - Final Integration Candidate: `cb8dc774cc396f3aff0ef40e79753761fbf3b49b`
 - Main integration commit: `ce2bde4`
-- Routing: LEVEL 2.5 — Phase 6 is closed. Return the Phase 7 implementation decision to the owner; do not deploy or start Phase 7 without that separate authorization.
+- Routing: LEVEL 2.5 — route a documentation-only reconciliation to Planner because active canonical sources still record Phase 7 as unauthorized. After that reconciliation, route the pre-implementation specification to UI/UX. Development remains inactive until UI/UX persists the complete specification and every exact phrase intended for implementation has an explicit owner decision.
 - Boundary: COORDINATOR atualizou somente Current Phase, Current Functional Commit, Review Matrix, blockers, warnings, Next Action e histórico; não concedeu aprovação técnica nem alterou seções ou relatórios de ownership dos reviewers
 
 ## Current Blockers
 
 ### Feature Blockers
 
-- None. `QA-IC-001` and `QA-IC-002` are closed by QA.
+- Active canonical sources still record the superseded `NOT_AUTHORIZED` state. Planner must reconcile those statements before UI/UX begins.
+- PhraseLibrary content is owner-gated: each exact phrase is blocked from implementation until individually approved. This does not block UI/UX from preparing clearly marked proposals.
 
 ### Production Blockers
 
@@ -260,20 +267,25 @@ Required Reviews — Integration Candidate:
 
 ## Next Action
 
-- Role: OWNER
-- Status: READY_FOR_DECISION
-- Task: explicitly authorize or decline/defer implementation of Phase 7 — Conversational Presence Foundation
-- Target baseline: `ce2bde4` on `main`
+- Role: PLANNER
+- Status: NOT_STARTED
+- Task: reconcile the Phase 7 authorization and individual phrase-approval gate across active canonical planning sources without changing functional code or expanding scope
+- Target baseline: `ce2bde4` on `main`; Phase 7 Functional Commit does not exist yet
 - Required inputs:
+  - [`AGENTS.md`](../AGENTS.md)
+  - [`docs/architecture.md`](architecture.md)
   - [`docs/phase-7.md`](phase-7.md)
   - [`docs/product-vision.md`](product-vision.md)
   - [`docs/roadmap.md`](roadmap.md)
-  - `ARCH-2026-09-20-001`
+  - Phase 7 owner authorization and phrase-approval gate recorded above
 - Expected output:
-  - explicit owner decision: Phase 7 implementation authorized within its approved scope, or declined/deferred
+  - `docs/phase-7.md`, `docs/roadmap.md` and `docs/architecture.md` accurately record the 2026-09-25 authorization while preserving all non-goals
+  - a documented protocol requiring UI/UX to list each proposed exact phrase separately as `PENDING_OWNER_APPROVAL`, with context and intended tone
+  - a documented prohibition on adding any unapproved phrase to code, fixtures, default content or active product copy
+  - a Planner handoff that routes UI/UX pre-implementation specification next; no frontend/backend implementation and no technical review
 - Blocking dependencies: none
-- Parallel work: none; later-phase implementation remains unauthorized
-- Escalation: USER — explicit Phase 7 implementation authorization is required
+- Parallel work: none — UI/UX, Development, QA and Security wait for the Planner reconciliation and subsequent Coordinator routing
+- Escalation: NONE — the owner decision is explicit; future individual phrase decisions return to the USER
 
 ## Recent History
 
@@ -314,3 +326,4 @@ Required Reviews — Integration Candidate:
 - 2026-09-24 — With owner authorization, COORDINATOR updated draft PR #1; QA closed `QA-IC-002` in `765769a`.
 - 2026-09-24 — COORDINATOR synchronized the branch with `main`, resolved the README conflict in `f819440`, and QA approved the final conflict-free candidate in `611cd63` with no blockers.
 - 2026-09-25 — The owner authorized Phase 6 integration. COORDINATOR reconciled the new `main` README update in `cb8dc77`, preserved the approved PT-BR public state, reran 45 Python and 36 frontend tests successfully, and merged PR #1 into `main` as `ce2bde4`. Phase 6 is complete; Production Readiness remains blocked and Phase 7 implementation remains unauthorized.
+- 2026-09-25 — The owner explicitly authorized Phase 7 implementation within the approved plan. COORDINATOR opened only the pre-implementation UI/UX gate and recorded a mandatory individual owner-approval gate for every exact PhraseLibrary phrase; Development remains inactive until UI/UX returns the complete specification and the Coordinator routes the next action.
