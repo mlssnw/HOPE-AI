@@ -1,140 +1,128 @@
 # UI/UX Review — Latest
 
-Status: APPROVED
-Date: 2026-09-16
-Phase: 6
-Review type: PHASE 6 POST-IMPLEMENTATION UI/UX REVIEW
-Functional Commit reviewed: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
-Functional baseline: `88e194778b4399a6713f118470f9d861c553cd9e`
-Pre-implementation specification commit: `3c10be208e4e4d6dcfc3329dd6207961c898d44c`
-Development documentation commit: `efe0ce83ca913a32aa1778adcf656f43c4c041ee`
-Review-round coordination commit: `e1f2e697a32b9a38f4172c2303f09255a901df39`
-Repository HEAD observed: `f9c0ca8289f62596946d21441ba239dcd7777fd3` — review documental posterior ao Functional Commit
-Visual decision: `UIUX-VIS-2026-09-10-001`
+- Status: `APPROVED`
+- Date: 2026-09-25
+- Phase: 7 — Conversational Presence Foundation
+- Review type: `PHASE 7 PRE-IMPLEMENTATION UI/UX SPECIFICATION`
+- Functional baseline reviewed: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`
+- Phase 7 Functional Commit: `NONE`
+- Architecture decision: `ARCH-2026-09-25-001`
+- Planner reconciliation commit: `bcd0a05da9cc8a8e8efd301103265470c0a21982`
+- Coordinator routing commit: `829aa31bfa20a8c551d2e0e66300d84ed2beb14e`
+- Production Readiness: `BLOCKED`
 
-## Scope Boundary
+## Scope boundary
 
-Esta revisão compara exclusivamente a implementação da Phase 6 no Functional Commit indicado com o Target UI aprovado e com `docs/design/phase-6-target-ui-spec.md`. O HEAD observado está à frente apenas por documentação de entrega, coordenação e review; não existe alteração em `frontend/`, `tests/` ou `package.json` entre o Functional Commit e o HEAD da rodada.
+This is a pre-implementation specification result, not a post-implementation fidelity review. UI/UX reviewed the integrated Phase 6 baseline and the approved Phase 7 plan, then persisted the experience contract and exact phrase proposals required before Development may be routed.
 
-Não foram alterados código, testes, handoff, plano, evidências ou arquivos de outros Works. Este parecer aprova fidelidade e experiência da feature em ambiente local/controlado; não autoriza produção, Phase 7 ou capacidades futuras.
+No Phase 7 Functional Commit exists. No frontend, backend, test, provider, database, migration, persistence, runtime, deployment or production surface was changed or approved. Phase 8 and later phases remain outside scope.
 
 ## Result
 
-- Post-implementation UI/UX result: APPROVED
-- Blocking findings: nenhum
-- Non-blocking findings: nenhum
-- Target UI fidelity: APPROVED dentro do contrato de truthfulness e das capacidades reais do baseline
-- P0/P1 implementation mapping: SATISFIED
-- Inherited warnings: `UIUX-F5-W01`, `UIUX-F5-W02` e `UIUX-F5-W03` CLOSED
-- Production readiness: NOT_EVALUATED por UI/UX e permanece separada do Feature Status
+- UI/UX specification result: `APPROVED`
+- Specification blockers: none
+- Specification warnings: none
+- Development routing: blocked by the separate individual owner phrase-decision gate
+- Phrase approvals granted by UI/UX: none
+- Phrase proposals: 5, all `PENDING_OWNER_APPROVAL`
+- Post-implementation UI/UX review: required against the future Phase 7 Functional Commit
 
-## Acceptance Evidence
+## Canonical outputs
 
-### 1. Identidade, shell e hierarquia visual — PASS
+- Experience specification: [`../design/phase-7-conversational-presence-spec.md`](../design/phase-7-conversational-presence-spec.md)
+- Phrase proposal register: [`../design/phase-7-phrase-proposals.md`](../design/phase-7-phrase-proposals.md)
 
-- Marca visual, nome acessível, título e metadata usam somente `HOPE`, sem expansão, pontos intermediários ou significado retroativo.
-- Desktop usa superfície contínua 62/38; notebook usa 58/42. O Globe domina a composição, o estado operacional permanece central no topo e o chat mantém leitura e ação primária claras.
-- A paleta grafite/azul profundo, branco quente e âmbar preserva a direção aprovada sem copiar o rail conceitual ou simular destinos inexistentes.
-- Em 1280 × 720 e nos viewports maiores, o composer permanece alcançável sem scroll horizontal e o inspector ocupa a região do Globe sem cobrir o núcleo selecionado.
-- Evidence: `frontend/index.html`, `frontend/styles/main.css`, `1280x720-chat.png`, `1440x900-chat.png` e `1920x1080-chat.png`.
+## Approved specification coverage
 
-### 2. Memory Globe, Core Orb, densidade e verdade dos dados — PASS
+### 1. Displayed and spoken response separation — PASS
 
-- Nós, entidades e relações continuam derivados do payload normalizado; categorias renderizadas são somente as presentes no grafo real. A fixture de três memórias permanece honestamente esparsa em vez de fabricar conteúdo para imitar o mockup.
-- O Core Orb implementa seed, três volumes, filamentos, microarcos, halo e partículas ambientais limitadas. Estados alteram intensidade/coreografia sem criar dados semânticos.
-- Busca preserva o contexto atenuado; criação, atualização, exclusão e relações são incrementais e o item novo fica interativo antes do fim da transição.
-- O renderer limita densidade por perfil, prioriza seleção/destaques/relações e mantém a contagem baseada no payload completo, não no LOD desenhado.
-- Evidence: `frontend/js/memory-globe.js`, `frontend/js/memory-globe-controller.js`, testes do renderer, `profile-*.png`, `search-empty.png` e `runtime-results.json`.
+- `DisplayResponse` is the complete canonical answer and remains available under speech disablement, cancellation, unavailability or error.
+- `SpokenResponse` is a separately identified optional rendition tied to the same session, turn and response version.
+- Material condensation is disclosed at response level; speech never becomes a second assistant message.
+- Warnings, uncertainty, confirmations, targets, costs, commands and consequences cannot be removed by formatting or personality.
 
-### 3. Chat, inspector e controles — PASS
+### 2. Voice states and truthful transitions — PASS
 
-- Chat, composer, Enviar, Cancelar, fontes por resposta, memória opt-in, histórico local, Web, Obsidian, leitura e ditado permanecem integrados e distinguíveis.
-- O inspector mostra somente campos retornados, agrupa proveniência e relacionados e mantém Focar, Perguntar e Esquecer. Campos ausentes não recebem conteúdo fictício.
-- Busca, sincronização, centralização, expansão, lista, modos, qualidade, movimento reduzido e câmera executam funções reais; o modo Memória fica indisponível sem seleção e possui explicação acessível.
-- Evidence: `inspector-desktop.png`, `inspector-mobile.png`, árvore acessível, `phase-6-flows.mjs` e reprodução independente no harness.
+- The contract covers Idle, Listening, Processing, Speaking, interrupted/cancelled outcome, unavailable capability and Error.
+- Listening requires a real capture/recognition start callback. Speaking requires real current playback.
+- Processing maps to real Thinking/Searching work. Unavailable is a capability condition, not fabricated activity.
+- Accessible text is authoritative; motion and the Core Orb are synchronized supplements.
 
-### 4. Desktop, notebook, tablet e mobile chat-first — PASS
+### 3. Stop, cancellation and stale output — PASS
 
-- Os sete viewports obrigatórios foram reproduzidos: 320 × 568, 390 × 844, 768 × 1024, 1024 × 768, 1280 × 720, 1440 × 900 e 1920 × 1080.
-- Tablet e mobile iniciam em Conversa. O alternador troca superfícies sem descartar rascunho, chat ou seleção; voltar da Memória restaura o foco ao acionador.
-- Em 320 × 568 e 390 × 844, composer e ações primárias aparecem antes do Globe. A superfície de Memória é dedicada, com controles reorganizados e perfil LOW; tablet usa MEDIUM.
-- Não houve overflow horizontal. Landscape e alturas curtas usam rolagem vertical para alcance, preservando os controles.
-- Evidence: matriz `*-chat.png`/`*-memory.png`, `accessibility-results.json` e pacote browser reproduzido.
+- Stop listening, Cancel response and Stop playback have distinct scopes and labels.
+- Escape preserves the existing layer-closing hierarchy, then stops the active voice operation when no layer owns it.
+- Session, turn and attempt identities gate callbacks that could change transcript, state, playback or amplitude.
+- Newer turns invalidate old formatting, synthesis and playback; repeated cancellation is idempotent.
 
-### 5. Acessibilidade, contraste, foco e movimento reduzido — PASS
+### 4. Combinable modes — PASS
 
-- Contrastes medidos: texto principal 13,56:1; secundário 6,54:1; texto da ação primária 10,54:1; perigo 7,74:1; foco 13,99:1; contorno de controle 4,30:1.
-- Foco visível é de 2 px; a ordem de Tab percorre busca, controles, canvas/lista, conversa e composer. Pointer, touch e câmera possuem alternativas explícitas.
-- Alvos móveis medem ao menos 44 × 44 px; controles usam ao menos 12 px e metadados não essenciais ao menos 11 px.
-- Escape fecha camadas na ordem contratada e restaura foco em lista, inspector, fullscreen, alternador e confirmação. O diálogo destrutivo começa em Cancelar, mantém alvo/consequência, bloqueia ações durante submissão e recupera foco em erro.
-- `prefers-reduced-motion` e o controle local eliminam rotação contínua, transições cosméticas e zoom automático; informação permanece em texto/contraste.
-- Evidence: `accessibility-results.json`, `reduced-motion.png`, `confirmation.png`, `delete-*.png` e reprodução browser.
+- Style, privacy, output, interruption and audience are independent, session-local axes.
+- The UI exposes a resolved restriction summary and states that modes affect new turns rather than prior visible/stored content.
+- Privacy/audience restrictions and Silent output win over style.
+- No mode grants permission, changes facts, starts capture, unlocks unavailable capabilities or confirms an action.
 
-### 6. Fallback textual sem WebGL — PASS
+### 5. Microphone and voice fallback — PASS
 
-- Falha inicial ou perda de contexto preserva o mesmo payload e apresenta mensagem, retry, busca, contagem, lista navegável, relações, inspector e conversa.
-- A recuperação restaura WebGL sem perder seleção ou estado. O fallback não cria API, nó ou relação e não altera consentimento.
-- Evidence: `no-webgl.png`, `webgl-restored.png`, `phase-6-flows.mjs`, `phase-6-runtime.mjs` e reprodução independente.
+- Unsupported, undecided permission, denied permission, recognition error, unavailable synthesis, autoplay block and playback error have distinct outcomes.
+- Text and the composer remain usable in every fallback.
+- Recovery is explicit and does not silently change provider or data destination.
 
-### 7. Perfis LOW/MEDIUM/HIGH/ULTRA — PASS
+### 6. Accessibility, keyboard and focus — PASS
 
-- Defaults: LOW no mobile, MEDIUM em tablet/notebook e HIGH no desktop; ULTRA exige seleção explícita. A escolha manual não é sobrescrita durante a sessão.
-- Limites confirmados com 3.000 nós/2.999 relações: LOW 400 nós, MEDIUM 1.000, HIGH 2.500 e ULTRA 3.000 da fixture recebida. Lista, contagens, seleção e controles preservam o payload completo.
-- Rodada independente: LOW 59,34 FPS; MEDIUM 59,91; HIGH 56,06; ULTRA 54,42 no hardware documentado. HIGH supera a meta de 45 FPS.
-- Evidence: testes do renderer, `runtime-results.json`, `profile-*.png` e execução independente do pacote browser.
+- The specification preserves WCAG 2.2 AA, visible focus, touch targets, zoom, larger text, screen-reader status and reduced motion.
+- It defines focus entry/return for Modes, microphone control, composer and errors.
+- Routine state uses one polite live region; actionable failures alone may use an alert.
+- Amplitude frames and duplicate state signals are never announced.
 
-### 8. Estados reais, claims e capacidades futuras — PASS
+### 7. Core Orb and amplitude — PASS
 
-- Chat, memória, Globe, voz e Core Orb usam sinais reais. `Ouvindo` ocorre somente entre callbacks reais de reconhecimento; `HOPE falando` somente durante áudio real; estado desconhecido retorna ao seguro.
-- Contagens vêm do grafo normalizado e disponibilidade descreve serviço/conexão, não consentimento.
-- Visão, Arquivos, Automação, tools, coding, skills, agents, navegação global sem destino, perfil/conta e métricas sem fonte não aparecem nem como itens desabilitados/“em breve”.
-- Estados loading, empty, unavailable, error e realtime degradado mantêm chat e recuperação claros sem skeletons ou nós fictícios.
-- Evidence: busca estática no Functional Commit, `voice-*.png`, `memory-*.png`, `realtime-degraded.png` e reprodução browser.
+- Continuous amplitude response is limited to real local audio already being played by the current HOPE client.
+- Listening amplitude is not invented and Phase 7 does not create a new microphone capture path for visualization.
+- `voiceLevel` is bounded, ephemeral, reset on every terminal path and never transmitted, persisted, logged or used for inference.
+- Reduced motion preserves truthful Speaking text without continuous amplitude animation.
 
-## Inherited Warning Closure
+### 8. Privacy, security and capability truth — PASS
 
-### UIUX-F5-W01 — CLOSED
+- No background listening, new audio flow, transcript retention, provider fallback or persistent mode is presented.
+- Public-safe `SelfKnowledge` must distinguish `IMPLEMENTED`, `PARTIAL`, `PLANNED` and unavailable capabilities using allowlisted facts and real health signals.
+- Wake word, speaker verification, streaming, cross-device behavior, tools, agents, automation and external effects remain explicitly unimplemented.
+- Production Readiness remains `BLOCKED`.
 
-- Previous severity: MEDIUM
-- Blocking: NO
-- Evidence: a interface usa “Serviço de memória disponível/indisponível” no resumo de sistema e mantém “Memória no chat” como controle independente, desmarcado por padrão.
-- Impact after fix: disponibilidade técnica e consentimento não compartilham mais o mesmo claim.
+### 9. Objective Development/QA criteria — PASS
 
-### UIUX-F5-W02 — CLOSED
+- Eighteen numbered `UIUX-P7-*` criteria cover response invariants, state truth, cancellation races, modes, fallbacks, accessibility, amplitude, persistence, phrase approval, responsive behavior and negative capability claims.
+- The evidence package requires automated transition/race tests, accessibility/focus evidence, responsive screenshots, reduced-motion/no-WebGL scenarios, static phrase allowlisting and network/storage/log assertions.
 
-- Previous severity: LOW
-- Blocking: NO
-- Evidence: status rotineiros usam `role="status"`/`aria-live="polite"`; `#urgent-status` e erros destrutivos usam `role="alert"` somente para falhas que exigem atenção.
-- Impact after fix: progresso e sucesso não interrompem leitores de tela como anúncio urgente.
+## Phrase proposal gate
 
-### UIUX-F5-W03 — CLOSED
+### `UIUX-P7-GATE-001` — Individual owner decisions required
 
-- Previous severity: MEDIUM
-- Blocking: NO
-- Evidence: media queries/coarse pointer fixam 44 px para controles móveis; botões usam 12 px e a ajuda do consentimento 11 px no mobile. O browser confirmou os limites nos viewports de 320 e 390 px.
-- Impact after fix: precisão de toque e legibilidade atendem ao contrato da Phase 6.
+- Classification: mandatory external owner gate, not a UI/UX defect
+- Severity: `INFO`
+- Blocking: `YES` for Development routing; `NO` for completion of this UI/UX specification
+- Evidence: five numbered records in [`../design/phase-7-phrase-proposals.md`](../design/phase-7-phrase-proposals.md), each with exact text, locale, category, usage context, intended tone, frequency/cooldown, safety/prohibited contexts and `PENDING_OWNER_APPROVAL`.
+- Impact: no proposed phrase is eligible for implementation until the owner decides that exact record. Approval of one item cannot authorize another item or any punctuation, localization, paraphrase, translation or rewrite.
+- Required action: Coordinator presents all five records individually to the owner and persists each explicit decision before routing Development.
 
 ## Findings
 
-Nenhum finding aberto. Não há blocker ou warning de UI/UX para o Functional Commit revisado.
+No UI/UX problem is open in the specification itself. The owner phrase gate above is an expected dependency created by the approved Phase 7 plan, not a warning or defect.
 
-## Validation Performed
+## Validation performed
 
-- Inspeção do diff `88e194778b4399a6713f118470f9d861c553cd9e..0912e9492370f6bce8c51762d1a8a87b5bd16aa8` e confirmação de ausência de backend/schema/persistência no escopo visual.
-- `45 passed` na suíte Python completa; um warning preexistente de Starlette/TestClient.
-- `36 passed` na suíte frontend Node.
-- Pacote browser completo reproduzido em cópia temporária limpa, destacada exatamente em `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`, usando Chrome 153 e o Playwright compartilhado do workspace: composição WebGL, sete viewports, fluxos, runtime, acessibilidade e estados negativos passaram.
-- Console/assets sem erros inesperados. HTTP 428/500/503 dos cenários negativos eram deliberados.
-- Inspeção visual da referência canônica e das capturas de desktop, notebook, tablet, mobile, inspector, voz, confirmação, fallback, perfis, reduced motion e estados.
+- Read the operational, architecture, phase, product-vision, roadmap, future-architecture, review-governance and applicable design sources in full.
+- Inspected the baseline dashboard, chat, voice input, TTS playback, cancellation, presentation-state and Core Orb contracts.
+- Confirmed that current functional code still matches the integrated baseline and that commits after `ce2bde4a0792fa6a8c0a79e56781add162bff2d2` are documentation-only.
+- Cross-checked the specification against the owner-approved Phase 7 non-goals and exact-item phrase protocol.
+- Kept all phrase content exclusively in the UI/UX proposal register; no proposal was added to code, tests, fixtures, snapshots, defaults, seeds or the active product.
 
-## Validation Boundaries
+## Validation boundaries
 
-- Zoom 200% foi validado por reflow CSS equivalente; o menu nativo do navegador não foi automatizado.
-- A árvore acessível e a navegação por teclado foram verificadas no Chrome; não houve sessão manual com leitor de tela, dispositivo móvel físico, teclado virtual real ou microfone/provider externo.
-- A medição de FPS é local e sintética; não certifica hardware móvel, rede, banco ou carga de produção.
-
-Esses limites não ocultam regressão observada e não impedem a aprovação da feature no ambiente local/controlado.
+- No runtime or browser execution is claimed because there is no Phase 7 implementation to review.
+- No microphone, external provider, paid call, database or production environment was exercised.
+- The future post-implementation UI/UX review must assess the exact Phase 7 Functional Commit and may not inherit this pre-implementation approval as implementation evidence.
 
 ## Recommendation
 
-Devolver ao COORDINATOR para consolidação com QA e Security no mesmo Functional Commit. UI/UX aprova a implementação da Phase 6 e não recomenda correção adicional neste gate. Production Readiness permanece separada e Phase 7 não está autorizada por este resultado.
+Return to the Coordinator to present proposals `P7-PHRASE-001` through `P7-PHRASE-005` individually to the owner. After exact decisions are persisted, the Coordinator may route Development within the approved Phase 7 specification. Do not route Development earlier and do not start Phase 8 or production work.

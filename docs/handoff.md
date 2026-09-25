@@ -179,25 +179,24 @@ Required Reviews — Integration Candidate:
 
 ## UI/UX
 
-- Coordination status: APPROVED
-- Current target: `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`
-- Review type: PHASE 6 POST-IMPLEMENTATION REVIEW
-- Scope decision: `ARCH-2026-09-10-003`
-- Coordinator authorization: `0bcc25a5437cab8a326e64281579ead56274d8cb`
-- Last official result: APPROVED
-- Specification: [`docs/design/phase-6-target-ui-spec.md`](design/phase-6-target-ui-spec.md)
-- P0/P1 implementation: APPROVED contra o contrato fechado
-- Fidelity: APPROVED dentro das capabilities reais do baseline
-- Feature blockers: nenhum
-- Closed: `UIUX-F5-W01`, `UIUX-F5-W02` e `UIUX-F5-W03`
-- Guardrails: chat-first em tablet/mobile; fallback textual sem WebGL; reduced motion; perfis LOW/MEDIUM/HIGH/ULTRA sem perda funcional; Core Orb e métricas somente com fonte real; capacidades futuras omitidas
-- Visual direction: APPROVED
-- Decision ID: `UIUX-VIS-2026-09-10-001`
-- Implementation status: APPROVED por UI/UX no Functional Commit `0912e94`
-- Recommendation: consolidar com QA e Security; nenhuma correção visual adicional é necessária neste gate
-- Review commit: `7122d25`
+- Coordination status: `APPROVED` — Phase 7 pre-implementation UI/UX specification complete
+- Review type: `PHASE 7 PRE-IMPLEMENTATION UI/UX SPECIFICATION`
+- Functional baseline reviewed: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`
+- Phase 7 Functional Commit: `NONE`
+- Architecture decision: `ARCH-2026-09-25-001`
+- Planner reconciliation commit: `bcd0a05da9cc8a8e8efd301103265470c0a21982`
+- Coordinator routing commit: `829aa31bfa20a8c551d2e0e66300d84ed2beb14e`
+- Specification: [`phase-7-conversational-presence-spec.md`](design/phase-7-conversational-presence-spec.md)
+- Phrase register: [`phase-7-phrase-proposals.md`](design/phase-7-phrase-proposals.md)
+- Specification coverage: display/spoken separation, truthful voice states, stop/cancel/stale-event handling, combinable modes, microphone/TTS fallback, accessibility/focus/reduced motion, local ephemeral output amplitude, privacy and capability truthfulness
+- Objective evidence contract: `UIUX-P7-001` through `UIUX-P7-018`
+- Specification blockers: none
+- Phrase proposals: 5; all `PENDING_OWNER_APPROVAL`; UI/UX grants no phrase approval
+- Development routing: `BLOCKED` until the owner decides each exact phrase intended for the first package and the Coordinator persists those decisions
+- Phrase scope: approval is exact-item only and does not cover punctuation, variants, localization, translation, paraphrase or future rewrite
+- Production Readiness: `BLOCKED`
+- Recommendation: return to the Coordinator for individual owner decisions on `P7-PHRASE-001` through `P7-PHRASE-005`; do not route Development, Phase 8 or production earlier
 - Report: [`uiux-latest.md`](reviews/uiux-latest.md)
-- Design source: [`docs/design/`](design/README.md)
 
 ## Planner
 
