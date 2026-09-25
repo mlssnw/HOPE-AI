@@ -20,7 +20,7 @@
 </p>
 
 <p align="center">
-  <em>Target UI aprovado: a implementação e os reviews técnicos da Fase 6 foram concluídos; o merge permanece sujeito à autorização da owner.</em>
+  <em>Target UI aprovado: a implementação e os reviews técnicos da Fase 6 foram concluídos e integrados pelo PR #1.</em>
 </p>
 
 <p align="center">
@@ -42,7 +42,7 @@ Assistentes tradicionais dependem principalmente do contexto imediato da convers
 - Consentimento de memória, histórico local, cancelamento e confirmação destrutiva permanecem separados e operáveis.
 - A correção de isolamento do teste realtime foi concluída e validada em ambiente limpo: 45 testes Python e 36 testes frontend passaram.
 - QA e Security aprovaram a integração com warnings; UI/UX aprovou a implementação visual.
-- Nenhuma fase posterior está ativa ou autorizada para implementação enquanto a integração da Fase 6 não for concluída.
+- A Fase 6 foi integrada sem autorizar automaticamente a implementação de fases posteriores.
 
 [📖 Ver detalhes técnicos da Fase 6](docs/phase-6.md)
 
@@ -66,7 +66,7 @@ Assistentes tradicionais dependem principalmente do contexto imediato da convers
 |---|---|
 | Versão pública | Fase 6 — sem usar o rótulo legado do runtime como versão da fase |
 | Fase atual | Fase 6 — Target UI Convergence |
-| Estado técnico | `APPROVED_WITH_WARNINGS` — reviews obrigatórios concluídos; integração aguarda autorização da owner |
+| Estado técnico | `APPROVED_WITH_WARNINGS` — reviews obrigatórios e integração da Fase 6 concluídos |
 | Functional Commit | `4d76f2433363a47a9d8fe29fef337de1dc79ac50` — correção test-only sobre a implementação `0912e94` |
 | Deploy público | Ainda não habilitado — autenticação, autorização e hardening de produção pendentes |
 
@@ -84,7 +84,7 @@ A única fase ativa é a **Fase 6 — Target UI Convergence**.
 - [x] QA aprovou a correção e encerrou `QA-IC-001` e `QA-IC-002`.
 - [x] Security aprovou com warnings e encerrou `SEC-019` e `SEC-020`.
 - [x] Descrição do PR sincronizada com o candidate revisado.
-- [ ] Merge da branch `codex/phase-6-target-ui` em `main`.
+- [x] Merge da branch `codex/phase-6-target-ui` em `main` pelo PR #1.
 
 O roadmap futuro existe como direção aprovada, mas não representa trabalho ativo nem autorização de implementação. Ele permanece separado em [`docs/roadmap.md`](docs/roadmap.md), junto da [`visão de produto`](docs/product-vision.md) e da [`arquitetura futura`](docs/future-architecture.md).
 
