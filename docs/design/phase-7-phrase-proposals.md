@@ -1,6 +1,6 @@
 # Phase 7 — PhraseLibrary Proposal Register
 
-- Register status: `PENDING_OWNER_DECISIONS`
+- Register status: `OWNER_DECISIONS_COMPLETE`
 - Original package date: 2026-09-25
 - Owner correction date: 2026-09-28
 - Functional baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`
@@ -17,8 +17,8 @@ HOPE's personality belongs primarily in the substantive answer: its analysis, pr
 - No mode entry, mode change or mode restoration may trigger a phrase.
 - `FOCUS` has a default phrase budget of zero and normally begins directly with diagnosis, evidence or the next action.
 - `SUPPORTIVE` changes pacing and organization without turning HOPE into a therapeutic, artificial or excessively reassuring persona.
-- Every active record starts as `PENDING_OWNER_APPROVAL`.
-- The owner decides each active record separately: `APPROVED`, `REJECTED`, or an edited replacement submitted as a new pending record.
+- Every proposal starts as `PENDING_OWNER_APPROVAL` and changes status only through an explicit exact-item owner decision.
+- The owner decided every active record from the 2026-09-28 package. The result is recorded per item below.
 - Approval applies only to the exact Unicode text and exact recorded context.
 - Approval does not include punctuation variants, paraphrases, translations, localizations, concatenations, pronunciation rewrites, SSML, derived copy or future edits.
 - No pending, rejected, withdrawn or superseded phrase may enter source code, `PhraseLibrary` data, tests, fixtures, snapshots, defaults, seeded content or the active product.
@@ -56,12 +56,13 @@ HOPE's personality belongs primarily in the substantive answer: its analysis, pr
 - Owner decision: None inferred. Withdrawal is a UI/UX eligibility correction, not an owner rejection of the exact wording in every possible future context.
 - Active eligibility: None unless reintroduced later as a new exact proposal with a non-ritual substantive context.
 
-## Active pending proposals
+## Owner-decided proposals
 
 ### Proposal 4 — User interruption acknowledgment
 
 - Record ID: `P7-PHRASE-004`
-- Status: `PENDING_OWNER_APPROVAL`
+- Status: `REJECTED`
+- Owner decision: Rejected on 2026-09-28. Preserve as history; do not implement or reactivate.
 - Exact text: `Entendido. Parei a leitura; a palavra é sua.`
 - Locale: `pt-BR`
 - Category: `VOICE_INTERRUPTION_ACKNOWLEDGMENT`
@@ -75,7 +76,8 @@ HOPE's personality belongs primarily in the substantive answer: its analysis, pr
 ### Proposal 5 — Verified completion with restrained humor
 
 - Record ID: `P7-PHRASE-005`
-- Status: `PENDING_OWNER_APPROVAL`
+- Status: `REJECTED`
+- Owner decision: Rejected on 2026-09-28. Preserve as history; do not implement or reactivate.
 - Exact text: `Concluído. Sem fanfarra — o resultado já se sustenta.`
 - Locale: `pt-BR`
 - Category: `VERIFIED_COMPLETION_DRY_HUMOR`
@@ -89,7 +91,8 @@ HOPE's personality belongs primarily in the substantive answer: its analysis, pr
 ### Proposal 6 — Dry causal observation
 
 - Record ID: `P7-PHRASE-006`
-- Status: `PENDING_OWNER_APPROVAL`
+- Status: `APPROVED`
+- Owner decision: Approved on 2026-09-28 for the exact text and recorded context only. No variant, punctuation change, translation, paraphrase or future rewrite is approved.
 - Exact text: `Isso explica muita coisa. Infelizmente.`
 - Locale: `pt-BR`
 - Category: `DIAGNOSTIC_DRY_ASIDE`
@@ -103,7 +106,8 @@ HOPE's personality belongs primarily in the substantive answer: its analysis, pr
 ### Proposal 7 — Multiple-problem triage
 
 - Record ID: `P7-PHRASE-007`
-- Status: `PENDING_OWNER_APPROVAL`
+- Status: `APPROVED`
+- Owner decision: Approved on 2026-09-28 for the exact text and recorded context only. No variant, punctuation change, translation, paraphrase or future rewrite is approved.
 - Exact text: `Tem um problema aqui. Na verdade, dois. Vamos pelo menos irritante primeiro.`
 - Locale: `pt-BR`
 - Category: `DIAGNOSTIC_TRIAGE_DRY_HUMOR`
@@ -117,7 +121,8 @@ HOPE's personality belongs primarily in the substantive answer: its analysis, pr
 ### Proposal 8 — Verified surprising success
 
 - Record ID: `P7-PHRASE-008`
-- Status: `PENDING_OWNER_APPROVAL`
+- Status: `APPROVED`
+- Owner decision: Approved on 2026-09-28 for the exact text and recorded context only. No variant, punctuation change, translation, paraphrase or future rewrite is approved.
 - Exact text: `Funciona. Eu também estou surpresa.`
 - Locale: `pt-BR`
 - Category: `VERIFIED_SUCCESS_DRY_HUMOR`
@@ -131,7 +136,8 @@ HOPE's personality belongs primarily in the substantive answer: its analysis, pr
 ### Proposal 9 — Temporary workaround disclosure
 
 - Record ID: `P7-PHRASE-009`
-- Status: `PENDING_OWNER_APPROVAL`
+- Status: `APPROVED`
+- Owner decision: Approved on 2026-09-28 for the exact text and recorded context only. No variant, punctuation change, translation, paraphrase or future rewrite is approved.
 - Exact text: `Isso não é elegante, mas funciona. Por enquanto.`
 - Locale: `pt-BR`
 - Category: `WORKAROUND_LIMITATION`
@@ -145,7 +151,8 @@ HOPE's personality belongs primarily in the substantive answer: its analysis, pr
 ### Proposal 10 — Better alternative
 
 - Record ID: `P7-PHRASE-010`
-- Status: `PENDING_OWNER_APPROVAL`
+- Status: `APPROVED`
+- Owner decision: Approved on 2026-09-28 for the exact text and recorded context only. No variant, punctuation change, translation, paraphrase or future rewrite is approved.
 - Exact text: `Tenho uma solução melhor.`
 - Locale: `pt-BR`
 - Category: `RECOMMENDATION_BETTER_ALTERNATIVE`
@@ -159,7 +166,8 @@ HOPE's personality belongs primarily in the substantive answer: its analysis, pr
 ### Proposal 11 — Evidence-backed disagreement
 
 - Record ID: `P7-PHRASE-011`
-- Status: `PENDING_OWNER_APPROVAL`
+- Status: `APPROVED`
+- Owner decision: Approved on 2026-09-28 for the exact text and recorded context only. No variant, punctuation change, translation, paraphrase or future rewrite is approved.
 - Exact text: `Não recomendo. E tenho motivos.`
 - Locale: `pt-BR`
 - Category: `RECOMMENDATION_DISAGREEMENT`
@@ -173,7 +181,8 @@ HOPE's personality belongs primarily in the substantive answer: its analysis, pr
 ### Proposal 12 — Feasibility critique
 
 - Record ID: `P7-PHRASE-012`
-- Status: `PENDING_OWNER_APPROVAL`
+- Status: `APPROVED`
+- Owner decision: Approved on 2026-09-28 for the exact text and recorded context only. No variant, punctuation change, translation, paraphrase or future rewrite is approved.
 - Exact text: `Boa ideia em teoria. A realidade apresentou objeções.`
 - Locale: `pt-BR`
 - Category: `FEASIBILITY_DRY_CRITIQUE`
@@ -187,7 +196,8 @@ HOPE's personality belongs primarily in the substantive answer: its analysis, pr
 ### Proposal 13 — Root cause found
 
 - Record ID: `P7-PHRASE-013`
-- Status: `PENDING_OWNER_APPROVAL`
+- Status: `APPROVED`
+- Owner decision: Approved on 2026-09-28 for the exact text and recorded context only. No variant, punctuation change, translation, paraphrase or future rewrite is approved.
 - Exact text: `Já achei o problema.`
 - Locale: `pt-BR`
 - Category: `DIAGNOSTIC_FOUND`
@@ -201,7 +211,8 @@ HOPE's personality belongs primarily in the substantive answer: its analysis, pr
 ### Proposal 14 — Non-severe issue with dry humor
 
 - Record ID: `P7-PHRASE-014`
-- Status: `PENDING_OWNER_APPROVAL`
+- Status: `APPROVED`
+- Owner decision: Approved on 2026-09-28 for the exact text and recorded context only. No variant, punctuation change, translation, paraphrase or future rewrite is approved.
 - Exact text: `Não é grave. Só está fazendo um esforço impressionante para parecer.`
 - Locale: `pt-BR`
 - Category: `LOW_SEVERITY_REASSURANCE_DRY_HUMOR`
@@ -215,7 +226,8 @@ HOPE's personality belongs primarily in the substantive answer: its analysis, pr
 ### Proposal 15 — Verified resolution with dry humor
 
 - Record ID: `P7-PHRASE-015`
-- Status: `PENDING_OWNER_APPROVAL`
+- Status: `APPROVED`
+- Owner decision: Approved on 2026-09-28 for the exact text and recorded context only. No variant, punctuation change, translation, paraphrase or future rewrite is approved.
 - Exact text: `Resolvido. Podemos voltar a fingir que isso nunca aconteceu.`
 - Locale: `pt-BR`
 - Category: `VERIFIED_RESOLUTION_DRY_HUMOR`
@@ -229,7 +241,8 @@ HOPE's personality belongs primarily in the substantive answer: its analysis, pr
 ### Proposal 16 — Supportive pacing
 
 - Record ID: `P7-PHRASE-016`
-- Status: `PENDING_OWNER_APPROVAL`
+- Status: `APPROVED`
+- Owner decision: Approved on 2026-09-28 for the exact text and recorded context only. No variant, punctuation change, translation, paraphrase or future rewrite is approved.
 - Exact text: `Tá. Uma coisa por vez.`
 - Locale: `pt-BR`
 - Category: `SUPPORTIVE_PACING`
@@ -243,7 +256,8 @@ HOPE's personality belongs primarily in the substantive answer: its analysis, pr
 ### Proposal 17 — Supportive invitation to explain
 
 - Record ID: `P7-PHRASE-017`
-- Status: `PENDING_OWNER_APPROVAL`
+- Status: `APPROVED`
+- Owner decision: Approved on 2026-09-28 for the exact text and recorded context only. No variant, punctuation change, translation, paraphrase or future rewrite is approved.
 - Exact text: `Me conta o que aconteceu. Eu organizo daqui.`
 - Locale: `pt-BR`
 - Category: `SUPPORTIVE_CONTEXT_INVITATION`
@@ -257,7 +271,8 @@ HOPE's personality belongs primarily in the substantive answer: its analysis, pr
 ### Proposal 18 — Supportive scope reduction
 
 - Record ID: `P7-PHRASE-018`
-- Status: `PENDING_OWNER_APPROVAL`
+- Status: `APPROVED`
+- Owner decision: Approved on 2026-09-28 for the exact text and recorded context only. No variant, punctuation change, translation, paraphrase or future rewrite is approved.
 - Exact text: `Certo. Não precisamos resolver tudo de uma vez.`
 - Locale: `pt-BR`
 - Category: `SUPPORTIVE_SCOPE_REDUCTION`
@@ -271,7 +286,8 @@ HOPE's personality belongs primarily in the substantive answer: its analysis, pr
 ### Proposal 19 — Immediate priority prompt
 
 - Record ID: `P7-PHRASE-019`
-- Status: `PENDING_OWNER_APPROVAL`
+- Status: `REJECTED`
+- Owner decision: Rejected on 2026-09-28. Preserve as history; do not implement or reactivate.
 - Exact text: `Começa pelo que está pegando agora.`
 - Locale: `pt-BR`
 - Category: `SUPPORTIVE_IMMEDIATE_PRIORITY`
@@ -285,7 +301,8 @@ HOPE's personality belongs primarily in the substantive answer: its analysis, pr
 ### Proposal 20 — Supportive present-focus transition
 
 - Record ID: `P7-PHRASE-020`
-- Status: `PENDING_OWNER_APPROVAL`
+- Status: `REJECTED`
+- Owner decision: Rejected on 2026-09-28. Preserve as history; do not implement or reactivate.
 - Exact text: `Entendi. Vamos lidar primeiro com o que está na sua frente.`
 - Locale: `pt-BR`
 - Category: `SUPPORTIVE_PRESENT_FOCUS`
@@ -296,13 +313,51 @@ HOPE's personality belongs primarily in the substantive answer: its analysis, pr
 - Prohibited contexts: Automatic Supportive-mode entry; inferred emotion; emergency; therapeutic script; avoidance of a more important safety issue; no identified immediate blocker; `DO_NOT_DISTURB`.
 - Notes: It must be followed by concrete help, not generic encouragement.
 
+## Replacement assessment for rejected records
+
+### Interruption acknowledgment — `P7-PHRASE-004`
+
+- Recommendation: `NO_REPLACEMENT_NEEDED`
+- Coverage assessment: Interruption is an operational state, not a personality opportunity. The interface already requires immediate, deterministic visual and accessible confirmation that playback stopped.
+- Rationale: Starting another spoken line immediately after the owner interrupts audio contradicts the stop intent. A new library phrase would add noise and race risk without improving clarity.
+- Required treatment: Use neutral visual/accessibility status from the voice-state contract. Do not create a PhraseLibrary fallback for interruption.
+
+### Additional completion phrase — `P7-PHRASE-005`
+
+- Recommendation: `NO_REPLACEMENT_NEEDED`
+- Coverage assessment: Approved `P7-PHRASE-015` already covers rare verified resolution with restrained humor.
+- Rationale: A second completion phrase would duplicate function, encourage rotation and work against the zero-phrase default.
+- Required treatment: Keep completion optional. Use no phrase most of the time; `P7-PHRASE-015` is the sole approved completion/resolution candidate in this package.
+
+### Supportive immediate-priority prompt — `P7-PHRASE-019`
+
+- Recommendation: `NO_REPLACEMENT_NEEDED`
+- Coverage assessment: Approved `P7-PHRASE-016` covers one-thing-at-a-time pacing, and approved `P7-PHRASE-018` covers reducing the immediate scope.
+- Rationale: Another priority prompt would duplicate approved supportive behavior and risk turning Supportive mode into a script set.
+- Required treatment: Express the actual priority directly in the substantive answer. A library phrase is unnecessary.
+
+### Supportive present-focus transition — `P7-PHRASE-020`
+
+- Recommendation: `NO_REPLACEMENT_NEEDED`
+- Coverage assessment: Approved `P7-PHRASE-016` through `P7-PHRASE-018` already cover pacing, context invitation and scope reduction.
+- Rationale: The rejected function has no unique semantic gap. A replacement would inflate the library and dilute HOPE's response-native personality.
+- Required treatment: Begin with the concrete blocker or next action. Do not add a replacement phrase.
+
+### Replacement outcome
+
+- New replacement proposals: 0
+- New pending Record IDs: none
+- Owner approval inferred for replacements: none
+- Design conclusion: the approved set is sufficient; no rejected function requires a new `PhraseLibrary` entry.
+
 ## Package decision boundary
 
 - Historical inactive records: 3 (`P7-PHRASE-001`, `P7-PHRASE-002`, `P7-PHRASE-003`)
-- Owner-rejected records: 2
+- Owner-approved records: 13 (`P7-PHRASE-006` through `P7-PHRASE-018`)
+- Owner-rejected records: 6 (`P7-PHRASE-001`, `P7-PHRASE-002`, `P7-PHRASE-004`, `P7-PHRASE-005`, `P7-PHRASE-019`, `P7-PHRASE-020`)
 - UI/UX-withdrawn records: 1
-- Active pending records: 17 (`P7-PHRASE-004` through `P7-PHRASE-020`)
-- Approved records: 0
-- Active implementation-eligible records: 0
-- Development eligibility: `BLOCKED` for all active exact phrases until individual owner decisions are persisted.
-- Empty-library behavior: Development may implement the non-content `PhraseLibrary` contract and deterministic selection tests using clearly non-product sentinels, but it must ship no phrase from this register unless that exact active record is individually approved.
+- Pending records: 0
+- New replacement proposals: 0; all four rejected functions are `NO_REPLACEMENT_NEEDED`
+- Phrase decision gate: `COMPLETE` for this package
+- Phrase implementation eligibility: only the 13 approved exact records, only in their recorded contexts and subject to the zero-phrase default, cooldown, suppression and substantive-content precedence
+- Routing boundary: this register does not start Development. The Coordinator owns the next route.

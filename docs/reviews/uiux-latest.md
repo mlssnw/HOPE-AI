@@ -3,6 +3,7 @@
 - Status: `APPROVED`
 - Original specification date: 2026-09-25
 - Owner correction revision: 2026-09-28
+- Owner phrase decisions: 2026-09-28
 - Phase: 7 — Conversational Presence Foundation
 - Review type: `PHASE 7 PRE-IMPLEMENTATION UI/UX SPECIFICATION — PERSONALITY CORRECTION`
 - Functional baseline reviewed: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`
@@ -11,6 +12,8 @@
 - Planner reconciliation commit: `bcd0a05da9cc8a8e8efd301103265470c0a21982`
 - Coordinator routing commit: `829aa31bfa20a8c551d2e0e66300d84ed2beb14e`
 - Original UI/UX package commit corrected: `efbe487b1a8d7d58eca03c30fb7110d8e3e52427`
+- Personality correction commit: `9362463d91759504d1a703d51471df3ffece5586`
+- Phrase-decision coordination baseline: `6e7b02a975deb3c1c0f36e3e0c3ba0768a635fee`
 - Production Readiness: `BLOCKED`
 
 ## Scope boundary
@@ -24,10 +27,13 @@ No Phase 7 Functional Commit exists. No frontend, backend, test, provider, datab
 - UI/UX specification result: `APPROVED`
 - Specification blockers: none
 - Specification warnings: none
-- Development routing: blocked by the separate individual owner phrase-decision gate
-- Phrase approvals granted by UI/UX: none
-- Historical inactive phrase records: 3 — `P7-PHRASE-001` and `P7-PHRASE-002` are `REJECTED`; `P7-PHRASE-003` is `WITHDRAWN_FROM_ACTIVE_PACKAGE`
-- Active phrase proposals: 17 — `P7-PHRASE-004` through `P7-PHRASE-020`, all `PENDING_OWNER_APPROVAL`
+- Phrase decision gate: `COMPLETE`
+- Owner-approved exact records: 13 — `P7-PHRASE-006` through `P7-PHRASE-018`
+- Owner-rejected records in this decision: 4 — `P7-PHRASE-004`, `P7-PHRASE-005`, `P7-PHRASE-019` and `P7-PHRASE-020`
+- Earlier inactive records preserved: `P7-PHRASE-001` and `P7-PHRASE-002` remain `REJECTED`; `P7-PHRASE-003` remains `WITHDRAWN_FROM_ACTIVE_PACKAGE`
+- Pending phrase proposals: 0
+- Replacement assessment: `NO_REPLACEMENT_NEEDED` for all four newly rejected functions; no new Record ID was created
+- Development routing: returned to the Coordinator; this UI/UX record does not start Development
 - Post-implementation UI/UX review: required against the future Phase 7 Functional Commit
 
 ## Canonical outputs
@@ -107,20 +113,21 @@ No Phase 7 Functional Commit exists. No frontend, backend, test, provider, datab
 - Twenty-one numbered `UIUX-P7-*` criteria cover response invariants, state truth, cancellation races, modes, fallbacks, accessibility, amplitude, persistence, phrase approval, zero-phrase behavior, response-native personality, responsive behavior and negative capability claims.
 - The evidence package requires automated transition/race tests, accessibility/focus evidence, responsive screenshots, reduced-motion/no-WebGL scenarios, static phrase allowlisting and network/storage/log assertions.
 
-## Phrase proposal gate
+## Phrase decision gate
 
-### `UIUX-P7-GATE-001` — Individual owner decisions required
+### `UIUX-P7-GATE-001` — CLOSED
 
-- Classification: mandatory external owner gate, not a UI/UX defect
+- Classification: completed external owner gate, not a UI/UX defect
 - Severity: `INFO`
-- Blocking: `YES` for Development routing; `NO` for completion of this UI/UX specification
-- Evidence: 17 active numbered records in [`../design/phase-7-phrase-proposals.md`](../design/phase-7-phrase-proposals.md), each with exact text, locale, category, usage context, intended tone, frequency/cooldown, safety/prohibited contexts and `PENDING_OWNER_APPROVAL`; three prior records are preserved as inactive history.
-- Impact: no proposed phrase is eligible for implementation until the owner decides that exact record. Approval of one item cannot authorize another item or any punctuation, localization, paraphrase, translation or rewrite.
-- Required action: Coordinator presents active records `P7-PHRASE-004` through `P7-PHRASE-020` individually to the owner and persists each explicit decision before routing Development.
+- Blocking: `NO`
+- Evidence: the owner individually approved `P7-PHRASE-006` through `P7-PHRASE-018` and rejected `P7-PHRASE-004`, `P7-PHRASE-005`, `P7-PHRASE-019` and `P7-PHRASE-020` on 2026-09-28.
+- Approval scope: exact text and recorded context only. No punctuation variant, localization, translation, paraphrase or future rewrite is approved.
+- Replacement analysis: interruption is better served by neutral operational feedback; completion is already covered by approved `P7-PHRASE-015`; supportive priority/present-focus are already covered by approved `P7-PHRASE-016` through `P7-PHRASE-018`.
+- Outcome: no new alternative is justified, no pending record remains and library inflation is avoided.
 
 ## Findings
 
-No UI/UX problem is open in the specification itself. The owner phrase gate above is an expected dependency created by the approved Phase 7 plan, not a warning or defect.
+No UI/UX problem is open in the specification or phrase-decision record. The exact-item owner gate is complete for this package.
 
 ## Validation performed
 
@@ -129,6 +136,8 @@ No UI/UX problem is open in the specification itself. The owner phrase gate abov
 - Confirmed that current functional code still matches the integrated baseline and that commits after `ce2bde4a0792fa6a8c0a79e56781add162bff2d2` are documentation-only.
 - Cross-checked the specification against the owner-approved Phase 7 non-goals and exact-item phrase protocol.
 - Applied the owner's 2026-09-28 correction: substantive-answer personality, optional/rare PhraseLibrary, zero phrase as a preferred valid result, no automatic mode hooks, direct Focus and recognizably HOPE Supportive behavior.
+- Persisted all 17 exact owner decisions without broadening approval to variants or contexts.
+- Compared every rejected function with the 13 approved records and recorded `NO_REPLACEMENT_NEEDED` for interruption, additional completion, supportive immediate priority and supportive present focus.
 - Kept all phrase content exclusively in the UI/UX proposal register; no proposal was added to code, tests, fixtures, snapshots, defaults, seeds or the active product.
 
 ## Validation boundaries
@@ -139,4 +148,4 @@ No UI/UX problem is open in the specification itself. The owner phrase gate abov
 
 ## Recommendation
 
-Return to the Coordinator to present active proposals `P7-PHRASE-004` through `P7-PHRASE-020` individually to the owner. Records `P7-PHRASE-001` through `P7-PHRASE-003` remain inactive history and are not candidates. After exact decisions are persisted, the Coordinator may route Development within the approved Phase 7 specification. Do not route Development earlier and do not start Phase 8 or production work.
+Return to the Coordinator with the phrase gate complete: 13 exact records approved, four newly rejected, three earlier inactive records preserved and no replacement proposed. The Coordinator owns any later Development route; this review starts no Work. Do not start Phase 8 or production work.
