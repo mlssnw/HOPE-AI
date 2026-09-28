@@ -2,12 +2,14 @@
 
 - Status: `APPROVED`
 - Review type: `PRE-IMPLEMENTATION SPECIFICATION`
-- Date: 2026-09-25
+- Original specification date: 2026-09-25
+- Owner correction revision: 2026-09-28
 - Functional baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`
 - Phase 7 Functional Commit: `NONE`
 - Architecture decision: `ARCH-2026-09-25-001`
 - Planner reconciliation commit: `bcd0a05da9cc8a8e8efd301103265470c0a21982`
 - Coordinator routing commit: `829aa31bfa20a8c551d2e0e66300d84ed2beb14e`
+- Owner personality correction applied after UI/UX commit: `efbe487b1a8d7d58eca03c30fb7110d8e3e52427`
 - Phrase proposal register: [`phase-7-phrase-proposals.md`](phase-7-phrase-proposals.md)
 - Environment boundary: local/controlled
 - Production Readiness: `BLOCKED`
@@ -61,7 +63,9 @@ It does not implement the feature, select a provider, authorize a new data flow,
 - Voice failure degrades to text, not to a silent provider switch or an invented success.
 - Modes narrow presentation or context. They never expand permissions, capabilities, facts or access.
 - Privacy-affecting modes are prospective and fail closed for new turns.
-- Personality phrases are optional polish below substantive content and remain absent until exact owner approval.
+- HOPE's personality appears primarily through the reasoning, wording and judgment of the substantive answer itself.
+- `PhraseLibrary` is rare optional presence. Returning no phrase is a normal and often preferred result.
+- No interaction mode automatically injects an opening, closing, catchphrase or ritual line.
 
 ## 1. DisplayResponse and SpokenResponse
 
@@ -159,7 +163,7 @@ Add one secondary `Modes` control in the composer area. It opens a non-modal pop
 
 | UI group | Contract values | User-visible meaning |
 |---|---|---|
-| Interaction style | `NORMAL`, `FOCUS`, `SUPPORTIVE`, `PRESENTATION` | Changes phrasing and pacing only. |
+| Interaction style | `NORMAL`, `FOCUS`, `SUPPORTIVE`, `PRESENTATION` | Changes the phrasing, organization and pacing of the substantive answer only; it never triggers a library phrase. |
 | Privacy | `STANDARD`, `PRIVATE` | Private applies to new turns, forces memory retrieval/capture off and prevents new local-history writes. |
 | Output | `VOICE`, `SILENT` | Voice permits the existing speech path when available; Silent prevents synthesis and playback. |
 | Interruptions | `STANDARD`, `DO_NOT_DISTURB` | Do not disturb suppresses nonessential optional phrases; it does not add proactive runtime or hide safety/operational failures. |
@@ -170,6 +174,10 @@ Add one secondary `Modes` control in the composer area. It opens a non-modal pop
 - Defaults are Normal, Standard privacy, the existing voice-output preference, Standard interruption and Private audience.
 - Modes are independent controls, but resolved restrictions are shown in one plain-language summary before the next turn.
 - Privacy and audience restrictions win over style. Silent wins over any style or phrase that prefers speech.
+- Entering or changing a mode produces no assistant message and performs no `PhraseLibrary` lookup by itself.
+- `FOCUS` has a default phrase budget of zero. A focused analysis begins directly with the diagnosis, evidence or next action; selecting Focus alone can never override that default.
+- `SUPPORTIVE` keeps HOPE's same intelligent, direct and recognizable identity. It may improve pacing, structure and care, but cannot add therapeutic scripts, emotional diagnosis, excessive reassurance or automatic comforting phrases.
+- `PRESENTATION` organizes the actual answer; it does not prepend a presentation ritual.
 - Private or Public visually locks memory use off for new turns. The existing Memory in chat preference is preserved in session state and may be restored only prospectively when the restricting mode ends.
 - Private prevents new local-history writes; it does not erase earlier history. The UI states that limit at selection time.
 - Public does not hide content already visible and does not certify that the surrounding physical environment is private.
@@ -177,6 +185,15 @@ Add one secondary `Modes` control in the composer area. It opens a non-modal pop
 - Mode changes are accepted only from explicit user controls or an equivalent explicit user command processed under the same policy. Model output, memory, web content and documents cannot activate them.
 - Modes remain session-local. Do not expose a save-as-default or cross-device claim.
 - The mode surface contains a persistent statement that modes change presentation/privacy for new turns, not permissions, facts or capabilities.
+
+### Personality in the substantive answer
+
+- Personality is expressed through word choice, prioritization, confident reasoning, precise disagreement, restrained humor and the quality of the recommendation inside the answer.
+- The implementation must not model personality as `prefix + substantive response + suffix` or as a mode-entry hook.
+- When the owner asks for analysis, the first useful sentence states the problem, evidence, constraint or recommendation unless safety, uncertainty or a required limitation must come first.
+- Directional example, not `PhraseLibrary` content: for “Hope, analisa esse erro.”, a focused answer starts directly with the identified WebSocket problem and why it occurs instead of inserting a generic acknowledgment.
+- Supportive style may shorten the horizon, group steps and acknowledge user-stated difficulty, but the response still moves promptly to concrete information or action.
+- Optional approved phrases may appear only when their exact semantic context is already present in the substantive answer. They cannot manufacture tone, replace reasoning or delay the useful first sentence.
 
 ## 5. Microphone and voice fallback
 
@@ -229,10 +246,15 @@ Add one secondary `Modes` control in the composer area. It opens a non-modal pop
 - No phrase in the proposal register is approved by this specification.
 - Development may implement only records whose exact text and context later carry an explicit owner `APPROVED` decision.
 - Approval is atomic by record ID and exact Unicode text. It does not cover punctuation changes, localization, paraphrase, concatenation, translation, SSML, pronunciation rewrite or future variant.
-- Phrases are optional surface language. They never replace substantive answers, state labels, warnings, confirmations, errors, privacy disclosures or capability limitations.
+- Phrases are rare optional surface language. The selector's default and most common valid result is no phrase.
+- Phrases never replace substantive answers, state labels, warnings, confirmations, errors, privacy disclosures or capability limitations.
+- A mode value is never sufficient context for phrase eligibility. No phrase is selected on mode entry, mode change or mode restoration.
+- `FOCUS` yields no library phrase by default. Only an explicit owner request for a stylistic aside may make an otherwise approved phrase eligible for that single turn; the answer still begins with substantive analysis when requested.
+- `SUPPORTIVE` does not activate a supportive phrase set. Eligibility requires the phrase's exact semantic context in the current user turn and must still pass safety, cooldown and usefulness checks.
+- There is no fallback phrase, minimum phrase count, rotation quota or requirement to demonstrate personality through library output.
 - `PRIVATE`, `PUBLIC`, `DO_NOT_DISTURB`, safety-sensitive contexts and serious errors suppress nonessential phrase selection.
 - Cooldown is measured across eligible assistant turns in the current session. It is not persisted.
-- A rejected or still-pending phrase cannot appear in source code, tests, fixtures, snapshots, defaults, seeded content or the active product. Tests may use clearly non-product sentinels.
+- A rejected, withdrawn, superseded or still-pending phrase cannot appear in source code, tests, fixtures, snapshots, defaults, seeded content or the active product. Tests may use clearly non-product sentinels.
 - Recognition/homage remains outside this initial package. Any future exact homage text needs its own proposal and explicit request context; no character identity, dialogue, catchphrase, mannerism or voice may be copied.
 
 ## 9. Privacy, security and truthfulness
@@ -272,11 +294,14 @@ Add one secondary `Modes` control in the composer area. It opens a non-modal pop
 | `UIUX-P7-011` | Reduced motion removes continuous amplitude/motion while preserving textual state. | Media-query and local-control screenshots/tests. |
 | `UIUX-P7-012` | Core Orb amplitude comes only from current local output and resets on every terminal path. | Synthetic local PCM tests for play/pause/stop/end/error/cancel/stale turn; no network/log event. |
 | `UIUX-P7-013` | No amplitude, mode, transcript, spoken response or voice-session data is persisted or logged. | Static diff check and storage/network/log assertions. |
-| `UIUX-P7-014` | Only owner-approved exact phrase records can enter product content. | Static allowlist check tied to the future approval record; pending/rejected phrases absent. |
-| `UIUX-P7-015` | Phrase selection respects cooldown, suppression and substantive-content precedence. | Deterministic unit tests using only approved phrases or non-product sentinels. |
-| `UIUX-P7-016` | `SelfKnowledge` and capability UI distinguish implemented, partial, planned and unavailable states. | Allowlist/capability tests and negative claim scan. |
-| `UIUX-P7-017` | Voice flows remain usable at all Phase 6 viewport sizes and without WebGL. | Screenshots at 320×568, 390×844, 768×1024, 1024×768, 1280×720, 1440×900 and 1920×1080. |
-| `UIUX-P7-018` | No new provider, endpoint, persistence, background microphone, wake word or future capability is implied. | Functional diff inventory, network assertions and visible/accessibility-tree copy scan. |
+| `UIUX-P7-014` | Only owner-approved exact phrase records can enter product content. | Static allowlist check tied to the future approval record; pending, rejected, withdrawn and superseded phrases absent. |
+| `UIUX-P7-015` | Phrase selection treats no phrase as the default valid result and has no fallback, minimum quota or rotation requirement. | Deterministic null-selection tests across ordinary eligible turns and cooldown exhaustion. |
+| `UIUX-P7-016` | Mode entry/change never invokes or injects a phrase; `FOCUS` has a zero-phrase default and begins directly with substantive analysis. | Event/call-spy tests proving no mode-to-phrase hook plus focused-response content assertions. |
+| `UIUX-P7-017` | `SUPPORTIVE` preserves HOPE's identity and directness without therapeutic, artificial or automatic reassurance. | Content fixtures showing concrete information/action before optional polish and negative copy checks. |
+| `UIUX-P7-018` | Approved optional phrases respect exact semantic context, cooldown, suppression, usefulness and substantive-content precedence. | Deterministic selection tests using only approved phrases or non-product sentinels. |
+| `UIUX-P7-019` | `SelfKnowledge` and capability UI distinguish implemented, partial, planned and unavailable states. | Allowlist/capability tests and negative claim scan. |
+| `UIUX-P7-020` | Voice flows remain usable at all Phase 6 viewport sizes and without WebGL. | Screenshots at 320×568, 390×844, 768×1024, 1024×768, 1280×720, 1440×900 and 1920×1080. |
+| `UIUX-P7-021` | No new provider, endpoint, persistence, background microphone, wake word or future capability is implied. | Functional diff inventory, network assertions and visible/accessibility-tree copy scan. |
 
 ## Development evidence package
 
@@ -289,8 +314,11 @@ The future Phase 7 Functional Commit must provide:
 - accessibility tree or equivalent semantic evidence with no duplicate state announcements;
 - reduced-motion and no-WebGL scenarios;
 - synthetic local audio evidence for amplitude without microphone/provider/paid calls;
-- static proof that no pending/rejected phrase appears in product code, fixtures, tests, snapshots, defaults or seeds;
+- static proof that no pending, rejected, withdrawn or superseded phrase appears in product code, fixtures, tests, snapshots, defaults or seeds;
 - exact traceability from every implemented phrase to the later owner approval record;
+- negative evidence that mode-entry, mode-change and Focus/Supportive selection do not call phrase injection hooks;
+- representative Focus answers that start with substantive diagnosis/evidence and Supportive answers that remain direct and non-therapeutic;
+- deterministic evidence that returning no phrase is valid, common and does not trigger a fallback;
 - screenshots for the required responsive matrix, including short-height/landscape and active Stop/Cancel;
 - a truthfulness scan for future capability claims;
 - confirmation that no backend endpoint, provider, schema, migration, persistence, secret, deployment or production surface was added.

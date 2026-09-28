@@ -180,22 +180,25 @@ Required Reviews — Integration Candidate:
 ## UI/UX
 
 - Coordination status: `APPROVED` — Phase 7 pre-implementation UI/UX specification complete
-- Review type: `PHASE 7 PRE-IMPLEMENTATION UI/UX SPECIFICATION`
+- Review type: `PHASE 7 PRE-IMPLEMENTATION UI/UX SPECIFICATION — PERSONALITY CORRECTION`
 - Functional baseline reviewed: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`
 - Phase 7 Functional Commit: `NONE`
 - Architecture decision: `ARCH-2026-09-25-001`
 - Planner reconciliation commit: `bcd0a05da9cc8a8e8efd301103265470c0a21982`
 - Coordinator routing commit: `829aa31bfa20a8c551d2e0e66300d84ed2beb14e`
+- Original UI/UX package commit corrected: `efbe487b1a8d7d58eca03c30fb7110d8e3e52427`
 - Specification: [`phase-7-conversational-presence-spec.md`](design/phase-7-conversational-presence-spec.md)
 - Phrase register: [`phase-7-phrase-proposals.md`](design/phase-7-phrase-proposals.md)
-- Specification coverage: display/spoken separation, truthful voice states, stop/cancel/stale-event handling, combinable modes, microphone/TTS fallback, accessibility/focus/reduced motion, local ephemeral output amplitude, privacy and capability truthfulness
-- Objective evidence contract: `UIUX-P7-001` through `UIUX-P7-018`
+- Specification coverage: display/spoken separation, truthful voice states, stop/cancel/stale-event handling, combinable modes, response-native personality, zero-phrase default, no automatic mode phrase hooks, microphone/TTS fallback, accessibility/focus/reduced motion, local ephemeral output amplitude, privacy and capability truthfulness
+- Objective evidence contract: `UIUX-P7-001` through `UIUX-P7-021`
 - Specification blockers: none
-- Phrase proposals: 5; all `PENDING_OWNER_APPROVAL`; UI/UX grants no phrase approval
+- Historical inactive phrases: `P7-PHRASE-001` and `P7-PHRASE-002` `REJECTED`; `P7-PHRASE-003` `WITHDRAWN_FROM_ACTIVE_PACKAGE`
+- Active phrase proposals: 17 (`P7-PHRASE-004` through `P7-PHRASE-020`); all `PENDING_OWNER_APPROVAL`; UI/UX grants no phrase approval
+- Personality rule: the substantive answer carries HOPE's identity; `PhraseLibrary` is rare/optional, no phrase is a normal preferred result, and no mode may trigger ritual copy
 - Development routing: `BLOCKED` until the owner decides each exact phrase intended for the first package and the Coordinator persists those decisions
 - Phrase scope: approval is exact-item only and does not cover punctuation, variants, localization, translation, paraphrase or future rewrite
 - Production Readiness: `BLOCKED`
-- Recommendation: return to the Coordinator for individual owner decisions on `P7-PHRASE-001` through `P7-PHRASE-005`; do not route Development, Phase 8 or production earlier
+- Recommendation: return to the Coordinator for individual owner decisions on active records `P7-PHRASE-004` through `P7-PHRASE-020`; do not route Development, Phase 8 or production earlier
 - Report: [`uiux-latest.md`](reviews/uiux-latest.md)
 
 ## Planner

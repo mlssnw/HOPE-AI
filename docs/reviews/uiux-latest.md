@@ -1,14 +1,16 @@
 # UI/UX Review — Latest
 
 - Status: `APPROVED`
-- Date: 2026-09-25
+- Original specification date: 2026-09-25
+- Owner correction revision: 2026-09-28
 - Phase: 7 — Conversational Presence Foundation
-- Review type: `PHASE 7 PRE-IMPLEMENTATION UI/UX SPECIFICATION`
+- Review type: `PHASE 7 PRE-IMPLEMENTATION UI/UX SPECIFICATION — PERSONALITY CORRECTION`
 - Functional baseline reviewed: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`
 - Phase 7 Functional Commit: `NONE`
 - Architecture decision: `ARCH-2026-09-25-001`
 - Planner reconciliation commit: `bcd0a05da9cc8a8e8efd301103265470c0a21982`
 - Coordinator routing commit: `829aa31bfa20a8c551d2e0e66300d84ed2beb14e`
+- Original UI/UX package commit corrected: `efbe487b1a8d7d58eca03c30fb7110d8e3e52427`
 - Production Readiness: `BLOCKED`
 
 ## Scope boundary
@@ -24,7 +26,8 @@ No Phase 7 Functional Commit exists. No frontend, backend, test, provider, datab
 - Specification warnings: none
 - Development routing: blocked by the separate individual owner phrase-decision gate
 - Phrase approvals granted by UI/UX: none
-- Phrase proposals: 5, all `PENDING_OWNER_APPROVAL`
+- Historical inactive phrase records: 3 — `P7-PHRASE-001` and `P7-PHRASE-002` are `REJECTED`; `P7-PHRASE-003` is `WITHDRAWN_FROM_ACTIVE_PACKAGE`
+- Active phrase proposals: 17 — `P7-PHRASE-004` through `P7-PHRASE-020`, all `PENDING_OWNER_APPROVAL`
 - Post-implementation UI/UX review: required against the future Phase 7 Functional Commit
 
 ## Canonical outputs
@@ -61,6 +64,9 @@ No Phase 7 Functional Commit exists. No frontend, backend, test, provider, datab
 - The UI exposes a resolved restriction summary and states that modes affect new turns rather than prior visible/stored content.
 - Privacy/audience restrictions and Silent output win over style.
 - No mode grants permission, changes facts, starts capture, unlocks unavailable capabilities or confirms an action.
+- No mode entry, change or restoration invokes `PhraseLibrary` or injects an opening/closing line.
+- `FOCUS` has a zero-phrase default and begins directly with substantive diagnosis, evidence or action.
+- `SUPPORTIVE` preserves HOPE's direct, intelligent identity and does not activate therapeutic or automatic reassurance copy.
 
 ### 5. Microphone and voice fallback — PASS
 
@@ -89,9 +95,16 @@ No Phase 7 Functional Commit exists. No frontend, backend, test, provider, datab
 - Wake word, speaker verification, streaming, cross-device behavior, tools, agents, automation and external effects remain explicitly unimplemented.
 - Production Readiness remains `BLOCKED`.
 
-### 9. Objective Development/QA criteria — PASS
+### 9. Personality in the substantive answer — PASS
 
-- Eighteen numbered `UIUX-P7-*` criteria cover response invariants, state truth, cancellation races, modes, fallbacks, accessibility, amplitude, persistence, phrase approval, responsive behavior and negative capability claims.
+- HOPE's personality is specified through reasoning, prioritization, wording, precise disagreement and restrained humor inside the answer.
+- A `prefix + response + suffix` implementation and automatic phrase hooks are explicitly prohibited.
+- No phrase is the normal valid result; there is no fallback phrase, minimum quota or rotation requirement.
+- Optional approved phrases are eligible only when their exact semantic context is already present and they add useful presence without delaying the useful first sentence.
+
+### 10. Objective Development/QA criteria — PASS
+
+- Twenty-one numbered `UIUX-P7-*` criteria cover response invariants, state truth, cancellation races, modes, fallbacks, accessibility, amplitude, persistence, phrase approval, zero-phrase behavior, response-native personality, responsive behavior and negative capability claims.
 - The evidence package requires automated transition/race tests, accessibility/focus evidence, responsive screenshots, reduced-motion/no-WebGL scenarios, static phrase allowlisting and network/storage/log assertions.
 
 ## Phrase proposal gate
@@ -101,9 +114,9 @@ No Phase 7 Functional Commit exists. No frontend, backend, test, provider, datab
 - Classification: mandatory external owner gate, not a UI/UX defect
 - Severity: `INFO`
 - Blocking: `YES` for Development routing; `NO` for completion of this UI/UX specification
-- Evidence: five numbered records in [`../design/phase-7-phrase-proposals.md`](../design/phase-7-phrase-proposals.md), each with exact text, locale, category, usage context, intended tone, frequency/cooldown, safety/prohibited contexts and `PENDING_OWNER_APPROVAL`.
+- Evidence: 17 active numbered records in [`../design/phase-7-phrase-proposals.md`](../design/phase-7-phrase-proposals.md), each with exact text, locale, category, usage context, intended tone, frequency/cooldown, safety/prohibited contexts and `PENDING_OWNER_APPROVAL`; three prior records are preserved as inactive history.
 - Impact: no proposed phrase is eligible for implementation until the owner decides that exact record. Approval of one item cannot authorize another item or any punctuation, localization, paraphrase, translation or rewrite.
-- Required action: Coordinator presents all five records individually to the owner and persists each explicit decision before routing Development.
+- Required action: Coordinator presents active records `P7-PHRASE-004` through `P7-PHRASE-020` individually to the owner and persists each explicit decision before routing Development.
 
 ## Findings
 
@@ -115,6 +128,7 @@ No UI/UX problem is open in the specification itself. The owner phrase gate abov
 - Inspected the baseline dashboard, chat, voice input, TTS playback, cancellation, presentation-state and Core Orb contracts.
 - Confirmed that current functional code still matches the integrated baseline and that commits after `ce2bde4a0792fa6a8c0a79e56781add162bff2d2` are documentation-only.
 - Cross-checked the specification against the owner-approved Phase 7 non-goals and exact-item phrase protocol.
+- Applied the owner's 2026-09-28 correction: substantive-answer personality, optional/rare PhraseLibrary, zero phrase as a preferred valid result, no automatic mode hooks, direct Focus and recognizably HOPE Supportive behavior.
 - Kept all phrase content exclusively in the UI/UX proposal register; no proposal was added to code, tests, fixtures, snapshots, defaults, seeds or the active product.
 
 ## Validation boundaries
@@ -125,4 +139,4 @@ No UI/UX problem is open in the specification itself. The owner phrase gate abov
 
 ## Recommendation
 
-Return to the Coordinator to present proposals `P7-PHRASE-001` through `P7-PHRASE-005` individually to the owner. After exact decisions are persisted, the Coordinator may route Development within the approved Phase 7 specification. Do not route Development earlier and do not start Phase 8 or production work.
+Return to the Coordinator to present active proposals `P7-PHRASE-004` through `P7-PHRASE-020` individually to the owner. Records `P7-PHRASE-001` through `P7-PHRASE-003` remain inactive history and are not candidates. After exact decisions are persisted, the Coordinator may route Development within the approved Phase 7 specification. Do not route Development earlier and do not start Phase 8 or production work.
