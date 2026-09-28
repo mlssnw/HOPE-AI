@@ -7,13 +7,13 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 ## Current Phase
 
 - Phase: 7 — Conversational Presence Foundation
-- Phase status: WAITING_FOR_APPROVAL — the corrected pre-implementation UI/UX specification is approved; individual owner decisions on the active phrase records are the current gate
+- Phase status: READY_FOR_DEVELOPMENT_ROUTING — the corrected pre-implementation UI/UX specification and the first phrase package are approved; eight optional alternatives await owner choice but do not block Development
 - Feature status: NOT_STARTED — no Phase 7 functional implementation or Functional Commit exists yet
 - Production readiness: BLOCKED — Phase 7 does not authorize public deployment or resolve the inherited production blockers
 - Baseline: `ce2bde4` on `main`, with Phase 6 complete and integrated through PR #1
 - Runtime API version: `6.0.0-phase.5` — frozen legacy metadata from the approved Phase 6 artifact; Phase 7 has not changed it
 - Authorized scope: only the contracts and local deterministic behavior defined in [`docs/phase-7.md`](phase-7.md)
-- Phrase approval gate: every exact PhraseLibrary phrase must receive individual owner approval before it is added to code, fixtures or active product content
+- Phrase approval gate: complete for the 13-record first package (`P7-PHRASE-006` through `P7-PHRASE-018`); every additional exact phrase still requires individual owner approval before it enters code, fixtures or active product content
 - Working tree boundary: preserve the pre-existing untracked `Hope dashboard` and `hope-linkedin-hero*` assets outside project commits
 - Database boundary: no schema, migration, persistence or real-database operation is authorized in Phase 7
 
@@ -231,11 +231,11 @@ Required Reviews — Integration Candidate:
 ## Coordinator
 
 - Autonomy level: 2.5
-- Status: WAITING_FOR_APPROVAL
-- Operational conclusion: UI/UX completed the corrected Phase 7 pre-implementation specification in `9362463`. The substantive answer now carries HOPE's personality; zero phrase is the normal preferred default, and no mode may trigger ritual copy.
+- Status: OWNER_OPTIONAL_SELECTION
+- Operational conclusion: the owner approved `P7-PHRASE-006` through `P7-PHRASE-018` and rejected `P7-PHRASE-004`, `P7-PHRASE-005`, `P7-PHRASE-019` and `P7-PHRASE-020`; UI/UX persisted those decisions in `348cad3` and created eight optional alternatives in `2a90ad1`. The 13 approved records are sufficient for Development routing.
 - Final Integration Candidate: `cb8dc774cc396f3aff0ef40e79753761fbf3b49b`
 - Main integration commit: `ce2bde4`
-- Routing: LEVEL 3 — return active phrase records `P7-PHRASE-004` through `P7-PHRASE-020` to the owner for individual `APPROVED`, `REJECTED` or edited-replacement decisions. Development remains inactive until the decisions intended for the first package are persisted.
+- Routing: LEVEL 3 — present `P7-PHRASE-021` through `P7-PHRASE-028` to the owner for optional individual decisions. They remain excluded by default; once the owner answers the requested alternatives, route the approved 13-record package plus any newly approved exact items to Development.
 - Boundary: COORDINATOR atualizou somente Current Phase, Current Functional Commit, Review Matrix, blockers, warnings, Next Action e histórico; não concedeu aprovação técnica nem alterou seções ou relatórios de ownership dos reviewers
 
 ## Current Blockers
@@ -243,7 +243,8 @@ Required Reviews — Integration Candidate:
 ### Feature Blockers
 
 - No technical blocker remains in the pre-implementation UI/UX specification.
-- PhraseLibrary content is owner-gated: 17 active exact records remain `PENDING_OWNER_APPROVAL`; no phrase is eligible for Development until its individual decision is persisted.
+- No Phase 7 feature blocker remains: the 13 approved exact records are eligible for Development within their recorded contexts and the zero-phrase default.
+- Eight optional exact alternatives (`P7-PHRASE-021` through `P7-PHRASE-028`) remain `PENDING_OWNER_APPROVAL`; they are excluded from implementation by default and do not block Development.
 
 ### Production Blockers
 
@@ -274,19 +275,19 @@ Required Reviews — Integration Candidate:
 ## Next Action
 
 - Role: OWNER
-- Status: WAITING_FOR_APPROVAL
-- Task: decide each active exact phrase record independently as `APPROVED`, `REJECTED` or an edited replacement that returns as a new pending record
-- Target documentation commit: `9362463`; functional baseline remains `ce2bde4` and Phase 7 Functional Commit remains `NONE`
+- Status: OPTIONAL_SELECTION_REQUESTED
+- Task: decide each optional alternative `P7-PHRASE-021` through `P7-PHRASE-028` independently as `APPROVED`, `REJECTED` or an edited replacement that returns as a new pending record
+- Target documentation commit: `2a90ad1`; functional baseline remains `ce2bde4` and Phase 7 Functional Commit remains `NONE`
 - Required inputs:
   - [`docs/design/phase-7-conversational-presence-spec.md`](design/phase-7-conversational-presence-spec.md)
   - [`docs/design/phase-7-phrase-proposals.md`](design/phase-7-phrase-proposals.md)
   - [`docs/reviews/uiux-latest.md`](reviews/uiux-latest.md)
 - Expected output:
-  - one explicit decision for each active record `P7-PHRASE-004` through `P7-PHRASE-020`
+  - one explicit decision for each optional record `P7-PHRASE-021` through `P7-PHRASE-028`, or an explicit decision to keep no replacement for one or more rejected functions
   - approval limited to exact text and recorded context; no inferred approval for variants, translations, punctuation changes or future rewrites
   - any edited wording recorded as a new exact pending proposal before implementation
-- Blocking dependencies: explicit owner decisions for every phrase intended for the first implementation package
-- Parallel work: none — Development, QA and Security remain inactive
+- Blocking dependencies: none for the approved 13-record first package; pending alternatives remain excluded unless individually approved
+- Parallel work: none until the owner answers the alternatives currently under consideration; after that response, Development is the sole next implementation Work
 - Escalation: USER
 
 ## Recent History
@@ -331,3 +332,4 @@ Required Reviews — Integration Candidate:
 - 2026-09-25 — The owner explicitly authorized Phase 7 implementation within the approved plan. COORDINATOR opened only the pre-implementation UI/UX gate and recorded a mandatory individual owner-approval gate for every exact PhraseLibrary phrase; Development remains inactive until UI/UX returns the complete specification and the Coordinator routes the next action.
 - 2026-09-25 — PLANNER completed `ARCH-2026-09-25-001` in `bcd0a05`, reconciled the active canonical authorization records, preserved every Phase 7 non-goal and formalized the exact-item phrase protocol without creating a phrase or changing code. COORDINATOR routed the next gate exclusively to UI/UX against baseline `ce2bde4`.
 - 2026-09-28 — The owner corrected the personality contract: substantive answers carry HOPE's identity, PhraseLibrary is rare and optional, zero phrase is preferred by default, Focus starts directly with analysis and Supportive remains recognizably HOPE. UI/UX persisted the corrected specification and 17 active exact pending records in `9362463`; COORDINATOR returned every active record to the owner for individual decisions.
+- 2026-09-28 — The owner approved `P7-PHRASE-006` through `P7-PHRASE-018` and rejected `P7-PHRASE-004`, `P7-PHRASE-005`, `P7-PHRASE-019` and `P7-PHRASE-020`. UI/UX persisted the exact decisions in `348cad3` and, at the owner's request, added eight optional non-blocking alternatives in `2a90ad1`; COORDINATOR opened only their optional individual decision step.
