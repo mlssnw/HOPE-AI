@@ -7,7 +7,7 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 ## Current Phase
 
 - Phase: 7 — Conversational Presence Foundation
-- Phase status: IN_PROGRESS — implementation authorized and Planner reconciliation complete; the pre-implementation UI/UX specification is the active gate
+- Phase status: WAITING_FOR_APPROVAL — the corrected pre-implementation UI/UX specification is approved; individual owner decisions on the active phrase records are the current gate
 - Feature status: NOT_STARTED — no Phase 7 functional implementation or Functional Commit exists yet
 - Production readiness: BLOCKED — Phase 7 does not authorize public deployment or resolve the inherited production blockers
 - Baseline: `ce2bde4` on `main`, with Phase 6 complete and integrated through PR #1
@@ -105,7 +105,7 @@ Required Reviews — Integration Candidate:
 | QA | YES | NOT_STARTED | — |
 | DATABASE | NO | N/A | — |
 | SECURITY | YES | NOT_STARTED | — |
-| UI/UX | YES | IN_PROGRESS | baseline `ce2bde4` |
+| UI/UX | YES | APPROVED | `9362463` against baseline `ce2bde4` |
 | PLANNER | YES | APPROVED | `bcd0a05da9cc8a8e8efd301103265470c0a21982` |
 
 ## Development
@@ -224,19 +224,19 @@ Required Reviews — Integration Candidate:
 ## Coordinator
 
 - Autonomy level: 2.5
-- Status: IN_PROGRESS
-- Operational conclusion: Phase 6 is integrated. The owner authorized Phase 7 within its approved scope, and Planner completed the canonical authorization/phrase-gate reconciliation in `bcd0a05` without creating a phrase or changing functional code.
+- Status: WAITING_FOR_APPROVAL
+- Operational conclusion: UI/UX completed the corrected Phase 7 pre-implementation specification in `9362463`. The substantive answer now carries HOPE's personality; zero phrase is the normal preferred default, and no mode may trigger ritual copy.
 - Final Integration Candidate: `cb8dc774cc396f3aff0ef40e79753761fbf3b49b`
 - Main integration commit: `ce2bde4`
-- Routing: LEVEL 2.5 — UI/UX is now the only active Work for the complete pre-implementation specification. Development remains inactive until UI/UX persists that specification and the Coordinator returns every proposed exact phrase to the owner for an individual decision.
+- Routing: LEVEL 3 — return active phrase records `P7-PHRASE-004` through `P7-PHRASE-020` to the owner for individual `APPROVED`, `REJECTED` or edited-replacement decisions. Development remains inactive until the decisions intended for the first package are persisted.
 - Boundary: COORDINATOR atualizou somente Current Phase, Current Functional Commit, Review Matrix, blockers, warnings, Next Action e histórico; não concedeu aprovação técnica nem alterou seções ou relatórios de ownership dos reviewers
 
 ## Current Blockers
 
 ### Feature Blockers
 
-- None for the UI/UX specification. Planner closed the canonical authorization inconsistency in `bcd0a05`.
-- PhraseLibrary content is owner-gated: each exact phrase is blocked from implementation until individually approved. This does not block UI/UX from preparing clearly marked proposals.
+- No technical blocker remains in the pre-implementation UI/UX specification.
+- PhraseLibrary content is owner-gated: 17 active exact records remain `PENDING_OWNER_APPROVAL`; no phrase is eligible for Development until its individual decision is persisted.
 
 ### Production Blockers
 
@@ -266,30 +266,21 @@ Required Reviews — Integration Candidate:
 
 ## Next Action
 
-- Role: UI/UX
-- Status: IN_PROGRESS
-- Task: produce and persist the complete Phase 7 pre-implementation experience specification and an individually reviewable phrase proposal register without changing functional code
-- Target baseline: `ce2bde4` on `main`; Phase 7 Functional Commit does not exist yet
+- Role: OWNER
+- Status: WAITING_FOR_APPROVAL
+- Task: decide each active exact phrase record independently as `APPROVED`, `REJECTED` or an edited replacement that returns as a new pending record
+- Target documentation commit: `9362463`; functional baseline remains `ce2bde4` and Phase 7 Functional Commit remains `NONE`
 - Required inputs:
-  - [`AGENTS.md`](../AGENTS.md)
-  - [`docs/architecture.md`](architecture.md)
-  - [`docs/phase-7.md`](phase-7.md)
-  - [`docs/product-vision.md`](product-vision.md)
-  - [`docs/roadmap.md`](roadmap.md)
-  - [`docs/future-architecture.md`](future-architecture.md)
-  - [`docs/design/`](design/README.md)
+  - [`docs/design/phase-7-conversational-presence-spec.md`](design/phase-7-conversational-presence-spec.md)
+  - [`docs/design/phase-7-phrase-proposals.md`](design/phase-7-phrase-proposals.md)
   - [`docs/reviews/uiux-latest.md`](reviews/uiux-latest.md)
-  - Planner decision `ARCH-2026-09-25-001` in commit `bcd0a05`
-  - Phase 7 owner authorization and exact-item phrase gate recorded above
 - Expected output:
-  - a verifiable UI/UX contract for display/spoken separation, voice states, interruption/stop, modes, fallbacks, accessibility, reduced motion and real local-amplitude Core Orb behavior
-  - the smallest sufficient initial phrase package, with each exact PT-BR phrase in a separate numbered record containing context, intended tone, category, frequency/cooldown, prohibited contexts and `PENDING_OWNER_APPROVAL`
-  - proposals that are natural, non-robotic, original to HOPE and consistent with the approved personality without copying or impersonating any reference character
-  - an updated UI/UX `latest` report and UI/UX handoff against baseline `ce2bde4`, followed by a return to the Coordinator for owner phrase decisions
-  - no frontend/backend implementation and no claim of phrase approval
-- Blocking dependencies: none
-- Parallel work: none — Development, QA and Security wait for the completed UI/UX gate and subsequent owner phrase decisions
-- Escalation: NONE during specification; every proposed exact phrase returns to the USER through the Coordinator before Development
+  - one explicit decision for each active record `P7-PHRASE-004` through `P7-PHRASE-020`
+  - approval limited to exact text and recorded context; no inferred approval for variants, translations, punctuation changes or future rewrites
+  - any edited wording recorded as a new exact pending proposal before implementation
+- Blocking dependencies: explicit owner decisions for every phrase intended for the first implementation package
+- Parallel work: none — Development, QA and Security remain inactive
+- Escalation: USER
 
 ## Recent History
 
@@ -332,3 +323,4 @@ Required Reviews — Integration Candidate:
 - 2026-09-25 — The owner authorized Phase 6 integration. COORDINATOR reconciled the new `main` README update in `cb8dc77`, preserved the approved PT-BR public state, reran 45 Python and 36 frontend tests successfully, and merged PR #1 into `main` as `ce2bde4`. Phase 6 is complete; Production Readiness remains blocked and Phase 7 implementation remains unauthorized.
 - 2026-09-25 — The owner explicitly authorized Phase 7 implementation within the approved plan. COORDINATOR opened only the pre-implementation UI/UX gate and recorded a mandatory individual owner-approval gate for every exact PhraseLibrary phrase; Development remains inactive until UI/UX returns the complete specification and the Coordinator routes the next action.
 - 2026-09-25 — PLANNER completed `ARCH-2026-09-25-001` in `bcd0a05`, reconciled the active canonical authorization records, preserved every Phase 7 non-goal and formalized the exact-item phrase protocol without creating a phrase or changing code. COORDINATOR routed the next gate exclusively to UI/UX against baseline `ce2bde4`.
+- 2026-09-28 — The owner corrected the personality contract: substantive answers carry HOPE's identity, PhraseLibrary is rare and optional, zero phrase is preferred by default, Focus starts directly with analysis and Supportive remains recognizably HOPE. UI/UX persisted the corrected specification and 17 active exact pending records in `9362463`; COORDINATOR returned every active record to the owner for individual decisions.
