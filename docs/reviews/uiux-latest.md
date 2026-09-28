@@ -31,8 +31,8 @@ No Phase 7 Functional Commit exists. No frontend, backend, test, provider, datab
 - Owner-approved exact records: 13 — `P7-PHRASE-006` through `P7-PHRASE-018`
 - Owner-rejected records in this decision: 4 — `P7-PHRASE-004`, `P7-PHRASE-005`, `P7-PHRASE-019` and `P7-PHRASE-020`
 - Earlier inactive records preserved: `P7-PHRASE-001` and `P7-PHRASE-002` remain `REJECTED`; `P7-PHRASE-003` remains `WITHDRAWN_FROM_ACTIVE_PACKAGE`
-- Pending phrase proposals: 0
-- Replacement assessment: `NO_REPLACEMENT_NEEDED` for all four newly rejected functions; no new Record ID was created
+- Optional pending alternatives: 8 — `P7-PHRASE-021` through `P7-PHRASE-028`, all `PENDING_OWNER_APPROVAL` and non-blocking
+- Replacement assessment: `NO_REPLACEMENT_NEEDED` remains the primary recommendation for all four rejected functions; the eight alternatives exist only because the owner explicitly requested choices
 - Development routing: returned to the Coordinator; this UI/UX record does not start Development
 - Post-implementation UI/UX review: required against the future Phase 7 Functional Commit
 
@@ -123,11 +123,20 @@ No Phase 7 Functional Commit exists. No frontend, backend, test, provider, datab
 - Evidence: the owner individually approved `P7-PHRASE-006` through `P7-PHRASE-018` and rejected `P7-PHRASE-004`, `P7-PHRASE-005`, `P7-PHRASE-019` and `P7-PHRASE-020` on 2026-09-28.
 - Approval scope: exact text and recorded context only. No punctuation variant, localization, translation, paraphrase or future rewrite is approved.
 - Replacement analysis: interruption is better served by neutral operational feedback; completion is already covered by approved `P7-PHRASE-015`; supportive priority/present-focus are already covered by approved `P7-PHRASE-016` through `P7-PHRASE-018`.
-- Outcome: no new alternative is justified, no pending record remains and library inflation is avoided.
+- Outcome: no replacement is architecturally necessary. Eight optional alternatives were added only by explicit owner request; they remain pending, non-blocking and excluded by default.
+
+### `UIUX-P7-GATE-002` — OPTIONAL OWNER CHOICE
+
+- Classification: optional exact-item phrase decision; not a specification or Development blocker
+- Severity: `INFO`
+- Blocking: `NO`
+- Evidence: exactly two optional alternatives are registered for each rejected function as `P7-PHRASE-021` through `P7-PHRASE-028`, all `PENDING_OWNER_APPROVAL`.
+- Scope: alternatives preserve zero phrase as the default, create no automatic mode hook and remain excluded from implementation unless individually approved.
+- First-package rule: Development may proceed with the 13 already approved exact records. Pending alternatives enter the first package only if the owner explicitly approves them before implementation scope is frozen.
 
 ## Findings
 
-No UI/UX problem is open in the specification or phrase-decision record. The exact-item owner gate is complete for this package.
+No UI/UX problem is open in the specification or phrase-decision record. The exact-item owner gate is complete for the approved package; the eight optional alternatives are non-blocking choices.
 
 ## Validation performed
 
@@ -138,6 +147,7 @@ No UI/UX problem is open in the specification or phrase-decision record. The exa
 - Applied the owner's 2026-09-28 correction: substantive-answer personality, optional/rare PhraseLibrary, zero phrase as a preferred valid result, no automatic mode hooks, direct Focus and recognizably HOPE Supportive behavior.
 - Persisted all 17 exact owner decisions without broadening approval to variants or contexts.
 - Compared every rejected function with the 13 approved records and recorded `NO_REPLACEMENT_NEEDED` for interruption, additional completion, supportive immediate priority and supportive present focus.
+- Added exactly two optional alternatives per rejected function, each with a new ID, exact text, context, tone, category, cooldown, prohibited contexts and `PENDING_OWNER_APPROVAL`, without changing the no-replacement recommendation.
 - Kept all phrase content exclusively in the UI/UX proposal register; no proposal was added to code, tests, fixtures, snapshots, defaults, seeds or the active product.
 
 ## Validation boundaries
@@ -148,4 +158,4 @@ No UI/UX problem is open in the specification or phrase-decision record. The exa
 
 ## Recommendation
 
-Return to the Coordinator with the phrase gate complete: 13 exact records approved, four newly rejected, three earlier inactive records preserved and no replacement proposed. The Coordinator owns any later Development route; this review starts no Work. Do not start Phase 8 or production work.
+Return to the Coordinator with the approved package unchanged and present the eight optional alternatives `P7-PHRASE-021` through `P7-PHRASE-028` for individual owner choice. They do not block Development and remain excluded unless approved. The Coordinator owns any later route; this review starts no Work. Do not start Phase 8 or production work.

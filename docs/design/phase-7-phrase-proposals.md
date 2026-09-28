@@ -1,6 +1,6 @@
 # Phase 7 — PhraseLibrary Proposal Register
 
-- Register status: `OWNER_DECISIONS_COMPLETE`
+- Register status: `OPTIONAL_ALTERNATIVES_PENDING_OWNER_DECISION`
 - Original package date: 2026-09-25
 - Owner correction date: 2026-09-28
 - Functional baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`
@@ -321,6 +321,7 @@ HOPE's personality belongs primarily in the substantive answer: its analysis, pr
 - Coverage assessment: Interruption is an operational state, not a personality opportunity. The interface already requires immediate, deterministic visual and accessible confirmation that playback stopped.
 - Rationale: Starting another spoken line immediately after the owner interrupts audio contradicts the stop intent. A new library phrase would add noise and race risk without improving clarity.
 - Required treatment: Use neutral visual/accessibility status from the voice-state contract. Do not create a PhraseLibrary fallback for interruption.
+- Optional alternatives offered by explicit owner request: `P7-PHRASE-021` and `P7-PHRASE-022`. They remain unnecessary and cannot start speech automatically.
 
 ### Additional completion phrase — `P7-PHRASE-005`
 
@@ -328,6 +329,7 @@ HOPE's personality belongs primarily in the substantive answer: its analysis, pr
 - Coverage assessment: Approved `P7-PHRASE-015` already covers rare verified resolution with restrained humor.
 - Rationale: A second completion phrase would duplicate function, encourage rotation and work against the zero-phrase default.
 - Required treatment: Keep completion optional. Use no phrase most of the time; `P7-PHRASE-015` is the sole approved completion/resolution candidate in this package.
+- Optional alternatives offered by explicit owner request: `P7-PHRASE-023` and `P7-PHRASE-024`. They remain unnecessary and do not replace approved `P7-PHRASE-015`.
 
 ### Supportive immediate-priority prompt — `P7-PHRASE-019`
 
@@ -335,6 +337,7 @@ HOPE's personality belongs primarily in the substantive answer: its analysis, pr
 - Coverage assessment: Approved `P7-PHRASE-016` covers one-thing-at-a-time pacing, and approved `P7-PHRASE-018` covers reducing the immediate scope.
 - Rationale: Another priority prompt would duplicate approved supportive behavior and risk turning Supportive mode into a script set.
 - Required treatment: Express the actual priority directly in the substantive answer. A library phrase is unnecessary.
+- Optional alternatives offered by explicit owner request: `P7-PHRASE-025` and `P7-PHRASE-026`. They remain unnecessary and must introduce a concrete prioritization.
 
 ### Supportive present-focus transition — `P7-PHRASE-020`
 
@@ -342,13 +345,128 @@ HOPE's personality belongs primarily in the substantive answer: its analysis, pr
 - Coverage assessment: Approved `P7-PHRASE-016` through `P7-PHRASE-018` already cover pacing, context invitation and scope reduction.
 - Rationale: The rejected function has no unique semantic gap. A replacement would inflate the library and dilute HOPE's response-native personality.
 - Required treatment: Begin with the concrete blocker or next action. Do not add a replacement phrase.
+- Optional alternatives offered by explicit owner request: `P7-PHRASE-027` and `P7-PHRASE-028`. They remain unnecessary and must be integrated with the concrete blocker.
 
 ### Replacement outcome
 
-- New replacement proposals: 0
-- New pending Record IDs: none
+- New replacement proposals: 8, created only because the owner explicitly requested alternatives
+- New pending Record IDs: `P7-PHRASE-021` through `P7-PHRASE-028`
 - Owner approval inferred for replacements: none
-- Design conclusion: the approved set is sufficient; no rejected function requires a new `PhraseLibrary` entry.
+- Design conclusion: the approved set remains sufficient and `NO_REPLACEMENT_NEEDED` remains the recommendation for every function. The alternatives are optional choices, not identified product gaps.
+
+## Optional replacement candidates — non-blocking
+
+### Proposal 21 — Minimal visual interruption confirmation
+
+- Record ID: `P7-PHRASE-021`
+- Status: `PENDING_OWNER_APPROVAL`
+- Exact text: `Parei.`
+- Locale: `pt-BR`
+- Category: `VOICE_INTERRUPTION_CONFIRMATION_OPTIONAL`
+- Exact usage context: Optional visual feedback after current HOPE playback has actually stopped, or a verbal response only when the owner explicitly asks for spoken confirmation. It is never synthesized automatically after interruption.
+- Intended tone: Minimal, direct and operational.
+- Frequency/cooldown: At most once per confirmed interruption; no phrase remains the default.
+- Safety eligibility: Eligible only after successful stop for the current valid playback.
+- Prohibited contexts: Automatic speech; pending stop; synthesis that never played; stale callback; error; automatic audio end; mode entry/change; `DO_NOT_DISTURB`; any case where playback may continue.
+- Notes: Neutral state feedback is still preferred. Approval would make this an optional visual/verbal-confirmation choice, not a required response.
+
+### Proposal 22 — Natural visual interruption confirmation
+
+- Record ID: `P7-PHRASE-022`
+- Status: `PENDING_OWNER_APPROVAL`
+- Exact text: `Parei por aqui.`
+- Locale: `pt-BR`
+- Category: `VOICE_INTERRUPTION_CONFIRMATION_OPTIONAL`
+- Exact usage context: Optional visual feedback after playback is confirmed stopped, or a verbal response only when the owner explicitly requests spoken confirmation. It must not restart audio on its own.
+- Intended tone: Natural, calm and concise.
+- Frequency/cooldown: At most once per confirmed interruption; no phrase remains the default.
+- Safety eligibility: Eligible only for the current valid playback after stop confirmation.
+- Prohibited contexts: Automatic speech; pending/failed stop; stale callback; unrelated chat cancellation; mode entry/change; `DO_NOT_DISTURB`; any case where silence is the clearer acknowledgment.
+- Notes: The operational state remains authoritative; this is optional presence only.
+
+### Proposal 23 — Verified concise completion
+
+- Record ID: `P7-PHRASE-023`
+- Status: `PENDING_OWNER_APPROVAL`
+- Exact text: `Feito. Agora sim.`
+- Locale: `pt-BR`
+- Category: `VERIFIED_COMPLETION_OPTIONAL`
+- Exact usage context: Rare optional closing after a low-risk result is objectively verified and the substantive response has already shown what changed.
+- Intended tone: Confident, concise and satisfied without ceremony.
+- Frequency/cooldown: At most once per 15 eligible assistant turns and at most once per session; no phrase remains the default.
+- Safety eligibility: Eligible only for verified local completion with no unresolved warning.
+- Prohibited contexts: Partial/uncertain result; external or irreversible effect; security/data-loss incident; medical, legal or financial matter; user distress; mode entry/change; `DO_NOT_DISTURB`.
+- Notes: It does not replace or broaden approved `P7-PHRASE-015` and cannot serve as completion evidence.
+
+### Proposal 24 — Verified solid completion
+
+- Record ID: `P7-PHRASE-024`
+- Status: `PENDING_OWNER_APPROVAL`
+- Exact text: `Pronto. Agora está sólido.`
+- Locale: `pt-BR`
+- Category: `VERIFIED_COMPLETION_OPTIONAL`
+- Exact usage context: Rare optional closing when the answer has verified that the result is stable against the defined acceptance criteria.
+- Intended tone: Technically confident, composed and natural.
+- Frequency/cooldown: At most once per 15 eligible assistant turns and at most once per session; no phrase remains the default.
+- Safety eligibility: Eligible only when “sólido” is supported by explicit verification in the substantive response.
+- Prohibited contexts: Unverified stability; temporary workaround; partial result; external/irreversible effect; unresolved warning; high-stakes matter; mode entry/change; `DO_NOT_DISTURB`.
+- Notes: It cannot compete with `P7-PHRASE-015` through rotation; selection remains rare and contextual.
+
+### Proposal 25 — Supportive leverage priority
+
+- Record ID: `P7-PHRASE-025`
+- Status: `PENDING_OWNER_APPROVAL`
+- Exact text: `Primeiro, o que destrava o resto.`
+- Locale: `pt-BR`
+- Category: `SUPPORTIVE_PRIORITY_OPTIONAL`
+- Exact usage context: Rare optional transition after the answer has identified one concrete step whose completion unlocks multiple remaining tasks, followed immediately by that step.
+- Intended tone: Strategic, supportive through clarity and recognizably HOPE.
+- Frequency/cooldown: At most once per 12 eligible assistant turns and at most once per session; no phrase remains the default.
+- Safety eligibility: Eligible for ordinary planning when dependency leverage is evidenced.
+- Prohibited contexts: Automatic Supportive-mode entry; inferred distress; no identified dependency; emergency/high-stakes triage; therapeutic script; mode entry/change; `DO_NOT_DISTURB`.
+- Notes: It does not duplicate one-at-a-time pacing; it states a prioritization rule and requires the actual priority in the answer.
+
+### Proposal 26 — Supportive impact priority
+
+- Record ID: `P7-PHRASE-026`
+- Status: `PENDING_OWNER_APPROVAL`
+- Exact text: `Vamos pelo ponto que muda mais o cenário.`
+- Locale: `pt-BR`
+- Category: `SUPPORTIVE_PRIORITY_OPTIONAL`
+- Exact usage context: Rare optional transition when the answer has evidence that one issue has the greatest practical impact and immediately names it.
+- Intended tone: Collaborative, strategic and direct without therapeutic framing.
+- Frequency/cooldown: At most once per 12 eligible assistant turns and at most once per session; no phrase remains the default.
+- Safety eligibility: Eligible for low-risk prioritization with an explicit impact comparison.
+- Prohibited contexts: Automatic Supportive-mode entry; unsupported impact claim; emergency; medical/legal/financial triage; generic encouragement; mode entry/change; `DO_NOT_DISTURB`.
+- Notes: The substantive answer must explain why that point changes the scenario.
+
+### Proposal 27 — Concrete blocker identification
+
+- Record ID: `P7-PHRASE-027`
+- Status: `PENDING_OWNER_APPROVAL`
+- Exact text: `O bloqueio real é este.`
+- Locale: `pt-BR`
+- Category: `CURRENT_BLOCKER_OPTIONAL`
+- Exact usage context: Rare optional sentence after the answer has identified the concrete blocker and immediately states it with evidence.
+- Intended tone: Precise, confident and direct.
+- Frequency/cooldown: At most once per 12 eligible assistant turns and at most once per session; no phrase remains the default.
+- Safety eligibility: Eligible for evidenced low-risk technical or organizational diagnosis.
+- Prohibited contexts: Mode entry; generic Focus opening; uncertain blocker; multiple unresolved candidates; high-stakes diagnosis; blame; `DO_NOT_DISTURB`.
+- Notes: In Focus, direct diagnosis without any library phrase remains preferred.
+
+### Proposal 28 — Concrete blocker with restrained character
+
+- Record ID: `P7-PHRASE-028`
+- Status: `PENDING_OWNER_APPROVAL`
+- Exact text: `É aqui que tudo está emperrando.`
+- Locale: `pt-BR`
+- Category: `CURRENT_BLOCKER_OPTIONAL`
+- Exact usage context: Rare optional sentence integrated into an answer that has verified one concrete bottleneck affecting the remaining flow and immediately explains it.
+- Intended tone: Observant, natural and lightly irreverent.
+- Frequency/cooldown: At most once per 12 eligible assistant turns and at most once per session; no phrase remains the default.
+- Safety eligibility: Eligible for evidenced low-risk debugging or workflow analysis.
+- Prohibited contexts: Mode entry; generic ritual opening; speculative diagnosis; several equal blockers; serious incident; personal criticism; `DO_NOT_DISTURB`.
+- Notes: It must lead directly into the blocker and corrective action, not replace them.
 
 ## Package decision boundary
 
@@ -356,8 +474,9 @@ HOPE's personality belongs primarily in the substantive answer: its analysis, pr
 - Owner-approved records: 13 (`P7-PHRASE-006` through `P7-PHRASE-018`)
 - Owner-rejected records: 6 (`P7-PHRASE-001`, `P7-PHRASE-002`, `P7-PHRASE-004`, `P7-PHRASE-005`, `P7-PHRASE-019`, `P7-PHRASE-020`)
 - UI/UX-withdrawn records: 1
-- Pending records: 0
-- New replacement proposals: 0; all four rejected functions are `NO_REPLACEMENT_NEEDED`
+- Optional pending records: 8 (`P7-PHRASE-021` through `P7-PHRASE-028`)
+- New replacement proposals: 8, while all four rejected functions retain `NO_REPLACEMENT_NEEDED` as the primary recommendation
 - Phrase decision gate: `COMPLETE` for this package
 - Phrase implementation eligibility: only the 13 approved exact records, only in their recorded contexts and subject to the zero-phrase default, cooldown, suppression and substantive-content precedence
+- Optional-alternative boundary: pending alternatives are excluded from implementation and are not required to release Development. They enter the first package only after an explicit individual owner approval.
 - Routing boundary: this register does not start Development. The Coordinator owns the next route.

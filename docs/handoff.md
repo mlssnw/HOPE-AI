@@ -198,13 +198,14 @@ Required Reviews — Integration Candidate:
 - Approved exact records: 13 (`P7-PHRASE-006` through `P7-PHRASE-018`), exact text and recorded context only
 - Rejected in the owner decision: `P7-PHRASE-004`, `P7-PHRASE-005`, `P7-PHRASE-019` and `P7-PHRASE-020`
 - Earlier inactive history: `P7-PHRASE-001` and `P7-PHRASE-002` `REJECTED`; `P7-PHRASE-003` `WITHDRAWN_FROM_ACTIVE_PACKAGE`
-- Pending phrase proposals: 0
-- Replacement assessment: `NO_REPLACEMENT_NEEDED` for all four rejected functions; interruption uses neutral operational feedback, completion is covered by `P7-PHRASE-015`, and supportive coverage is sufficient in `P7-PHRASE-016` through `P7-PHRASE-018`
+- Optional pending alternatives: 8 (`P7-PHRASE-021` through `P7-PHRASE-028`), exactly two per rejected function, all `PENDING_OWNER_APPROVAL`
+- Replacement assessment: `NO_REPLACEMENT_NEEDED` remains the primary recommendation for all four rejected functions; interruption uses neutral operational feedback, completion is covered by `P7-PHRASE-015`, and supportive coverage is sufficient in `P7-PHRASE-016` through `P7-PHRASE-018`
+- Optional-alternative boundary: the eight alternatives are non-blocking and excluded from implementation unless individually approved; the 13 already approved records are sufficient for Development routing
 - Personality rule: the substantive answer carries HOPE's identity; `PhraseLibrary` is rare/optional, no phrase is a normal preferred result, and no mode may trigger ritual copy
 - Development routing: returned to the Coordinator; the phrase gate is complete, but this UI/UX update starts no Work
 - Phrase scope: approval is exact-item only and does not cover punctuation, variants, localization, translation, paraphrase or future rewrite
 - Production Readiness: `BLOCKED`
-- Recommendation: return to the Coordinator for the next workflow route; preserve exact approvals and rejected history, and do not start Phase 8 or production
+- Recommendation: return to the Coordinator to present optional alternatives `P7-PHRASE-021` through `P7-PHRASE-028` individually while preserving the existing Development route as non-blocked by them; do not start Phase 8 or production
 - Report: [`uiux-latest.md`](reviews/uiux-latest.md)
 
 ## Planner
