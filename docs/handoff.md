@@ -210,23 +210,23 @@ Required Reviews — Integration Candidate:
 
 ## Planner
 
-- Status: `APPROVED`
-- Decision ID: `ARCH-2026-09-25-001`
-- Baseline analyzed: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2` on `main`; Coordinator authorization record `cdb40098489d28dd476a2b9c211cd6289a325888`
-- Phase 6 status: complete and integrated through PR #1
-- Phase 7 planning: `APPROVED`
-- Phase 7 implementation authorization: `APPROVED` by the owner on 2026-09-25, strictly within [`docs/phase-7.md`](phase-7.md)
-- Phase 7 implementation: `NOT_STARTED`; Functional Commit `NONE`
-- Phrase gate: UI/UX must present every exact proposal separately with context, intended tone and `PENDING_OWNER_APPROVAL`
-- Approval scope: one owner-approved exact phrase does not approve variants, localizations, other phrases or future rewrites
-- Implementation restriction: no unapproved phrase may enter source code, `PhraseLibrary`, fixtures, tests, snapshots, defaults, seeded content or the active product
-- Phrase quality: proposals must be natural, non-robotic, original to HOPE and consistent with the approved personality without character imitation
-- Required Reviews after a future Functional Commit: QA `YES`, DATABASE `NO` while the no-persistence boundary holds, SECURITY `YES`, UI/UX `YES`
-- Production Readiness: `BLOCKED`; Phase 7 authorization does not approve deployment, public exposure or inherited HIGH/CRITICAL risk
-- Unchanged non-goals: providers, cloud voice, wake word, speaker verification, database, migrations, persistence, tools, agents, integrations, deployment, production and Phase 8+
-- Records: [`architecture-latest.md`](reviews/architecture-latest.md), [`phase-7.md`](phase-7.md), [`roadmap.md`](roadmap.md), [`product-vision.md`](product-vision.md), [`future-architecture.md`](future-architecture.md) and [`architecture.md`](architecture.md)
-- Coordinator handoff: normalize the public coordination panel and route the Phase 7 pre-implementation specification to UI/UX against `ce2bde4`; Development remains inactive until UI/UX persists the complete specification and every exact phrase intended for implementation has an explicit owner decision
-- Boundary: this Planner record starts no Work, changes no functional code, creates no phrase and authorizes no later phase
+- Status: `WAITING_FOR_APPROVAL`
+- Decision ID: `ARCH-2026-11-06-001`
+- Repository HEAD analyzed: `b7c73b16293779b1ab28ffed5cccdfdad84258a9` on `codex/phase-7-conversational-presence`
+- Functional baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`; Phase 7 Functional Commit `NONE`
+- Existing Phase 7 authorization: preserved within the approved original plan; full implementation/delivery is `BLOCKED` by the generation-boundary contradiction
+- Ruling: selected answer-native styles need a generation signal; the current plan expressly prohibits preference transmission, system-prompt changes and backend API expansion. Reusing `PersonalityState` or unchanged provider JSON keys does not remove the conflict.
+- Proposed amendment: exactly one optional `presentation_mode` enum on existing `/api/chat` and one bounded static server-authored presentation section in existing system text; `WAITING_FOR_APPROVAL`, not permission to implement
+- Escalation: `USER` — approval must explicitly include the bounded extra system text/input-token consequence; no paid validation, new provider, budget or cost setting is authorized
+- Development boundary: do not implement the disputed generation path or claim full readiness before approval. Independent local work already authorized by Phase 7 may continue, including conservative overlength speech handling and private-history write eligibility.
+- Realtime boundary: local in-process session/turn/attempt metadata is allowed; reject uncorrelated remote `AI_STATE_CHANGED` for current-turn state. HTTP/WebSocket wire-correlation expansion is outside this ruling/amendment.
+- Rejected workarounds: frontend prefix/suffix, mode phrase hooks, hidden user-message instructions and canonical-answer rewriting
+- Phrase gate: only exact records `P7-PHRASE-006` through `P7-PHRASE-018` approved; `P7-PHRASE-021` through `P7-PHRASE-028` pending and excluded. Zero phrase remains the default; optional pending phrases do not cause this blocker.
+- Required reviews on the future Functional Commit: QA `YES`, SECURITY `YES`, UI/UX `YES`, DATABASE `NO` only while the no-persistence/no-query boundary holds
+- Production Readiness: `BLOCKED`; no new provider, endpoint, persistence, database, migration, secret, paid call, production action, tool, agent, integration or Phase 8 work authorized
+- Records: [current ruling and proposed contract](reviews/architecture-latest.md), [phase gate](phase-7.md#current-generation-boundary-gate--2026-11-06)
+- Coordinator handoff: reconcile operational blockers/Next Action and present the concrete narrow amendment for explicit owner decision; do not infer approval from the previous routing or from the UI/UX result
+- Boundary: documentation-only; other role reports and handoff sections preserved; no functional or public runtime claim changed
 
 ## Coordinator
 

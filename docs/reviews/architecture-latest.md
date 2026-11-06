@@ -1,5 +1,136 @@
 # Architecture Review — Latest
 
+- Status: `WAITING_FOR_APPROVAL`
+- Decision ID: `ARCH-2026-11-06-001`
+- Date: 2026-11-06
+- Review type: Phase 7 generation-boundary ruling; documentation only
+- Branch: `codex/phase-7-conversational-presence`
+- Repository HEAD analyzed: `b7c73b16293779b1ab28ffed5cccdfdad84258a9`
+- Implemented baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`
+- Phase 7 Functional Commit: `NONE`
+- Existing Phase 7 authorization: preserved within the approved plan
+- Proposed generation amendment: `WAITING_FOR_APPROVAL`; not authorized by this ruling
+- Full Phase 7 implementation/delivery: `BLOCKED` by the generation-boundary contradiction
+- Escalation: `USER`
+- Production Readiness: `BLOCKED`
+
+## Ruling
+
+A per-turn presentation selector on the existing `/api/chat` request and a bounded server-authored generation instruction are a technically suitable solution, but are **not compatible with the literal current authorization**. They require the owner's explicit approval of the narrow amendment below. The Planner can propose and reconcile that amendment; the Planner cannot grant the missing permission.
+
+The current plan independently prohibits new transmission of a preference, changes to the system prompt and backend API expansion. Its Test Strategy explicitly requires proof of "no backend API expansion". Adding an optional request field changes that contract even without adding an endpoint. Adding a presentation instruction changes the effective provider-bound system text even if the provider JSON keys are unchanged. Calling the instruction non-core does not make those existing prohibitions disappear.
+
+The owner's later personality correction requires personality in the substantive answer and rejects ritual wrappers. It establishes the required experience; it does not expressly authorize the new technical transmission or supersede these non-goals. The UI/UX specification itself makes the phase plan authoritative for scope and says it authorizes no new data flow. The contradiction therefore cannot be resolved by a Planner-only editorial interpretation.
+
+Development must not implement the proposed generation path until approval is recorded. Independent, already authorized local contracts may continue without claiming that style generation works or that the complete phase is ready for review. No new authorization is needed for the bounded TTS/history corrections below. The Coordinator must reflect this technical blocker in the operational panel; this ruling does not overwrite Coordinator or reviewer ownership.
+
+## Evidence and correction to the problem statement
+
+- [`../../frontend/js/chat.js`](../../frontend/js/chat.js) sends `message`, `history`, `use_web`, `use_vault` and `memory_enabled`; it sends no selected style. [`../../backend/models.py`](../../backend/models.py) forbids extra request fields.
+- [`../../backend/ai/orchestrator.py`](../../backend/ai/orchestrator.py) already calls `infer_personality_state(request.message)` and `build_system_prompt(self.personality, expression)`. The active prompt is therefore not entirely fixed: its existing expressive state varies from the submitted message. That inference is not a trusted UI-mode channel and does not implement the four selected presentation styles.
+- [`../../backend/ai/personality.py`](../../backend/ai/personality.py) and [`../../backend/ai/prompts.py`](../../backend/ai/prompts.py) contain the current core personality, style and safety rules. Mapping a UI mode to an existing `PersonalityState` would still change which effective system text is sent and would not satisfy the prohibition by itself.
+- [`../../backend/services.py`](../../backend/services.py) sends the selected system text through the existing provider `system` field. Its legacy `chat` path uses `SYSTEM_PROMPT`; tests use both the orchestrated and compatibility paths. Neither path may silently discard a newly approved style contract.
+- The corrected [UI/UX specification](../design/phase-7-conversational-presence-spec.md#4-modes-and-truthful-communication), particularly `UIUX-P7-016` and `UIUX-P7-017`, requires answer-native composition and forbids mode-triggered phrases. Its [review](uiux-latest.md) approves the experience, not backend/provider changes.
+- [`../../tests/frontend/presentation-state.test.mjs`](../../tests/frontend/presentation-state.test.mjs) currently re-enables remote state after a new local request. It does not prove that late events from the cancelled prior turn are rejected after the next turn starts.
+- [`../../frontend/js/api-client.js`](../../frontend/js/api-client.js) slices speech text to 5,000 characters. [`../../frontend/js/chat.js`](../../frontend/js/chat.js) passes the entire session history to storage; [`../../frontend/js/storage.js`](../../frontend/js/storage.js) also deletes prior stored history when `saveHistory` receives `false`. These paths need bounded corrections to meet already approved invariants.
+
+## Smallest proposed amendment — not yet authorized
+
+Owner approval must explicitly allow only the following exception to the request, preference-transmission and system-prompt prohibitions. All other non-goals remain unchanged. No functional file may be edited to implement this proposal before that approval.
+
+### Request contract and validation
+
+- Add exactly one optional field to the existing `POST /api/chat` JSON body: `presentation_mode`, with exact string values `NORMAL`, `FOCUS`, `SUPPORTIVE` or `PRESENTATION`; omission means `NORMAL`.
+- Preserve `extra="forbid"` and all existing limits. Reject `null`, wrong types, unknown values, case variants, whitespace variants and free-form instructions with the normal `422` validation response, before generation or source collection. Do not silently normalize arbitrary text into an instruction.
+- Make no response-schema, endpoint, header, TTS-schema, WebSocket-schema or provider-schema change under this exception. Do not send the other four mode axes as new fields.
+- Snapshot the selected style at turn submission. A later UI change applies to the next turn and cannot mutate an in-flight request, retry result or displayed answer. A retry takes a new attempt identity and an explicit snapshot.
+- Accept style selection only from explicit local mode controls. Do not parse retrieved memory, history, model output, web results or documents as selectors. Natural-language mode-command recognition is unnecessary for this first package and is excluded from this amendment.
+
+### Trust boundary and prompt placement
+
+- Treat the client enum as an untrusted, bounded presentation preference, never as identity, permission or capability. Server validation chooses from immutable, server-owned instructions; the browser cannot submit prompt text, templates, tags or arbitrary policy fragments.
+- Preserve `PersonalityConfig`, `PersonalityState`, `infer_personality_state` and every existing core prompt section and its ordering. For `NORMAL` and omitted values, preserve the existing effective prompt exactly for the same input and inferred expression.
+- For the other three validated values, append one separately named `[TURN PRESENTATION]` section after the existing core prompt. Its heading and instruction together must be at most 1,000 Unicode characters. Only static server-authored text may populate it; no user text, history, memory, sources, phrase records, identifiers or private mode values are interpolated.
+- The section must state that it affects only the current answer's wording, organization and pacing, remains subordinate to all core rules and never changes facts, warnings, uncertainty, required confirmations or capability claims. Safety-sensitive `ALERT`/`CONCERNED` behavior continues to suppress humor; presentation cannot weaken it.
+- Keep this overlay in a small separate pure helper/module and compose it at the model-generation boundary. Do not rewrite the core personality or add personas. Do not insert hidden instructions into `message`, `history`, `memory_context` or `external_context`.
+- Preserve existing trust delimiters for memory and sources. An enum-looking value or a forged `[TURN PRESENTATION]` block in those inputs remains data. It cannot choose the static section or affect client mode state.
+
+### Exact mode semantics
+
+| Value | Bounded generation behavior |
+|---|---|
+| `NORMAL` | Existing prompt and behavior; no overlay. |
+| `FOCUS` | Start with substantive diagnosis, evidence, constraint or next action; concise organization; no ritual acknowledgment or automatic phrase. Preserve necessary completeness. |
+| `SUPPORTIVE` | Keep HOPE direct and analytical; group manageable steps and identify a concrete priority when warranted. Acknowledge only user-stated difficulty; no inferred emotion, therapeutic script, automatic reassurance or persona change. |
+| `PRESENTATION` | Organize the substantive explanation for comprehension with an appropriate sequence and structure. No introductory ritual, invented audience facts or suppressed caveats. |
+
+Generated behavior remains probabilistic. Deterministic tests can prove selector mapping and trust boundaries; mocked output cannot prove provider adherence. Do not claim guaranteed phrasing or real-provider fidelity from a fake-model fixture.
+
+### Memory, privacy and provider boundary
+
+- Style never changes `memory_enabled`, web/vault toggles, history eligibility, capture, retrieval, deletion, confirmation, output permission or public-safe `SelfKnowledge`.
+- Resolve `PRIVATE`/`PUBLIC` restrictions before submission using the existing `memory_enabled=false` contract. The backend's existing memory opt-out remains authoritative and must still block retrieval, capture and memory commands in every style. Do not persist any mode or style metadata.
+- No mode value or overlay is appended to user messages, saved history, memory candidates, memory source records or logs. Original user content remains the only candidate for the existing capture path.
+- The only allowed provider delta would be the bounded static section inside the existing `system` string for non-default styles. Preserve the provider, model configuration, endpoint, transport, JSON keys, `max_tokens`, number of generation calls, retries, source collection and TTS settings. No new API option, tool, second model pass, streaming, provider dependency or fallback.
+- An added system section can add input tokens to an ordinary future user-triggered call. This is not evidence of zero marginal token cost. Owner approval must include that bounded consequence; this work performs no paid call and changes no credential, budget, subscription or cost setting. If any actual spending or budget expansion becomes necessary, stop for separate authorization.
+
+### Required tests if the amendment is approved
+
+1. API validation: omitted/default and four exact values; reject null, wrong types, unexpected fields, case/whitespace variants and injected text before any source/model call.
+2. Prompt composition: identical existing core prefix and exact `NORMAL` baseline for every inferred expression; exactly one static bounded section for each non-default style; no arbitrary text interpolation; `ALERT`/`CONCERNED` safety precedence.
+3. Mocked orchestrator/provider boundary: selected style reaches the existing generation call; its message/history, source collection, provider JSON keys, model, output limit and call count remain unchanged. Exercise the legacy compatibility path too, or prove that it cannot be a production bypass; do not quietly ignore the new field.
+4. Injection: hostile current-message/history/source/memory strings cannot change the selected static overlay or trigger client mode/phrase state. Invalid selectors fail closed. Keep retrieved context in the existing untrusted data blocks.
+5. Privacy cross-product: all styles with memory opt-out and restricted modes perform zero retrieval/capture; no selector/overlay appears in stored history, memory, logs or TTS metadata. Test mode changes during pending responses.
+6. Frontend integration: explicit selection is snapshotted per turn; no mode-entry/change phrase hook; no rewriting of the canonical reply; zero phrase remains normal; cancellation invalidates late generation and playback.
+7. Representative synthetic answer fixtures and UI/UX review assess direct Focus, recognizable Supportive and substantive Presentation organization, complete caveats and exact approved phrase boundaries. Label fixture evidence honestly; no paid/live generation validation is authorized.
+
+QA, Security and UI/UX remain required on the same future Functional Commit. Database remains `NO` only while no schema, query, model or persistence expansion occurs.
+
+## Related Development questions resolved within the existing scope
+
+### Correlation and realtime
+
+Session/turn/attempt metadata on **local in-process** operation events and callbacks is already authorized by the explicit `TurnManager`/`VoiceStateManager` contracts. It must be ephemeral, bounded and never treated as authentication.
+
+Adding end-to-end correlation fields to HTTP requests or the server-to-browser WebSocket wire contract is a contract expansion and is **not** authorized by this ruling or the one-field generation amendment. A generic `dict` event payload does not remove that architectural boundary. Server-generated IDs alone do not establish correspondence to a local turn, and arrival time is not proof of origin.
+
+The smallest currently authorized implementation rejects uncorrelated `AI_STATE_CHANGED` messages as sources of current turn state. It uses actual locally correlated chat/capture/synthesis/playback callbacks for that state, preserving incremental memory events, heartbeat, reconnect and full-sync fallback. Never stamp an uncorrelated remote event with the active local IDs or accept it just because a request is running. A remote `speaking` event from `/api/tts` starts at synthesis time and cannot prove client audio playback. Display `SEARCHING` only when evidence identifies real current search; otherwise retain truthful Processing.
+
+If Development needs wire correlation instead of this conservative path, submit a separately enumerated request/event metadata amendment to the owner before implementation. The present proposal deliberately avoids it. Tests must cover cancel A, start B, then late thinking/searching/speaking/error/idle from A, plus missing/foreign IDs, retries and stale recognition/audio events. Adapt the old raw-remote-state browser expectation to the approved local truth invariant; preserve memory realtime coverage.
+
+### Speech length and canonical meaning
+
+Removing silent `text.slice(0, 5000)` is an authorized correctness change to the existing client path. Keep the backend/provider limit and the single existing TTS request unchanged. Format conservatively; if the complete safe spoken rendition cannot fit within the existing limit, preserve the complete display, disclose speech unavailability for that response and send no TTS request. Do not truncate a warning, generate a new summary, split into multiple paid calls, increase the limit or add a provider feature. Test a material warning beyond the limit, exact-limit inputs, Unicode boundaries, formatter failure and zero TTS calls for unsafe/oversized output.
+
+### Private history cannot be saved later
+
+An in-memory per-turn persistence-eligibility decision, applied to both user and assistant messages on every existing history write, is already authorized. A turn submitted under `PRIVATE` stays ineligible after the mode ends and after its response arrives; changing unrelated preferences or restoring persistence must not re-save it. Maintain the canonical visible session separately from the eligible subset written to the existing history key and existing `{role, content}` format. No new storage key, durable privacy flag, table, query, record type or retention mechanism is permitted.
+
+Entering `PRIVATE` suspends new history writes without deleting previously stored history. Do not invoke the existing delete-on-false storage behavior merely to implement the mode. Preserve the explicit existing history-off/clear actions and their deliberate deletion semantics. Session mode metadata never reaches storage. Test delayed responses, mode restoration, unrelated preference toggles, save/reload, prior-record preservation and both halves of the private turn. These guarantees govern saved records, not retroactive erasure or semantic redaction of content the owner later explicitly repeats in a new eligible turn.
+
+## Rejected workarounds and phrase reconciliation
+
+- Reject `prefix + reply + suffix`, automatic mode phrases, manufactured acknowledgments and deterministic rewriting/reordering/summarizing of the canonical generated answer as substitutes for response-native style. Speech formatting remains allowed only for the separate spoken representation under its existing meaning-preservation contract.
+- Reject silently prepending mode instructions to the user's message/history and repurposing `PersonalityState` as a way to conceal a prompt change.
+- Only `P7-PHRASE-006` through `P7-PHRASE-018` are approved, with their exact Unicode text, recorded context, cooldown and suppression rules. Approval is eligibility, not a quota or permission to inject them routinely.
+- `P7-PHRASE-021` through `P7-PHRASE-028` remain `PENDING_OWNER_APPROVAL`, excluded from code, fixtures, tests, snapshots, defaults and active content. They do not cause this blocker.
+- Rejected/withdrawn records remain excluded. No phrase is created, changed or approved by this ruling; the [UI/UX register](../design/phase-7-phrase-proposals.md) remains authoritative.
+
+## Preservation, validation and handoff
+
+- No new provider, endpoint, persistence, database operation, schema, migration, secret, credential, paid call, budget change, deployment, production action, tool, agent, automation, integration or Phase 8 work is authorized.
+- This decision changes only Planner-owned planning/review documentation and the Planner handoff section. No functional code or reviewer finding changes; no public runtime claim changes and no README/CHANGELOG update is needed for this pending amendment.
+- Read the required governance, phase, design, phrase and review sources and the relevant frontend/backend/tests. Verified a clean initial tree on `b7c73b1`; local HEAD was six documentation commits ahead of the available `origin/main` ref, with no behind commits. No remote refresh or production access was needed.
+- Validation for this documentation change: diff/whitespace, local Markdown link targets, changed-file scope and handoff ownership. No runtime test, browser test, database or provider validation is claimed.
+- Next principal action: Coordinator presents the exact one-field/one-section amendment and its token consequence to the owner. After explicit approval, Planner reconciles the affected plan clauses and the Coordinator releases the disputed implementation. If declined, the response-native style requirement must be explicitly deferred/re-scoped with the owner and UI/UX; no silent weakening is allowed.
+- Owner-facing ruling (PT-BR): a geração por modo está bloqueada até autorização explícita da emenda limitada; correções locais independentes já autorizadas podem avançar. Não há autorização presumida para prompt, payload, custo ou fase futura.
+
+---
+
+## Historical decision — ARCH-2026-09-25-001
+
+The following record is preserved as historical evidence. Its original authorization remains valid within its scope; its immediate routing and gate statements are superseded by the current ruling and the later persisted UI/UX/phrase decisions.
+
 - Status: `APPROVED`
 - Decision ID: `ARCH-2026-09-25-001`
 - Date: 2026-09-25

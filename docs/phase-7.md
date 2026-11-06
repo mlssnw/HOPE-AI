@@ -16,6 +16,18 @@
 
 The owner approved this exact plan and authorized its implementation strictly within the boundaries below. Authorization does not mean implementation has started or that any acceptance criterion has passed. The immediate next gate is a Coordinator-routed, pre-implementation UI/UX specification. This record does not start UI/UX, Development, QA, Security, provider evaluation, migration, deployment, production, Phase 8 or any later phase.
 
+## Current generation-boundary gate — 2026-11-06
+
+- Planner decision: [`ARCH-2026-11-06-001`](reviews/architecture-latest.md#ruling).
+- Existing plan/implementation authorization remains approved within the original scope; no Phase 7 Functional Commit exists.
+- The complete UI/UX specification and first exact phrase package are now persisted. Only `P7-PHRASE-006` through `P7-PHRASE-018` are approved. `P7-PHRASE-021` through `P7-PHRASE-028` remain pending, excluded and non-blocking.
+- New technical blocker: selected answer-native style requires a generation signal, but this plan prohibits preference transmission, system-prompt changes and backend API expansion. Reusing an existing personality state does not resolve that prohibition.
+- Full Phase 7 implementation/delivery: `BLOCKED`; generation amendment: `WAITING_FOR_APPROVAL`; escalation: `USER`.
+- The Planner proposes exactly one optional `presentation_mode` enum on existing `/api/chat` and one bounded static server-authored presentation section in the existing system text. The [complete proposed contract and tests](reviews/architecture-latest.md#smallest-proposed-amendment--not-yet-authorized) are reviewable but **not authorized**. No original non-goal is relaxed by this notice.
+- Independent authorized local contracts may continue. The ruling explicitly bounds local event correlation, rejection of uncorrelated remote state, safe overlength speech behavior and prevention of later persistence of private turns.
+- No frontend phrase wrapper, hidden user-message instruction or canonical-answer post-processing may substitute for the required generation behavior.
+- This dated gate supersedes stale immediate routing/phrase-gate statements below. The earlier plan remains preserved until the owner decides the explicit amendment; Coordinator-owned operational status is reconciled separately.
+
 ## Objective
 
 Create a local, deterministic and provider-neutral foundation for HOPE's conversational presence: separate displayed responses from spoken responses, control turns and cancellation, project truthful states in the interface, define speech and original-personality contracts, and react locally to the amplitude of audio already being played.
