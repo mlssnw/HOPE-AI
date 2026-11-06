@@ -7,7 +7,7 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 ## Current Phase
 
 - Phase: 7 — Conversational Presence Foundation
-- Phase status: READY_FOR_DEVELOPMENT_ROUTING — the corrected pre-implementation UI/UX specification and the first phrase package are approved; eight optional alternatives await owner choice but do not block Development
+- Phase status: IN_PROGRESS — the corrected pre-implementation UI/UX specification and the 13-record first phrase package are approved; Development is the active Work
 - Feature status: NOT_STARTED — no Phase 7 functional implementation or Functional Commit exists yet
 - Production readiness: BLOCKED — Phase 7 does not authorize public deployment or resolve the inherited production blockers
 - Baseline: `ce2bde4` on `main`, with Phase 6 complete and integrated through PR #1
@@ -231,11 +231,11 @@ Required Reviews — Integration Candidate:
 ## Coordinator
 
 - Autonomy level: 2.5
-- Status: OWNER_OPTIONAL_SELECTION
+- Status: ROUTED_TO_DEVELOPMENT
 - Operational conclusion: the owner approved `P7-PHRASE-006` through `P7-PHRASE-018` and rejected `P7-PHRASE-004`, `P7-PHRASE-005`, `P7-PHRASE-019` and `P7-PHRASE-020`; UI/UX persisted those decisions in `348cad3` and created eight optional alternatives in `2a90ad1`. The 13 approved records are sufficient for Development routing.
 - Final Integration Candidate: `cb8dc774cc396f3aff0ef40e79753761fbf3b49b`
 - Main integration commit: `ce2bde4`
-- Routing: LEVEL 3 — present `P7-PHRASE-021` through `P7-PHRASE-028` to the owner for optional individual decisions. They remain excluded by default; once the owner answers the requested alternatives, route the approved 13-record package plus any newly approved exact items to Development.
+- Routing: LEVEL 2 — Development must implement only the authorized Phase 7 contracts and exact approved records `P7-PHRASE-006` through `P7-PHRASE-018`. Optional records `P7-PHRASE-021` through `P7-PHRASE-028` remain excluded unless the owner approves them before Development freezes the package.
 - Boundary: COORDINATOR atualizou somente Current Phase, Current Functional Commit, Review Matrix, blockers, warnings, Next Action e histórico; não concedeu aprovação técnica nem alterou seções ou relatórios de ownership dos reviewers
 
 ## Current Blockers
@@ -274,21 +274,22 @@ Required Reviews — Integration Candidate:
 
 ## Next Action
 
-- Role: OWNER
-- Status: OPTIONAL_SELECTION_REQUESTED
-- Task: decide each optional alternative `P7-PHRASE-021` through `P7-PHRASE-028` independently as `APPROVED`, `REJECTED` or an edited replacement that returns as a new pending record
-- Target documentation commit: `2a90ad1`; functional baseline remains `ce2bde4` and Phase 7 Functional Commit remains `NONE`
+- Role: DEVELOPMENT
+- Status: AUTHORIZED
+- Task: implement Phase 7 — Conversational Presence Foundation strictly within the approved plan, UI/UX specification and the 13 exact approved phrase records; preserve response-native personality, the zero-phrase default and the ban on automatic mode phrases
+- Target documentation commit: `67e106b`; functional baseline remains `ce2bde4` and the new Phase 7 Functional Commit is to be created by Development
 - Required inputs:
+  - [`docs/phase-7.md`](phase-7.md)
   - [`docs/design/phase-7-conversational-presence-spec.md`](design/phase-7-conversational-presence-spec.md)
   - [`docs/design/phase-7-phrase-proposals.md`](design/phase-7-phrase-proposals.md)
   - [`docs/reviews/uiux-latest.md`](reviews/uiux-latest.md)
 - Expected output:
-  - one explicit decision for each optional record `P7-PHRASE-021` through `P7-PHRASE-028`, or an explicit decision to keep no replacement for one or more rejected functions
-  - approval limited to exact text and recorded context; no inferred approval for variants, translations, punctuation changes or future rewrites
-  - any edited wording recorded as a new exact pending proposal before implementation
-- Blocking dependencies: none for the approved 13-record first package; pending alternatives remain excluded unless individually approved
-- Parallel work: none until the owner answers the alternatives currently under consideration; after that response, Development is the sole next implementation Work
-- Escalation: USER
+  - a Phase 7 Functional Commit containing only the authorized local deterministic behavior, proportionate tests and updated phase documentation
+  - `READY_FOR_REVIEW` handoff with the exact Functional Commit and validation evidence
+  - no implementation of pending/rejected phrases, providers, cloud audio, wake word, speaker verification, database, migrations, persistence, tools, agents, integrations, deployment, production or Phase 8+
+- Blocking dependencies: none
+- Parallel work: none — QA, Security and UI/UX must review the same future Functional Commit after Development returns it; Database remains `N/A` while the no-persistence boundary holds
+- Escalation: NONE
 
 ## Recent History
 
@@ -333,3 +334,4 @@ Required Reviews — Integration Candidate:
 - 2026-09-25 — PLANNER completed `ARCH-2026-09-25-001` in `bcd0a05`, reconciled the active canonical authorization records, preserved every Phase 7 non-goal and formalized the exact-item phrase protocol without creating a phrase or changing code. COORDINATOR routed the next gate exclusively to UI/UX against baseline `ce2bde4`.
 - 2026-09-28 — The owner corrected the personality contract: substantive answers carry HOPE's identity, PhraseLibrary is rare and optional, zero phrase is preferred by default, Focus starts directly with analysis and Supportive remains recognizably HOPE. UI/UX persisted the corrected specification and 17 active exact pending records in `9362463`; COORDINATOR returned every active record to the owner for individual decisions.
 - 2026-09-28 — The owner approved `P7-PHRASE-006` through `P7-PHRASE-018` and rejected `P7-PHRASE-004`, `P7-PHRASE-005`, `P7-PHRASE-019` and `P7-PHRASE-020`. UI/UX persisted the exact decisions in `348cad3` and, at the owner's request, added eight optional non-blocking alternatives in `2a90ad1`; COORDINATOR opened only their optional individual decision step.
+- 2026-11-06 — With no Phase 7 feature blocker remaining, COORDINATOR routed the approved specification and exact records `P7-PHRASE-006` through `P7-PHRASE-018` to Development. Optional records `P7-PHRASE-021` through `P7-PHRASE-028` remain pending, excluded and non-blocking.
