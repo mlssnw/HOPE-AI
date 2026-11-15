@@ -160,22 +160,18 @@ Required Reviews — Integration Candidate:
 
 ## Security Review
 
-- Coordination status: APPROVED_WITH_WARNINGS
-- Integration Candidate reviewed: `51f93d12740a6e0860856257ea761377b04c97fb`
-- Functional correction reviewed: `4d76f2433363a47a9d8fe29fef337de1dc79ac50`
-- QA evidence considered: `4497347b6440c03c305cbb54eaccc643d95ced3c`; current branch tip observed: `62b54bcaed23a9a01292668b2190dc0c151a0bc3`
-- Security result: APPROVED_WITH_WARNINGS
-- Production Readiness: REJECTED / BLOCKED
-- `SEC-019`: CLOSED — README now distinguishes credential custody from owner authentication and chat consent from existing-memory reads by the Memory Globe
-- `SEC-020`: CLOSED — clean exact-candidate export passed the focused regression and complete Python suite without `.env`, database URLs or provider credentials, using only disposable in-memory SQLite
-- Scope confirmed: only `tests/test_realtime.py` changed functionally; no runtime/backend/frontend/API/schema/migration/dependency or production-configuration drift
-- Validation: focused regression `1 passed`; Python `45 passed`; frontend `36 passed`; one known Starlette/TestClient warning
-- New Security findings/blockers: none
-- Carried non-blocking warning: `SEC-018` — browser harness environment and destructive-flow sentinel hardening remain open
-- Deploy blockers unchanged: `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-008`, `SEC-012`
-- External operational blocker: `QA-IC-002` remains open per QA; Security did not edit the PR and does not close or reclassify this blocker
-- Obsidian environmental retest: `BLOCKED / NOT_TESTED`, no Phase 6 gate impact and no secret/private content exposure observed in the persisted QA evidence
-- Recommendation to Coordinator: record Security for `51f93d1`, keep the overall integration rejected until QA verifies `QA-IC-002`, preserve Production Readiness as blocked, and do not merge or start a later phase
+- Coordination status: `REJECTED`
+- Functional Commit reviewed: `c649a903693d5fedf631d760880b80ed881dc138`
+- Security result: `REJECTED` — `SEC-021` is HIGH and blocking
+- Finding: `PUBLIC` disables current-turn persistent memory but forwards unfiltered recent session history, including private-turn records and potentially memory-derived assistant content, to `/api/chat`
+- Impact: private owner data can re-enter a generated answer intended for a public audience; this breaks the explicit Phase 7 audience/privacy boundary
+- Independent reproduction: the same outbound payload reported `memory_enabled=false` and `history_contains_private=true`
+- Validation: directed Python `32 passed`; complete Python `60 passed` with one known warning; frontend `62 passed`; Python compilation, JavaScript syntax and diff checks passed
+- Controls confirmed: strict presentation enum and pre-service `422`; exact `NORMAL` prompt preservation; static bounded server-owned overlay; unchanged provider shape/call count; `SEC-006` and `SEC-007`; exact UUID deletion confirmation; stale voice/realtime guards; local-playback-only amplitude; approved phrase allowlist; safe DOM rendering
+- Scope: no database, schema, migration, query, persistence, dependency, provider or endpoint delta; Database remains `N/A` for this package
+- Environmental limits: no real provider, microphone, PostgreSQL, migration, deployment or production action; Development browser evidence was inspected but not rerun by Security
+- Production Readiness: `REJECTED / BLOCKED`; historical blockers `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-008` and `SEC-012` remain open and unchanged
+- Recommendation to Coordinator: route a narrowly scoped `SEC-021` correction to Development, require a new Functional Commit and applicable re-reviews, and do not merge, start Phase 8 or deploy
 - Report: [`security-review-latest.md`](reviews/security-review-latest.md)
 
 ## UI/UX
