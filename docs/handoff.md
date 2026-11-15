@@ -125,22 +125,22 @@ Required Reviews — Integration Candidate:
 
 ## QA
 
-- Coordination status: APPROVED_WITH_WARNINGS
-- Final Integration Candidate confirmed: `f819440a72f2e68368bcc0d3c1af6ec700d170bf`
-- Previously reviewed functional candidate: `51f93d12740a6e0860856257ea761377b04c97fb`
-- Functional correction reviewed: `4d76f2433363a47a9d8fe29fef337de1dc79ac50`; Development evidence: `9e5764671d86121aedd88b926c05ccbc7c385131`.
-- QA-IC-001: `CLOSED / APPROVED` — exact clean export, no `.env`, no database URLs and no provider credentials; focused regression `1 passed`, complete Python suite `45 passed`, frontend `36 passed`, Python syntax `49/49`, JavaScript syntax `30/30`.
-- Functional impact: test-fixture-only. Runtime backend, frontend, API, schema, migrations, dependencies and production configuration are unchanged; only disposable in-memory SQLite was used.
-- Overall result: `APPROVED_WITH_WARNINGS` for Final Integration Candidate `f819440a72f2e68368bcc0d3c1af6ec700d170bf`.
-- QA-IC-002: `CLOSED / APPROVED` by metadata-only verification on 2026-09-24. PR #1 remains draft; base/head are `main` <- `codex/phase-6-target-ui`; its body identifies exact candidate `51f93d1`, correction `4d76f24`, QA-IC-001 closed, Security `APPROVED_WITH_WARNINGS`, SEC-019/SEC-020 closed, Production Readiness blocked and Phase 7 not authorized; obsolete candidate `cf9cd97` is absent.
-- QA blockers: none.
-- Final metadata/documentation confirmation: PR #1 remains open/draft with `codex/phase-6-target-ui` -> `main`, head `f819440`, and GitHub mergeability `clean`; its body cites `f819440`, `51f93d1`, and `4d76f24`, while preserving owner authorization, Production Readiness `BLOCKED`, and Phase 7 not authorized.
-- Final README confirmation: PT-BR, HOPE/Fase 6, `APPROVED_WITH_WARNINGS`, Phase 6 documentation link, no Phase 5/`IN_PROGRESS` current-state claim, and no conflicting runtime badge.
-- Non-blocking issues: `QA-ENV-003` (real production environments not exercised) and `QA-WARN-HTTPX` (known TestClient deprecation warning).
-- Metadata verification boundary: functional suites were not repeated because `51f93d1..f819440` contains no backend, frontend, tests, schema, migration, dependency, or runtime delta.
-- QA evidence: `4497347b6440c03c305cbb54eaccc643d95ced3c` closed QA-IC-001; this metadata-only QA documentation commit closes QA-IC-002 and records the final integration result.
-- Parallel Obsidian live retest: `BLOCKED / NOT_TESTED`; configuration is present, but no Obsidian process or configured listener was visible in the current OS session, so health remained unavailable and authentication/read were not exercised.
-- Obsidian gate impact: none. The owner-reported active application/plugin state was not observable from this QA session; no secret or private vault content was exposed and no write occurred.
+- Coordination status: `REJECTED`
+- Phase: 7 — Conversational Presence Foundation
+- Functional Commit reviewed: `c649a903693d5fedf631d760880b80ed881dc138`
+- Functional baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`; documentation/evidence descendant `6919c967c66f728471b5c195079dabda33a3e3ed` introduced no functional drift.
+- Exact-target isolation: clean `git archive` export, no `.env`, database URLs or provider credentials; no real database, migration, paid provider or production action.
+- Passing evidence: Python `60 passed`; frontend `62 passed`; Python/JavaScript syntax passed; new Phase 7 Chrome harness passed five scenarios with clean console/assets; isolated accessibility browser regression passed 200% reflow equivalent, 130% text, landscape, contrast and focus.
+- API and mode contracts: strict presentation enum, exact omitted/`NORMAL` prompt, one bounded static overlay, unchanged provider keys/call count, five mode axes, prospective privacy/history restrictions, exact phrase allowlist, public-safe SelfKnowledge and no-WebGL/viewport coverage passed within the mocked/synthetic environment.
+- Memory and API regressions: passing automated coverage includes `memory_enabled=true` retrieval, exact-UUID forget confirmation, missing/mismatched confirmation HTTP `428`, confirmed deletion and relation removal. Incremental Memory Globe behavior passed unit coverage; the complete legacy browser package remains blocked by `QA-P7-002`.
+- `QA-P7-001` — `MEDIUM`, Blocking `YES`: starting microphone recognition during active HOPE playback changes the visible state to Listening but does not pause the actual audio or terminate/reset its meter. Targeted Chrome evidence returned `pauseCalls=0`, `state=listening`, `micPressed=true`.
+- `QA-P7-001` acceptance: stop and invalidate current playback before real recognition starts; release playback/meter resources; reset `voiceLevel` to zero; reject late audio events; add idempotent browser regression coverage.
+- `QA-P7-002` — `MEDIUM`, Blocking `YES`: the complete repository Phase 6 browser runner is red on the exact target. `phase-6-runtime.mjs:49` still expects uncorrelated remote AI states to control the current UI, and `phase-6-flows.mjs:53` still expects history-ineligible messages to become persisted later.
+- `QA-P7-002` acceptance: reconcile both assertions with the authorized Phase 7 contracts without weakening coverage, then pass the full Phase 6 and Phase 7 browser packages from a clean exact-target export so all legacy memory/realtime/delete scenarios execute.
+- UI/UX evidence result: `UIUX-P7-001`, `002`, `006`–`011`, `013`–`021` passed within the executed limits; `UIUX-P7-003`, `004`, `005` and `012` are not approved because of the active-playback-to-recognition defect.
+- Non-blocking limits: mocked providers do not prove live Focus/Supportive/Presentation adherence or audio fidelity; no physical microphone/speaker, manual screen reader, real PostgreSQL/pgvector, deployment or production environment was exercised; the known Starlette/TestClient deprecation warning remains.
+- Recommendation: return the two exact blockers to Development and require a new Functional Commit before QA re-review. Production, Phase 8, migrations and real-provider work remain outside this review.
+- Historical record: the Phase 6 final-integration `APPROVED_WITH_WARNINGS` result and closed `QA-IC-001`/`QA-IC-002` remain preserved in the historical section of the QA report; they are not the current Phase 7 result.
 - Report: [`qa-latest.md`](reviews/qa-latest.md)
 
 ## Database Audit

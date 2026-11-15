@@ -1,3 +1,140 @@
+# QA Review — Phase 7 Conversational Presence Foundation
+
+## QA Status
+
+`REJECTED`
+
+The exact Phase 7 candidate passes its Python, frontend and new Phase 7 browser suites, but it does not satisfy the complete acceptance contract. Starting microphone recognition while HOPE audio is already playing changes the visible state to Listening without stopping the active audio. In addition, the repository's complete Phase 6 browser regression runner fails on two assertions that were not reconciled with the authorized Phase 7 behavior. Both findings block the claim that cancellation/interruption and the complete regression suite pass.
+
+## Commit Tested
+
+- Functional Commit: `c649a903693d5fedf631d760880b80ed881dc138`
+- Functional baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`
+- Delivery documentation/evidence: `6919c967c66f728471b5c195079dabda33a3e3ed`
+- Repository HEAD observed: `08e3984986798dfee0500f6af6cd3f695e57a910`
+- Branch: `codex/phase-7-completion`
+- Review date: 2026-11-15
+
+`c649a903` is an ancestor of the observed HEAD. `git diff c649a903..HEAD -- backend frontend tests migrations ...` was empty; the later commits contain documentation/evidence only. Testing used a clean `git archive` export of the exact Functional Commit with database and provider environment variables removed. No `.env` was read.
+
+## Test Summary
+
+| Area | Result | Evidence |
+|---|---|---|
+| Backend / Python | PASSED | `60 passed`, one known Starlette/TestClient deprecation warning |
+| Frontend / JavaScript | PASSED | `62 passed`, `0 failed` |
+| Syntax | PASSED | Python AST parsing and `node --check` for 47 JavaScript files |
+| API / presentation contract | PASSED | strict enum rejection, omitted/`NORMAL` equality, one bounded static overlay, provider payload keys and `max_tokens=1400` verified with mocks |
+| Phase 7 browser harness | PASSED | five Chrome scenarios; console/page errors and asset failures clean; separate QA evidence directory used |
+| Phase 6 browser regression package | FAILED | official `node tests/browser/run.mjs` stopped in `phase-6-runtime.mjs`; isolated `phase-6-flows.mjs` also failed |
+| Accessibility browser regression | PASSED | isolated Phase 6 accessibility runner passed bounds, 200% reflow equivalent, 130% text, landscape, contrast and focus |
+| Memory / API regressions | PASSED in automated suites | retrieval with `memory_enabled=true`, exact-UUID forget confirmation, HTTP 428 negative cases, deletion and relation removal covered by passing Python tests |
+| Realtime | PARTIAL / REGRESSION HARNESS FAILED | frontend unit coverage passed heartbeat, disconnect and reconnect scheduling; the legacy browser assertion for raw uncorrelated AI state is stale and fails |
+| Voice / cancellation | FAILED | targeted Chrome reproduction confirmed active audio is not paused when recognition starts |
+| Memory Globe / WebGL | PASSED in Phase 7 harness | no-WebGL conversation and controls passed; complete Phase 7 viewport matrix passed |
+| Basic security | PASSED within local scope | hostile presentation input, inert HTML, exact phrase allowlist, no tracked sensitive `.env`, and zero known secret-prefix hits in the delta |
+
+## Commands and Evidence Executed
+
+- Git state, ancestry, log, exact functional diff inventory and `git diff --check`.
+- Clean export: `git archive --format=zip c649a903693d5fedf631d760880b80ed881dc138` into a disposable directory.
+- Python: isolated interpreter with the export as current directory, `python -m pytest -q -p no:cacheprovider`.
+- Frontend: `node --test tests/frontend/*.test.mjs`.
+- Syntax: AST parsing of Python files and `node --check` for frontend/test JavaScript.
+- Phase 7 browser: `HOPE_EVIDENCE_DIR=test-results/phase-7-qa node tests/browser/run-phase-7.mjs` on exclusive port 8767.
+- Phase 6 browser regression: `node tests/browser/run.mjs` on exclusive port 8766; then isolated accessibility and flow runners for diagnosis.
+- Targeted voice race: disposable FastAPI harness plus Chrome synthetic playback/recognition; result was `{"pauseCalls":0,"state":"listening","micPressed":"true"}`.
+- Static boundary checks: no schema, migration, database, dependency or credential-path delta; no tracked sensitive `.env`; known secret-prefix scan returned zero hits.
+
+## Acceptance and UI/UX Evidence Matrix
+
+| Contract | QA result |
+|---|---|
+| Strict `presentation_mode`, exact `NORMAL`, bounded overlay, unchanged provider shape/call count | PASS with mocked-provider fidelity limit |
+| Canonical DisplayResponse / separate SpokenResponse / material warnings and values preserved | PASS |
+| Session, turn, attempt and response-version stale guards | PASS for covered generation, synthesis and recognition cases; FAIL for the playback-to-listening transition in `QA-P7-001` |
+| Stop, cancel, Escape, focus and truthful visual states | FAIL due to `QA-P7-001`; the other exercised paths passed |
+| Five mode axes, privacy restrictions, delayed Private response and restoration | PASS |
+| Exact phrases `006`–`018`, null default, cooldown and suppressions; pending/rejected phrases excluded | PASS |
+| Public-safe SelfKnowledge and capability-state separation | PASS |
+| Local-only amplitude, reset paths and reduced motion | FAIL for the microphone-start transition because active playback is not stopped or explicitly reset; other terminal paths passed |
+| Responsive UI, 200% reflow equivalent, 130% text, required viewports and no-WebGL | PASS |
+| Existing chat, memory, API, confirmation/delete and incremental Memory Globe behavior | PASS in automated suites; complete legacy browser runner remains red under `QA-P7-002` |
+
+`UIUX-P7-001`, `002`, `006`–`011`, `013`–`021` passed within the executed environment. `UIUX-P7-003`, `004`, `005` and `012` are not approved because the active-playback-to-recognition path violates the specified interruption and terminal-reset behavior.
+
+## Regressions Found
+
+### QA-P7-001 — Starting recognition does not stop active playback
+
+- Severity: `MEDIUM`
+- Blocking: `YES`
+- Affected surface: voice interruption, truthful state, local amplitude and microphone/playback coexistence
+- Evidence: in Chrome with deterministic synthetic audio, HOPE entered `SPEAKING`; activating the microphone then entered `LISTENING`, but the active audio object's `pause()` call count remained zero. Result: `pauseCalls=0`, `state=listening`, `micPressed=true`.
+- Code diagnosis: the microphone click path in `VoiceInput` begins a new turn/reference, but `ChatController` does not call `VoiceManager.stopSpeech()` before recognition starts. The new reference makes old callbacks stale, but it does not stop the actual media element or explicitly reset its meter at that transition.
+- Impact: HOPE can keep speaking while the UI claims it is listening. Playback can feed the microphone, the Stop-playback scope becomes misleading, and the last positive Orb amplitude can survive because the stale meter callback is ignored rather than terminated through the normal reset path.
+- Recommendation: make microphone activation stop/invalidate active playback before recognition starts, then add browser coverage proving audio pause/resource release, amplitude zero, real recognition-start gating and idempotent interruption.
+- Acceptance criteria to close: real playback is paused/stopped before Listening; meter/resources are released; `voiceLevel` is zero; late old-audio events cannot change state; repeated activation remains safe.
+
+### QA-P7-002 — Complete legacy browser regression package is not green
+
+- Severity: `MEDIUM`
+- Blocking: `YES`
+- Affected surface: repository test integrity and Phase 6 regression evidence
+- Evidence 1: `node tests/browser/run.mjs` failed at `tests/browser/phase-6-runtime.mjs:49`, timing out while waiting for uncorrelated `AI_STATE_CHANGED` values to control `#hope-state`. Phase 7 intentionally rejects those uncorrelated events, so the legacy assertion no longer represents the authorized contract.
+- Evidence 2: isolated `tests/browser/phase-6-flows.mjs` failed at line 53 with `2 !== 4` after reload. Phase 7 now preserves only history-eligible messages; the legacy test still expects messages created while persistence was off to become persistable later.
+- Impact: the repository's advertised complete Phase 6 browser runner fails on the exact Functional Commit. The new Phase 7 harness does not replace all legacy memory/realtime/delete/browser regression scenarios, so the claim that the complete suite passes is not reproducible.
+- Recommendation: reconcile the two obsolete assertions with the authorized Phase 7 contracts without weakening the underlying coverage, run the entire Phase 6 browser package from a disposable output location, and keep the new Phase 7 package green.
+- Acceptance criteria to close: `node tests/browser/run.mjs` completes successfully on a clean exact-target export; updated assertions prove uncorrelated remote state is ignored and only history-eligible records persist; all remaining legacy scenarios execute rather than being skipped after the first failure.
+
+## Blockers
+
+- `QA-P7-001` — active playback continues when microphone recognition starts.
+- `QA-P7-002` — the complete repository browser regression package fails and does not execute all legacy scenarios.
+
+## Non-blocking Issues
+
+### QA-P7-W01 — Real-provider presentation and audio fidelity are untested
+
+- Severity: `INFO`
+- Blocking: `NO`
+- Evidence: provider behavior was exercised only through mocks and synthetic PCM/fake playback/recognition.
+- Impact: deterministic tests prove request/prompt boundaries, not whether a live provider consistently follows Focus/Supportive/Presentation style or produces acceptable audio.
+- Recommendation: retain this limit explicitly; any paid/live evaluation requires separate authorization.
+
+### QA-P7-W02 — Real devices and production dependencies remain outside this review
+
+- Severity: `INFO`
+- Blocking: `NO` for Phase 7 feature scope
+- Evidence: no physical microphone/speaker, manual screen reader, real PostgreSQL/pgvector, migration, provider credential, deployment or production environment was used.
+- Impact: this review does not establish Production Readiness.
+- Recommendation: preserve the existing Database, Security, accessibility-device and production gates.
+
+### QA-WARN-HTTPX — Deprecated TestClient integration
+
+- Severity: `INFO`
+- Blocking: `NO`
+- Evidence: the Python suite emitted the known `StarletteDeprecationWarning` for the current TestClient/httpx integration.
+- Impact: no current failure; future dependency maintenance is required.
+- Recommendation: track outside the Phase 7 correction gate.
+
+## Environmental Limits
+
+- No real microphone, paid AI/TTS provider, real PostgreSQL, migration, credential, infrastructure, deployment or production action was used.
+- Browser media evidence used deterministic fake recognition, fake playback and synthetic PCM.
+- Mocks do not prove live-provider generation fidelity, prosody or audio quality.
+- The real owner/authentication and production-security blockers remain unchanged and are not reclassified by this feature review.
+
+## Recommendation
+
+`REJECTED`
+
+Return the candidate to Development for the two exact blockers above. Re-review should target a new Functional Commit and rerun the targeted playback-to-recognition race, both complete browser packages, Python, frontend and syntax checks. Phase 8, production, migration and real-provider work remain outside scope.
+
+---
+
+## Historical QA Record — Phase 6
+
 # QA Final Confirmation — Phase 6 Integration Candidate
 
 ## QA Status
