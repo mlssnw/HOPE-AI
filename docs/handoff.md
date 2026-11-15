@@ -180,33 +180,26 @@ Required Reviews — Integration Candidate:
 
 ## UI/UX
 
-- Coordination status: `APPROVED` — Phase 7 pre-implementation UI/UX specification complete
-- Review type: `PHASE 7 PRE-IMPLEMENTATION UI/UX SPECIFICATION — PERSONALITY CORRECTION`
-- Functional baseline reviewed: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`
-- Phase 7 Functional Commit: `NONE`
-- Architecture decision: `ARCH-2026-09-25-001`
-- Planner reconciliation commit: `bcd0a05da9cc8a8e8efd301103265470c0a21982`
-- Coordinator routing commit: `829aa31bfa20a8c551d2e0e66300d84ed2beb14e`
-- Original UI/UX package commit corrected: `efbe487b1a8d7d58eca03c30fb7110d8e3e52427`
-- Personality correction commit: `9362463d91759504d1a703d51471df3ffece5586`
-- Phrase-decision coordination baseline: `6e7b02a975deb3c1c0f36e3e0c3ba0768a635fee`
-- Specification: [`phase-7-conversational-presence-spec.md`](design/phase-7-conversational-presence-spec.md)
-- Phrase register: [`phase-7-phrase-proposals.md`](design/phase-7-phrase-proposals.md)
-- Specification coverage: display/spoken separation, truthful voice states, stop/cancel/stale-event handling, combinable modes, response-native personality, zero-phrase default, no automatic mode phrase hooks, microphone/TTS fallback, accessibility/focus/reduced motion, local ephemeral output amplitude, privacy and capability truthfulness
-- Objective evidence contract: `UIUX-P7-001` through `UIUX-P7-021`
-- Specification blockers: none
-- Phrase decision gate: `COMPLETE` — owner decision persisted for every record in the active package
-- Approved exact records: 13 (`P7-PHRASE-006` through `P7-PHRASE-018`), exact text and recorded context only
-- Rejected in the owner decision: `P7-PHRASE-004`, `P7-PHRASE-005`, `P7-PHRASE-019` and `P7-PHRASE-020`
-- Earlier inactive history: `P7-PHRASE-001` and `P7-PHRASE-002` `REJECTED`; `P7-PHRASE-003` `WITHDRAWN_FROM_ACTIVE_PACKAGE`
-- Optional pending alternatives: 8 (`P7-PHRASE-021` through `P7-PHRASE-028`), exactly two per rejected function, all `PENDING_OWNER_APPROVAL`
-- Replacement assessment: `NO_REPLACEMENT_NEEDED` remains the primary recommendation for all four rejected functions; interruption uses neutral operational feedback, completion is covered by `P7-PHRASE-015`, and supportive coverage is sufficient in `P7-PHRASE-016` through `P7-PHRASE-018`
-- Optional-alternative boundary: the eight alternatives are non-blocking and excluded from implementation unless individually approved; the 13 already approved records are sufficient for Development routing
-- Personality rule: the substantive answer carries HOPE's identity; `PhraseLibrary` is rare/optional, no phrase is a normal preferred result, and no mode may trigger ritual copy
-- Development routing: returned to the Coordinator; the phrase gate is complete, but this UI/UX update starts no Work
-- Phrase scope: approval is exact-item only and does not cover punctuation, variants, localization, translation, paraphrase or future rewrite
+- Coordination status: `REJECTED` — Phase 7 post-implementation UI/UX review found two accessibility/interaction blockers
+- Review type: `PHASE 7 POST-IMPLEMENTATION UI/UX REVIEW`
+- Review date: 2026-11-15
+- Target Functional Commit: `c649a903693d5fedf631d760880b80ed881dc138`
+- Functional baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`
+- Architecture decision: `ARCH-2026-11-14-001`
+- Development documentation/evidence: `6919c967c66f728471b5c195079dabda33a3e3ed`
+- Functional delta after target: none; later workspace commits inspected by UI/UX were documentation/evidence only
+- `UIUX-P7-POST-001`: `HIGH`, `Blocking: YES` — the Modes surface has no required visible touch-close action or focus entry and can clip its heading/first controls above the viewport under short-height/enlarged-text conditions
+- `UIUX-P7-POST-002`: `MEDIUM`, `Blocking: YES` — actionable voice/chat failures are copied into polite and assertive live regions and may also receive a redundant generic error announcement
+- Blocking criteria: `UIUX-P7-006`, `UIUX-P7-007` and `UIUX-P7-010`; the complete `UIUX-P7-001` through `UIUX-P7-021` matrix is in the report
+- Non-blocking limits: `UIUX-P7-W01` real-provider style/physical voice fidelity untested; `UIUX-P7-W02` physical touch, manual screen reader and actual 200% zoom not independently exercised in this review window
+- Independent validation: frontend `62 passed`; focused backend presentation suite `15 passed`; no UI/UX browser runner was started while QA owned the fixed port
+- Approved areas: canonical Display/optional Spoken separation, truthful local voice/Core Orb state, distinct stop/cancel scopes, stale-event guards, prospective privacy/history behavior, five mode axes, reduced motion, no-WebGL conversation, public-safe SelfKnowledge and negative future-capability claims
+- Historical pre-implementation specification: remains `APPROVED`; this rejection applies only to implementation fidelity on the target Functional Commit
+- Phrase gate preserved: only exact `P7-PHRASE-006` through `P7-PHRASE-018` remain approved; rejected/withdrawn records stay excluded; `P7-PHRASE-021` through `P7-PHRASE-028` remain `PENDING_OWNER_APPROVAL`, excluded and non-blocking
+- Personality boundary preserved: substantive-answer personality, zero-phrase default, no automatic mode phrase, no frontend prefix/suffix and no new phrase or variant approved by this review
+- Required correction: return both blockers to Development for the smallest accessibility/Modes/live-region correction and create a new Functional Commit for proportional QA, Security and UI/UX re-review
 - Production Readiness: `BLOCKED`
-- Recommendation: return to the Coordinator to present optional alternatives `P7-PHRASE-021` through `P7-PHRASE-028` individually while preserving the existing Development route as non-blocked by them; do not start Phase 8 or production
+- Recommendation: return to the Coordinator; do not start Phase 8, merge or production
 - Report: [`uiux-latest.md`](reviews/uiux-latest.md)
 
 ## Planner
