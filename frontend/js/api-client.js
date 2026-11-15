@@ -72,12 +72,15 @@ export async function sendChat(payload, signal, userId) {
 }
 
 export async function requestSpeech(text, signal, userId) {
+  if (typeof text !== "string" || Array.from(text).length > 5000) {
+    throw new ApiError("A resposta excede o limite de leitura; o texto completo continua disponível.");
+  }
   const response = await fetch("/api/tts", {
     method: "POST", signal, headers: {
       "Content-Type": "application/json",
       ...(userId ? { "X-Hope-User-Id": userId } : {}),
     },
-    body: JSON.stringify({ text: text.slice(0, 5000) }),
+    body: JSON.stringify({ text }),
   });
   if (!response.ok) throw new ApiError(await parseError(response), response.status);
   if (!response.headers.get("content-type")?.startsWith("audio/")) {
