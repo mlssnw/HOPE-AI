@@ -19,6 +19,7 @@
 <span id="claude-status">Chat: verificando</span><span id="vault-status">Obsidian: verificando</span><span id="web-status">Web: verificando</span>
 <span id="memory-status">Serviço de memória: verificando</span><span id="realtime-status">Conectando sincronização</span>
 </div></details>
+<details class="self-knowledge" id="self-knowledge"><summary>Sobre a HOPE</summary><div id="self-knowledge-content"><p>Carregando informações públicas verificáveis…</p></div></details>
 </header>
 <main class="workspace" id="workspace">
 <section class="core-panel" id="memory-globe-shell" aria-labelledby="core-title">
@@ -72,6 +73,24 @@
 <label class="toggle-pill"><input id="use-web" type="checkbox"><span>Web</span></label><label class="toggle-pill"><input id="use-vault" type="checkbox"><span>Obsidian</span></label>
 </div>
 <p class="memory-consent-note" id="memory-consent-help">Memória no chat permite recuperar e salvar memórias e enviar trechos ao provedor de IA. Histórico local guarda a conversa neste navegador.</p>
+<details class="modes-control" id="modes-control">
+<summary>Modos <span data-mode-active>Padrão</span></summary>
+<div class="modes-sheet" aria-label="Modos desta sessão">
+<div class="modes-head"><strong>Modos da sessão</strong><span>Aplicados somente a novos turnos.</span></div>
+<fieldset><legend>Estilo</legend>
+<label><input type="radio" name="mode-style" value="NORMAL" checked> Normal</label>
+<label><input type="radio" name="mode-style" value="FOCUS"> Foco</label>
+<label><input type="radio" name="mode-style" value="SUPPORTIVE"> Apoio</label>
+<label><input type="radio" name="mode-style" value="PRESENTATION"> Apresentação</label>
+</fieldset>
+<fieldset><legend>Privacidade</legend><label><input type="radio" name="mode-privacy" value="STANDARD" checked> Padrão</label><label><input type="radio" name="mode-privacy" value="PRIVATE"> Privado</label></fieldset>
+<fieldset><legend>Saída</legend><label><input type="radio" name="mode-output" value="VOICE" checked> Voz permitida</label><label><input type="radio" name="mode-output" value="SILENT"> Sem voz</label></fieldset>
+<fieldset><legend>Interrupções</legend><label><input type="radio" name="mode-interruption" value="STANDARD" checked> Padrão</label><label><input type="radio" name="mode-interruption" value="DO_NOT_DISTURB"> Não perturbe</label></fieldset>
+<fieldset><legend>Audiência</legend><label><input type="radio" name="mode-audience" value="PRIVATE" checked> Privada</label><label><input type="radio" name="mode-audience" value="PUBLIC"> Pública</label></fieldset>
+<p class="mode-resolution" data-mode-resolution role="status">Para novos turnos: preferências padrão da sessão.</p>
+<p class="mode-boundary">Modos mudam apresentação e privacidade para novos turnos. Não alteram fatos, permissões ou capacidades.</p>
+</div>
+</details>
 <div class="composer-bar">
 <div class="voice-controls"><button id="voice-toggle" type="button" aria-label="Leitura em voz" aria-pressed="false" aria-describedby="voice-status"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4zM17 8q5 4 0 8"/></svg><span>Leitura</span></button><button id="mic-button" type="button" aria-label="Ditado por voz" aria-pressed="false" aria-describedby="voice-status"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M6 11v1a6 6 0 0 0 12 0v-1M12 18v3M9 21h6"/></svg><span>Ditado</span></button><button id="speech-stop" type="button" hidden>Parar leitura</button></div>
 <div class="send-controls"><button class="cancel-button" id="cancel-button" type="button" hidden>Cancelar</button><button class="send-button" id="send-button" type="submit">Enviar <span aria-hidden="true">↗</span></button></div>

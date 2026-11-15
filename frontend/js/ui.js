@@ -42,6 +42,17 @@ export function showSources(sources, article, memoryIds = []) {
   }
   panel.hidden=false;article.append(panel);
 }
+export function addSpeechAction(article, { enabled, onPlay }) {
+  if (!article) return null;
+  const actions = document.createElement("div"); actions.className = "message-actions";
+  const button = document.createElement("button"); button.type = "button";
+  button.className = "message-speech"; button.textContent = "Ouvir resposta";
+  button.disabled = !enabled;
+  button.title = enabled ? "Reproduzir esta resposta" : "Leitura em voz indisponível para este turno";
+  button.addEventListener("click", onPlay);
+  actions.append(button); article.append(actions);
+  return button;
+}
 export function setBusy(busy) {
   elements.send.disabled = busy; elements.prompt.disabled = busy; elements.cancel.hidden = !busy;
   elements.web.disabled = busy; elements.vault.disabled = busy; elements.memory.disabled = busy;

@@ -14,6 +14,7 @@ export class MemoryGlobeController {
     this.userId = getOrCreateUserId(); this.graph = normalizeGraph({}); this.layout = layoutGraph({});
     this.selectedId = null; this.mode = "orbital"; this.searchIds = null; this.searchIndex = 0; this.searchToken = 0;
     this.operation = { chat:"idle", voice:"idle", remote:"idle", cancelled:false };
+    this.voiceLevel = 0;
     this.quality = initialQuality(innerWidth); $("globe-quality").value = this.quality;
     this.motionMedia = matchMedia("(prefers-reduced-motion:reduce)");
     try { this.manualMotion = localStorage.getItem("hope.reduced-motion") === "true"; } catch { this.manualMotion = false; }
@@ -38,6 +39,7 @@ export class MemoryGlobeController {
       $("webgl-fallback").hidden = true; $("memory-globe").hidden = false;
       $("memory-globe-shell").classList.remove("no-webgl");
       this.renderer.setAiState(displayedState(this.operation));
+      this.renderer.setVoiceLevel?.(this.voiceLevel);
       this.renderer.setHighlights(this.searchIds || []);
       this.renderer.setInspectorOpen(!$("memory-inspector").hidden);
       this.setList(false);
@@ -116,6 +118,10 @@ export class MemoryGlobeController {
     });
     addEventListener("hope:confirm-memory-delete", event => this.openDeleteConfirmation(event.detail));
     addEventListener("hope:operation", event => this.setOperation(event.detail));
+    addEventListener("hope:voice-level", event => {
+      this.voiceLevel = Math.max(0, Math.min(1, Number(event.detail?.value) || 0));
+      this.renderer?.setVoiceLevel?.(this.voiceLevel);
+    });
   }
   updateMotion() {
     const reduced = this.motionMedia.matches || this.manualMotion;

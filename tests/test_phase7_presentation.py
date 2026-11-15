@@ -11,6 +11,9 @@ from backend.ai.prompts import build_system_prompt
 from backend.config import Settings
 from backend.models import ChatRequest, PresentationMode
 from backend.services import HopeServices
+from backend.main import create_app
+from backend.models import ChatResponse
+from httpx import ASGITransport, AsyncClient
 
 
 @pytest.mark.parametrize(
@@ -93,3 +96,26 @@ async def test_provider_payload_shape_and_call_count_stay_unchanged_for_focus() 
     assert set(requests[0]) == {"model", "max_tokens", "system", "messages"}
     assert requests[0]["max_tokens"] == 1400
     assert str(requests[0]["system"]).count("[TURN PRESENTATION]") == 1
+
+
+@pytest.mark.asyncio
+async def test_invalid_presentation_mode_returns_422_before_service_work() -> None:
+    class CountingServices:
+        calls = 0
+
+        async def chat(self, request: ChatRequest) -> ChatResponse:
+            self.calls += 1
+            return ChatResponse(reply="unexpected")
+
+    services = CountingServices()
+    app = create_app(services)  # type: ignore[arg-type]
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as client:
+        response = await client.post(
+            "/api/chat",
+            json={"message": "Teste", "presentation_mode": " focus "},
+        )
+
+    assert response.status_code == 422
+    assert services.calls == 0
