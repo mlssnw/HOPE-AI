@@ -7,14 +7,14 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 ## Current Phase
 
 - Phase: 7 — Conversational Presence Foundation
-- Phase status: CHANGES_REQUESTED — independent local implementation may continue, but the answer-native generation path is blocked pending owner approval of `ARCH-2026-11-06-001`
-- Feature status: NOT_STARTED — no Phase 7 functional implementation or Functional Commit exists yet
+- Phase status: IN_PROGRESS — full completion, including the exact bounded generation amendment, is authorized by `ARCH-2026-11-14-001`; Development is the next active Work
+- Feature status: IN_PROGRESS — partial TTS checkpoint `2647794` exists; complete Phase 7 delivery and its required reviews remain outstanding
 - Production readiness: BLOCKED — Phase 7 does not authorize public deployment or resolve the inherited production blockers
 - Baseline: `ce2bde4` on `main`, with Phase 6 complete and integrated through PR #1
 - Runtime API version: `6.0.0-phase.5` — frozen legacy metadata from the approved Phase 6 artifact; Phase 7 has not changed it
-- Authorized scope: only the contracts and local deterministic behavior defined in [`docs/phase-7.md`](phase-7.md)
+- Authorized scope: the complete contracts in [`docs/phase-7.md`](phase-7.md), including only the exact presentation-mode exception reconciled in `11eb4f7`
 - Phrase approval gate: complete for the 13-record first package (`P7-PHRASE-006` through `P7-PHRASE-018`); every additional exact phrase still requires individual owner approval before it enters code, fixtures or active product content
-- Working tree boundary: preserve the pre-existing untracked `Hope dashboard` and `hope-linkedin-hero*` assets outside project commits
+- Working tree boundary: implement on `codex/phase-7-completion` in the isolated completion worktree; preserve main's pre-existing untracked assets and the other worktree's uncommitted UI/runtime/data changes without importing them
 - Database boundary: no schema, migration, persistence or real-database operation is authorized in Phase 7
 
 ## User Strategic Decision
@@ -91,22 +91,23 @@ Required Reviews — Integration Candidate:
 
 ## Current Functional Commit
 
-- Commit: NONE — Phase 7 implementation has not started
+- Complete Phase 7 delivery commit: NONE — Development must produce a complete exact review candidate
+- Latest partial functional checkpoint: `2647794ea806b20117c7cce531602911da98ca97` — overlength TTS rejection, not complete Phase 7
 - Phase: 7
 - Target baseline: `ce2bde4` on `main`
 - Previous phase evidence: Phase 6 implementation `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`, isolated test correction `4d76f2433363a47a9d8fe29fef337de1dc79ac50`, integrated through `ce2bde4`
-- Status: NOT_STARTED — UI/UX pre-implementation specification and owner approval of every exact PhraseLibrary phrase precede Development
+- Status: IN_PROGRESS — pre-implementation specification and exact phrase gate are persisted; generation authorization is reconciled in `ARCH-2026-11-14-001`
 
 ## Review Matrix
 
 | Work | Required | Status | Commit |
 |---|---|---|---|
-| DEV | YES | NOT_STARTED | — |
+| DEV | YES | IN_PROGRESS | complete target pending; partial TTS `2647794` |
 | QA | YES | NOT_STARTED | — |
 | DATABASE | NO | N/A | — |
 | SECURITY | YES | NOT_STARTED | — |
-| UI/UX | YES | APPROVED | `9362463` against baseline `ce2bde4` |
-| PLANNER | YES | APPROVED | `bcd0a05da9cc8a8e8efd301103265470c0a21982` |
+| UI/UX | YES | APPROVED — PRE-IMPLEMENTATION ONLY | spec/phrase package `2a90ad1`, baseline `ce2bde4`; implementation review pending |
+| PLANNER | YES | APPROVED — IMPLEMENTATION ROUTING | `11eb4f7` — `ARCH-2026-11-14-001`; final consolidation pending |
 
 ## Development
 
@@ -230,11 +231,11 @@ Required Reviews — Integration Candidate:
 ## Coordinator
 
 - Autonomy level: 2.5
-- Status: WAITING_FOR_APPROVAL_WITH_SAFE_PARALLEL_WORK
-- Operational conclusion: Development found that the approved answer-native style cannot reach model generation without changing the existing chat request and effective system text, both prohibited by the literal plan. Planner persisted the smallest technical amendment as `ARCH-2026-11-06-001` in `df4d142`; it requires explicit owner approval. Independent local contracts remain authorized and are continuing in the isolated worktree.
+- Status: ROUTED_TO_DEVELOPMENT
+- Operational conclusion: the owner requested completion of all Phase 7, use of the predefined Works, Git updates and notification of changes, while retaining HOPE identity. Planner reconciled the necessary bounded generation amendment in `11eb4f7`. Development may implement the complete authorized package; no complete implementation or review approval is claimed yet.
 - Final Integration Candidate: `cb8dc774cc396f3aff0ef40e79753761fbf3b49b`
 - Main integration commit: `ce2bde4`
-- Routing: LEVEL 3 — return the one-field/one-section generation amendment and its bounded input-token consequence to the owner. Development may continue only the independent local work enumerated by the Planner and must not implement `presentation_mode` or any prompt overlay before approval.
+- Routing: LEVEL 2 — visible DEV task implements on `codex/phase-7-completion` after this coordination commit. Then QA, Security and UI/UX review the same exact complete Functional Commit. Use the [execution routing record](coordination/phase-7-execution-2026-11-14.md); no concurrent implementation or handoff writes.
 - Boundary: COORDINATOR atualizou somente Current Phase, Current Functional Commit, Review Matrix, blockers, warnings, Next Action e histórico; não concedeu aprovação técnica nem alterou seções ou relatórios de ownership dos reviewers
 
 ## Current Blockers
@@ -242,10 +243,9 @@ Required Reviews — Integration Candidate:
 ### Feature Blockers
 
 - No technical blocker remains in the pre-implementation UI/UX specification.
-- Feature blocker: selected `FOCUS`, `SUPPORTIVE` and `PRESENTATION` styles cannot alter the substantive generated answer under the literal current prohibition on preference transmission, system-prompt changes and API expansion.
-- Resolution proposed, not authorized: `ARCH-2026-11-06-001` adds only optional `presentation_mode` to the existing `/api/chat` request and a bounded static server-authored `[TURN PRESENTATION]` section for non-default modes.
-- Owner decision must explicitly accept the bounded extra system text and possible input-token increase on ordinary future user-triggered model calls. No paid validation, new provider, budget or cost setting is authorized.
-- Independent local correlation, conservative overlength speech behavior, private-history eligibility and other non-gated pure/local contracts may continue without claiming full Phase 7 readiness.
+- No authorization blocker remains for the approved Phase 7 implementation. The prior generation-boundary blocker was resolved by `ARCH-2026-11-14-001`; its exact enum/static-section boundary remains binding.
+- Completion gates remain: a complete Functional Commit, evidence for every phase criterion and `UIUX-P7-001` through `UIUX-P7-021`, independent QA/Security/UI/UX reviews, and Planner consolidation.
+- No paid validation, new provider, budget setting, real-database operation, production or later phase is authorized.
 - Eight optional exact alternatives (`P7-PHRASE-021` through `P7-PHRASE-028`) remain `PENDING_OWNER_APPROVAL`; they are excluded from implementation by default and do not block Development.
 
 ### Production Blockers
@@ -276,20 +276,23 @@ Required Reviews — Integration Candidate:
 
 ## Next Action
 
-- Role: OWNER
-- Status: WAITING_FOR_APPROVAL
-- Task: approve or reject the narrow Phase 7 generation amendment `ARCH-2026-11-06-001`: one optional validated `presentation_mode` field on existing `/api/chat` plus one bounded static server-authored presentation section in the existing system text for the current turn
-- Target documentation commit: `df4d142`; functional baseline remains `ce2bde4` and Phase 7 Functional Commit remains `NONE`
+- Role: DEVELOPMENT
+- Status: AUTHORIZED
+- Task: complete Phase 7 within `ARCH-2026-11-14-001`, the full phase plan and UI/UX specification; preserve response-native personality, zero-phrase default and HOPE identity
+- Target planning commit: `11eb4f7`; branch `codex/phase-7-completion`; partial checkpoint `2647794`; complete candidate to be created by Development
 - Required inputs:
   - [`docs/phase-7.md`](phase-7.md)
   - [`docs/design/phase-7-conversational-presence-spec.md`](design/phase-7-conversational-presence-spec.md)
   - [`docs/reviews/architecture-latest.md`](reviews/architecture-latest.md)
+  - [`docs/design/phase-7-phrase-proposals.md`](design/phase-7-phrase-proposals.md)
+  - [`docs/reviews/uiux-latest.md`](reviews/uiux-latest.md)
 - Expected output:
-  - explicit approval or rejection of the exact amendment, including acknowledgment that its static system section may add bounded input tokens to ordinary future model calls
-  - no inferred authorization for arbitrary prompt text, another request field, provider/schema changes, persistence, cost settings or later phases
-- Blocking dependencies: owner decision on `ARCH-2026-11-06-001` before Development implements the disputed mode-to-generation path or claims a complete Phase 7 Functional Commit
-- Parallel work: Development may continue only the independently authorized pure/local contracts listed in the Planner ruling; QA, Security and UI/UX remain inactive until one complete Functional Commit exists
-- Escalation: USER
+  - complete implementation and proportionate tests, exact Functional Commit, phase documentation and `READY_FOR_REVIEW` delivery
+  - traceability to every acceptance criterion and `UIUX-P7-001` through `UIUX-P7-021`, with browser evidence in `docs/evidence/phase-7/`
+  - honest environmental/provider-fidelity limits; no pending/rejected phrase or unauthorized data/provider/production change
+- Blocking dependencies: none before implementation; required reviews/consolidation follow the complete frozen candidate
+- Parallel work: none while Development writes; mandatory reviewers may later inspect the same exact hash with distinct report ownership and serialized handoff updates
+- Escalation: NONE
 
 ## Recent History
 
@@ -336,3 +339,4 @@ Required Reviews — Integration Candidate:
 - 2026-09-28 — The owner approved `P7-PHRASE-006` through `P7-PHRASE-018` and rejected `P7-PHRASE-004`, `P7-PHRASE-005`, `P7-PHRASE-019` and `P7-PHRASE-020`. UI/UX persisted the exact decisions in `348cad3` and, at the owner's request, added eight optional non-blocking alternatives in `2a90ad1`; COORDINATOR opened only their optional individual decision step.
 - 2026-11-06 — With no Phase 7 feature blocker remaining, COORDINATOR routed the approved specification and exact records `P7-PHRASE-006` through `P7-PHRASE-018` to Development. Optional records `P7-PHRASE-021` through `P7-PHRASE-028` remain pending, excluded and non-blocking.
 - 2026-11-06 — Development identified that answer-native selected styles require a generation signal prohibited by the literal plan. PLANNER persisted `ARCH-2026-11-06-001` in `df4d142`, proposed the smallest one-field/one-section amendment and escalated its approval to the owner. COORDINATOR kept independent local work active but blocked the disputed generation path and full Phase 7 delivery.
+- 2026-11-14 — The owner retained HOPE, requested completion of all Phase 7 using the predefined Works, continued Git commits and notification of changes. The isolated completion branch starts from `dde8186`; the previous dirty worktree and real data remain preserved. Visible PLANNER persisted `ARCH-2026-11-14-001` in `11eb4f7`, reconciling the exact bounded generation amendment. COORDINATOR routed complete implementation to the visible DEV task; no implementation/review approval or production authorization is inferred.
