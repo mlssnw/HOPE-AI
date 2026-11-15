@@ -4,7 +4,8 @@ Histórico verificável da evolução do HOPE AI. Commits documentais posteriore
 
 ## Phase 7 — Conversational Presence Foundation — 2026-11-14
 
-- Delivery: `READY_FOR_REVIEW` at Functional Commit `c649a903693d5fedf631d760880b80ed881dc138`; documentation/evidence record `6919c967c66f728471b5c195079dabda33a3e3ed`. Required independent reviews and Planner consolidation remain pending.
+- Delivery: `CHANGES_REQUESTED` after independent QA, Security and UI/UX rejection of Functional Commit `c649a903693d5fedf631d760880b80ed881dc138` on 2026-11-15. Documentation/evidence record: `6919c967c66f728471b5c195079dabda33a3e3ed`.
+- Correction gate: `SEC-021` (Public outbound history), `QA-P7-001` (playback-to-recognition interruption), `QA-P7-002` (complete legacy browser regression), `UIUX-P7-POST-001` (Modes reachability/focus/close) and `UIUX-P7-POST-002` (duplicate announcements). A corrected candidate requires affected re-reviews and Planner consolidation.
 - Planning: `ARCH-2026-11-14-001` reconciled full implementation authorization and the bounded per-turn presentation exception. HOPE retains its original name.
 - Added strict presentation-mode validation and a bounded static server-authored overlay; omitted/Normal mode preserves the existing effective prompt and provider transport/call count.
 - Added separate display/spoken contracts, conservative speech formatting, local turn/attempt identity, cancellation and stale-callback guards, truthful voice state and local playback amplitude.

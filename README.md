@@ -42,7 +42,7 @@ Assistentes tradicionais dependem principalmente do contexto imediato da convers
 - A personalidade aparece na resposta; mudar de modo não dispara frases prontas.
 - Cancelamento e identificação de turno protegem contra eventos antigos de chat, ditado e reprodução.
 - O Core Orb acompanha somente a amplitude do áudio local em reprodução; informações públicas da HOPE podem ser consultadas na interface.
-- A entrega passou nas validações do Development e aguarda os reviews independentes de QA, Security e UI/UX.
+- Os reviews independentes de QA, Security e UI/UX solicitaram correções de privacidade, voz e acessibilidade antes da aprovação.
 
 [📖 Ver detalhes técnicos da Fase 7](docs/phase-7.md)
 
@@ -60,7 +60,7 @@ Os recursos desta branch foram entregues para revisão. A aprovação da fase e 
 | Voz | Ditado pela Web Speech API e TTS por ElevenLabs quando disponíveis, com texto/fala separados, controle de turno e cancelamento. Conteúdo acima do limite seguro de fala permanece completo na tela. |
 | Presença conversacional | Modos locais e combináveis; estilos Normal, Foco, Acolhedor e Apresentação; biblioteca opcional de frases aprovadas; informações públicas e verificáveis da HOPE. |
 | Integrações | Adapters opcionais para Anthropic, Tavily, ElevenLabs e Obsidian Local REST API. As credenciais permanecem no backend, mas os endpoints ainda exigem autenticação do owner antes de qualquer exposição pública. |
-| Qualidade | Development registrou 60 testes Python, 62 frontend e cinco cenários Chrome aprovados, com sete tamanhos de tela e mídia sintética. Reviews independentes em andamento. |
+| Qualidade | 60 testes Python, 62 frontend e cinco cenários Chrome aprovados com mídia sintética. Os reviews independentes encontraram falhas adicionais; a regressão completa e as correções ainda precisam ser aprovadas. |
 | Segurança | Segredos no backend, CSP restrita, conteúdo externo tratado como não confiável, consentimento de memória e confirmação destrutiva. Autenticação e hardening de produção permanecem pendentes. |
 
 ## 🚦 Status do projeto
@@ -68,7 +68,7 @@ Os recursos desta branch foram entregues para revisão. A aprovação da fase e 
 | Campo | Estado |
 |---|---|
 | Fase atual | Fase 7 — Conversational Presence Foundation |
-| Estado técnico | `READY_FOR_REVIEW` — implementação entregue; reviews independentes pendentes |
+| Estado técnico | `CHANGES_REQUESTED` — QA, Security e UI/UX exigiram correções; fase ainda não aprovada |
 | Functional Commit | `c649a903693d5fedf631d760880b80ed881dc138` |
 | Integração | [PR #2 em rascunho](https://github.com/mlssnw/HOPE-AI/pull/2), ainda sem merge em `main` |
 | Deploy público | Ainda não habilitado — autenticação, autorização e hardening de produção pendentes |
@@ -83,9 +83,9 @@ A fase ativa é a **Fase 7 — Conversational Presence Foundation**, em ambiente
 
 - [x] Planejamento, especificação e pacote exato de frases aprovados.
 - [x] Implementação e evidências entregues pelo Development.
-- [ ] Review funcional independente de QA.
-- [ ] Review de Security.
-- [ ] Review visual pós-implementação de UI/UX.
+- [ ] Correções e aprovação do QA, incluindo a regressão das fases anteriores.
+- [ ] Correção do contexto enviado no modo Público e aprovação de Security.
+- [ ] Correções de acessibilidade e aprovação pós-implementação de UI/UX.
 - [ ] Consolidação do Planner e decisão de integração.
 
 As próximas fases continuam como direção futura, com autorização própria antes da implementação. A ordem aprovada está em [`docs/roadmap.md`](docs/roadmap.md), junto da [`visão de produto`](docs/product-vision.md) e da [`arquitetura futura`](docs/future-architecture.md).

@@ -7,8 +7,8 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 ## Current Phase
 
 - Phase: 7 — Conversational Presence Foundation
-- Phase status: WAITING_FOR_REVIEW — Development delivered the complete Phase 7 candidate; independent QA, Security and UI/UX reviews are required
-- Feature status: READY_FOR_REVIEW — Functional Commit `c649a903693d5fedf631d760880b80ed881dc138`; no final phase approval yet
+- Phase status: CHANGES_REQUESTED — QA, Security and UI/UX rejected the candidate; one scoped Development correction round is required
+- Feature status: CHANGES_REQUESTED — Functional Commit `c649a903693d5fedf631d760880b80ed881dc138` is not approved
 - Production readiness: BLOCKED — Phase 7 does not authorize public deployment or resolve the inherited production blockers
 - Baseline: `ce2bde4` on `main`, with Phase 6 complete and integrated through PR #1
 - Runtime API version: `6.0.0-phase.5` — frozen legacy metadata from the approved Phase 6 artifact; Phase 7 has not changed it
@@ -97,17 +97,17 @@ Required Reviews — Integration Candidate:
 - Phase: 7
 - Target baseline: `ce2bde4` on `main`
 - Previous phase evidence: Phase 6 implementation `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`, isolated test correction `4d76f2433363a47a9d8fe29fef337de1dc79ac50`, integrated through `ce2bde4`
-- Status: READY_FOR_REVIEW — pre-implementation specification, exact phrase gate and bounded generation authorization are persisted; independent implementation reviews remain pending
+- Status: CHANGES_REQUESTED — mandatory reviews rejected this exact candidate; the approved specification, phrase gate and generation boundary remain binding
 
 ## Review Matrix
 
 | Work | Required | Status | Commit |
 |---|---|---|---|
 | DEV | YES | READY_FOR_REVIEW | `c649a903693d5fedf631d760880b80ed881dc138` |
-| QA | YES | WAITING_FOR_REVIEW | `c649a903693d5fedf631d760880b80ed881dc138` |
+| QA | YES | REJECTED | `c649a903693d5fedf631d760880b80ed881dc138` |
 | DATABASE | NO | N/A | — |
-| SECURITY | YES | WAITING_FOR_REVIEW | `c649a903693d5fedf631d760880b80ed881dc138` |
-| UI/UX | YES | WAITING_FOR_REVIEW — POST-IMPLEMENTATION | `c649a903693d5fedf631d760880b80ed881dc138`; pre-implementation spec remains approved |
+| SECURITY | YES | REJECTED | `c649a903693d5fedf631d760880b80ed881dc138` |
+| UI/UX | YES | REJECTED — POST-IMPLEMENTATION | `c649a903693d5fedf631d760880b80ed881dc138`; pre-implementation spec remains approved |
 | PLANNER | YES | WAITING_FOR_REVIEW — FINAL CONSOLIDATION | `c649a903693d5fedf631d760880b80ed881dc138`; planning approval `11eb4f7` preserved |
 
 ## Development
@@ -220,11 +220,11 @@ Required Reviews — Integration Candidate:
 ## Coordinator
 
 - Autonomy level: 2.5
-- Status: ROUTED_TO_REQUIRED_REVIEWS
-- Operational conclusion: Development delivered Functional Commit `c649a90` and documentation/evidence `6919c96` as `READY_FOR_REVIEW`, reporting 60 Python tests, 62 frontend tests and five synthetic-media Chrome scenarios passing. These are Development results; required domain reviewers must independently assess the same target before phase consolidation.
+- Status: CHANGES_REQUESTED
+- Operational conclusion: QA (`8d85e21`), UI/UX (`768ddfd`) and Security (`d60a402`) independently rejected Functional Commit `c649a90`. Their official reports and own handoff sections are persisted. Passing unit/new-browser suites do not close the five blocking findings listed below.
 - Final Integration Candidate: `cb8dc774cc396f3aff0ef40e79753761fbf3b49b`
 - Main integration commit: `ce2bde4`
-- Routing: LEVEL 2 — QA and Security inspect `c649a90` in parallel with distinct report files and no code changes. UI/UX follows QA's browser run to avoid fixed-port contention, using the same target. Serialize handoff/report commits; Planner consolidates only after all required reviews. Draft [PR #2](https://github.com/mlssnw/HOPE-AI/pull/2) tracks the branch; no merge/production action is authorized by this review route.
+- Routing: LEVEL 1 — return the five existing-scope findings to Development as one correction round. Development is the only functional writer; reviewers are idle until a new exact Functional Commit is frozen. Then require affected QA, Security and UI/UX re-reviews before Planner consolidation. Draft [PR #2](https://github.com/mlssnw/HOPE-AI/pull/2) remains unmerged; no HIGH risk acceptance or production action is authorized.
 - Boundary: COORDINATOR atualizou somente Current Phase, Current Functional Commit, Review Matrix, blockers, warnings, Next Action e histórico; não concedeu aprovação técnica nem alterou seções ou relatórios de ownership dos reviewers
 
 ## Current Blockers
@@ -233,7 +233,12 @@ Required Reviews — Integration Candidate:
 
 - No technical blocker remains in the pre-implementation UI/UX specification.
 - No authorization blocker remains for the approved Phase 7 implementation. The prior generation-boundary blocker was resolved by `ARCH-2026-11-14-001`; its exact enum/static-section boundary remains binding.
-- Remaining completion gates: independent validation of the complete candidate and its `UIUX-P7-001` through `UIUX-P7-021` evidence, required QA/Security/UI/UX verdicts, and Planner consolidation. No phase approval is inferred from Development's green test results.
+- `SEC-021` — HIGH, blocking: Public requests can forward earlier private or memory-derived session history despite disabling current-turn memory. Preserve visible/stored history and enforce the outbound Public boundary within the approved local scope.
+- `QA-P7-001` — MEDIUM, blocking: starting recognition does not stop active playback/reset its meter before Listening.
+- `QA-P7-002` — MEDIUM, blocking: the complete legacy browser package fails on two stale assertions and does not execute all regression scenarios successfully.
+- `UIUX-P7-POST-001` — HIGH, blocking: Modes lacks reliable touch close, focus entry/return and vertically reachable controls at short heights/enlarged text.
+- `UIUX-P7-POST-002` — MEDIUM, blocking: actionable errors are duplicated across live announcement regions.
+- Remaining gates: corrected exact Functional Commit; proportional QA, Security and UI/UX re-reviews; Planner consolidation. No domain approval is inferred from green Development tests or from pre-implementation approval.
 - No paid validation, new provider, budget setting, real-database operation, production or later phase is authorized.
 - Eight optional exact alternatives (`P7-PHRASE-021` through `P7-PHRASE-028`) remain `PENDING_OWNER_APPROVAL`; they are excluded from implementation by default and do not block Development.
 
@@ -245,7 +250,7 @@ Required Reviews — Integration Candidate:
 
 ## Warnings
 
-- UI/UX não registrou blocker ou warning no review pós-implementação; `UIUX-F5-W01`, `UIUX-F5-W02` e `UIUX-F5-W03` foram encerrados.
+- Historical Phase 6 UI/UX approval does not approve Phase 7. Current UI/UX limits `UIUX-P7-W01`/`UIUX-P7-W02` cover live-provider fidelity and unexecuted manual assistive-technology/physical-device checks; current blocking findings are listed above. `UIUX-F5-W01`, `UIUX-F5-W02` and `UIUX-F5-W03` remain closed.
 - `QA-003` foi encerrado; `QA-ENV-002` e `QA-WARN-HTTPX` permanecem INFO/non-blocking.
 - `SEC-018` permanece LOW/non-blocking e deve seguir para o backlog de hardening do harness.
 - `SEC-017` permanece MEDIUM e não bloqueante: o gate depende do lifespan e o harness sintético não valida schema, autenticação ou isolamento.
@@ -265,9 +270,9 @@ Required Reviews — Integration Candidate:
 
 ## Next Action
 
-- Role: QA
-- Status: WAITING_FOR_REVIEW
-- Task: independently validate the complete Phase 7 implementation and regressions, including the full phase acceptance criteria and UI/UX evidence contract; report findings without fixing code
+- Role: Development
+- Status: CHANGES_REQUESTED
+- Task: correct SEC-021, QA-P7-001, QA-P7-002, UIUX-P7-POST-001 and UIUX-P7-POST-002 within the existing Phase 7 scope; verify each regression and deliver one new exact Functional Commit
 - Target Functional Commit: `c649a903693d5fedf631d760880b80ed881dc138`; documentation/evidence `6919c96`; branch `codex/phase-7-completion`
 - Required inputs:
   - [`docs/phase-7.md`](phase-7.md)
@@ -275,12 +280,14 @@ Required Reviews — Integration Candidate:
   - [`docs/reviews/architecture-latest.md`](reviews/architecture-latest.md)
   - [`docs/design/phase-7-phrase-proposals.md`](design/phase-7-phrase-proposals.md)
   - [`docs/reviews/uiux-latest.md`](reviews/uiux-latest.md)
+  - [`docs/reviews/qa-latest.md`](reviews/qa-latest.md)
+  - [`docs/reviews/security-review-latest.md`](reviews/security-review-latest.md)
 - Expected output:
-  - exact-target QA verdict in `docs/reviews/qa-latest.md`, concrete finding IDs/severity/blocking, validation evidence and honest environment/provider-fidelity limits
-  - results for acceptance criteria and relevant `UIUX-P7-001` through `UIUX-P7-021`; preserve committed Development evidence and use a separate output directory for reruns
-  - own handoff section and commit persisted only in the Coordinator's serialized handoff window; no reviewer changes code
-- Blocking dependencies: none for QA/Security; UI/UX waits for QA's browser process to finish before starting the fixed-port harness
-- Parallel work: Security on the same exact target and its own report; no functional writer active; UI/UX browser review follows QA and handoff commits are serialized
+  - focused fixes and meaningful negative regression coverage, plus the complete Python/frontend and both legacy/Phase 7 browser suites executed successfully
+  - updated Phase 7 delivery/evidence and Development handoff; exact new target and limitations, without changing reviewer verdicts or historical Phase 6 evidence
+  - READY_FOR_REVIEW delivery for mandatory affected re-reviews; no self-approval
+- Blocking dependencies: none for in-scope Development correction; no owner approval is needed to repair the already-authorized boundaries
+- Parallel work: none on functional files or shared handoff; reviewers resume on the frozen corrected hash with distinct reports and serialized shared writes
 - Escalation: NONE
 
 ## Recent History
@@ -330,3 +337,4 @@ Required Reviews — Integration Candidate:
 - 2026-11-06 — Development identified that answer-native selected styles require a generation signal prohibited by the literal plan. PLANNER persisted `ARCH-2026-11-06-001` in `df4d142`, proposed the smallest one-field/one-section amendment and escalated its approval to the owner. COORDINATOR kept independent local work active but blocked the disputed generation path and full Phase 7 delivery.
 - 2026-11-14 — The owner retained HOPE, requested completion of all Phase 7 using the predefined Works, continued Git commits and notification of changes. The isolated completion branch starts from `dde8186`; the previous dirty worktree and real data remain preserved. Visible PLANNER persisted `ARCH-2026-11-14-001` in `11eb4f7`, reconciling the exact bounded generation amendment. COORDINATOR routed complete implementation to the visible DEV task; no implementation/review approval or production authorization is inferred.
 - 2026-11-14 — Development completed the package through backend `744bec0`, voice/UI `4b91818` and public-boundary correction `c649a90`; the last hash is the shared Functional Commit. Delivery documentation/evidence `6919c96` records 60 Python, 62 frontend and five Chrome scenarios passing. COORDINATOR opened the required independent reviews on that target, preserving Production Readiness `BLOCKED` and the draft PR #2.
+- 2026-11-15 — QA (`8d85e21`), UI/UX (`768ddfd`) and Security (`d60a402`) rejected `c649a90` with five blocking findings. COORDINATOR persisted `CHANGES_REQUESTED`, corrected the public README status and returned one scoped fix round to Development. Production blockers, owner-approved phrases and isolated-worktree boundaries remain unchanged.

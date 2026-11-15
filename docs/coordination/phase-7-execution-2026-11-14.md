@@ -21,11 +21,11 @@ Use the existing project tasks so the owner can inspect the prompts and results.
 
 | Work | Existing task | Current route |
 |---|---|---|
-| PLANNER | `01a06512-d1df-75c0-af33-3665be10775f` | Finish authorization reconciliation; commit planning only. |
-| DEV | `01a05fd4-0cf2-77b3-bbfd-408b6bc57aae` | Read-only preparation until the Planner commit is frozen; then complete the authorized implementation, tests and evidence. |
-| QA | `01a0650d-9115-74d0-bd54-e6306a06d106` | Required after a complete exact Functional Commit exists. |
-| SECURITY | `01a06511-edb4-77d3-bccf-407a90a90289` | Required on the same complete Functional Commit. |
-| UI/UX | `01a06db4-35e1-7192-a9b2-b046e817b27d` | Required post-implementation fidelity review on that same commit; the pre-implementation specification is already approved. |
+| PLANNER | `01a06512-d1df-75c0-af33-3665be10775f` | Authorization reconciled in `11eb4f7`; final consolidation waits for matching required re-reviews. |
+| DEV | `01a05fd4-0cf2-77b3-bbfd-408b6bc57aae` | Correct the five findings from the rejected `c649a90` candidate; deliver a new frozen target, tests and evidence. |
+| QA | `01a0650d-9115-74d0-bd54-e6306a06d106` | `REJECTED` on `c649a90`, persisted in `8d85e21`; re-review the corrected target. |
+| SECURITY | `01a06511-edb4-77d3-bccf-407a90a90289` | `REJECTED` on `c649a90`, persisted in `d60a402`; re-review the corrected target. |
+| UI/UX | `01a06db4-35e1-7192-a9b2-b046e817b27d` | Post-implementation `REJECTED` on `c649a90`, persisted in `768ddfd`; re-review the corrected target. Pre-implementation approval remains historical. |
 | DATABASE | `01a0650f-5208-7622-9780-f5762a003c8a` | N/A while no schema, migration, query or persistence expansion occurs; reopen through Planner if scope changes. |
 
 One writer owns implementation. Reviewers do not fix code. Serialize updates to `docs/handoff.md`; each role writes only its own report and section. A new functional correction requires affected re-reviews against the new exact hash. The Coordinator normalizes operational state and public documentation; the Planner consolidates results without replacing domain reviewers.
