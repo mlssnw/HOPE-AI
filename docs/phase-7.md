@@ -7,14 +7,23 @@
 - Authorization reconciliation: `ARCH-2026-09-25-001`
 - Approved parent direction: `ARCH-2026-09-20-001` — owner approval on 2026-09-20
 - Implementation authorization: `APPROVED` by the owner on 2026-09-25, recorded by the Coordinator in `cdb40098489d28dd476a2b9c211cd6289a325888`
-- Implementation status: `NOT_STARTED`
-- Feature status: `NOT_STARTED`
+- Implementation status: `BLOCKED` — a partial Development checkpoint exists; the complete phase is not ready for review
+- Feature status: `BLOCKED`
 - Phase 7 Functional Commit: `NONE`
 - Functional baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2` on `main`
 - Production Readiness: `BLOCKED`
 - Environment boundary: local/controlled
 
-The owner approved this exact plan and authorized its implementation strictly within the boundaries below. Authorization does not mean implementation has started or that any acceptance criterion has passed. The immediate next gate is a Coordinator-routed, pre-implementation UI/UX specification. This record does not start UI/UX, Development, QA, Security, provider evaluation, migration, deployment, production, Phase 8 or any later phase.
+The owner approved this exact plan and authorized implementation strictly within the boundaries below. The partial checkpoint does not establish completion of the Phase 7 acceptance criteria. The current generation-boundary gate and the approved scope remain in force.
+
+## Development checkpoint — 2026-11-14
+
+- Partial functional checkpoint: `2647794ea806b20117c7cce531602911da98ca97`. It prevents silent TTS truncation by rejecting speech over the existing 5,000-code-point limit before a request; the complete displayed answer remains available through the existing chat path. This is not the complete Phase 7 Functional Commit.
+- Development validation on the worktree: 38 frontend tests and 45 Python tests passed; Python reported one Starlette/TestClient deprecation warning. Python compilation and JavaScript syntax checks passed. These results include the other uncommitted worktree changes and are not an independent review of the checkpoint commit.
+- The browser harness was not rerun because it overwrites existing modified Phase 6 evidence. No browser, accessibility or visual-review result is claimed for this checkpoint.
+- The owner directed that the product remain HOPE. Identity restoration was applied only in the working tree and is not part of the checkpoint commit. An existing internal database filename, `kelex_local.db`, remains referenced to avoid disconnecting existing data; the file and its contents were not changed or queried.
+- Other preexisting worktree changes, including UI/runtime changes and historical evidence, remain uncommitted and are not adopted by this checkpoint. The Coordinator's handoff changes remain separately owned.
+- Full Phase 7 and answer-native mode generation remain `BLOCKED`; the proposed generation amendment remains unapproved. This checkpoint does not authorize a mode field, prompt overlay, provider change or later phase and does not mark the phase `READY_FOR_REVIEW`.
 
 ## Current generation-boundary gate — 2026-11-06
 
@@ -39,7 +48,7 @@ Phase 6 provides chat, browser dictation, optional TTS and basic voice states, b
 ## Current State
 
 - Phase 6 is complete and integrated into `main` through `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`.
-- Phase 7 has no Functional Commit and no functional implementation.
+- Phase 7 has no complete Functional Commit; the bounded TTS checkpoint is recorded above.
 - The displayed response is currently also the source used for speech.
 - `frontend/js/voice.js` uses the Web Speech API for dictation; the backend has optional TTS coupled to ElevenLabs.
 - Cancellation and protection against stale audio exist in the current flow but do not form a reusable turn contract.
