@@ -1,5 +1,164 @@
 # Architecture Review — Latest
 
+- Status: `APPROVED`
+- Decision ID: `ARCH-2026-11-14-001`
+- Date: 2026-11-14
+- Review type: owner authorization reconciliation; planning only
+- Branch: `codex/phase-7-completion`
+- Repository HEAD analyzed: `dde81869a09c9ca50ca18b7e4d0c4ff326d0c951`
+- Integrated functional baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`
+- Existing partial TTS checkpoint: `2647794ea806b20117c7cce531602911da98ca97`; not a complete Phase 7 delivery or independent review
+- Complete Phase 7 Functional Commit: `NONE`
+- Phase 7 implementation authorization, including the previously presented bounded generation amendment: `APPROVED`
+- Remaining implementation and review: `IN_PROGRESS`; no new capability or acceptance result is declared implemented by this decision
+- Escalation for this reconciled authorization: `NONE`
+- Production Readiness: `BLOCKED`
+
+## Current decision and authorization source
+
+The owner instructed completion of Phase 7 on 2026-11-14 after the concrete `ARCH-2026-11-06-001` amendment had been presented. Exact owner instruction (PT-BR):
+
+> Coloque os outros workes para funcionar quando for necessario, implemente tudo da phase 7 e vá atualizando o Git, cada worker tem a função pre definida
+
+In that conversation context, this is authorization to complete the approved Phase 7 package **including the exact necessary one-field/one-section generation amendment already presented**. It closes the previous approval blocker; no repeat approval request is required for that same bounded implementation. The owner also explicitly directed that the product remain **HOPE**; no KELEX rebranding is authorized. Development workers retain their predefined roles; their use does not authorize a product agent runtime, tools, automation or any future phase.
+
+The earlier ruling remains intact below as historical evidence of the boundary before this instruction. Its `WAITING_FOR_APPROVAL`/implementation-blocked gate is superseded only to the extent recorded here. The active implementable contract is now [Phase 7 — Per-turn generation presentation](../phase-7.md#per-turn-generation-presentation).
+
+## Problem
+
+The approved Phase 7 experience requires selected Focus, Supportive and Presentation styles to shape the substantive generated answer. The original plan simultaneously prohibited preference transmission, backend API expansion and changes to effective system text. That contradiction blocked a complete, honest implementation and made frontend wrappers or automatic phrases tempting but unacceptable substitutes.
+
+## Current State
+
+- Phase 6 remains the integrated functional baseline at `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`.
+- Phase 7 has a partial TTS checkpoint at `2647794ea806b20117c7cce531602911da98ca97`, but no complete Functional Commit.
+- The pre-implementation UI/UX specification is `APPROVED` and its first phrase package is complete: only `P7-PHRASE-006` through `P7-PHRASE-018` are approved.
+- The owner has now authorized completion of Phase 7 including the previously presented bounded generation amendment. The former approval blocker is closed; implementation and independent review remain incomplete.
+- Existing QA, Database and Security reports concern earlier phase candidates and cannot approve the future Phase 7 candidate.
+
+## Constraints
+
+- Preserve HOPE identity, `SINGLE_USER`, the local/controlled environment and all inherited production blockers.
+- Keep the core personality/safety prompt unchanged and keep omitted/`NORMAL` behavior byte-for-byte equivalent at the effective prompt boundary for the same input and inferred expression.
+- Add no provider, endpoint, response field, WebSocket contract, persistent setting, schema, query, migration, secret, credential, paid test, budget change or production action.
+- Keep mode activation explicit, local and ephemeral. External content, memory, history and model output remain untrusted data and cannot select a mode.
+- Do not weaken privacy, memory opt-out, cancellation, accessibility, truthfulness or exact phrase approval boundaries.
+
+## Options
+
+### Option A — Keep the original prohibition and defer answer-native styles
+
+- Pros: no chat request or effective system-text change.
+- Cons: cannot satisfy the already approved UI/UX contract; leaves Phase 7 incomplete; encourages misleading frontend wrappers.
+- Cost: low immediate cost; additional rework later.
+- Complexity: low now; medium later.
+- Security impact: smallest immediate surface, but no compliant style path.
+- Database impact: none.
+- Maintenance impact: preserves a documented contradiction.
+
+### Option B — Authorize one bounded enum and one static presentation section
+
+- Pros: satisfies answer-native style semantics through the existing generation path; remains deterministic, provider-neutral and testable; preserves `NORMAL` exactly.
+- Cons: expands the existing request by one optional field and adds bounded input tokens for non-default turns; provider style adherence remains probabilistic.
+- Cost: low-to-medium implementation effort; small per-turn input-token increase only for non-default modes; no paid validation authorized.
+- Complexity: medium and localized.
+- Security impact: bounded client enum with server-owned static mapping; requires strict validation and hostile-input tests.
+- Database impact: none.
+- Maintenance impact: one explicit helper and one narrow request contract instead of scattered mode-specific behavior.
+
+## Recommendation
+
+Adopt Option B exactly as bounded below. Development is authorized to complete Phase 7 on the isolated branch after this documentation commit. This recommendation records the owner's approval; it does not approve an implementation that does not yet exist.
+
+## Rationale
+
+The smallest viable exception sends only a closed enum, maps it to immutable server-owned text and changes only presentation for the current generated answer. It avoids arbitrary prompt content, provider coupling, persistence and a second generation pass while meeting the owner-approved experience. Deferral would leave the phase structurally incomplete; frontend prefixes, suffixes or automatic phrases would violate the substantive-answer requirement.
+
+## Architecture — exact authorized exception
+
+1. Add only optional `presentation_mode` to existing `POST /api/chat`, with exact values `NORMAL`, `FOCUS`, `SUPPORTIVE`, `PRESENTATION`; omission means `NORMAL`. Preserve `extra="forbid"`, existing limits and normal `422` rejection of null, wrong types, unknown/case/whitespace variants and arbitrary instruction text before source/model work.
+2. Snapshot explicit local control selection per turn. Validate on the server and select only immutable server-authored text. Do not infer mode activation from messages, history, memory, external content or model output. No natural-language mode-command parser is required or added.
+3. Preserve `PersonalityConfig`, `PersonalityState`, `infer_personality_state`, core prompt sections and their order. Omitted/`NORMAL` produces exactly the existing prompt for the same input/inferred expression. Each non-default value adds only one `[TURN PRESENTATION]` section after the core, at most 1,000 Unicode characters including its heading.
+4. The section is subordinate to the unchanged safety/truth/precision rules and only guides the current answer's wording, organization and pacing. It contains no interpolated user text, history, memory, source, identifier, phrase record or private-mode metadata. `ALERT`/`CONCERNED` precedence remains intact. No identity/persona or factual/permission change is allowed.
+5. The only provider-bound change is that static section inside the existing `system` string. Preserve provider, model configuration, endpoint, transport, JSON keys, output limit, call count, retries, source collection and TTS settings. No second generation pass, provider option, fallback, streaming or new dependency is authorized. The other four mode axes remain local and use existing restrictive contracts.
+6. Keep personality in the substantive generated answer: direct Focus; concrete, non-therapeutic Supportive; organized Presentation. Reject ritual prefix/suffix, automatic mode phrases, hidden user-message instructions and canonical-answer post-processing as substitutes.
+
+The bounded text can increase input tokens on an ordinary future user-triggered call, as disclosed in the prior proposal. Authorization to implement that behavior is not authorization to run paid/provider evaluations, change budget/settings/subscriptions, introduce a provider or buy capacity. Validate with mocks and disposable local fixtures. Mocked answers prove integration and invariants, not real-provider style adherence; any unperformed live evaluation remains explicitly untested.
+
+## Preserved local contracts and ownership
+
+- Complete all approved Phase 7 components and UI/UX criteria; do not stop at the TTS checkpoint. Display remains canonical; speech remains separate, conservative and optional. Preserve the existing TTS length limit and no-silent-truncation behavior; send no TTS request when safe speech cannot fit.
+- Session/turn/attempt correlation stays local. Reject uncorrelated `AI_STATE_CHANGED` for current-turn state without assigning it the active IDs. Real local callbacks govern listening/playback; preserve incremental memory events, heartbeat, reconnect and full-sync recovery. No HTTP/WebSocket wire-correlation expansion is authorized.
+- Modes, privacy/output restrictions, pronunciation hints, voice state and amplitude remain ephemeral. `PRIVATE`/`PUBLIC` force existing memory opt-out before new turns. Private turn messages stay ineligible for later history writes even after mode restoration; entering Private preserves prior stored history. No new storage key or persisted flag.
+- Only exact records `P7-PHRASE-006` through `P7-PHRASE-018` are approved under their recorded contexts/cooldowns/suppressions. `021` through `028` remain pending and excluded; rejected/withdrawn entries remain excluded. Zero phrase is the normal default; no selection on mode entry/change/restoration.
+- Work only in the isolated `phase-7-completion` worktree. Preserve the other worktree, its uncommitted UI/runtime/database fallback/seed changes and local database untouched; do not import them as Phase 7 scope.
+- No new provider, endpoint, persistence, schema, query, migration, real-database operation, secret, credential, paid test, budget change, production, tool, agent runtime, integration or Phase 8 is authorized. `SINGLE_USER`, HOPE identity and inherited production blockers remain unchanged.
+
+## Remaining gates and Development route
+
+- Development may proceed immediately on `codex/phase-7-completion` after this documentation commit with the full approved Phase 7 scope, the existing UI/UX specification and the exact generation exception. There is no outstanding owner gate for those implementation choices.
+- Development must supply a complete candidate hash, proportional Python/JavaScript/browser evidence, mapping to `UIUX-P7-001` through `UIUX-P7-021`, and `READY_FOR_REVIEW`. The partial checkpoint's mixed-worktree test results cannot substitute for exact-candidate validation.
+- Required reviews on that same candidate: QA `YES`, SECURITY `YES`, UI/UX `YES`; DATABASE `NO` only while there is no new persistence/query/schema/database behavior. No earlier review approves the new implementation.
+- Mandatory evidence includes strict enum validation, exact `NORMAL` prompt preservation, bounded static overlay and unchanged provider shape/call count, hostile-input/memory boundaries, local stale-event races, privacy restoration/history eligibility, approved-only phrase allowlisting, no mode phrase hooks, speech safety, accessibility/reduced motion and local synthetic amplitude.
+- Coordinator updates its operational panel and routes the predefined Works. Planner consolidates the independent results; neither Development nor Planner replaces reviewer approval. Phase completion and Production Readiness remain separate.
+- No automatic Phase 8, public deployment or HIGH/CRITICAL risk acceptance follows completion.
+
+## Risks
+
+- `NORMAL` prompt drift could alter existing behavior or cost.
+- A permissive parser could turn arbitrary client, memory or source text into instructions.
+- Presentation guidance could suppress caveats, warnings or `ALERT`/`CONCERNED` precedence.
+- Private turns could be persisted after a later mode restoration if history eligibility is not captured per turn.
+- Late uncorrelated realtime events could overwrite truthful local state.
+- Phrase selection could become a mode ritual or include pending records.
+- Mocked tests could be overstated as proof of real-provider style fidelity.
+
+Mitigations are exact enum validation, immutable static mappings, a 1,000-character total section cap, exact `NORMAL` equality tests, per-turn snapshots, local correlation, explicit history eligibility, approved-only phrase allowlisting and independent review of one complete candidate hash.
+
+## Acceptance Criteria
+
+- [x] Owner authorization covers the complete Phase 7 package and the exact bounded generation amendment.
+- [x] Pre-implementation UI/UX specification is persisted and approved.
+- [x] The active phrase package is closed for `P7-PHRASE-006` through `P7-PHRASE-018`; pending `021` through `028` remain excluded and non-blocking.
+- [x] Planning records preserve the historical `ARCH-2026-11-06-001` gate and identify this decision as its narrow supersession.
+- [ ] Development produces one complete Phase 7 Functional Commit implementing every applicable contract.
+- [ ] Automated and browser evidence proves the documented prompt, provider, privacy, realtime, speech, accessibility and phrase invariants.
+- [ ] QA, Security and UI/UX approve the same Functional Commit; Database remains `N/A` only if no persistence/query/schema behavior changes.
+- [ ] Planner consolidates those reviews without authorizing production or Phase 8.
+
+## Implementation Phase
+
+1. `COMPLETE` — owner approved the Phase 7 plan, implementation and bounded generation amendment.
+2. `COMPLETE` — Planner reconciles the active architecture, phase plan, roadmap and Planner handoff.
+3. `NEXT` — Coordinator normalizes the operational panel and routes Development on `codex/phase-7-completion`.
+4. Development completes the smallest package, validates locally without paid calls or real data and records one exact Functional Commit as `READY_FOR_REVIEW`.
+5. Coordinator routes QA, Security and UI/UX against that same hash; Database is conditional on an actual database-impact delta.
+6. Planner consolidates the review matrix. No subsequent phase starts automatically.
+
+## Deferred Items
+
+- Optional phrases `P7-PHRASE-021` through `P7-PHRASE-028` until individually approved.
+- New or alternate AI, STT or TTS providers; streaming; wake word; speaker verification; profiles; installed clients and cross-device sessions.
+- Persistent mode/pronunciation/voice state, any schema/query/migration, and any real-database operation.
+- Authentication/permissions from Phase 8, tools, integrations, agents, automation, cloud exposure, production and go-live.
+- Paid provider/style evaluation, budget changes and capacity purchases.
+
+## Coordinator Handoff
+
+Normalize the Coordinator-owned panel from the superseded approval blocker to the active `ARCH-2026-11-14-001` authorization, keep the complete Functional Commit as `NONE` until Development creates it, and route the predefined Development Work. Do not treat the partial TTS checkpoint as the candidate, do not start reviewers before one complete hash exists, and do not start Phase 8 or production.
+
+## Documentation validation
+
+Read AGENTS, architecture, handoff, all latest reviews, the phase plan, UI/UX specification/register and roadmap. Confirmed branch `codex/phase-7-completion` at `dde8186`, ten commits ahead and zero behind the available `origin/main` reference. The initial tree contained only this interrupted, uncommitted Planner draft; it was resumed and preserved rather than discarded. This task changes planning/review documentation and only the Planner handoff section; it does not rerun or claim runtime/browser/provider/database validation. Check local links, whitespace, historical-record preservation and changed-file ownership before the documentation-only commit.
+
+Owner-facing conclusion (PT-BR): a autorização mais recente libera a implementação completa da Fase 7, incluindo a emenda limitada já apresentada. HOPE permanece HOPE. QA, Security e UI/UX continuam obrigatórios no mesmo commit final; produção e fases futuras permanecem fora do escopo.
+
+---
+
+## Historical decision — ARCH-2026-11-06-001
+
+The following decision is preserved verbatim as evidence of the earlier approval gate. Its pending authorization and immediate routing are superseded by `ARCH-2026-11-14-001`; its bounded design informed the now-authorized contract above.
+
 - Status: `WAITING_FOR_APPROVAL`
 - Decision ID: `ARCH-2026-11-06-001`
 - Date: 2026-11-06

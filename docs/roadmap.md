@@ -6,9 +6,10 @@
 - Owner approval: 2026-09-20
 - Approval record: `f85b9bb775574b8a1340497e3e9e6d99b9b19c8c`
 - Implemented baseline: Phase 6 is complete and integrated into `main` through `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`
-- Current phase: Phase 7 — implementation authorized, `NOT_STARTED`, Functional Commit `NONE`
+- Current phase: Phase 7 — implementation authorized and `IN_PROGRESS`, complete Functional Commit `NONE`
 - Functional baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`
-- Phase 7 implementation authorization: `APPROVED` by the owner on 2026-09-25; Planner reconciliation `ARCH-2026-09-25-001`
+- Phase 7 implementation authorization: `APPROVED` by the owner on 2026-09-25; bounded completion amendment authorized and reconciled by `ARCH-2026-11-14-001`
+- Phase 7 partial checkpoint: `2647794ea806b20117c7cce531602911da98ca97` — TTS overlength safety only; not the complete candidate
 - Implementation authorization: NONE for Phase 8+
 
 ## Source-of-truth role
@@ -21,7 +22,7 @@ The Phase 6 history remains governed by `docs/phase-6.md` and `ARCH-2026-09-19-0
 
 - Every phase needs an explicit plan, owner approval where required, a new Functional Commit and independent reviews.
 - A completed planning document is not implementation authorization.
-- Phase 7 is the documented exception now carrying explicit implementation authorization; it remains unstarted until its pre-implementation UI/UX gate and individual phrase decisions are complete.
+- Phase 7 is the documented exception carrying explicit implementation authorization. Its pre-implementation UI/UX gate and active phrase decisions are complete; Development may now finish the bounded package, but no complete candidate exists yet.
 - Any unplanned schema, persistence, provider, data class, cost or external effect returns to the Planner.
 - Production Hardening is a gate before the first remote/public surface, not a final clean-up after exposure.
 - `Required Reviews` values below are mandatory defaults; scope changes may add reviewers, never silently remove them.
@@ -81,15 +82,15 @@ Production Hardening is inserted before any phase is exposed remotely or continu
 ## Phase 7 — Conversational Presence Foundation
 
 - Goal: create a provider-neutral, local/controlled conversation and voice-presentation layer.
-- Scope: `VoiceManager`, `SpeechFormatter`, `TurnManager`, `VoiceStateManager`, provider-neutral prosody/pronunciation contracts, original `PhraseLibrary`, stop/cancel behavior, combinable modes, public-safe `SelfKnowledge` contract and local Core Orb amplitude from already-playing output.
+- Scope: `VoiceManager`, `SpeechFormatter`, `TurnManager`, `VoiceStateManager`, provider-neutral prosody/pronunciation contracts, original `PhraseLibrary`, stop/cancel behavior, combinable modes, public-safe `SelfKnowledge` contract, local Core Orb amplitude from already-playing output, and the bounded `presentation_mode` generation contract authorized by `ARCH-2026-11-14-001`.
 - Non-goals: new cloud audio, streaming provider, background wake word, speaker profile, biometric processing, cross-device session, persistence changes or external effects.
-- Dependencies: Phase 6 integrated at `ce2bde4`; approved personality/public `SelfKnowledge` boundary; approved Phase 7 plan and explicit owner authorization; complete UI/UX specification and individual owner decision for every exact phrase intended for implementation before Development is routed.
-- Acceptance: displayed/spoken outputs are distinct; safety and uncertainty survive speech formatting; stale turns cannot speak; stop is immediate; Core Orb amplitude stays local and ephemeral; modes cannot change permissions or truth; no unapproved exact phrase enters code, fixtures, tests, defaults or active product content.
+- Dependencies: Phase 6 integrated at `ce2bde4`; approved personality/public `SelfKnowledge` boundary; approved Phase 7 plan; completed pre-implementation UI/UX specification; exact owner decisions for the active phrase package; owner authorization for the bounded generation amendment. All are satisfied for Development routing.
+- Acceptance: displayed/spoken outputs are distinct; safety and uncertainty survive speech formatting; stale or uncorrelated events cannot speak or replace truthful local state; stop is immediate; Core Orb amplitude stays local and ephemeral; `PRIVATE`/`PUBLIC` send `memory_enabled=false` and private turns cannot later enter persisted history; omitted/`NORMAL` preserves the existing prompt exactly; non-default style selects only one bounded static `[TURN PRESENTATION]` section; provider shape/call count stay unchanged; modes cannot change permissions or truth; no unapproved exact phrase enters code, fixtures, tests, defaults or active product content.
 - Reviews: QA YES; DATABASE NO; SECURITY YES; UI/UX YES.
 - Cost/complexity: low-to-medium / medium.
 - Production impact: none; local/controlled only.
-- Owner approval: plan and implementation scope approved on 2026-09-25. Implementation is `NOT_STARTED`. UI/UX is the next Coordinator-routed gate; Development remains blocked until the complete specification and every intended exact phrase decision are persisted.
-- Phrase gate: UI/UX presents each exact proposal separately with context, intended tone and initial `PENDING_OWNER_APPROVAL`. Approval is exact-item only and does not cover variants, other phrases or later rewrites.
+- Owner approval: plan and implementation scope approved on 2026-09-25; exact bounded generation amendment approved and reconciled on 2026-11-14. Implementation is `IN_PROGRESS`; the Coordinator's next route is Development.
+- Phrase gate: `COMPLETE` for the active package. Only exact `P7-PHRASE-006` through `P7-PHRASE-018` are approved. Pending `P7-PHRASE-021` through `P7-PHRASE-028` are excluded, non-blocking and require separate individual approval.
 
 ## Phase 8 — Single-User Security & Permissions
 
@@ -279,8 +280,9 @@ Persistent agents, richer learning, ambient multimodal context and broader auton
 
 - Approved on 2026-09-20: `ARCH-2026-09-20-001`, this sequence, the personality/public `SelfKnowledge` boundary and Phase 7 as the next planning target.
 - Approved on 2026-09-25: the exact Phase 7 plan and implementation strictly within that plan, reconciled by `ARCH-2026-09-25-001`.
-- Current gate: Coordinator routes the pre-implementation specification to UI/UX. Each exact phrase proposal starts `PENDING_OWNER_APPROVAL` and requires its own owner decision.
-- Development has not started and receives no route from this document. Phase 8 and every later phase remain unauthorized.
+- Approved and reconciled on 2026-11-14: completion of Phase 7 including the exact bounded `presentation_mode` generation amendment in `ARCH-2026-11-14-001`.
+- Current gate: Coordinator normalizes the operational panel and routes Development to produce one complete Phase 7 Functional Commit. The existing partial TTS checkpoint is not the candidate.
+- Phase 8 and every later phase remain unauthorized.
 
 ## Deferred cross-cutting gates
 

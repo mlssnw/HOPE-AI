@@ -210,23 +210,22 @@ Required Reviews — Integration Candidate:
 
 ## Planner
 
-- Status: `WAITING_FOR_APPROVAL`
-- Decision ID: `ARCH-2026-11-06-001`
-- Repository HEAD analyzed: `b7c73b16293779b1ab28ffed5cccdfdad84258a9` on `codex/phase-7-conversational-presence`
-- Functional baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`; Phase 7 Functional Commit `NONE`
-- Existing Phase 7 authorization: preserved within the approved original plan; full implementation/delivery is `BLOCKED` by the generation-boundary contradiction
-- Ruling: selected answer-native styles need a generation signal; the current plan expressly prohibits preference transmission, system-prompt changes and backend API expansion. Reusing `PersonalityState` or unchanged provider JSON keys does not remove the conflict.
-- Proposed amendment: exactly one optional `presentation_mode` enum on existing `/api/chat` and one bounded static server-authored presentation section in existing system text; `WAITING_FOR_APPROVAL`, not permission to implement
-- Escalation: `USER` — approval must explicitly include the bounded extra system text/input-token consequence; no paid validation, new provider, budget or cost setting is authorized
-- Development boundary: do not implement the disputed generation path or claim full readiness before approval. Independent local work already authorized by Phase 7 may continue, including conservative overlength speech handling and private-history write eligibility.
-- Realtime boundary: local in-process session/turn/attempt metadata is allowed; reject uncorrelated remote `AI_STATE_CHANGED` for current-turn state. HTTP/WebSocket wire-correlation expansion is outside this ruling/amendment.
-- Rejected workarounds: frontend prefix/suffix, mode phrase hooks, hidden user-message instructions and canonical-answer rewriting
-- Phrase gate: only exact records `P7-PHRASE-006` through `P7-PHRASE-018` approved; `P7-PHRASE-021` through `P7-PHRASE-028` pending and excluded. Zero phrase remains the default; optional pending phrases do not cause this blocker.
-- Required reviews on the future Functional Commit: QA `YES`, SECURITY `YES`, UI/UX `YES`, DATABASE `NO` only while the no-persistence/no-query boundary holds
-- Production Readiness: `BLOCKED`; no new provider, endpoint, persistence, database, migration, secret, paid call, production action, tool, agent, integration or Phase 8 work authorized
-- Records: [current ruling and proposed contract](reviews/architecture-latest.md), [phase gate](phase-7.md#current-generation-boundary-gate--2026-11-06)
-- Coordinator handoff: reconcile operational blockers/Next Action and present the concrete narrow amendment for explicit owner decision; do not infer approval from the previous routing or from the UI/UX result
-- Boundary: documentation-only; other role reports and handoff sections preserved; no functional or public runtime claim changed
+- Status: `APPROVED` for Development routing; implementation/review remain `IN_PROGRESS`
+- Decision ID: `ARCH-2026-11-14-001`
+- Repository HEAD analyzed: `dde81869a09c9ca50ca18b7e4d0c4ff326d0c951` on `codex/phase-7-completion`
+- Functional baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`; partial TTS checkpoint `2647794ea806b20117c7cce531602911da98ca97`; complete Phase 7 Functional Commit `NONE`
+- Authorization: the owner authorized completion of Phase 7 including the exact bounded generation amendment previously presented in `ARCH-2026-11-06-001`. No repeat owner gate remains for that implementation.
+- Generation contract: add only optional `presentation_mode` to existing `POST /api/chat` with exact `NORMAL`, `FOCUS`, `SUPPORTIVE` and `PRESENTATION` values; omission/`NORMAL` preserves the existing effective prompt exactly. Each non-default mode selects one static server-owned `[TURN PRESENTATION]` section capped at 1,000 Unicode characters including its heading.
+- Provider/cost boundary: preserve endpoint, provider JSON shape/keys, model, output limit, call count, retries and settings. Only the bounded system-string input grows for non-default turns; no paid validation, new provider, budget or subscription change is authorized.
+- Privacy/realtime boundary: modes and audio state remain ephemeral; `PRIVATE`/`PUBLIC` use `memory_enabled=false`; private-turn history eligibility cannot be restored later; reject uncorrelated remote state instead of assigning current local IDs.
+- Personality boundary: personality lives in the substantive answer. No frontend prefix/suffix, automatic mode phrase, hidden user-message instruction or canonical-answer rewriting.
+- Phrase gate: only exact `P7-PHRASE-006` through `P7-PHRASE-018` are approved; `P7-PHRASE-021` through `P7-PHRASE-028` remain pending and excluded. Zero phrase remains the normal default.
+- Development route: authorized after this documentation commit on `codex/phase-7-completion`. Development must complete the full package and create one exact candidate; the partial checkpoint is not reviewable as the complete phase.
+- Required reviews on that future hash: QA `YES`, SECURITY `YES`, UI/UX `YES`, DATABASE `NO` only while the no-persistence/no-query/schema boundary holds.
+- Production Readiness: `BLOCKED`; no real database, migration, credential, infrastructure, deployment, public exposure, tool/agent runtime, Phase 8 or HIGH/CRITICAL risk acceptance is authorized.
+- Records: [active decision](reviews/architecture-latest.md), [active phase contract](phase-7.md#current-completion-authorization--2026-11-14), [roadmap](roadmap.md#phase-7--conversational-presence-foundation)
+- Coordinator handoff: normalize the Coordinator-owned panel, route Development, then route mandatory reviewers only after one complete Functional Commit exists. Do not start Phase 8 or production.
+- Boundary: documentation-only; all other handoff sections and reviewer reports are preserved.
 
 ## Coordinator
 
