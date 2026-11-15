@@ -8,9 +8,9 @@
 - Completion authorization reconciliation: `ARCH-2026-11-14-001`
 - Approved parent direction: `ARCH-2026-09-20-001` — owner approval on 2026-09-20
 - Implementation authorization: `APPROVED` by the owner on 2026-09-25, recorded by the Coordinator in `cdb40098489d28dd476a2b9c211cd6289a325888`
-- Implementation status: `IN_PROGRESS` — Development may complete the approved package; the complete phase is not yet ready for review
-- Feature status: `IN_PROGRESS`
-- Phase 7 Functional Commit: `NONE`
+- Implementation status: `READY_FOR_REVIEW` — Development delivered the complete candidate; independent review is pending
+- Feature status: `READY_FOR_REVIEW`
+- Phase 7 Functional Commit: `c649a903693d5fedf631d760880b80ed881dc138`
 - Functional baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2` on `main`
 - Production Readiness: `BLOCKED`
 - Environment boundary: local/controlled
@@ -34,6 +34,50 @@ The owner approved this exact plan and authorized implementation strictly within
 - The complete UI/UX specification is `APPROVED`. Only exact `P7-PHRASE-006` through `P7-PHRASE-018` are approved for implementation; `P7-PHRASE-021` through `P7-PHRASE-028` remain pending, excluded and non-blocking.
 - Required post-implementation reviews on the same future hash are QA `YES`, Security `YES` and UI/UX `YES`. Database remains `NO` only while implementation has no persistence, query, schema or database behavior.
 - Production Readiness remains `BLOCKED`. This authorization does not start Phase 8, change HOPE identity, accept HIGH/CRITICAL risk, authorize a paid/provider test, alter infrastructure or permit deployment.
+
+## Development completion — 2026-11-14
+
+- Status: `READY_FOR_REVIEW`; Development does not approve the phase.
+- Complete Functional Commit: `c649a903693d5fedf631d760880b80ed881dc138`.
+- Functional sequence: `744bec0` adds the bounded generation presentation contract; `4b91818` completes the local conversational-presence package and Phase 7 browser evidence; `c649a90` closes the explicit public homage-boundary evidence. Reviewers must use the complete final hash, not an intermediate commit.
+- Backend: exact `PresentationMode` enum validation on existing `POST /api/chat`; omitted/`NORMAL` preserves the prior effective prompt; each non-default value appends one static server-owned `[TURN PRESENTATION]` section under 1,000 Unicode characters. Provider endpoint, JSON keys, model, `max_tokens=1400`, call count and response schema remain unchanged.
+- Local response and voice contracts: separate canonical `DisplayResponse` and conservative `SpokenResponse`; no unsafe truncation; session/turn/attempt/response-version guards; correlated state transitions; distinct stop/cancel; synthetic/local playback amplitude only; uncorrelated realtime AI state cannot control the current local turn.
+- Modes and privacy: five session-local axes with explicit controls only; no natural-language parser and no mode persistence. `PRIVATE` and `PUBLIC` fail memory closed for new turns, `PRIVATE` keeps both sides of that turn out of later local-history writes, `SILENT` prevents TTS, and prior stored history remains intact.
+- Personality surfaces: exact approved phrase records `P7-PHRASE-006` through `P7-PHRASE-018` only, guarded by trusted evidence, cooldowns, suppressions and a null default. Mode changes perform no phrase lookup. Public `SelfKnowledge` is a versioned allowlist outside the core prompt, derives availability from runtime signals, distinguishes `IMPLEMENTED`, `PARTIAL`, `PLANNED` and `UNAVAILABLE`, and records the original/non-imitative homage boundary.
+- Interface: accessible Modes popover/bottom sheet, resolved restriction summary, explicit play/stop controls, truthful status text, Escape priority, microphone/TTS fallbacks, responsive/reduced-motion behavior and Core Orb voice level derived only from current local playback. The complete displayed response remains visible when speech is silent, stopped, unavailable or fails.
+
+### Files changed
+
+- Backend: `backend/models.py`, `backend/ai/presentation.py`, `backend/ai/prompts.py`, `backend/ai/orchestrator.py`, `backend/services.py`.
+- Frontend contracts: `response-presentation.js`, `turn-manager.js`, `turn-request.js`, `session-history.js`, `voice-state.js`, `voice-manager.js`, `voice-level.js`, `modes.js`, `mode-controller.js`, `phrase-library.js`, `self-knowledge.js`.
+- Frontend integration: `index.html`, `chat.js`, `voice.js`, `ui.js`, `presentation-state.js`, Memory Globe controller/renderer and `main.css`.
+- Tests and evidence: focused Python/frontend tests, disposable browser harness, synthetic PCM fixture and `docs/evidence/phase-7/`.
+
+### Validation executed
+
+- Python: `60 passed`; one known Starlette/TestClient deprecation warning.
+- Frontend: `62 passed` in the final complete suite.
+- Browser: five Phase 7 scenarios passed in Chrome `157.0.8103.51` using a disposable FastAPI harness, synthetic PCM/fake playback and fake recognition. Coverage includes all five mode axes, delayed private response/history restoration, Silent/TTS suppression, TTS and autoplay failure/retry, cancel/stop/stale races, Escape, local amplitude/reset, no WebGL, reduced motion, 130% text and viewports `320x568`, `390x844`, `768x1024`, `1024x768`, `1280x720`, `1440x900` and `1920x1080`.
+- Syntax and scope: Python `compileall`, JavaScript `node --check`, `git diff --check` and changed-path inspection passed. No migration, schema, query, database, environment, dependency or provider path changed.
+
+### Evidence mapping
+
+| Contract | Evidence |
+|---|---|
+| `UIUX-P7-001`–`007` | formatter/voice-manager/state tests; voice failure, retry, recognition, Escape, cancel and stale browser scenarios |
+| `UIUX-P7-008`–`009`, `013` | mode/request/history tests; delayed Private/Public/Silent browser request and storage assertions |
+| `UIUX-P7-010`–`012`, `020` | synthetic PCM tests; local amplitude browser evidence; reduced motion, text scaling, all viewports and no-WebGL evidence |
+| `UIUX-P7-014`–`018` | exact allowlist, trusted context, cooldown, suppression and null-default tests; no phrase consumer on mode change |
+| `UIUX-P7-019` | public manifest allowlist/status/homage tests and runtime capability surface |
+| `UIUX-P7-021` | changed-path inspection plus unchanged provider-shape/call-count tests and zero real provider/database activity |
+
+### Environmental limits
+
+- No real microphone, paid provider, real PostgreSQL, migration, infrastructure, deployment or production action was used.
+- Browser media fidelity is limited to synthetic PCM, fake recognition and fake playback events; provider-specific style and audio quality were not evaluated.
+- Python dependencies were borrowed from the existing isolated development virtual environment while every command ran with this worktree as the current directory and external-service variables cleared.
+- The legacy Phase 6 browser runner was not executed because several historical scripts hard-code the Phase 6 evidence directory. Phase 6 evidence was preserved; regression coverage came from the complete Python/frontend suites and the new non-overwriting Phase 7 harness.
+- Production Readiness remains `BLOCKED`; Phase 8 is not started.
 
 ## Historical generation-boundary gate — 2026-11-06
 
@@ -338,28 +382,28 @@ It must exclude system prompts, chain-of-thought, credentials, secrets, private 
 - [x] The complete pre-implementation UI/UX specification is persisted before Development is routed.
 - [x] Every proposed exact phrase is listed separately with context, intended tone and initial `PENDING_OWNER_APPROVAL` status.
 - [x] Every phrase intended for the active package has an explicit owner decision; no approval is inferred across variants. Pending `P7-PHRASE-021` through `P7-PHRASE-028` remain excluded.
-- [ ] No unapproved phrase enters code, fixtures, tests, snapshots, defaults, seeded content or the active product.
-- [ ] Displayed and spoken representations are separate, with displayed content remaining canonical.
-- [ ] Speech formatting preserves safety, uncertainty, confirmations, targets, costs and destructive consequences.
-- [ ] Long code/list formatting is deterministic and leaves the complete display response available.
-- [ ] Every voice interaction has a session/turn identity; stale callbacks cannot speak or change state.
-- [ ] Stop/cancel halts current playback, invalidates downstream work and returns to a truthful stable state.
-- [ ] `VoiceStateManager` transitions satisfy documented precedence and accessible status rules.
-- [ ] Existing voice/provider network behavior is unchanged; no new endpoint, provider, fallback, secret, dependency or external data class is introduced.
-- [ ] Prosody/pronunciation contracts are provider-neutral and contain no provider markup or sensitive profile.
-- [ ] `PhraseLibrary` content is owner-approved, original, natural, non-robotic, non-repetitive and unable to override substantive content.
-- [ ] Explicit homage remains original, single-response and non-imitative; prohibited quote, identity and voice behavior is covered by tests.
-- [ ] Modes combine deterministically, with privacy/output restrictions winning over style.
-- [ ] `PRIVATE`/`PUBLIC` cannot use memory for new turns when the restriction cannot be enforced.
-- [ ] Omitted/`NORMAL` preserves the existing effective prompt exactly; invalid `presentation_mode` values return `422` before source/model work.
-- [ ] Every non-default mode selects only its bounded static `[TURN PRESENTATION]` section while provider shape, output limit and call count remain unchanged.
-- [ ] `SelfKnowledge` reports only allowlisted public facts and distinguishes `IMPLEMENTED`, `PARTIAL`, `PLANNED` and unavailable capabilities.
-- [ ] Core Orb amplitude derives only from already-playing local audio, remains ephemeral and resets on stop, end and error.
-- [ ] Keyboard, screen-reader status, reduced motion and stop controls meet existing design contracts.
-- [ ] No code presents wake word, speaker verification, streaming, cross-device, tools, agents or external effects as implemented.
-- [ ] No database, migration, real provider call, paid service, credential, deployment or production change occurs.
+- [x] No unapproved phrase enters code, fixtures, tests, snapshots, defaults, seeded content or the active product.
+- [x] Displayed and spoken representations are separate, with displayed content remaining canonical.
+- [x] Speech formatting preserves safety, uncertainty, confirmations, targets, costs and destructive consequences.
+- [x] Long code/list formatting is deterministic and leaves the complete display response available.
+- [x] Every voice interaction has a session/turn identity; stale callbacks cannot speak or change state.
+- [x] Stop/cancel halts current playback, invalidates downstream work and returns to a truthful stable state.
+- [x] `VoiceStateManager` transitions satisfy documented precedence and accessible status rules.
+- [x] Existing voice/provider network behavior is unchanged; no new endpoint, provider, fallback, secret, dependency or external data class is introduced.
+- [x] Prosody/pronunciation contracts are provider-neutral and contain no provider markup or sensitive profile.
+- [x] `PhraseLibrary` content is owner-approved, original, natural, non-robotic, non-repetitive and unable to override substantive content.
+- [x] Explicit homage remains original, single-response and non-imitative; prohibited quote, identity and voice behavior is covered by tests.
+- [x] Modes combine deterministically, with privacy/output restrictions winning over style.
+- [x] `PRIVATE`/`PUBLIC` cannot use memory for new turns when the restriction cannot be enforced.
+- [x] Omitted/`NORMAL` preserves the existing effective prompt exactly; invalid `presentation_mode` values return `422` before source/model work.
+- [x] Every non-default mode selects only its bounded static `[TURN PRESENTATION]` section while provider shape, output limit and call count remain unchanged.
+- [x] `SelfKnowledge` reports only allowlisted public facts and distinguishes `IMPLEMENTED`, `PARTIAL`, `PLANNED` and unavailable capabilities.
+- [x] Core Orb amplitude derives only from already-playing local audio, remains ephemeral and resets on stop, end and error.
+- [x] Keyboard, screen-reader status, reduced motion and stop controls meet existing design contracts.
+- [x] No code presents wake word, speaker verification, streaming, cross-device, tools, agents or external effects as implemented.
+- [x] No database, migration, real provider call, paid service, credential, deployment or production change occurs.
 - [ ] QA, Security and UI/UX review the same future Functional Commit; Database remains `N/A` only if the no-persistence boundary holds.
-- [ ] Production Readiness remains `BLOCKED`.
+- [x] Production Readiness remains `BLOCKED`.
 
 ## Test Strategy
 

@@ -111,17 +111,16 @@ Required Reviews — Integration Candidate:
 
 ## Development
 
-- Status: READY_FOR_REVIEW
-- Phase: 6 — isolated correction of QA-IC-001 / SEC-020
-- Functional commit: `4d76f2433363a47a9d8fe29fef337de1dc79ac50`
-- Baseline: `91c77c1768aec511a253e19a22b32100a29bf342`; rejected integration candidate `20843a4568ca6eba67d66f93234412038ca79199`.
-- Delivered: the realtime chat test now injects explicit test settings and the existing disposable SQLite memory manager, with database cleanup. Its event assertions remain unchanged. No product/runtime/frontend/schema change.
-- Validation: reproduced the original failure in a clean Git export without .env or DATABASE_URL; after the correction, the full Python suite passed 45 tests in that export under an allowlisted environment. Frontend passed 36 tests; Python compileall, syntax checks for 30 JavaScript files and git diff --check passed.
-- Evidence: [Development correction record](phase-6.md#development-correction--qa-ic-001--sec-020--2026-09-22).
-- Environmental limits: one known Starlette/TestClient deprecation warning; no browser rerun for this test-only delta, real PostgreSQL, migration, paid provider or production validation.
-- Impact analysis: QA YES for clean-export reproducibility on the new hash; SECURITY YES for focused SEC-020/test-isolation re-review, with no runtime trust-boundary changes; DATABASE NO and UI/UX NO because their implementation surfaces did not change.
-- Boundary: no push, merge, PR-body edit or Phase 7 work. QA-IC-002 belongs to Coordinator/owner. Pre-existing untracked dashboard/hero assets remain excluded. Reviewer reports, Review Matrix, blockers and Next Action were not changed by Development.
-- Handoff: return to COORDINATOR for exact-hash review routing. Development does not approve the phase or close reviewer findings. Production Readiness remains BLOCKED.
+- Status: `READY_FOR_REVIEW`
+- Phase: 7 — Conversational Presence Foundation
+- Functional commit: `c649a903693d5fedf631d760880b80ed881dc138`
+- Execution baseline: `a3133dd`; approved planning commit: `11eb4f7a4d112589199b19597096519de46c75fb`; partial checkpoint preserved: `2647794ea806b20117c7cce531602911da98ca97`.
+- Delivered: complete approved Phase 7 package — strict per-turn presentation enum/static overlay, canonical DisplayResponse and separate SpokenResponse, turn/attempt/cancel/stale guards, VoiceManager/VoiceStateManager, five session-local mode axes, prospective privacy/history rules, exact approved PhraseLibrary package, public-safe SelfKnowledge and local playback amplitude projected to the Core Orb.
+- Validation: Python `60 passed` with one known Starlette/TestClient warning; frontend `62 passed`; Chrome Phase 7 harness passed five scenarios using synthetic media and disposable fixtures; Python compileall, JavaScript syntax and `git diff --check` passed. Browser evidence: [`docs/evidence/phase-7/`](evidence/phase-7/).
+- Environmental limits: no real microphone, paid provider, real PostgreSQL, migration, infrastructure, deployment or production validation. Provider style/audio fidelity remains untested; the legacy Phase 6 browser runner was not used because it overwrites historical evidence.
+- Impact analysis: QA `YES` for full functional/browser regression; Security `YES` for request validation, prompt boundary, privacy, untrusted content, cancellation, public manifest and client audio lifecycle; UI/UX `YES` for modes, response/voice separation, accessibility, states, responsive behavior, reduced motion and Core Orb feedback. Database `NO` because no persistence, query, schema, migration or database path changed.
+- Boundary: HOPE identity preserved; only phrases `P7-PHRASE-006` through `P7-PHRASE-018` are present; no natural-language mode parser, provider expansion, tool/agent runtime, Phase 8, push, merge or production action. Reviewer reports, Review Matrix, blockers and Next Action were not changed by Development.
+- Handoff: return to COORDINATOR to route QA, Security and UI/UX against the exact same Functional Commit. Development does not approve the phase. Production Readiness remains `BLOCKED`.
 
 ## QA
 
