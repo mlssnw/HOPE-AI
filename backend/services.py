@@ -218,7 +218,12 @@ class HopeServices:
             content += "\n\n<external_context trust=\"untrusted-data\" format=\"json\">\n"
             content += self._context(sources) + "\n</external_context>"
         messages.append({"role": "user", "content": content})
-        reply = await self.complete(system_prompt=SYSTEM_PROMPT, messages=messages)
+        reply = await self.complete(
+            system_prompt=build_system_prompt(
+                presentation_mode=request.presentation_mode
+            ),
+            messages=messages,
+        )
         return ChatResponse(reply=reply, sources=sources)
 
     async def synthesize_speech(self, text: str) -> tuple[bytes, str]:

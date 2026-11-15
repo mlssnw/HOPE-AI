@@ -321,7 +321,11 @@ class HopeOrchestrator:
                     memory_delete_confirmation=command_result.memory_delete_confirmation,
                 )
 
-            prompt = build_system_prompt(self.personality, expression)
+            prompt = build_system_prompt(
+                self.personality,
+                expression,
+                presentation_mode=request.presentation_mode,
+            )
             reply, sources, provider_tools = await self._call_model(
                 request, context, prompt
             )
