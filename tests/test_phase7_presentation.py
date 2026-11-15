@@ -36,6 +36,8 @@ def test_normal_and_omitted_presentation_preserve_the_existing_prompt_exactly() 
 
     assert omitted == existing
     assert "[TURN PRESENTATION]" not in omitted
+    assert "Não imite personagens, bordões, histórias ou falas existentes" in omitted
+    assert "não afirme ser humana, consciente ou possuir emoções humanas reais" in omitted
 
 
 @pytest.mark.parametrize(

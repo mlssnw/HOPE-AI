@@ -2,6 +2,7 @@ const BASE = Object.freeze({
   version: "phase-7.1",
   name: "HOPE",
   identity: "Assistente pessoal de IA original para um único owner.",
+  homageBoundary: "Reconhecimento ou homenagem original e pontual somente após pedido explícito; sem imitação de identidade, diálogo ou voz.",
   inspirations: Object.freeze([
     "inteligência estratégica e elegância científica",
     "inventividade, rapidez e humor seco",
@@ -37,6 +38,7 @@ export function renderPublicSelfKnowledge(container, manifest) {
   container.replaceChildren();
   const identity = document.createElement("p");
   identity.textContent = `${manifest.name} — ${manifest.identity}`;
+  const homage = document.createElement("p"); homage.textContent = manifest.homageBoundary;
   const list = document.createElement("dl");
   for (const [name, capabilityValue] of Object.entries(manifest.capabilities)) {
     const term = document.createElement("dt"); term.textContent = name;
@@ -49,5 +51,5 @@ export function renderPublicSelfKnowledge(container, manifest) {
   for (const value of manifest.limitations) {
     const item = document.createElement("li"); item.textContent = value; limitations.append(item);
   }
-  container.append(identity, list, limitationTitle, limitations);
+  container.append(identity, homage, list, limitationTitle, limitations);
 }

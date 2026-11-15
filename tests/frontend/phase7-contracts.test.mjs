@@ -202,6 +202,15 @@ test("public self knowledge distinguishes implemented, partial, planned and unav
   assert.equal(manifest.capabilities.web.status, "UNAVAILABLE");
 });
 
+test("public self knowledge keeps homage original, brief and non-imitative", () => {
+  const manifest = publicSelfKnowledge({});
+  assert.equal(
+    manifest.homageBoundary,
+    "Reconhecimento ou homenagem original e pontual somente após pedido explícito; sem imitação de identidade, diálogo ou voz.",
+  );
+  assert.equal(manifest.inspirations.length, 3);
+});
+
 test("synthetic PCM amplitude is clamped, smoothed and resettable", () => {
   const samples = new Float32Array([1, -1, 1, -1]);
   const first = calculateVoiceLevel(samples, 0);
