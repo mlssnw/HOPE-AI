@@ -5,7 +5,7 @@
 **Assistente pessoal experimental de Inteligência Artificial com memória persistente, contexto explicável e visualização das relações que importam.**
 
 ![Status](https://img.shields.io/badge/status-em%20desenvolvimento-F2AE3D)
-![Phase](https://img.shields.io/badge/phase-6-63BFD4)
+![Phase](https://img.shields.io/badge/phase-7-63BFD4)
 ![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-009688?logo=fastapi&logoColor=white)
 ![PostgreSQL + pgvector](https://img.shields.io/badge/PostgreSQL-pgvector-4169E1?logo=postgresql&logoColor=white)
@@ -20,7 +20,7 @@
 </p>
 
 <p align="center">
-  <em>Target UI aprovado: a implementação e os reviews técnicos da Fase 6 foram concluídos e integrados pelo PR #1.</em>
+  <em>Referência visual aprovada do dashboard. Os novos controles de presença conversacional estão em revisão independente nesta branch.</em>
 </p>
 
 <p align="center">
@@ -29,45 +29,48 @@
 
 ## 🧠 O que é a HOPE?
 
-A HOPE é um assistente pessoal experimental de IA com memória persistente e recuperação contextual. O projeto explora como uma IA pode armazenar, relacionar, recuperar, corrigir e esquecer informações ao longo do tempo com controles explícitos do usuário.
+A HOPE é uma assistente pessoal experimental de IA com memória persistente e recuperação contextual, destinada a uma única pessoa. O projeto explora como uma IA pode armazenar, relacionar, recuperar, corrigir e esquecer informações ao longo do tempo com controles explícitos do usuário.
 
 ## Por que este projeto existe?
 
 Assistentes tradicionais dependem principalmente do contexto imediato da conversa. A HOPE nasceu para explorar uma abordagem em que memória, contexto, relações e histórico possam persistir e ser consultados de forma controlada ao longo do tempo.
 
-## ✨ Última atualização — Fase 6
+## ✨ Última atualização — Fase 7
 
-- O dashboard convergiu para a direção visual aprovada sem ativar capacidades futuras inexistentes.
-- Memory Globe/Core Orb, chat, inspector, responsividade chat-first, fallback sem WebGL e acessibilidade foram integrados ao novo shell.
-- Consentimento de memória, histórico local, cancelamento e confirmação destrutiva permanecem separados e operáveis.
-- A correção de isolamento do teste realtime foi concluída e validada em ambiente limpo: 45 testes Python e 36 testes frontend passaram.
-- QA e Security aprovaram a integração com warnings; UI/UX aprovou a implementação visual.
-- A Fase 6 foi integrada sem autorizar automaticamente a implementação de fases posteriores.
+- Texto exibido e fala possuem representações separadas; a resposta completa continua disponível quando o áudio falha ou é interrompido.
+- Modos de estilo, privacidade, saída, interrupção e audiência são combináveis e valem para novos turnos da sessão.
+- A personalidade aparece na resposta; mudar de modo não dispara frases prontas.
+- Cancelamento e identificação de turno protegem contra eventos antigos de chat, ditado e reprodução.
+- O Core Orb acompanha somente a amplitude do áudio local em reprodução; informações públicas da HOPE podem ser consultadas na interface.
+- A entrega passou nas validações do Development e aguarda os reviews independentes de QA, Security e UI/UX.
 
-[📖 Ver detalhes técnicos da Fase 6](docs/phase-6.md)
+[📖 Ver detalhes técnicos da Fase 7](docs/phase-7.md)
 
 ## ⚙️ Implementado atualmente
+
+Os recursos desta branch foram entregues para revisão. A aprovação da fase e sua integração ainda dependem dos gates abaixo.
 
 | Área | Implementação atual |
 |---|---|
 | Memória | CRUD, classificação, consolidação, proveniência, entidades, relações e recuperação híbrida em PostgreSQL/pgvector. Ativação no chat é opt-in. |
 | IA | `HopeOrchestrator` com personalidade original, contexto delimitado e Claude como provider operacional atual. Abstração multi-LLM ainda é parcial. |
-| Visualização | Dashboard da Fase 6 aprovado dentro das capacidades reais, com Memory Globe/Core Orb, modos orbital, clusters e memória, responsividade e fallback textual/WebGL. |
+| Visualização | Dashboard com Memory Globe/Core Orb, modos orbital, clusters e memória, responsividade e fallback textual/WebGL. Amplitude de voz local e novos controles estão em revisão. |
 | Tempo real | Event Bus e WebSocket com eventos incrementais, heartbeat, reconnect e reconciliação HTTP. O barramento ainda é local ao processo. |
 | Busca | Recuperação híbrida de memória; Tavily e busca textual no Obsidian ficam disponíveis quando configurados. |
-| Voz | Ditado pela Web Speech API e TTS por ElevenLabs quando suportados e configurados. |
+| Voz | Ditado pela Web Speech API e TTS por ElevenLabs quando disponíveis, com texto/fala separados, controle de turno e cancelamento. Conteúdo acima do limite seguro de fala permanece completo na tela. |
+| Presença conversacional | Modos locais e combináveis; estilos Normal, Foco, Acolhedor e Apresentação; biblioteca opcional de frases aprovadas; informações públicas e verificáveis da HOPE. |
 | Integrações | Adapters opcionais para Anthropic, Tavily, ElevenLabs e Obsidian Local REST API. As credenciais permanecem no backend, mas os endpoints ainda exigem autenticação do owner antes de qualquer exposição pública. |
-| Qualidade | Evidência anterior de 45 testes Python e 36 testes frontend, além de validação browser da matriz de viewports, WebGL/fallback, realtime, acessibilidade e cenários degradados. |
+| Qualidade | Development registrou 60 testes Python, 62 frontend e cinco cenários Chrome aprovados, com sete tamanhos de tela e mídia sintética. Reviews independentes em andamento. |
 | Segurança | Segredos no backend, CSP restrita, conteúdo externo tratado como não confiável, consentimento de memória e confirmação destrutiva. Autenticação e hardening de produção permanecem pendentes. |
 
 ## 🚦 Status do projeto
 
 | Campo | Estado |
 |---|---|
-| Versão pública | Fase 6 — sem usar o rótulo legado do runtime como versão da fase |
-| Fase atual | Fase 6 — Target UI Convergence |
-| Estado técnico | `APPROVED_WITH_WARNINGS` — reviews obrigatórios e integração da Fase 6 concluídos |
-| Functional Commit | `4d76f2433363a47a9d8fe29fef337de1dc79ac50` — correção test-only sobre a implementação `0912e94` |
+| Fase atual | Fase 7 — Conversational Presence Foundation |
+| Estado técnico | `READY_FOR_REVIEW` — implementação entregue; reviews independentes pendentes |
+| Functional Commit | `c649a903693d5fedf631d760880b80ed881dc138` |
+| Integração | [PR #2 em rascunho](https://github.com/mlssnw/HOPE-AI/pull/2), ainda sem merge em `main` |
 | Deploy público | Ainda não habilitado — autenticação, autorização e hardening de produção pendentes |
 
 A fundação local/controlada já conecta chat, memória persistente, PostgreSQL/pgvector, Memory Globe e eventos em tempo real. Isso não equivale a prontidão para produção pública.
@@ -76,17 +79,16 @@ O acompanhamento técnico detalhado permanece no [painel operacional](docs/hando
 
 ## 🗺️ Fase atual e próximo gate
 
-A única fase ativa é a **Fase 6 — Target UI Convergence**.
+A fase ativa é a **Fase 7 — Conversational Presence Foundation**, em ambiente local/controlado.
 
-- [x] Implementação funcional entregue no commit `0912e94`.
-- [x] Direção visual validada pelo UI/UX no Functional Commit.
-- [x] Development corrigiu o isolamento do teste realtime no commit `4d76f24`.
-- [x] QA aprovou a correção e encerrou `QA-IC-001` e `QA-IC-002`.
-- [x] Security aprovou com warnings e encerrou `SEC-019` e `SEC-020`.
-- [x] Descrição do PR sincronizada com o candidate revisado.
-- [x] Merge da branch `codex/phase-6-target-ui` em `main` pelo PR #1.
+- [x] Planejamento, especificação e pacote exato de frases aprovados.
+- [x] Implementação e evidências entregues pelo Development.
+- [ ] Review funcional independente de QA.
+- [ ] Review de Security.
+- [ ] Review visual pós-implementação de UI/UX.
+- [ ] Consolidação do Planner e decisão de integração.
 
-O roadmap futuro existe como direção aprovada, mas não representa trabalho ativo nem autorização de implementação. Ele permanece separado em [`docs/roadmap.md`](docs/roadmap.md), junto da [`visão de produto`](docs/product-vision.md) e da [`arquitetura futura`](docs/future-architecture.md).
+As próximas fases continuam como direção futura, com autorização própria antes da implementação. A ordem aprovada está em [`docs/roadmap.md`](docs/roadmap.md), junto da [`visão de produto`](docs/product-vision.md) e da [`arquitetura futura`](docs/future-architecture.md).
 
 ## Arquitetura resumida
 
@@ -180,8 +182,9 @@ Durante o desenvolvimento, `X-Hope-User-Id` separa dados por UUID, mas **não é
 
 A HOPE trata qualidade como parte da arquitetura do produto:
 
-- **45 testes Python**;
-- **36 testes frontend**;
+- **60 testes Python** na entrega do Development;
+- **62 testes frontend** na entrega do Development;
+- cinco cenários Chrome com voz sintética, sete tamanhos de tela, modos, privacidade, cancelamento, acessibilidade e uso sem WebGL;
 - cenários de memória, consentimento, correção e esquecimento;
 - WebSocket, heartbeat, reconexão e eventos incrementais;
 - degradação segura quando banco, schema ou providers não estão disponíveis;
@@ -191,10 +194,10 @@ As suítes usam serviços simulados e não chamam APIs pagas:
 
 ```bash
 python -m pytest -q
-npm run test:frontend
+node --test tests/frontend/*.test.mjs
 ```
 
-Resultados, blockers e evidências detalhadas ficam em [`docs/reviews/`](docs/reviews/README.md).
+Os resultados acima ainda aguardam review independente da Fase 7. O áudio e o reconhecimento dos testes são simulados; qualidade do provider e microfone real não foram avaliados. Resultados, blockers e evidências detalhadas ficam em [`docs/reviews/`](docs/reviews/README.md) e [`docs/phase-7.md`](docs/phase-7.md).
 
 ## Segurança e privacidade
 
@@ -208,6 +211,8 @@ Resultados, blockers e evidências detalhadas ficam em [`docs/reviews/`](docs/re
 | Memória persistente | O opt-in do chat controla recuperação, captura e comandos de memória durante a conversa; memórias já armazenadas ainda podem ser carregadas pelo Memory Globe na interface local/controlada |
 
 Desativar **Memória no chat** impede novas recuperações, capturas e comandos persistentes durante a conversa; não apaga automaticamente memórias já armazenadas nem desativa a leitura dessas memórias pelo Memory Globe atual. A exclusão exige uma ação explícita e confirmação do alvo. **Histórico local** possui controle e limpeza separados.
+
+Os modos **Privado** e **Público** bloqueiam memória no chat para novos turnos. Privado também impede novas gravações no histórico local, inclusive após sair do modo. Essas escolhas não apagam dados anteriores nem ocultam o que já está exibido. Os modos permanecem somente na sessão e não concedem permissões para ações.
 
 Antes de qualquer deploy público, o projeto ainda requer autenticação, autorização, proteção de providers, rate limiting, hardening do WebSocket, role restrita de banco, TLS verificado e auditoria atribuível. Consulte o [Security Review](docs/reviews/security-review-latest.md) e o [Database Audit](docs/reviews/database-audit-latest.md).
 
@@ -235,18 +240,20 @@ tests/            testes Python e Node
 - O asset conceitual do dashboard ainda exibe capacidades futuras omitidas corretamente pela implementação da Fase 6.
 - O runtime ainda reporta um rótulo técnico legado; o README usa a fase operacional vigente para evitar confundi-lo com a versão pública do projeto.
 - Web Speech API, providers externos e Obsidian dependem de suporte e configuração locais.
+- Streaming de voz, wake word, verificação de voz e sessões entre dispositivos continuam planejados.
 
 ## Documentação
 
-Estado atual da Fase 6:
+Estado atual da Fase 7:
 
 - [Arquitetura atual](docs/architecture.md)
-- [Fase 6](docs/phase-6.md)
+- [Fase 7](docs/phase-7.md)
+- [Especificação de presença conversacional](docs/design/phase-7-conversational-presence-spec.md)
 - [Dashboard oficial e regras de uso](docs/design/official-dashboard.md)
 - [Handoff operacional](docs/handoff.md)
 - [Reviews técnicos](docs/reviews/README.md)
 
-Direção futura, sem autorização de implementação:
+Direção futura, além do escopo autorizado da Fase 7:
 
 - [Visão de produto](docs/product-vision.md)
 - [Roadmap oficial](docs/roadmap.md)

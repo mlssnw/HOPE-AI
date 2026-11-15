@@ -2,6 +2,17 @@
 
 Histórico verificável da evolução do HOPE AI. Commits documentais posteriores não substituem o Functional Commit de cada entrega.
 
+## Phase 7 — Conversational Presence Foundation — 2026-11-14
+
+- Delivery: `READY_FOR_REVIEW` at Functional Commit `c649a903693d5fedf631d760880b80ed881dc138`; documentation/evidence record `6919c967c66f728471b5c195079dabda33a3e3ed`. Required independent reviews and Planner consolidation remain pending.
+- Planning: `ARCH-2026-11-14-001` reconciled full implementation authorization and the bounded per-turn presentation exception. HOPE retains its original name.
+- Added strict presentation-mode validation and a bounded static server-authored overlay; omitted/Normal mode preserves the existing effective prompt and provider transport/call count.
+- Added separate display/spoken contracts, conservative speech formatting, local turn/attempt identity, cancellation and stale-callback guards, truthful voice state and local playback amplitude.
+- Added five session-local mode axes, prospective privacy/history eligibility, approved-only optional PhraseLibrary with a zero-phrase default, and a public-safe SelfKnowledge surface. Mode changes do not inject phrases.
+- Development validation: 60 Python tests, 62 frontend tests and five synthetic-media Chrome scenarios passed; seven viewports, reduced motion, larger text, privacy/history and no-WebGL flows are covered. Compilation, syntax and whitespace checks passed.
+- Limits: no paid/live provider fidelity test, real microphone, real PostgreSQL, migration, production or Phase 8 work. Production Readiness remains `BLOCKED`; draft [PR #2](https://github.com/mlssnw/HOPE-AI/pull/2) is not merged.
+- The entries below preserve earlier decisions and statuses as historical evidence; their old Phase 7 authorization gates are superseded by the current decision and handoff.
+
 ## Product Vision e Roadmap — decisões de 2026-09-19 a 2026-09-21
 
 - A owner registrou nova direção futura para voice presence, realtime voice, wake word `HOPE`, speaker verification, Core Orb reativo à amplitude local, self knowledge, personalidade ampliada, modos combináveis, memória controlável, organização pessoal, integrações, diagnósticos, auditoria, localização por dispositivo, apps instaláveis e Model Router.
