@@ -7,7 +7,7 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 ## Current Phase
 
 - Phase: 7 — Conversational Presence Foundation
-- Phase status: WAITING_FOR_REVIEW — Development delivered the correction round; affected QA, Security and UI/UX re-reviews are required
+- Phase status: WAITING_FOR_REVIEW — QA and Security approved the corrected target with warnings; UI/UX and Planner consolidation remain pending
 - Feature status: READY_FOR_REVIEW — Functional Commit `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5` is not approved yet
 - Production readiness: BLOCKED — Phase 7 does not authorize public deployment or resolve the inherited production blockers
 - Baseline: `ce2bde4` on `main`, with Phase 6 complete and integrated through PR #1
@@ -105,9 +105,9 @@ Required Reviews — Integration Candidate:
 | Work | Required | Status | Commit |
 |---|---|---|---|
 | DEV | YES | READY_FOR_REVIEW | `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5` |
-| QA | YES | WAITING_FOR_REVIEW | `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5` |
+| QA | YES | APPROVED_WITH_WARNINGS | `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5` |
 | DATABASE | NO | N/A | — |
-| SECURITY | YES | WAITING_FOR_REVIEW | `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5` |
+| SECURITY | YES | APPROVED_WITH_WARNINGS | `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5` |
 | UI/UX | YES | WAITING_FOR_REVIEW — POST-IMPLEMENTATION | `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`; pre-implementation spec remains approved |
 | PLANNER | YES | WAITING_FOR_REVIEW — FINAL CONSOLIDATION | `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`; planning approval `11eb4f7` preserved |
 
@@ -220,22 +220,19 @@ Required Reviews — Integration Candidate:
 
 - Autonomy level: 2.5
 - Status: WAITING_FOR_REVIEW
-- Operational conclusion: Development delivered correction `af2aa66` and documentation `5f125a0`, reporting 60 Python, 67 frontend and both complete browser packages passing (seven Phase 7 scenarios; HIGH 59.91 FPS/2,500 nodes with the 45 FPS floor preserved). The previous candidate `c649a90` remains rejected; only the required reviewers can close its five findings on the new target.
+- Operational conclusion: QA approved `af2aa66` with warnings in `7a5a446`, independently passing 60 Python, 67 frontend and both complete browser packages (HIGH 58.85 FPS/2,500 nodes). Security approved the same target with warnings in `a2b5739`, closing SEC-021. QA-P7-001/002 are closed. UI/UX still needs current-target interaction evidence; no final phase approval is inferred.
 - Final Integration Candidate: `cb8dc774cc396f3aff0ef40e79753761fbf3b49b`
 - Main integration commit: `ce2bde4`
-- Routing: LEVEL 1 — QA and Security re-review frozen `af2aa66`; UI/UX prepares independently and uses the fixed-port browser only after QA releases it. Each role owns its report; shared handoff/index/commit writes are serialized. Planner consolidates after matching verdicts. Draft [PR #2](https://github.com/mlssnw/HOPE-AI/pull/2) remains unmerged; no HIGH risk acceptance or production action is authorized.
+- Routing: LEVEL 1 — UI/UX owns the current-target browser window after QA's release. Its initial full-run attempt did not complete reliably; targeted independent interaction checks must provide evidence before its verdict. UI/UX writes only its report and new synthetic evidence; shared handoff/index/commit writes remain closed until serialization. Planner consolidates after the final matching verdict. Draft [PR #2](https://github.com/mlssnw/HOPE-AI/pull/2) remains unmerged; no HIGH risk acceptance or production action is authorized.
 - Boundary: COORDINATOR atualizou somente Current Phase, Current Functional Commit, Review Matrix, blockers, warnings, Next Action e histórico; não concedeu aprovação técnica nem alterou seções ou relatórios de ownership dos reviewers
 
 ## Current Blockers
 
 ### Feature Blockers
 
-- The five findings below describe rejected `c649a90`. Development reports corrections in `af2aa66`; their closure is awaiting independent re-review and is not granted by this panel.
+- Findings originated on rejected `c649a90`. QA closed QA-P7-001/002 on `af2aa66` in `7a5a446`; Security closed SEC-021 on that same target in `a2b5739`. Neither role has a remaining Phase 7 feature blocker. UI/UX's two previous findings await its independent closure evidence below.
 - No technical blocker remains in the pre-implementation UI/UX specification.
 - No authorization blocker remains for the approved Phase 7 implementation. The prior generation-boundary blocker was resolved by `ARCH-2026-11-14-001`; its exact enum/static-section boundary remains binding.
-- `SEC-021` — HIGH, blocking: Public requests can forward earlier private or memory-derived session history despite disabling current-turn memory. Preserve visible/stored history and enforce the outbound Public boundary within the approved local scope.
-- `QA-P7-001` — MEDIUM, blocking: starting recognition does not stop active playback/reset its meter before Listening.
-- `QA-P7-002` — MEDIUM, blocking: the complete legacy browser package fails on two stale assertions and does not execute all regression scenarios successfully.
 - `UIUX-P7-POST-001` — HIGH, blocking: Modes lacks reliable touch close, focus entry/return and vertically reachable controls at short heights/enlarged text.
 - `UIUX-P7-POST-002` — MEDIUM, blocking: actionable errors are duplicated across live announcement regions.
 - Remaining gates: corrected exact Functional Commit; proportional QA, Security and UI/UX re-reviews; Planner consolidation. No domain approval is inferred from green Development tests or from pre-implementation approval.
@@ -270,9 +267,9 @@ Required Reviews — Integration Candidate:
 
 ## Next Action
 
-- Role: QA
+- Role: UI/UX
 - Status: WAITING_FOR_REVIEW
-- Task: independently re-review corrected Phase 7, explicitly resolve QA-P7-001/002 and check the cross-domain privacy/accessibility regressions without changing code
+- Task: finish independent current-target interaction evidence, issue the post-implementation verdict and explicitly close or retain UIUX-P7-POST-001/002 without changing code
 - Target Functional Commit: `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`; documentation/evidence `5f125a0`; previous rejected target `c649a90`; branch `codex/phase-7-completion`
 - Required inputs:
   - [`docs/phase-7.md`](phase-7.md)
@@ -283,11 +280,11 @@ Required Reviews — Integration Candidate:
   - [`docs/reviews/qa-latest.md`](reviews/qa-latest.md)
   - [`docs/reviews/security-review-latest.md`](reviews/security-review-latest.md)
 - Expected output:
-  - exact-target QA verdict with evidence for both complete browser packages, Python/frontend suites and directed negative regressions; preserve historical evidence and test floors
-  - explicit finding closure or remaining severity/blocking status, honest environment/provider-fidelity limits and own latest report
+  - exact-target UI/UX verdict with evidence of Modes focus/close/vertical reachability, single accessible announcement, affected UIUX-P7 criteria and synthetic screenshots/measurements
+  - explicit finding closure or remaining severity/blocking status, honest environment/provider-fidelity limits and own latest report; old screenshots do not prove corrected interactions
   - own handoff section and documentation commit only when the Coordinator opens the serialized window; no code changes
-- Blocking dependencies: none for QA or Security; UI/UX browser waits for QA to release the fixed ports
-- Parallel work: Security on the same frozen target and own report; UI/UX static/unit/evidence preparation, followed by independent browser inspection after QA; no functional writer
+- Blocking dependencies: none; QA has released the browser ports, and the current UI/UX process is active
+- Parallel work: none requiring shared writes; QA/Security are complete and no functional writer is active
 - Escalation: NONE
 
 ## Recent History
@@ -339,3 +336,4 @@ Required Reviews — Integration Candidate:
 - 2026-11-14 — Development completed the package through backend `744bec0`, voice/UI `4b91818` and public-boundary correction `c649a90`; the last hash is the shared Functional Commit. Delivery documentation/evidence `6919c96` records 60 Python, 62 frontend and five Chrome scenarios passing. COORDINATOR opened the required independent reviews on that target, preserving Production Readiness `BLOCKED` and the draft PR #2.
 - 2026-11-15 — QA (`8d85e21`), UI/UX (`768ddfd`) and Security (`d60a402`) rejected `c649a90` with five blocking findings. COORDINATOR persisted `CHANGES_REQUESTED`, corrected the public README status and returned one scoped fix round to Development. Production blockers, owner-approved phrases and isolated-worktree boundaries remain unchanged.
 - 2026-11-16 — Development delivered correction `af2aa66` and documentation `5f125a0`, with 60 Python, 67 frontend, seven Phase 7 Chrome scenarios and the full legacy browser package passing. COORDINATOR froze that new target and reopened required QA, Security and UI/UX reviews; the prior rejection remains historical and Production Readiness stays blocked.
+- 2026-11-17 — QA persisted APPROVED_WITH_WARNINGS in `7a5a446`, closing QA-P7-001/002; Security persisted APPROVED_WITH_WARNINGS in `a2b5739`, closing SEC-021, both for `af2aa66`. COORDINATOR released the browser window to UI/UX; its independent affected-surface evidence and final verdict remain pending.

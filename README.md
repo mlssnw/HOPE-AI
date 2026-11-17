@@ -184,7 +184,7 @@ A HOPE trata qualidade como parte da arquitetura do produto:
 
 - **60 testes Python** na entrega do Development;
 - **67 testes frontend** na entrega corrigida do Development;
-- cinco cenários Chrome com voz sintética, sete tamanhos de tela, modos, privacidade, cancelamento, acessibilidade e uso sem WebGL;
+- sete cenários Chrome da Fase 7 com voz sintética, sete tamanhos de tela, modos, privacidade, cancelamento, acessibilidade e uso sem WebGL, além da regressão completa da Fase 6;
 - cenários de memória, consentimento, correção e esquecimento;
 - WebSocket, heartbeat, reconexão e eventos incrementais;
 - degradação segura quando banco, schema ou providers não estão disponíveis;
