@@ -2,6 +2,19 @@
 
 Histórico verificável da evolução do HOPE AI. Commits documentais posteriores não substituem o Functional Commit de cada entrega.
 
+## Phase 7 — Conversational Presence Foundation — 2026-11-14
+
+- Delivery: `READY_FOR_REVIEW` at corrected Functional Commit `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5` on 2026-11-16; documentation `5f125a04e989274e3d90cc7a69876cbb582c9526`. Required affected re-reviews and Planner consolidation are pending.
+- Independent QA (`7a5a446`) and Security (`a2b5739`) concluded `APPROVED_WITH_WARNINGS` for that corrected target, closing QA-P7-001/002 and SEC-021. UI/UX's final interaction review and Planner consolidation remain pending.
+- Previous candidate `c649a903693d5fedf631d760880b80ed881dc138` was rejected on 2026-11-15. Development corrected `SEC-021` (Public outbound history), `QA-P7-001` (playback-to-recognition interruption), `QA-P7-002` (complete legacy browser regression), `UIUX-P7-POST-001` (Modes reachability/focus/close) and `UIUX-P7-POST-002` (duplicate announcements); only domain reviewers can close them.
+- Planning: `ARCH-2026-11-14-001` reconciled full implementation authorization and the bounded per-turn presentation exception. HOPE retains its original name.
+- Added strict presentation-mode validation and a bounded static server-authored overlay; omitted/Normal mode preserves the existing effective prompt and provider transport/call count.
+- Added separate display/spoken contracts, conservative speech formatting, local turn/attempt identity, cancellation and stale-callback guards, truthful voice state and local playback amplitude.
+- Added five session-local mode axes, prospective privacy/history eligibility, approved-only optional PhraseLibrary with a zero-phrase default, and a public-safe SelfKnowledge surface. Mode changes do not inject phrases.
+- Corrected Development validation: 60 Python tests, 67 frontend tests, seven synthetic-media Phase 7 Chrome scenarios and the complete legacy Phase 6 browser package passed. Final HIGH performance was 59.91 FPS for 2,500 nodes against the unchanged 45 FPS floor. Compilation, syntax and whitespace checks passed; historical evidence was preserved.
+- Limits: no paid/live provider fidelity test, real microphone, real PostgreSQL, migration, production or Phase 8 work. Production Readiness remains `BLOCKED`; draft [PR #2](https://github.com/mlssnw/HOPE-AI/pull/2) is not merged.
+- The entries below preserve earlier decisions and statuses as historical evidence; their old Phase 7 authorization gates are superseded by the current decision and handoff.
+
 ## Product Vision e Roadmap — decisões de 2026-09-19 a 2026-09-21
 
 - A owner registrou nova direção futura para voice presence, realtime voice, wake word `HOPE`, speaker verification, Core Orb reativo à amplitude local, self knowledge, personalidade ampliada, modos combináveis, memória controlável, organização pessoal, integrações, diagnósticos, auditoria, localização por dispositivo, apps instaláveis e Model Router.

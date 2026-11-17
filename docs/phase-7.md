@@ -5,16 +5,133 @@
 - Planning status: `APPROVED`
 - Phase plan decision: `ARCH-2026-09-20-002`
 - Authorization reconciliation: `ARCH-2026-09-25-001`
+- Completion authorization reconciliation: `ARCH-2026-11-14-001`
 - Approved parent direction: `ARCH-2026-09-20-001` — owner approval on 2026-09-20
 - Implementation authorization: `APPROVED` by the owner on 2026-09-25, recorded by the Coordinator in `cdb40098489d28dd476a2b9c211cd6289a325888`
-- Implementation status: `NOT_STARTED`
-- Feature status: `NOT_STARTED`
-- Phase 7 Functional Commit: `NONE`
+- Implementation status: `READY_FOR_REVIEW` — Development delivered the corrected candidate; independent re-review is pending
+- Feature status: `READY_FOR_REVIEW`
+- Phase 7 Functional Commit: `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`
 - Functional baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2` on `main`
 - Production Readiness: `BLOCKED`
 - Environment boundary: local/controlled
 
-The owner approved this exact plan and authorized its implementation strictly within the boundaries below. Authorization does not mean implementation has started or that any acceptance criterion has passed. The immediate next gate is a Coordinator-routed, pre-implementation UI/UX specification. This record does not start UI/UX, Development, QA, Security, provider evaluation, migration, deployment, production, Phase 8 or any later phase.
+The owner approved this exact plan and authorized implementation strictly within the boundaries below. On 2026-11-14, `ARCH-2026-11-14-001` reconciled the later instruction to complete Phase 7 and authorized the previously presented bounded generation amendment. The partial checkpoint does not establish completion of the Phase 7 acceptance criteria; one complete Functional Commit and independent reviews are still required.
+
+## Development checkpoint — 2026-11-14
+
+- Partial functional checkpoint: `2647794ea806b20117c7cce531602911da98ca97`. It prevents silent TTS truncation by rejecting speech over the existing 5,000-code-point limit before a request; the complete displayed answer remains available through the existing chat path. This is not the complete Phase 7 Functional Commit.
+- Development validation on the worktree: 38 frontend tests and 45 Python tests passed; Python reported one Starlette/TestClient deprecation warning. Python compilation and JavaScript syntax checks passed. These results include the other uncommitted worktree changes and are not an independent review of the checkpoint commit.
+- The browser harness was not rerun because it overwrites existing modified Phase 6 evidence. No browser, accessibility or visual-review result is claimed for this checkpoint.
+- The owner directed that the product remain HOPE. Identity restoration was applied only in the working tree and is not part of the checkpoint commit. An existing internal database filename, `kelex_local.db`, remains referenced to avoid disconnecting existing data; the file and its contents were not changed or queried.
+- Other preexisting worktree changes, including UI/runtime changes and historical evidence, remain uncommitted and are not adopted by this checkpoint. The Coordinator's handoff changes remain separately owned.
+- This checkpoint alone did not authorize the generation amendment or mark the phase `READY_FOR_REVIEW`. The later owner authorization is recorded separately in `ARCH-2026-11-14-001`; it does not convert this partial checkpoint into a complete candidate.
+
+## Current completion authorization — 2026-11-14
+
+- Active Planner decision: [`ARCH-2026-11-14-001`](reviews/architecture-latest.md#current-decision-and-authorization-source).
+- The owner authorized completion of Phase 7 including the exact one-field/one-section generation amendment previously presented in `ARCH-2026-11-06-001`. No repeat owner approval is required for that bounded implementation.
+- Development may proceed after the documentation-only reconciliation commit. The complete Phase 7 Functional Commit remains `NONE` until Development delivers one exact candidate.
+- The complete UI/UX specification is `APPROVED`. Only exact `P7-PHRASE-006` through `P7-PHRASE-018` are approved for implementation; `P7-PHRASE-021` through `P7-PHRASE-028` remain pending, excluded and non-blocking.
+- Required post-implementation reviews on the same future hash are QA `YES`, Security `YES` and UI/UX `YES`. Database remains `NO` only while implementation has no persistence, query, schema or database behavior.
+- Production Readiness remains `BLOCKED`. This authorization does not start Phase 8, change HOPE identity, accept HIGH/CRITICAL risk, authorize a paid/provider test, alter infrastructure or permit deployment.
+
+## Development completion — 2026-11-14
+
+- Status: `SUPERSEDED_BY_REVIEW_CORRECTION`; Development did not approve the phase.
+- Original complete Functional Commit: `c649a903693d5fedf631d760880b80ed881dc138`.
+- Functional sequence: `744bec0` adds the bounded generation presentation contract; `4b91818` completes the local conversational-presence package and Phase 7 browser evidence; `c649a90` closes the explicit public homage-boundary evidence. This was the complete target for the original delivery; current reviewers must use the corrected Functional Commit above.
+- Backend: exact `PresentationMode` enum validation on existing `POST /api/chat`; omitted/`NORMAL` preserves the prior effective prompt; each non-default value appends one static server-owned `[TURN PRESENTATION]` section under 1,000 Unicode characters. Provider endpoint, JSON keys, model, `max_tokens=1400`, call count and response schema remain unchanged.
+- Local response and voice contracts: separate canonical `DisplayResponse` and conservative `SpokenResponse`; no unsafe truncation; session/turn/attempt/response-version guards; correlated state transitions; distinct stop/cancel; synthetic/local playback amplitude only; uncorrelated realtime AI state cannot control the current local turn.
+- Modes and privacy: five session-local axes with explicit controls only; no natural-language parser and no mode persistence. `PRIVATE` and `PUBLIC` fail memory closed for new turns, `PRIVATE` keeps both sides of that turn out of later local-history writes, `SILENT` prevents TTS, and prior stored history remains intact.
+- Personality surfaces: exact approved phrase records `P7-PHRASE-006` through `P7-PHRASE-018` only, guarded by trusted evidence, cooldowns, suppressions and a null default. Mode changes perform no phrase lookup. Public `SelfKnowledge` is a versioned allowlist outside the core prompt, derives availability from runtime signals, distinguishes `IMPLEMENTED`, `PARTIAL`, `PLANNED` and `UNAVAILABLE`, and records the original/non-imitative homage boundary.
+- Interface: accessible Modes popover/bottom sheet, resolved restriction summary, explicit play/stop controls, truthful status text, Escape priority, microphone/TTS fallbacks, responsive/reduced-motion behavior and Core Orb voice level derived only from current local playback. The complete displayed response remains visible when speech is silent, stopped, unavailable or fails.
+
+### Files changed
+
+- Backend: `backend/models.py`, `backend/ai/presentation.py`, `backend/ai/prompts.py`, `backend/ai/orchestrator.py`, `backend/services.py`.
+- Frontend contracts: `response-presentation.js`, `turn-manager.js`, `turn-request.js`, `session-history.js`, `voice-state.js`, `voice-manager.js`, `voice-level.js`, `modes.js`, `mode-controller.js`, `phrase-library.js`, `self-knowledge.js`.
+- Frontend integration: `index.html`, `chat.js`, `voice.js`, `ui.js`, `presentation-state.js`, Memory Globe controller/renderer and `main.css`.
+- Tests and evidence: focused Python/frontend tests, disposable browser harness, synthetic PCM fixture and `docs/evidence/phase-7/`.
+
+### Validation executed
+
+- Python: `60 passed`; one known Starlette/TestClient deprecation warning.
+- Frontend: `62 passed` in the final complete suite.
+- Browser: five Phase 7 scenarios passed in Chrome `157.0.8103.51` using a disposable FastAPI harness, synthetic PCM/fake playback and fake recognition. Coverage includes all five mode axes, delayed private response/history restoration, Silent/TTS suppression, TTS and autoplay failure/retry, cancel/stop/stale races, Escape, local amplitude/reset, no WebGL, reduced motion, 130% text and viewports `320x568`, `390x844`, `768x1024`, `1024x768`, `1280x720`, `1440x900` and `1920x1080`.
+- Syntax and scope: Python `compileall`, JavaScript `node --check`, `git diff --check` and changed-path inspection passed. No migration, schema, query, database, environment, dependency or provider path changed.
+
+### Evidence mapping
+
+| Contract | Evidence |
+|---|---|
+| `UIUX-P7-001`–`007` | formatter/voice-manager/state tests; voice failure, retry, recognition, Escape, cancel and stale browser scenarios |
+| `UIUX-P7-008`–`009`, `013` | mode/request/history tests; delayed Private/Public/Silent browser request and storage assertions |
+| `UIUX-P7-010`–`012`, `020` | synthetic PCM tests; local amplitude browser evidence; reduced motion, text scaling, all viewports and no-WebGL evidence |
+| `UIUX-P7-014`–`018` | exact allowlist, trusted context, cooldown, suppression and null-default tests; no phrase consumer on mode change |
+| `UIUX-P7-019` | public manifest allowlist/status/homage tests and runtime capability surface |
+| `UIUX-P7-021` | changed-path inspection plus unchanged provider-shape/call-count tests and zero real provider/database activity |
+
+### Environmental limits
+
+- No real microphone, paid provider, real PostgreSQL, migration, infrastructure, deployment or production action was used.
+- Browser media fidelity is limited to synthetic PCM, fake recognition and fake playback events; provider-specific style and audio quality were not evaluated.
+- Python dependencies were borrowed from the existing isolated development virtual environment while every command ran with this worktree as the current directory and external-service variables cleared.
+- The legacy Phase 6 browser runner was not executed because several historical scripts hard-code the Phase 6 evidence directory. Phase 6 evidence was preserved; regression coverage came from the complete Python/frontend suites and the new non-overwriting Phase 7 harness.
+- Production Readiness remains `BLOCKED`; Phase 8 is not started.
+
+## Review correction delivery — 2026-11-16
+
+- Status: `READY_FOR_REVIEW`; Development does not approve the phase.
+- Corrected Functional Commit: `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`.
+- Corrected baseline: rejected candidate `c649a903693d5fedf631d760880b80ed881dc138`; coordination baseline `2b81852` introduced no functional delta.
+- Scope remained limited to `SEC-021`, `QA-P7-001`, `QA-P7-002`, `UIUX-P7-POST-001` and `UIUX-P7-POST-002`. No phrase, provider, endpoint, backend request/response field, persistence format, database path or Phase 8 capability changed.
+
+### Corrections
+
+| Finding | Correction and regression evidence |
+|---|---|
+| `SEC-021` | Session history now carries ephemeral per-record trust/audience/memory-derivation provenance. Public requests send only explicitly `PUBLIC_SAFE` records; restored legacy records, private turns, memory-derived records, delayed private responses and downstream private responses fail closed. Visible history, persisted message shape and the existing chat wire contract remain unchanged. Unit and browser regressions cover legacy restore, public/private combinations and delayed mode changes. |
+| `QA-P7-001` | Starting recognition synchronously stops current playback before creating the new recognition reference. Playback, analyser nodes and object URLs are released; amplitude resets to zero; Listening still waits for the real recognition callback; late playback callbacks and repeated start/stop remain inert. Synthetic browser evidence checks pause, disconnect, zero level and stale events. |
+| `QA-P7-002` | Phase 6 browser expectations now enforce the Phase 7 contracts: uncorrelated realtime AI state is ignored, and history-ineligible messages never become persistable later. The intentional TTS failure fixture is explicit, and all Phase 6 evidence paths accept a disposable override. The runner creates and removes its own system-temporary evidence directory by default. |
+| `UIUX-P7-POST-001` | Modes now has a visible 44 px close control, focus entry on the named heading, focus return to the trigger, bounded vertical scrolling, a sticky heading/close row and reachability for all five groups on mobile, short-height, 130% text and 200% reflow-equivalent layouts. Escape remains supported without being the only close path. |
+| `UIUX-P7-POST-002` | Routine updates target only the polite region; actionable failures target only the visible alert region. Generic `ERROR` state copy is no longer announced before the actionable detail, and duplicate same-state transitions are rejected. Unit and browser mutation evidence verify one non-empty announcement path. |
+
+### Validation executed
+
+- Python: `60 passed`; one known Starlette/TestClient deprecation warning.
+- Frontend: `67 passed`.
+- Phase 7 browser package: seven Chrome scenarios passed with synthetic audio/fake recognition, covering public-history isolation, delayed private response, playback-to-recognition interruption, stale callbacks, one-channel failure announcements, Modes focus/touch/scroll behavior, no-WebGL, reduced motion and required viewport/text reflow.
+- Complete Phase 6 browser package: passed all compositing, responsive, realtime, performance, accessibility, memory state, fallback, voice, history, destructive confirmation and relation-removal scenarios. Final HIGH measurement: `59.91 FPS` with 2,500 rendered nodes, preserving the `45 FPS` floor.
+- Python `compileall`, JavaScript syntax checks, `git diff --check`, staged-path inspection and disposable-output cleanup passed.
+
+### Environmental limits
+
+- No real microphone, physical touch device, manual screen reader, paid provider, real PostgreSQL, migration, credential, infrastructure, deployment or production action was used.
+- Browser voice evidence uses synthetic PCM, fake recognition and fake playback; it does not establish provider-specific voice quality or physical-device fidelity.
+- Python dependencies were borrowed from the existing isolated Phase 7 development virtual environment while commands ran with this worktree as the current directory and external-service variables cleared.
+- Browser evidence was written only to disposable temporary directories and removed after validation; frozen Phase 6/Phase 7 historical evidence was not overwritten.
+- Production Readiness remains `BLOCKED`; Phase 8 is not started.
+
+### Required re-reviews
+
+- QA: `YES` — all five findings affect browser, history, voice and regression contracts.
+- Security: `YES` — `SEC-021` changes the Public outbound-history trust boundary.
+- UI/UX: `YES` — Modes interaction/focus/reflow and live-region behavior changed.
+- Database: `NO` — no persistence format, query, schema, migration or database behavior changed.
+
+## Historical generation-boundary gate — 2026-11-06
+
+This section preserves the earlier blocker as historical evidence. Its approval gate was narrowly superseded by `ARCH-2026-11-14-001`; its technical boundary remains the basis of the active contract below.
+
+- Planner decision: [`ARCH-2026-11-06-001`](reviews/architecture-latest.md#ruling).
+- Existing plan/implementation authorization remains approved within the original scope; no Phase 7 Functional Commit exists.
+- The complete UI/UX specification and first exact phrase package are now persisted. Only `P7-PHRASE-006` through `P7-PHRASE-018` are approved. `P7-PHRASE-021` through `P7-PHRASE-028` remain pending, excluded and non-blocking.
+- New technical blocker: selected answer-native style requires a generation signal, but this plan prohibits preference transmission, system-prompt changes and backend API expansion. Reusing an existing personality state does not resolve that prohibition.
+- Historical status at that time: full Phase 7 implementation/delivery `BLOCKED`; generation amendment `WAITING_FOR_APPROVAL`; escalation `USER`.
+- The Planner proposed exactly one optional `presentation_mode` enum on existing `/api/chat` and one bounded static server-authored presentation section in the existing system text. That exact contract is now authorized by `ARCH-2026-11-14-001`; it was not authorized when this historical gate was written.
+- Independent authorized local contracts may continue. The ruling explicitly bounds local event correlation, rejection of uncorrelated remote state, safe overlength speech behavior and prevention of later persistence of private turns.
+- No frontend phrase wrapper, hidden user-message instruction or canonical-answer post-processing may substitute for the required generation behavior.
+- This dated gate no longer controls active routing. Coordinator-owned operational status is reconciled separately.
 
 ## Objective
 
@@ -27,7 +144,7 @@ Phase 6 provides chat, browser dictation, optional TTS and basic voice states, b
 ## Current State
 
 - Phase 6 is complete and integrated into `main` through `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`.
-- Phase 7 has no Functional Commit and no functional implementation.
+- Phase 7 has no complete Functional Commit; the bounded TTS checkpoint is recorded above.
 - The displayed response is currently also the source used for speech.
 - `frontend/js/voice.js` uses the Web Speech API for dictation; the backend has optional TTS coupled to ElevenLabs.
 - Cancellation and protection against stale audio exist in the current flow but do not form a reusable turn contract.
@@ -40,7 +157,7 @@ Phase 6 provides chat, browser dictation, optional TTS and basic voice states, b
 
 - Preserve `SINGLE_USER`, cloud-first and provider-agnostic direction without anticipating Phase 8.
 - Use only capabilities and flows already available in the local/controlled environment.
-- Add no new transmission of audio, transcript, profile, preference or telemetry.
+- Add no new transmission of audio, transcript, profile or telemetry. The sole preference-transmission exception is the optional bounded `presentation_mode` field defined below.
 - Change no schema, migration, real PostgreSQL instance, secret, credential or cost.
 - Do not present wake word, speaker verification, streaming, cross-device behavior or integrations as functional.
 - Displayed text remains canonical. A spoken form must never omit safety, uncertainty, confirmation requirements or material consequences.
@@ -72,7 +189,7 @@ Phase 6 provides chat, browser dictation, optional TTS and basic voice states, b
 
 ## Recommendation
 
-Adopt Option B. Phase 7 introduces only the local presentation/orchestration layer and preserves the current transports without expanding them. Any need for a new provider, audio endpoint, storage, profile, device or external effect invalidates the approved scope and returns to the Planner.
+Adopt Option B. Phase 7 introduces the local presentation/orchestration layer and preserves the current endpoints and provider transport. The only authorized request expansion is the optional `presentation_mode` field on existing `POST /api/chat`. Any need for another field, provider, audio endpoint, storage, profile, device or external effect invalidates the approved scope and returns to the Planner.
 
 ## Rationale
 
@@ -88,6 +205,7 @@ Separating canonical response, spoken representation and turn state solves an ex
 - Provider-neutral prosody and pronunciation contracts; no provider-specific SSML outside a future adapter.
 - Original `PhraseLibrary` with categories, context, cooldown and lower precedence than substantive content, subject to the individual phrase-approval gate.
 - Deterministic resolution of combinable modes across independent axes.
+- One optional per-turn `presentation_mode` selector and one bounded server-authored generation overlay for non-default style values.
 - Static, versioned public-safe `SelfKnowledge` manifest.
 - Local and ephemeral amplitude from audio HOPE is already playing, bounded to `voiceLevel 0.0..1.0`.
 - Accessible states, controls and messages compatible with the current visual contracts.
@@ -96,7 +214,7 @@ Separating canonical response, spoken representation and turn state solves an ex
 ## Non-goals
 
 - New cloud STT/TTS, provider replacement or audio streaming.
-- New endpoint, external payload, provider fallback or external-service capability negotiation.
+- New endpoint, response schema, header, WebSocket contract, provider payload shape, provider fallback or external-service capability negotiation. The sole request-body exception is the optional `presentation_mode` enum on existing `POST /api/chat`.
 - Foreground or background wake word.
 - Speaker verification, voice profile, biometrics or retention of audio/transcripts.
 - Cross-device sessions, device registration, location or native clients.
@@ -105,7 +223,7 @@ Separating canonical response, spoken representation and turn state solves an ex
 - Provider selection, license, credential, secret, budget or cost.
 - Owner authentication, `PermissionManager` or anticipation of Phase 8.
 - Deployment, remote access, production or acceptance of HIGH/CRITICAL risk.
-- Changes to the core personality rules, system prompt or `AGENTS.md`.
+- Changes to core personality/safety rules, existing prompt sections/order or `AGENTS.md`. The sole system-text exception is the static per-turn presentation section defined below.
 - Phase 8 or any later phase.
 
 ## Dependencies
@@ -114,8 +232,9 @@ Separating canonical response, spoken representation and turn state solves an ex
 - `ARCH-2026-09-20-001`, `docs/product-vision.md` and `docs/roadmap.md` approved by the owner.
 - Phase 7 plan and implementation authorization granted by the owner and reconciled by `ARCH-2026-09-25-001`.
 - Current state, accessibility, reduced-motion and truthfulness contracts in `docs/design/`.
-- Complete pre-implementation UI/UX specification before Development is routed.
-- Individual owner decision for every exact phrase intended for implementation.
+- Complete pre-implementation UI/UX specification: satisfied and `APPROVED`.
+- Individual owner decision for every exact phrase intended for implementation: satisfied for `P7-PHRASE-006` through `P7-PHRASE-018`; pending `021` through `028` are excluded.
+- Owner authorization for the bounded generation amendment: satisfied by `ARCH-2026-11-14-001`.
 
 ## Architecture
 
@@ -138,6 +257,8 @@ TurnManager ───────────────► VoiceManager ──
      └── stale-event guard                   local amplitude ◄┘
 
 ModeResolver ──► presentation/privacy/output policy
+     │
+     └── explicit style snapshot ──► static turn overlay ──► existing chat generation
 SelfKnowledgeManifest ──► public-safe identity and capability claims
 PhraseLibrary ──► approved, original, optional surface language only
 ```
@@ -223,7 +344,7 @@ Gate rules:
 5. Development may implement only phrases whose exact owner decision is traceable in the UI/UX specification or its approval record.
 6. If the owner edits a proposal, the edited exact text is a new proposal and remains pending until explicitly approved.
 7. Proposed phrases must be natural, non-robotic and consistent with HOPE's original approved personality. They must not imitate a referenced character or weaken safety, truth or precision.
-8. This plan creates no phrase and grants no phrase approval.
+8. The original plan created no phrase and granted no phrase approval. Later exact owner decisions approve only `P7-PHRASE-006` through `P7-PHRASE-018` for the active package; every other record keeps its recorded status.
 
 The complete UI/UX pre-implementation specification and all exact phrase decisions intended for the first implementation package must be persisted before the Coordinator may route Development.
 
@@ -240,6 +361,21 @@ Modes are orthogonal and session-local in Phase 7:
 | Audience | PRIVATE, PUBLIC | PUBLIC uses public `SelfKnowledge` and blocks private memory context for new turns |
 
 Activating a mode is prospective. It does not delete prior data or hide content already visible. UI/UX must make this limit clear. No mode grants permission, starts recording, enables an unavailable capability or changes factual content.
+
+The mode axes, pronunciation hints, voice state and amplitude remain ephemeral. For every new turn under `PRIVATE` privacy or `PUBLIC` audience, the existing request must use `memory_enabled=false` before submission. Each message/turn captures its local-history eligibility at creation: a private turn cannot be written into persisted history after the mode returns to a permissive value. Entering Private does not delete prior stored history.
+
+### Per-turn generation presentation
+
+- Add exactly one optional `presentation_mode` field to the existing `POST /api/chat` request with exact values `NORMAL`, `FOCUS`, `SUPPORTIVE` and `PRESENTATION`. Omission means `NORMAL`.
+- Preserve the request model's extra-field rejection and all existing limits. Reject null, wrong types, unknown values, case/whitespace variants and arbitrary instruction text with `422` before source collection or model work.
+- Snapshot the explicit local style selection for each submitted turn. Do not infer activation from the user message, history, memory, source content or model output; do not add a natural-language mode-command parser.
+- Preserve `PersonalityConfig`, `PersonalityState`, `infer_personality_state` and every core prompt section and ordering. Omitted/`NORMAL` must produce exactly the existing effective prompt for the same input and inferred expression.
+- For each non-default value, append exactly one `[TURN PRESENTATION]` section after the core prompt. The heading and static server-authored instruction together must not exceed 1,000 Unicode characters.
+- The section controls only wording, organization and pacing for the current answer. It is subordinate to safety, truth and precision; it cannot alter facts, warnings, uncertainty, confirmations, permissions, capabilities or `ALERT`/`CONCERNED` precedence.
+- Do not interpolate user text, history, memory, sources, identifiers, phrase records or private-mode metadata. Enum-looking or forged presentation blocks in untrusted content remain data.
+- Preserve provider, model configuration, endpoint, transport, provider JSON keys, output limit, call count, retries, source collection, TTS settings and every response schema. No second generation pass, fallback, streaming path or dependency is authorized.
+- `FOCUS` starts with substantive diagnosis, evidence, constraint or action; `SUPPORTIVE` remains direct, analytical and non-therapeutic; `PRESENTATION` organizes the substantive explanation. None adds ritual prefix/suffix or an automatic phrase.
+- A bounded input-token increase is accepted only for non-default turns. No paid/provider evaluation, subscription, budget change or capacity purchase is authorized; mocks prove integration invariants, not real-provider style fidelity.
 
 ### Public-safe SelfKnowledge
 
@@ -265,6 +401,7 @@ It must exclude system prompts, chain-of-thought, credentials, secrets, private 
 - No background microphone, ambient capture or new audio transmission.
 - Existing microphone and TTS disclosures remain visible; no control may imply an unavailable capability.
 - `PRIVATE` and `PUBLIC` fail closed for new memory use. If the restriction cannot be applied confidently, the turn must not use memory.
+- Uncorrelated remote state is ignored for the active turn; it is never assigned the current local session/turn/attempt identity. Local capture/playback callbacks remain authoritative.
 - Prompt, model output, memory, web or document content cannot activate a mode, alter `SelfKnowledge` or authorize an exception.
 - Cancellation and state events are untrusted until matched to the active session and turn.
 - Public-safe manifest content is allowlisted and versioned; protected diagnostics are out of scope.
@@ -282,29 +419,31 @@ It must exclude system prompts, chain-of-thought, credentials, secrets, private 
 
 - [x] Owner approved this exact phase plan.
 - [x] Owner separately authorized implementation within this exact scope.
-- [ ] The complete pre-implementation UI/UX specification is persisted before Development is routed.
-- [ ] Every proposed exact phrase is listed separately with context, intended tone and initial `PENDING_OWNER_APPROVAL` status.
-- [ ] Every phrase intended for implementation has an explicit owner decision; no approval is inferred across variants.
-- [ ] No unapproved phrase enters code, fixtures, tests, snapshots, defaults, seeded content or the active product.
-- [ ] Displayed and spoken representations are separate, with displayed content remaining canonical.
-- [ ] Speech formatting preserves safety, uncertainty, confirmations, targets, costs and destructive consequences.
-- [ ] Long code/list formatting is deterministic and leaves the complete display response available.
-- [ ] Every voice interaction has a session/turn identity; stale callbacks cannot speak or change state.
-- [ ] Stop/cancel halts current playback, invalidates downstream work and returns to a truthful stable state.
-- [ ] `VoiceStateManager` transitions satisfy documented precedence and accessible status rules.
-- [ ] Existing voice/provider network behavior is unchanged; no new endpoint, provider, fallback, secret, dependency or external data class is introduced.
-- [ ] Prosody/pronunciation contracts are provider-neutral and contain no provider markup or sensitive profile.
-- [ ] `PhraseLibrary` content is owner-approved, original, natural, non-robotic, non-repetitive and unable to override substantive content.
-- [ ] Explicit homage remains original, single-response and non-imitative; prohibited quote, identity and voice behavior is covered by tests.
-- [ ] Modes combine deterministically, with privacy/output restrictions winning over style.
-- [ ] `PRIVATE`/`PUBLIC` cannot use memory for new turns when the restriction cannot be enforced.
-- [ ] `SelfKnowledge` reports only allowlisted public facts and distinguishes `IMPLEMENTED`, `PARTIAL`, `PLANNED` and unavailable capabilities.
-- [ ] Core Orb amplitude derives only from already-playing local audio, remains ephemeral and resets on stop, end and error.
-- [ ] Keyboard, screen-reader status, reduced motion and stop controls meet existing design contracts.
-- [ ] No code presents wake word, speaker verification, streaming, cross-device, tools, agents or external effects as implemented.
-- [ ] No database, migration, real provider call, paid service, credential, deployment or production change occurs.
+- [x] The complete pre-implementation UI/UX specification is persisted before Development is routed.
+- [x] Every proposed exact phrase is listed separately with context, intended tone and initial `PENDING_OWNER_APPROVAL` status.
+- [x] Every phrase intended for the active package has an explicit owner decision; no approval is inferred across variants. Pending `P7-PHRASE-021` through `P7-PHRASE-028` remain excluded.
+- [x] No unapproved phrase enters code, fixtures, tests, snapshots, defaults, seeded content or the active product.
+- [x] Displayed and spoken representations are separate, with displayed content remaining canonical.
+- [x] Speech formatting preserves safety, uncertainty, confirmations, targets, costs and destructive consequences.
+- [x] Long code/list formatting is deterministic and leaves the complete display response available.
+- [x] Every voice interaction has a session/turn identity; stale callbacks cannot speak or change state.
+- [x] Stop/cancel halts current playback, invalidates downstream work and returns to a truthful stable state.
+- [x] `VoiceStateManager` transitions satisfy documented precedence and accessible status rules.
+- [x] Existing voice/provider network behavior is unchanged; no new endpoint, provider, fallback, secret, dependency or external data class is introduced.
+- [x] Prosody/pronunciation contracts are provider-neutral and contain no provider markup or sensitive profile.
+- [x] `PhraseLibrary` content is owner-approved, original, natural, non-robotic, non-repetitive and unable to override substantive content.
+- [x] Explicit homage remains original, single-response and non-imitative; prohibited quote, identity and voice behavior is covered by tests.
+- [x] Modes combine deterministically, with privacy/output restrictions winning over style.
+- [x] `PRIVATE`/`PUBLIC` cannot use memory for new turns when the restriction cannot be enforced.
+- [x] Omitted/`NORMAL` preserves the existing effective prompt exactly; invalid `presentation_mode` values return `422` before source/model work.
+- [x] Every non-default mode selects only its bounded static `[TURN PRESENTATION]` section while provider shape, output limit and call count remain unchanged.
+- [x] `SelfKnowledge` reports only allowlisted public facts and distinguishes `IMPLEMENTED`, `PARTIAL`, `PLANNED` and unavailable capabilities.
+- [x] Core Orb amplitude derives only from already-playing local audio, remains ephemeral and resets on stop, end and error.
+- [x] Keyboard, screen-reader status, reduced motion and stop controls meet existing design contracts.
+- [x] No code presents wake word, speaker verification, streaming, cross-device, tools, agents or external effects as implemented.
+- [x] No database, migration, real provider call, paid service, credential, deployment or production change occurs.
 - [ ] QA, Security and UI/UX review the same future Functional Commit; Database remains `N/A` only if the no-persistence boundary holds.
-- [ ] Production Readiness remains `BLOCKED`.
+- [x] Production Readiness remains `BLOCKED`.
 
 ## Test Strategy
 
@@ -318,7 +457,10 @@ It must exclude system prompts, chain-of-thought, credentials, secrets, private 
 - Frontend integration tests with fake recognition/audio; no microphone, provider or paid network dependency.
 - Browser tests for start/stop/cancel, overlapping turns, unavailable voice, keyboard, focus, accessible status and reduced motion.
 - Security tests for prompt/memory attempts to activate modes, inject `SelfKnowledge`, bypass phrase/quote rules or revive cancelled audio.
-- Static diff checks proving no backend API expansion, schema/migration, environment variable, credential or provider dependency.
+- Request-contract tests for exact enum validation, `422` failures and proof that no field other than `presentation_mode` expands the backend API.
+- Prompt tests for exact omitted/`NORMAL` preservation, one bounded static overlay per non-default mode, hostile-content isolation and unchanged core ordering.
+- Provider-boundary tests for unchanged JSON keys, model, output limit and call count; mocks must not be reported as real-provider style evidence.
+- Static diff checks proving no other backend API expansion, schema/migration, environment variable, credential or provider dependency.
 - Phase 6 regression suites and an evidence package tied to one exact future Functional Commit.
 
 ## Required Reviews
@@ -347,7 +489,7 @@ Primary mitigations are pure functions, allowlists, exact approval records, turn
 
 ## Rollout and Rollback
 
-- Future rollout is local/controlled only and starts only after the Coordinator routes Development following the UI/UX and phrase gates.
+- Future rollout is local/controlled only and starts only after the Coordinator routes Development following this authorization reconciliation.
 - Development produces one reviewable Functional Commit.
 - Integration should be incremental: pure contracts, state/turns, formatter, modes/`SelfKnowledge`, and finally local amplitude.
 - Canonical display and chat remain operational when speech is unavailable.
@@ -357,14 +499,13 @@ Primary mitigations are pure functions, allowlists, exact approval records, turn
 
 ## Implementation Phase
 
-1. `COMPLETE` — owner approved the Phase 7 plan and authorized implementation within its boundaries.
-2. `COMPLETE` — Planner reconciles authorization and the individual phrase gate in canonical planning records.
-3. `NEXT, NOT_STARTED` — Coordinator routes UI/UX to create the complete pre-implementation specification and individually present exact phrase proposals.
-4. `OWNER GATE` — owner approves, edits or rejects every proposed exact phrase independently.
-5. `BLOCKED UNTIL STEPS 3–4` — Coordinator may route Development only after the persisted UI/UX gate and exact phrase decisions.
-6. Development implements the smallest approved package and creates one Phase 7 Functional Commit.
-7. QA, Security and UI/UX review that same hash; Database remains `N/A` only while the no-persistence boundary holds.
-8. Planner consolidates reviews without starting Phase 8 automatically.
+1. `COMPLETE` — owner approved the Phase 7 plan and authorized implementation within its original boundaries.
+2. `COMPLETE` — UI/UX persisted the full specification and exact phrase register; `P7-PHRASE-006` through `P7-PHRASE-018` form the approved active package.
+3. `COMPLETE` — owner authorized the bounded one-field/one-section generation amendment; Planner reconciled it as `ARCH-2026-11-14-001`.
+4. `NEXT` — Coordinator normalizes the operational panel and routes Development on `codex/phase-7-completion`.
+5. Development completes the smallest approved package, validates without paid calls or real data and creates one exact Phase 7 Functional Commit.
+6. QA, Security and UI/UX review that same hash; Database remains `N/A` only while the no-persistence/no-query boundary holds.
+7. Planner consolidates reviews without starting Phase 8 automatically.
 
 ## Deferred Items
 
@@ -380,8 +521,8 @@ Primary mitigations are pure functions, allowlists, exact approval records, turn
 
 ## Future Authorization Requirements
 
-- The 2026-09-25 authorization covers only this Phase 7 scope.
-- Exact phrase approval remains a separate per-item owner gate and is never implied by phase authorization.
+- The 2026-09-25 authorization plus `ARCH-2026-11-14-001` cover only this Phase 7 scope and the exact bounded generation exception.
+- Exact phrase approval remains a separate per-item owner gate and is never implied by phase authorization. The active package is limited to `P7-PHRASE-006` through `P7-PHRASE-018`.
 - Any new provider, persistent data, credential, cost, migration, remote access or production change requires its own decision.
 - Planner, reviewers and Coordinator cannot accept HIGH/CRITICAL risk.
 - Phase 8 and every later phase require separate planning and authorization.
@@ -389,7 +530,8 @@ Primary mitigations are pure functions, allowlists, exact approval records, turn
 ## Coordinator Handoff
 
 - Recommended next role: `COORDINATOR`.
-- Recommended route: send the pre-implementation specification task to `UI/UX` against baseline `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`.
-- UI/UX task: define the complete Phase 7 experience and present every exact phrase proposal separately with context, intended tone and `PENDING_OWNER_APPROVAL`.
-- Do not route yet to: Development, QA, Security, Database, provider evaluation, cloud, deployment, production or Phase 8.
-- Preserve: Phase 7 non-goals, Production Readiness `BLOCKED`, no Functional Commit, no provider/database expansion and every reviewer-owned historical finding.
+- Recommended route: normalize the Coordinator-owned panel and route `Development` against `ARCH-2026-11-14-001` on `codex/phase-7-completion`.
+- Development task: complete the entire approved Phase 7 package, preserve the partial checkpoint as history, produce one exact Functional Commit and report `READY_FOR_REVIEW` with proportional evidence.
+- After that candidate exists, route QA, Security and UI/UX against the same hash. Route Database only if Development introduces an actual persistence/query/schema/database delta.
+- Do not route provider evaluation, paid testing, cloud, deployment, production or Phase 8.
+- Preserve: HOPE identity, exact phrase boundary, Phase 7 non-goals, Production Readiness `BLOCKED`, current complete Functional Commit `NONE` until Development creates it, and every reviewer-owned historical finding.

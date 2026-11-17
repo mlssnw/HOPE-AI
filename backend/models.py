@@ -1,7 +1,15 @@
 from __future__ import annotations
 
+from enum import StrEnum
 from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+
+class PresentationMode(StrEnum):
+    NORMAL = "NORMAL"
+    FOCUS = "FOCUS"
+    SUPPORTIVE = "SUPPORTIVE"
+    PRESENTATION = "PRESENTATION"
 
 
 class HistoryMessage(BaseModel):
@@ -22,6 +30,7 @@ class ChatRequest(BaseModel):
     use_web: bool = False
     use_vault: bool = False
     memory_enabled: bool = False
+    presentation_mode: PresentationMode = PresentationMode.NORMAL
 
     @field_validator("message")
     @classmethod

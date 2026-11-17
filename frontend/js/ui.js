@@ -1,4 +1,5 @@
 import { renderMarkdown, renderPlainText, renderSources } from "./renderer.js";
+import { announcementTarget } from "./announcement-policy.js";
 
 export const elements = {
   form: document.querySelector("#chat-form"), prompt: document.querySelector("#prompt"),
@@ -9,7 +10,8 @@ export const elements = {
   voice: document.querySelector("#voice-toggle"), web: document.querySelector("#use-web"),
   vault: document.querySelector("#use-vault"), memory: document.querySelector("#memory-enabled"),
   persist: document.querySelector("#persist-history"),
-  live: document.querySelector("#live-status"), clock: document.querySelector("#clock"),
+  live: document.querySelector("#live-status"), urgent: document.querySelector("#urgent-status"),
+  clock: document.querySelector("#clock"),
 };
 
 export function addMessage(role, text) {
@@ -42,14 +44,27 @@ export function showSources(sources, article, memoryIds = []) {
   }
   panel.hidden=false;article.append(panel);
 }
+export function addSpeechAction(article, { enabled, onPlay }) {
+  if (!article) return null;
+  const actions = document.createElement("div"); actions.className = "message-actions";
+  const button = document.createElement("button"); button.type = "button";
+  button.className = "message-speech"; button.textContent = "Ouvir resposta";
+  button.disabled = !enabled;
+  button.title = enabled ? "Reproduzir esta resposta" : "Leitura em voz indisponível para este turno";
+  button.addEventListener("click", onPlay);
+  actions.append(button); article.append(actions);
+  return button;
+}
 export function setBusy(busy) {
   elements.send.disabled = busy; elements.prompt.disabled = busy; elements.cancel.hidden = !busy;
   elements.web.disabled = busy; elements.vault.disabled = busy; elements.memory.disabled = busy;
   elements.persist.disabled = busy;
 }
 export function announce(message, error = false) {
-  elements.live.textContent = message; elements.live.classList.toggle("error", error);
-  document.querySelector("#urgent-status").textContent = error ? message : "";
+  const target = announcementTarget(message, error);
+  elements.live.textContent = target.polite;
+  elements.live.classList.toggle("error", false);
+  elements.urgent.textContent = target.alert;
 }
 export function setServiceStatus(id, configured, available = null) {
   const element = document.querySelector(`#${id}`);

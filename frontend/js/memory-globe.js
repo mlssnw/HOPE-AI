@@ -102,7 +102,7 @@ export class MemoryGlobeRenderer {
     this.program = createProgram(this.gl); this.layout = layoutGraph({});
     this.mode = "orbital"; this.quality = "high"; this.selectedId = null;
     this.highlightedIds = new Set(); this.hoveredId = null; this.drag = null;
-    this.graphSnapshot = normalizeGraph({}); this.transitions = new Map(); this.aiState = "idle";
+    this.graphSnapshot = normalizeGraph({}); this.transitions = new Map(); this.aiState = "idle"; this.voiceLevel = 0;
     this.camera = { ...DEFAULT_CAMERA }; this.cameraTransition = null;
     this.motionPreference = matchMedia("(prefers-reduced-motion: reduce)");
     this.reducedMotion = this.motionPreference.matches; this.lastInteraction = 0; this.pointers = new Map();
@@ -231,6 +231,7 @@ export class MemoryGlobeRenderer {
     });
   }
   setAiState(state) { this.aiState = state === "listening" ? state : normalizeAiState(state); }
+  setVoiceLevel(value) { this.voiceLevel = clamp(Number(value) || 0, 0, 1); }
   setMode(mode) { this.mode = ["orbital", "cluster", "memory"].includes(mode) ? mode : "orbital"; this.sceneCache = null; this.interact(); }
   setSelected(id) { this.selectedId = this.layout.nodeMap.has(id) ? id : null; if (!this.selectedId && this.mode === "memory") this.mode = "orbital"; this.sceneCache = null; }
   setHighlights(ids) { this.highlightedIds = new Set(ids || []); this.sceneCache = null; }
@@ -326,7 +327,8 @@ export class MemoryGlobeRenderer {
     const simple = this.reducedMotion || this.quality === "low";
     const motion = simple ? 0 : time * .00035;
     const state = this.aiState;
-    const activity = { thinking: 1.15, searching: 1.10, speaking: 1.12, listening: 1.04, error: .88 }[state] || 1;
+    const localVoice = !simple && state === "speaking" ? this.voiceLevel * .24 : 0;
+    const activity = ({ thinking: 1.15, searching: 1.10, speaking: 1.12, listening: 1.04, error: .88 }[state] || 1) + localVoice;
     const birthPulse = !simple && [...this.transitions.values()].some(item => item.kind === "birth" && time - item.startedAt < 180) ? 1.08 : 1;
     const pulse = activity * birthPulse * (simple ? 1 : 1 + Math.sin(motion * (state === "speaking" ? 7 : 2)) * .035);
     const tint = state === "error" ? [1, .30, .35] : [1, .69, .24];

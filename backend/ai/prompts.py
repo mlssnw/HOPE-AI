@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+from ..models import PresentationMode
 from .personality import PersonalityConfig, PersonalityState, personality_instructions
+from .presentation import presentation_section
 
 
 def build_system_prompt(
     config: PersonalityConfig | None = None,
     state: PersonalityState = PersonalityState.NEUTRAL,
+    *,
+    presentation_mode: PresentationMode = PresentationMode.NORMAL,
 ) -> str:
     sections = personality_instructions(config or PersonalityConfig(), state)
     sections.update(
@@ -48,4 +52,6 @@ def build_system_prompt(
         "TOOL RULES",
         "UNCERTAINTY",
     )
-    return "\n\n".join(f"[{name}]\n{sections[name]}" for name in order)
+    prompt = "\n\n".join(f"[{name}]\n{sections[name]}" for name in order)
+    turn_section = presentation_section(presentation_mode)
+    return f"{prompt}\n\n{turn_section}" if turn_section else prompt

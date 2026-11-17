@@ -4,14 +4,14 @@ import { initialQuality, operationalState, displayedState } from '../../frontend
 test('quality defaults never opt into ULTRA',()=>{
   assert.deepEqual([320,680,681,1279,1280,1920].map(initialQuality),['low','low','medium','medium','high','high']);
 });
-test('cancel ignores stale remote processing until the next local request',()=>{
+test('uncorrelated remote state never controls the current local turn',()=>{
   let state={chat:'thinking',voice:'idle',remote:'searching'};
   state=operationalState(state,{source:'chat',state:'cancelled'});
   state=operationalState(state,{source:'realtime',state:'thinking'});
   assert.equal(displayedState(state),'idle');
   state=operationalState(state,{source:'chat',state:'started'});
   state=operationalState(state,{source:'realtime',state:'searching'});
-  assert.equal(displayedState(state),'searching');
+  assert.equal(displayedState(state),'thinking');
 });
 test('voice states require actual voice events; unsupported states are not presented',()=>{
   let state={chat:'idle',voice:'idle',remote:'idle'};

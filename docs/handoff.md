@@ -7,14 +7,14 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 ## Current Phase
 
 - Phase: 7 — Conversational Presence Foundation
-- Phase status: IN_PROGRESS — implementation authorized and Planner reconciliation complete; the pre-implementation UI/UX specification is the active gate
-- Feature status: NOT_STARTED — no Phase 7 functional implementation or Functional Commit exists yet
+- Phase status: WAITING_FOR_REVIEW — all required technical reviewers approved the corrected target with warnings; final Planner consolidation is pending
+- Feature status: READY_FOR_REVIEW — matching QA, Security and UI/UX verdicts are persisted for `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`; phase consolidation remains separate
 - Production readiness: BLOCKED — Phase 7 does not authorize public deployment or resolve the inherited production blockers
 - Baseline: `ce2bde4` on `main`, with Phase 6 complete and integrated through PR #1
 - Runtime API version: `6.0.0-phase.5` — frozen legacy metadata from the approved Phase 6 artifact; Phase 7 has not changed it
-- Authorized scope: only the contracts and local deterministic behavior defined in [`docs/phase-7.md`](phase-7.md)
-- Phrase approval gate: every exact PhraseLibrary phrase must receive individual owner approval before it is added to code, fixtures or active product content
-- Working tree boundary: preserve the pre-existing untracked `Hope dashboard` and `hope-linkedin-hero*` assets outside project commits
+- Authorized scope: the complete contracts in [`docs/phase-7.md`](phase-7.md), including only the exact presentation-mode exception reconciled in `11eb4f7`
+- Phrase approval gate: complete for the 13-record first package (`P7-PHRASE-006` through `P7-PHRASE-018`); every additional exact phrase still requires individual owner approval before it enters code, fixtures or active product content
+- Working tree boundary: implement on `codex/phase-7-completion` in the isolated completion worktree; preserve main's pre-existing untracked assets and the other worktree's uncommitted UI/runtime/data changes without importing them
 - Database boundary: no schema, migration, persistence or real-database operation is authorized in Phase 7
 
 ## User Strategic Decision
@@ -91,55 +91,56 @@ Required Reviews — Integration Candidate:
 
 ## Current Functional Commit
 
-- Commit: NONE — Phase 7 implementation has not started
+- Complete Phase 7 correction commit: `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`
+- Documentation/evidence record: `5f125a04e989274e3d90cc7a69876cbb582c9526`; no functional delta from the target
+- Previous rejected candidate: `c649a903693d5fedf631d760880b80ed881dc138`; its reports remain historical evidence, not verdicts on the new target
+- Latest partial functional checkpoint: `2647794ea806b20117c7cce531602911da98ca97` — overlength TTS rejection, not complete Phase 7
 - Phase: 7
 - Target baseline: `ce2bde4` on `main`
 - Previous phase evidence: Phase 6 implementation `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`, isolated test correction `4d76f2433363a47a9d8fe29fef337de1dc79ac50`, integrated through `ce2bde4`
-- Status: NOT_STARTED — UI/UX pre-implementation specification and owner approval of every exact PhraseLibrary phrase precede Development
+- Status: READY_FOR_REVIEW — correction delivery is persisted; the approved specification, phrase gate and generation boundary remain binding
 
 ## Review Matrix
 
 | Work | Required | Status | Commit |
 |---|---|---|---|
-| DEV | YES | NOT_STARTED | — |
-| QA | YES | NOT_STARTED | — |
+| DEV | YES | READY_FOR_REVIEW | `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5` |
+| QA | YES | APPROVED_WITH_WARNINGS | `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5` |
 | DATABASE | NO | N/A | — |
-| SECURITY | YES | NOT_STARTED | — |
-| UI/UX | YES | IN_PROGRESS | baseline `ce2bde4` |
-| PLANNER | YES | APPROVED | `bcd0a05da9cc8a8e8efd301103265470c0a21982` |
+| SECURITY | YES | APPROVED_WITH_WARNINGS | `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5` |
+| UI/UX | YES | APPROVED_WITH_WARNINGS — POST-IMPLEMENTATION | `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5` |
+| PLANNER | YES | WAITING_FOR_REVIEW — FINAL CONSOLIDATION | `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`; planning approval `11eb4f7` preserved |
 
 ## Development
 
-- Status: READY_FOR_REVIEW
-- Phase: 6 — isolated correction of QA-IC-001 / SEC-020
-- Functional commit: `4d76f2433363a47a9d8fe29fef337de1dc79ac50`
-- Baseline: `91c77c1768aec511a253e19a22b32100a29bf342`; rejected integration candidate `20843a4568ca6eba67d66f93234412038ca79199`.
-- Delivered: the realtime chat test now injects explicit test settings and the existing disposable SQLite memory manager, with database cleanup. Its event assertions remain unchanged. No product/runtime/frontend/schema change.
-- Validation: reproduced the original failure in a clean Git export without .env or DATABASE_URL; after the correction, the full Python suite passed 45 tests in that export under an allowlisted environment. Frontend passed 36 tests; Python compileall, syntax checks for 30 JavaScript files and git diff --check passed.
-- Evidence: [Development correction record](phase-6.md#development-correction--qa-ic-001--sec-020--2026-09-22).
-- Environmental limits: one known Starlette/TestClient deprecation warning; no browser rerun for this test-only delta, real PostgreSQL, migration, paid provider or production validation.
-- Impact analysis: QA YES for clean-export reproducibility on the new hash; SECURITY YES for focused SEC-020/test-isolation re-review, with no runtime trust-boundary changes; DATABASE NO and UI/UX NO because their implementation surfaces did not change.
-- Boundary: no push, merge, PR-body edit or Phase 7 work. QA-IC-002 belongs to Coordinator/owner. Pre-existing untracked dashboard/hero assets remain excluded. Reviewer reports, Review Matrix, blockers and Next Action were not changed by Development.
-- Handoff: return to COORDINATOR for exact-hash review routing. Development does not approve the phase or close reviewer findings. Production Readiness remains BLOCKED.
+- Status: `READY_FOR_REVIEW`
+- Phase: 7 — Conversational Presence Foundation
+- Functional commit: `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`
+- Corrected baseline: rejected candidate `c649a903693d5fedf631d760880b80ed881dc138`; coordination baseline `2b81852` introduced no functional delta. Approved planning commit `11eb4f7a4d112589199b19597096519de46c75fb` and partial checkpoint `2647794ea806b20117c7cce531602911da98ca97` remain preserved.
+- Delivered corrections: `SEC-021` fail-closed Public history projection with ephemeral per-turn provenance; `QA-P7-001` playback/resource/amplitude shutdown before recognition; `QA-P7-002` reconciled Phase 6 realtime/history expectations and disposable runner output; `UIUX-P7-POST-001` explicit Modes close/focus/scroll/reflow behavior; `UIUX-P7-POST-002` one authoritative announcement channel per routine transition or actionable failure.
+- Validation: Python `60 passed` with one known Starlette/TestClient warning; frontend `67 passed`; Phase 7 Chrome package passed seven scenarios; complete Phase 6 browser package passed all legacy scenarios. Final HIGH performance was `59.91 FPS` with 2,500 rendered nodes against the unchanged `45 FPS` floor. Python compileall, JavaScript syntax, `git diff --check`, staged-path inspection and temporary-output cleanup passed.
+- Environmental limits: no real microphone, physical touch device, manual screen reader, paid provider, real PostgreSQL, migration, credential, infrastructure, deployment or production validation. Synthetic browser media does not establish provider audio quality or physical-device fidelity. Frozen historical evidence was not overwritten.
+- Impact analysis: QA `YES` for all five functional/browser regressions; Security `YES` for the Public outbound-history trust boundary; UI/UX `YES` for Modes focus/touch/reflow and announcement behavior. Database `NO` because storage format, persistence, queries, schema, migrations and database paths are unchanged.
+- Boundary: visible/stored history and the existing chat wire contract remain compatible; HOPE identity and only phrases `P7-PHRASE-006` through `P7-PHRASE-018` are preserved. No provider expansion, backend API field, tool/agent runtime, Phase 8, push, merge or production action occurred. Reviewer reports, Review Matrix, consolidated blockers and Next Action were not changed by Development.
+- Handoff: return to COORDINATOR to route QA, Security and UI/UX against Functional Commit `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`. Development does not approve the phase. Production Readiness remains `BLOCKED`.
 
 ## QA
 
-- Coordination status: APPROVED_WITH_WARNINGS
-- Final Integration Candidate confirmed: `f819440a72f2e68368bcc0d3c1af6ec700d170bf`
-- Previously reviewed functional candidate: `51f93d12740a6e0860856257ea761377b04c97fb`
-- Functional correction reviewed: `4d76f2433363a47a9d8fe29fef337de1dc79ac50`; Development evidence: `9e5764671d86121aedd88b926c05ccbc7c385131`.
-- QA-IC-001: `CLOSED / APPROVED` — exact clean export, no `.env`, no database URLs and no provider credentials; focused regression `1 passed`, complete Python suite `45 passed`, frontend `36 passed`, Python syntax `49/49`, JavaScript syntax `30/30`.
-- Functional impact: test-fixture-only. Runtime backend, frontend, API, schema, migrations, dependencies and production configuration are unchanged; only disposable in-memory SQLite was used.
-- Overall result: `APPROVED_WITH_WARNINGS` for Final Integration Candidate `f819440a72f2e68368bcc0d3c1af6ec700d170bf`.
-- QA-IC-002: `CLOSED / APPROVED` by metadata-only verification on 2026-09-24. PR #1 remains draft; base/head are `main` <- `codex/phase-6-target-ui`; its body identifies exact candidate `51f93d1`, correction `4d76f24`, QA-IC-001 closed, Security `APPROVED_WITH_WARNINGS`, SEC-019/SEC-020 closed, Production Readiness blocked and Phase 7 not authorized; obsolete candidate `cf9cd97` is absent.
-- QA blockers: none.
-- Final metadata/documentation confirmation: PR #1 remains open/draft with `codex/phase-6-target-ui` -> `main`, head `f819440`, and GitHub mergeability `clean`; its body cites `f819440`, `51f93d1`, and `4d76f24`, while preserving owner authorization, Production Readiness `BLOCKED`, and Phase 7 not authorized.
-- Final README confirmation: PT-BR, HOPE/Fase 6, `APPROVED_WITH_WARNINGS`, Phase 6 documentation link, no Phase 5/`IN_PROGRESS` current-state claim, and no conflicting runtime badge.
-- Non-blocking issues: `QA-ENV-003` (real production environments not exercised) and `QA-WARN-HTTPX` (known TestClient deprecation warning).
-- Metadata verification boundary: functional suites were not repeated because `51f93d1..f819440` contains no backend, frontend, tests, schema, migration, dependency, or runtime delta.
-- QA evidence: `4497347b6440c03c305cbb54eaccc643d95ced3c` closed QA-IC-001; this metadata-only QA documentation commit closes QA-IC-002 and records the final integration result.
-- Parallel Obsidian live retest: `BLOCKED / NOT_TESTED`; configuration is present, but no Obsidian process or configured listener was visible in the current OS session, so health remained unavailable and authentication/read were not exercised.
-- Obsidian gate impact: none. The owner-reported active application/plugin state was not observable from this QA session; no secret or private vault content was exposed and no write occurred.
+- Coordination status: `APPROVED_WITH_WARNINGS`
+- Phase: 7 — Conversational Presence Foundation
+- Functional Commit reviewed: `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`
+- Functional baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`; previously rejected candidate `c649a903693d5fedf631d760880b80ed881dc138`.
+- Exact-target isolation: clean `git archive` export, no `.env`, database URLs or provider credentials; no real database, migration, paid provider or production action.
+- Passing evidence: Python `60 passed`; frontend `67 passed`; Python syntax passed for 51 files; JavaScript syntax passed for 49 files; the Phase 7 Chrome harness passed 7/7 scenarios with clean console/assets; the complete official Phase 6 browser regression package passed.
+- API, memory and realtime: typed E2E models, isolated mock state, `memory_enabled=true` retrieval, exact-UUID forget confirmation, missing/mismatched confirmation HTTP `428`, confirmed deletion with relations removed, incremental events, heartbeat, reconnect and HTTP fallback passed.
+- Public history boundary: legacy/unknown, private, memory-derived and delayed private response records are excluded from Public requests; PUBLIC+PRIVATE remains fail-closed while the visible and persisted public message shape stays unchanged.
+- `QA-P7-001`: `CLOSED` — activating recognition during playback pauses audio, disconnects the meter, resets amplitude to zero, waits for the real recognition callback before Listening and rejects late playback callbacks.
+- `QA-P7-002`: `CLOSED` — the full Phase 6 browser package passes with assertions that preserve uncorrelated-state rejection and history-eligibility coverage; all legacy scenarios execute.
+- Modes, accessibility and WebGL: explicit close/Escape/focus return, one announcement channel, 130% text, 200% reflow equivalent, seven viewport sizes, no-WebGL fallback, context recovery and Memory Globe quality tiers passed. HIGH rendered 2,500 nodes at 58.85 FPS in this run.
+- QA blockers: `NONE`.
+- Non-blocking limits: mocked providers do not prove live Focus/Supportive/Presentation adherence, prosody or audio fidelity; no physical microphone/speaker, manual screen reader, real PostgreSQL/pgvector, deployment or production environment was exercised; the known Starlette/TestClient deprecation warning remains.
+- Recommendation: advance exact Functional Commit `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5` through the remaining required review gates. This does not approve production, migrations, real-provider use or Phase 8.
+- Historical record: the Phase 6 final-integration `APPROVED_WITH_WARNINGS` result and closed `QA-IC-001`/`QA-IC-002` remain preserved in the historical section of the QA report; they are not the current Phase 7 result.
 - Report: [`qa-latest.md`](reviews/qa-latest.md)
 
 ## Database Audit
@@ -159,81 +160,85 @@ Required Reviews — Integration Candidate:
 
 ## Security Review
 
-- Coordination status: APPROVED_WITH_WARNINGS
-- Integration Candidate reviewed: `51f93d12740a6e0860856257ea761377b04c97fb`
-- Functional correction reviewed: `4d76f2433363a47a9d8fe29fef337de1dc79ac50`
-- QA evidence considered: `4497347b6440c03c305cbb54eaccc643d95ced3c`; current branch tip observed: `62b54bcaed23a9a01292668b2190dc0c151a0bc3`
-- Security result: APPROVED_WITH_WARNINGS
-- Production Readiness: REJECTED / BLOCKED
-- `SEC-019`: CLOSED — README now distinguishes credential custody from owner authentication and chat consent from existing-memory reads by the Memory Globe
-- `SEC-020`: CLOSED — clean exact-candidate export passed the focused regression and complete Python suite without `.env`, database URLs or provider credentials, using only disposable in-memory SQLite
-- Scope confirmed: only `tests/test_realtime.py` changed functionally; no runtime/backend/frontend/API/schema/migration/dependency or production-configuration drift
-- Validation: focused regression `1 passed`; Python `45 passed`; frontend `36 passed`; one known Starlette/TestClient warning
-- New Security findings/blockers: none
-- Carried non-blocking warning: `SEC-018` — browser harness environment and destructive-flow sentinel hardening remain open
-- Deploy blockers unchanged: `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-008`, `SEC-012`
-- External operational blocker: `QA-IC-002` remains open per QA; Security did not edit the PR and does not close or reclassify this blocker
-- Obsidian environmental retest: `BLOCKED / NOT_TESTED`, no Phase 6 gate impact and no secret/private content exposure observed in the persisted QA evidence
-- Recommendation to Coordinator: record Security for `51f93d1`, keep the overall integration rejected until QA verifies `QA-IC-002`, preserve Production Readiness as blocked, and do not merge or start a later phase
+- Coordination status: `APPROVED_WITH_WARNINGS`
+- Functional Commit reviewed: `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`
+- Security result: `APPROVED_WITH_WARNINGS` — `SEC-021` is `CLOSED`; no new Phase 7 Security blocker was identified
+- Closure evidence: outbound `PUBLIC` history now requires explicit ephemeral `PUBLIC_SAFE` provenance, `PUBLIC` audience and no memory-derived marker; legacy, unknown, private, memory-derived, `PUBLIC+PRIVATE` and delayed-private records fail closed
+- Preserved behavior: provably public-safe context remains available; visible and consent-based saved history remain intact; provenance is absent from the wire/storage shape, so restored records become unknown and fail closed
+- Independent validation: complete Python `60 passed` with one known warning; frontend `67 passed`; adversarial public-history/wire-shape test passed; Python compilation, JavaScript syntax, secret-pattern and diff checks passed
+- Controls confirmed: `SEC-006` and `SEC-007`; `memory_enabled=false` retrieval/capture/command gating; exact UUID deletion confirmation; snapshotted delayed-response policy; strict presentation enum and bounded overlay; stale voice/realtime guards; safe DOM rendering and public `SelfKnowledge` allowlist
+- Scope: correction delta changes no backend endpoint, request/response field, database, schema, migration, query, provider, dependency, CDN or Phase 8 surface; post-target descendants are documentation-only
+- Environmental limits: Security did not run browser, real provider, microphone, PostgreSQL, migration, deployment or production actions; Development's seven Chrome scenarios, legacy browser package and `59.91 FPS` result were not adopted as independent Security execution
+- Production Readiness: `REJECTED / BLOCKED`; historical blockers `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-008` and `SEC-012` remain open and unchanged
+- Recommendation to Coordinator: record Security `APPROVED_WITH_WARNINGS`, close `SEC-021`, preserve inherited production blockers and continue consolidation on this exact Functional Commit; this feature approval does not authorize Phase 8 or deployment
 - Report: [`security-review-latest.md`](reviews/security-review-latest.md)
 
 ## UI/UX
 
-- Coordination status: `APPROVED` — Phase 7 pre-implementation UI/UX specification complete
-- Review type: `PHASE 7 PRE-IMPLEMENTATION UI/UX SPECIFICATION`
-- Functional baseline reviewed: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`
-- Phase 7 Functional Commit: `NONE`
-- Architecture decision: `ARCH-2026-09-25-001`
-- Planner reconciliation commit: `bcd0a05da9cc8a8e8efd301103265470c0a21982`
-- Coordinator routing commit: `829aa31bfa20a8c551d2e0e66300d84ed2beb14e`
-- Specification: [`phase-7-conversational-presence-spec.md`](design/phase-7-conversational-presence-spec.md)
-- Phrase register: [`phase-7-phrase-proposals.md`](design/phase-7-phrase-proposals.md)
-- Specification coverage: display/spoken separation, truthful voice states, stop/cancel/stale-event handling, combinable modes, microphone/TTS fallback, accessibility/focus/reduced motion, local ephemeral output amplitude, privacy and capability truthfulness
-- Objective evidence contract: `UIUX-P7-001` through `UIUX-P7-018`
-- Specification blockers: none
-- Phrase proposals: 5; all `PENDING_OWNER_APPROVAL`; UI/UX grants no phrase approval
-- Development routing: `BLOCKED` until the owner decides each exact phrase intended for the first package and the Coordinator persists those decisions
-- Phrase scope: approval is exact-item only and does not cover punctuation, variants, localization, translation, paraphrase or future rewrite
+- Coordination status: `APPROVED_WITH_WARNINGS`
+- Review type: `PHASE 7 POST-IMPLEMENTATION UI/UX RE-REVIEW`
+- Review date: 2026-11-17
+- Target Functional Commit: `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`
+- Functional baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`
+- Previous rejected candidate: `c649a903693d5fedf631d760880b80ed881dc138`
+- Architecture decision: `ARCH-2026-11-14-001`
+- Development documentation/evidence: `5f125a04e989274e3d90cc7a69876cbb582c9526`
+- Functional delta after target: none under backend, frontend, tests or scripts; later commits through `058a4a0` are documentation/review coordination only
+- `UIUX-P7-POST-001`: previous `HIGH`, now `CLOSED`, `Blocking: NO` — visible 44 px touch close, heading focus entry, close/Escape focus return, sticky heading and all five groups were independently reachable across short-height, reflow-equivalent, 130% text, mobile and landscape cases
+- `UIUX-P7-POST-002`: previous `MEDIUM`, now `CLOSED`, `Blocking: NO` — controlled chat and TTS failures each used one authoritative alert mutation with no polite duplicate or preceding generic `ERROR` copy
+- Result matrix: all `UIUX-P7-001` through `UIUX-P7-021` pass within recorded limits; `UIUX-P7-010` and `UIUX-P7-020` carry non-blocking `UIUX-P7-W04`, and `UIUX-P7-017` retains the live-provider limit
+- Independent validation: frontend `67 passed`; eight focused Chrome scenarios passed with synthetic media and disposable state; playback-to-recognition paused audio, disconnected analyzer resources, reset amplitude and rejected stale playback events
+- Evidence: three synthetic Modes captures plus `uiux-browser-results.json` under [`docs/evidence/phase-7/review-af2aa66/`](evidence/phase-7/review-af2aa66/); frozen historical evidence was not overwritten
+- Non-blocking warnings: `UIUX-P7-W01` real-provider style/physical voice fidelity; `UIUX-P7-W02` manual assistive technology/physical devices/actual zoom control; `UIUX-P7-W03` no fresh Python rerun in the UI/UX runtime for unchanged backend paths; `UIUX-P7-W04` two-pixel horizontal overflow only under combined `720×450` and 130% root text, with no clipped or unreachable content
+- Environment cleanup: the browser and disposable harness were closed; ports `8766`/`8767` have zero listeners and no related processes remain
+- Approved areas: canonical Display/optional Spoken separation, truthful local voice/Core Orb state, distinct stop/cancel scopes, stale-event guards, prospective privacy/history behavior, five mode axes, accessible Modes interaction, one-channel failures, reduced motion, no-WebGL conversation, public-safe SelfKnowledge and negative future-capability claims
+- Historical pre-implementation specification remains `APPROVED`; the prior post-implementation rejection remains preserved as history in the report
+- Phrase gate preserved: only exact `P7-PHRASE-006` through `P7-PHRASE-018` remain approved; rejected/withdrawn records stay excluded; `P7-PHRASE-021` through `P7-PHRASE-028` remain `PENDING_OWNER_APPROVAL`, excluded and non-blocking
+- Personality boundary preserved: substantive-answer personality, zero-phrase default, no automatic mode phrase, no frontend prefix/suffix and no new phrase or variant approved by this review
 - Production Readiness: `BLOCKED`
-- Recommendation: return to the Coordinator for individual owner decisions on `P7-PHRASE-001` through `P7-PHRASE-005`; do not route Development, Phase 8 or production earlier
+- Recommendation: return to the Coordinator for alignment with QA/Security and Planner consolidation; do not start Phase 8, deploy or treat this UI/UX result as production authorization
 - Report: [`uiux-latest.md`](reviews/uiux-latest.md)
 
 ## Planner
 
-- Status: `APPROVED`
-- Decision ID: `ARCH-2026-09-25-001`
-- Baseline analyzed: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2` on `main`; Coordinator authorization record `cdb40098489d28dd476a2b9c211cd6289a325888`
-- Phase 6 status: complete and integrated through PR #1
-- Phase 7 planning: `APPROVED`
-- Phase 7 implementation authorization: `APPROVED` by the owner on 2026-09-25, strictly within [`docs/phase-7.md`](phase-7.md)
-- Phase 7 implementation: `NOT_STARTED`; Functional Commit `NONE`
-- Phrase gate: UI/UX must present every exact proposal separately with context, intended tone and `PENDING_OWNER_APPROVAL`
-- Approval scope: one owner-approved exact phrase does not approve variants, localizations, other phrases or future rewrites
-- Implementation restriction: no unapproved phrase may enter source code, `PhraseLibrary`, fixtures, tests, snapshots, defaults, seeded content or the active product
-- Phrase quality: proposals must be natural, non-robotic, original to HOPE and consistent with the approved personality without character imitation
-- Required Reviews after a future Functional Commit: QA `YES`, DATABASE `NO` while the no-persistence boundary holds, SECURITY `YES`, UI/UX `YES`
-- Production Readiness: `BLOCKED`; Phase 7 authorization does not approve deployment, public exposure or inherited HIGH/CRITICAL risk
-- Unchanged non-goals: providers, cloud voice, wake word, speaker verification, database, migrations, persistence, tools, agents, integrations, deployment, production and Phase 8+
-- Records: [`architecture-latest.md`](reviews/architecture-latest.md), [`phase-7.md`](phase-7.md), [`roadmap.md`](roadmap.md), [`product-vision.md`](product-vision.md), [`future-architecture.md`](future-architecture.md) and [`architecture.md`](architecture.md)
-- Coordinator handoff: normalize the public coordination panel and route the Phase 7 pre-implementation specification to UI/UX against `ce2bde4`; Development remains inactive until UI/UX persists the complete specification and every exact phrase intended for implementation has an explicit owner decision
-- Boundary: this Planner record starts no Work, changes no functional code, creates no phrase and authorizes no later phase
+- Status: `APPROVED` for Development routing; implementation/review remain `IN_PROGRESS`
+- Decision ID: `ARCH-2026-11-14-001`
+- Repository HEAD analyzed: `dde81869a09c9ca50ca18b7e4d0c4ff326d0c951` on `codex/phase-7-completion`
+- Functional baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`; partial TTS checkpoint `2647794ea806b20117c7cce531602911da98ca97`; complete Phase 7 Functional Commit `NONE`
+- Authorization: the owner authorized completion of Phase 7 including the exact bounded generation amendment previously presented in `ARCH-2026-11-06-001`. No repeat owner gate remains for that implementation.
+- Generation contract: add only optional `presentation_mode` to existing `POST /api/chat` with exact `NORMAL`, `FOCUS`, `SUPPORTIVE` and `PRESENTATION` values; omission/`NORMAL` preserves the existing effective prompt exactly. Each non-default mode selects one static server-owned `[TURN PRESENTATION]` section capped at 1,000 Unicode characters including its heading.
+- Provider/cost boundary: preserve endpoint, provider JSON shape/keys, model, output limit, call count, retries and settings. Only the bounded system-string input grows for non-default turns; no paid validation, new provider, budget or subscription change is authorized.
+- Privacy/realtime boundary: modes and audio state remain ephemeral; `PRIVATE`/`PUBLIC` use `memory_enabled=false`; private-turn history eligibility cannot be restored later; reject uncorrelated remote state instead of assigning current local IDs.
+- Personality boundary: personality lives in the substantive answer. No frontend prefix/suffix, automatic mode phrase, hidden user-message instruction or canonical-answer rewriting.
+- Phrase gate: only exact `P7-PHRASE-006` through `P7-PHRASE-018` are approved; `P7-PHRASE-021` through `P7-PHRASE-028` remain pending and excluded. Zero phrase remains the normal default.
+- Development route: authorized after this documentation commit on `codex/phase-7-completion`. Development must complete the full package and create one exact candidate; the partial checkpoint is not reviewable as the complete phase.
+- Required reviews on that future hash: QA `YES`, SECURITY `YES`, UI/UX `YES`, DATABASE `NO` only while the no-persistence/no-query/schema boundary holds.
+- Production Readiness: `BLOCKED`; no real database, migration, credential, infrastructure, deployment, public exposure, tool/agent runtime, Phase 8 or HIGH/CRITICAL risk acceptance is authorized.
+- Records: [active decision](reviews/architecture-latest.md), [active phase contract](phase-7.md#current-completion-authorization--2026-11-14), [roadmap](roadmap.md#phase-7--conversational-presence-foundation)
+- Coordinator handoff: normalize the Coordinator-owned panel, route Development, then route mandatory reviewers only after one complete Functional Commit exists. Do not start Phase 8 or production.
+- Boundary: documentation-only; all other handoff sections and reviewer reports are preserved.
 
 ## Coordinator
 
 - Autonomy level: 2.5
-- Status: IN_PROGRESS
-- Operational conclusion: Phase 6 is integrated. The owner authorized Phase 7 within its approved scope, and Planner completed the canonical authorization/phrase-gate reconciliation in `bcd0a05` without creating a phrase or changing functional code.
+- Status: WAITING_FOR_REVIEW
+- Operational conclusion: all mandatory reviewers approved exact `af2aa66` with warnings: QA `7a5a446`, Security `a2b5739`, UI/UX `eb9a550`. All five feature findings are closed by their domain owners. QA verified the complete test/browser packages; UI/UX independently verified eight targeted Chrome scenarios and persisted current-target measurements/screenshots. Final Planner consolidation remains pending.
 - Final Integration Candidate: `cb8dc774cc396f3aff0ef40e79753761fbf3b49b`
 - Main integration commit: `ce2bde4`
-- Routing: LEVEL 2.5 — UI/UX is now the only active Work for the complete pre-implementation specification. Development remains inactive until UI/UX persists that specification and the Coordinator returns every proposed exact phrase to the owner for an individual decision.
+- Routing: LEVEL 1 — route final documentation-only consolidation to Planner. It owns architecture/phase/vision/roadmap/backlog and its own handoff section; technical reports and their findings remain unchanged. All implementation/reviewer write windows are closed. Draft [PR #2](https://github.com/mlssnw/HOPE-AI/pull/2) remains unmerged; no HIGH risk acceptance, production or next-phase action is authorized.
 - Boundary: COORDINATOR atualizou somente Current Phase, Current Functional Commit, Review Matrix, blockers, warnings, Next Action e histórico; não concedeu aprovação técnica nem alterou seções ou relatórios de ownership dos reviewers
 
 ## Current Blockers
 
 ### Feature Blockers
 
-- None for the UI/UX specification. Planner closed the canonical authorization inconsistency in `bcd0a05`.
-- PhraseLibrary content is owner-gated: each exact phrase is blocked from implementation until individually approved. This does not block UI/UX from preparing clearly marked proposals.
+- No Phase 7 feature blocker remains in the mandatory domain reports for `af2aa66`.
+- Findings originated on rejected `c649a90`: QA closed QA-P7-001/002 in `7a5a446`; Security closed SEC-021 in `a2b5739`; UI/UX closed UIUX-P7-POST-001/002 in `eb9a550`. All closures apply to the same corrected Functional Commit.
+- No technical blocker remains in the pre-implementation UI/UX specification.
+- No authorization blocker remains for the approved Phase 7 implementation. The prior generation-boundary blocker was resolved by `ARCH-2026-11-14-001`; its exact enum/static-section boundary remains binding.
+- Remaining gate: Planner consolidation of exact-target reviews, accepted non-blocking warnings and active architecture/roadmap state. This operational summary grants no independent domain approval.
+- No paid validation, new provider, budget setting, real-database operation, production or later phase is authorized.
+- Eight optional exact alternatives (`P7-PHRASE-021` through `P7-PHRASE-028`) remain `PENDING_OWNER_APPROVAL`; they are excluded from implementation by default and do not block Development.
 
 ### Production Blockers
 
@@ -243,7 +248,7 @@ Required Reviews — Integration Candidate:
 
 ## Warnings
 
-- UI/UX não registrou blocker ou warning no review pós-implementação; `UIUX-F5-W01`, `UIUX-F5-W02` e `UIUX-F5-W03` foram encerrados.
+- Current Phase 7 UI/UX warnings `UIUX-P7-W01`/`W02`/`W03` are INFO/non-blocking limits for provider fidelity, manual/physical-device validation and no fresh UI/UX Python run. `UIUX-P7-W04` is LOW/non-blocking: 2 px horizontal overflow at 720×450 plus 130% text, without inaccessible content or controls. Planner must preserve these and assign follow-up in the backlog. Historical `UIUX-F5-W01`/`W02`/`W03` remain closed.
 - `QA-003` foi encerrado; `QA-ENV-002` e `QA-WARN-HTTPX` permanecem INFO/non-blocking.
 - `SEC-018` permanece LOW/non-blocking e deve seguir para o backlog de hardening do harness.
 - `SEC-017` permanece MEDIUM e não bloqueante: o gate depende do lifespan e o harness sintético não valida schema, autenticação ou isolamento.
@@ -263,30 +268,25 @@ Required Reviews — Integration Candidate:
 
 ## Next Action
 
-- Role: UI/UX
-- Status: IN_PROGRESS
-- Task: produce and persist the complete Phase 7 pre-implementation experience specification and an individually reviewable phrase proposal register without changing functional code
-- Target baseline: `ce2bde4` on `main`; Phase 7 Functional Commit does not exist yet
+- Role: Planner
+- Status: WAITING_FOR_REVIEW
+- Task: consolidate all matching mandatory verdicts, reconcile active implemented-state documentation and register non-blocking warnings without starting another phase or approving production
+- Target Functional Commit: `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`; documentation/evidence `5f125a0`; previous rejected target `c649a90`; branch `codex/phase-7-completion`
 - Required inputs:
-  - [`AGENTS.md`](../AGENTS.md)
-  - [`docs/architecture.md`](architecture.md)
   - [`docs/phase-7.md`](phase-7.md)
-  - [`docs/product-vision.md`](product-vision.md)
-  - [`docs/roadmap.md`](roadmap.md)
-  - [`docs/future-architecture.md`](future-architecture.md)
-  - [`docs/design/`](design/README.md)
+  - [`docs/design/phase-7-conversational-presence-spec.md`](design/phase-7-conversational-presence-spec.md)
+  - [`docs/reviews/architecture-latest.md`](reviews/architecture-latest.md)
+  - [`docs/design/phase-7-phrase-proposals.md`](design/phase-7-phrase-proposals.md)
   - [`docs/reviews/uiux-latest.md`](reviews/uiux-latest.md)
-  - Planner decision `ARCH-2026-09-25-001` in commit `bcd0a05`
-  - Phase 7 owner authorization and exact-item phrase gate recorded above
+  - [`docs/reviews/qa-latest.md`](reviews/qa-latest.md)
+  - [`docs/reviews/security-review-latest.md`](reviews/security-review-latest.md)
 - Expected output:
-  - a verifiable UI/UX contract for display/spoken separation, voice states, interruption/stop, modes, fallbacks, accessibility, reduced motion and real local-amplitude Core Orb behavior
-  - the smallest sufficient initial phrase package, with each exact PT-BR phrase in a separate numbered record containing context, intended tone, category, frequency/cooldown, prohibited contexts and `PENDING_OWNER_APPROVAL`
-  - proposals that are natural, non-robotic, original to HOPE and consistent with the approved personality without copying or impersonating any reference character
-  - an updated UI/UX `latest` report and UI/UX handoff against baseline `ce2bde4`, followed by a return to the Coordinator for owner phrase decisions
-  - no frontend/backend implementation and no claim of phrase approval
-- Blocking dependencies: none
-- Parallel work: none — Development, QA and Security wait for the completed UI/UX gate and subsequent owner phrase decisions
-- Escalation: NONE during specification; every proposed exact phrase returns to the USER through the Coordinator before Development
+  - exact-target final consolidation in architecture-latest.md, current phase record and Planner handoff section; no substitution for technical reviewers
+  - narrow reconciliation of active architecture/product vision/roadmap/future architecture statements, distinguishing the approved branch candidate from integrated main
+  - warnings in backlog with source, severity, treatment and future gate; preserve production blockers and the original approved roadmap, persona and phrase limits
+- Blocking dependencies: none; all required role reports and own handoff sections are committed
+- Parallel work: none; Planner has the exclusive documentation/handoff/index window and all functional writes remain frozen
+- Escalation: NONE
 
 ## Recent History
 
@@ -329,3 +329,13 @@ Required Reviews — Integration Candidate:
 - 2026-09-25 — The owner authorized Phase 6 integration. COORDINATOR reconciled the new `main` README update in `cb8dc77`, preserved the approved PT-BR public state, reran 45 Python and 36 frontend tests successfully, and merged PR #1 into `main` as `ce2bde4`. Phase 6 is complete; Production Readiness remains blocked and Phase 7 implementation remains unauthorized.
 - 2026-09-25 — The owner explicitly authorized Phase 7 implementation within the approved plan. COORDINATOR opened only the pre-implementation UI/UX gate and recorded a mandatory individual owner-approval gate for every exact PhraseLibrary phrase; Development remains inactive until UI/UX returns the complete specification and the Coordinator routes the next action.
 - 2026-09-25 — PLANNER completed `ARCH-2026-09-25-001` in `bcd0a05`, reconciled the active canonical authorization records, preserved every Phase 7 non-goal and formalized the exact-item phrase protocol without creating a phrase or changing code. COORDINATOR routed the next gate exclusively to UI/UX against baseline `ce2bde4`.
+- 2026-09-28 — The owner corrected the personality contract: substantive answers carry HOPE's identity, PhraseLibrary is rare and optional, zero phrase is preferred by default, Focus starts directly with analysis and Supportive remains recognizably HOPE. UI/UX persisted the corrected specification and 17 active exact pending records in `9362463`; COORDINATOR returned every active record to the owner for individual decisions.
+- 2026-09-28 — The owner approved `P7-PHRASE-006` through `P7-PHRASE-018` and rejected `P7-PHRASE-004`, `P7-PHRASE-005`, `P7-PHRASE-019` and `P7-PHRASE-020`. UI/UX persisted the exact decisions in `348cad3` and, at the owner's request, added eight optional non-blocking alternatives in `2a90ad1`; COORDINATOR opened only their optional individual decision step.
+- 2026-11-06 — With no Phase 7 feature blocker remaining, COORDINATOR routed the approved specification and exact records `P7-PHRASE-006` through `P7-PHRASE-018` to Development. Optional records `P7-PHRASE-021` through `P7-PHRASE-028` remain pending, excluded and non-blocking.
+- 2026-11-06 — Development identified that answer-native selected styles require a generation signal prohibited by the literal plan. PLANNER persisted `ARCH-2026-11-06-001` in `df4d142`, proposed the smallest one-field/one-section amendment and escalated its approval to the owner. COORDINATOR kept independent local work active but blocked the disputed generation path and full Phase 7 delivery.
+- 2026-11-14 — The owner retained HOPE, requested completion of all Phase 7 using the predefined Works, continued Git commits and notification of changes. The isolated completion branch starts from `dde8186`; the previous dirty worktree and real data remain preserved. Visible PLANNER persisted `ARCH-2026-11-14-001` in `11eb4f7`, reconciling the exact bounded generation amendment. COORDINATOR routed complete implementation to the visible DEV task; no implementation/review approval or production authorization is inferred.
+- 2026-11-14 — Development completed the package through backend `744bec0`, voice/UI `4b91818` and public-boundary correction `c649a90`; the last hash is the shared Functional Commit. Delivery documentation/evidence `6919c96` records 60 Python, 62 frontend and five Chrome scenarios passing. COORDINATOR opened the required independent reviews on that target, preserving Production Readiness `BLOCKED` and the draft PR #2.
+- 2026-11-15 — QA (`8d85e21`), UI/UX (`768ddfd`) and Security (`d60a402`) rejected `c649a90` with five blocking findings. COORDINATOR persisted `CHANGES_REQUESTED`, corrected the public README status and returned one scoped fix round to Development. Production blockers, owner-approved phrases and isolated-worktree boundaries remain unchanged.
+- 2026-11-16 — Development delivered correction `af2aa66` and documentation `5f125a0`, with 60 Python, 67 frontend, seven Phase 7 Chrome scenarios and the full legacy browser package passing. COORDINATOR froze that new target and reopened required QA, Security and UI/UX reviews; the prior rejection remains historical and Production Readiness stays blocked.
+- 2026-11-17 — QA persisted APPROVED_WITH_WARNINGS in `7a5a446`, closing QA-P7-001/002; Security persisted APPROVED_WITH_WARNINGS in `a2b5739`, closing SEC-021, both for `af2aa66`. COORDINATOR released the browser window to UI/UX; its independent affected-surface evidence and final verdict remain pending.
+- 2026-11-17 — UI/UX persisted APPROVED_WITH_WARNINGS in `eb9a550`, closing UIUX-P7-POST-001/002 on `af2aa66`, with eight independent targeted Chrome scenarios and new synthetic evidence. COORDINATOR routed final documentation-only consolidation to Planner; no feature blocker remains in required domain reports, and production/later phases remain unauthorized.

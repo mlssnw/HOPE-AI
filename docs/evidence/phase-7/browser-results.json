@@ -1,0 +1,27 @@
+{
+  "browser": "157.0.8103.51",
+  "results": [
+    {
+      "name": "five axes, privacy history and exact request snapshot",
+      "status": "PASS"
+    },
+    {
+      "name": "display survives TTS failure and playback uses local amplitude",
+      "status": "PASS"
+    },
+    {
+      "name": "recognition truth, Escape priority, cancel and stale guards",
+      "status": "PASS"
+    },
+    {
+      "name": "no WebGL keeps complete voice and mode controls",
+      "status": "PASS"
+    },
+    {
+      "name": "viewports, zoom, larger text and reduced motion",
+      "status": "PASS"
+    }
+  ],
+  "simulatedAudio": true,
+  "paidProviders": false
+}

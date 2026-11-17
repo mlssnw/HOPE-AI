@@ -10,8 +10,10 @@ export function operationalState(current, event) {
     if (event.state === "error") { next.chat = "error"; next.remote = "idle"; }
   } else if (event.source === "voice") {
     next.voice = ["listening", "speaking"].includes(event.state) ? event.state : "idle";
-  } else if (event.source === "realtime" && !next.cancelled) {
-    next.remote = ["thinking", "searching", "speaking", "error"].includes(event.state) ? event.state : "idle";
+  } else if (event.source === "realtime") {
+    // Phase 7 has no correlation fields on the existing WebSocket contract.
+    // Uncorrelated remote state must never be assigned to the active local turn.
+    next.remote = "idle";
   }
   return next;
 }

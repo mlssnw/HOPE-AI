@@ -1,0 +1,426 @@
+{
+  "target": "af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5",
+  "synthetic": true,
+  "scenarios": [
+    {
+      "name": "modes desktop short / 200% reflow equivalent",
+      "status": "PASS",
+      "evidence": {
+        "width": 720,
+        "height": 450,
+        "fontSize": 16,
+        "touch": false,
+        "initial": {
+          "focus": "modes-title",
+          "open": true,
+          "viewport": {
+            "width": 720,
+            "height": 450
+          },
+          "scrollWidth": 720,
+          "sheet": {
+            "top": 149.375,
+            "bottom": 464.375,
+            "left": 44,
+            "right": 652,
+            "height": 315
+          },
+          "head": {
+            "top": 150.375,
+            "bottom": 227.375
+          },
+          "close": {
+            "width": 60.75,
+            "height": 44
+          }
+        },
+        "settledSheet": {
+          "top": 134.375,
+          "bottom": 449.375
+        },
+        "horizontalOverflow": 0,
+        "groups": [
+          {
+            "legend": "Estilo",
+            "top": 223.5625,
+            "bottom": 362.09375,
+            "sheetTop": 134.375,
+            "sheetBottom": 449.375
+          },
+          {
+            "legend": "Privacidade",
+            "top": 223.5625,
+            "bottom": 362.09375,
+            "sheetTop": 134.375,
+            "sheetBottom": 449.375
+          },
+          {
+            "legend": "Saída",
+            "top": 360.28125,
+            "bottom": 448.4375,
+            "sheetTop": 134.375,
+            "sheetBottom": 449.375
+          },
+          {
+            "legend": "Interrupções",
+            "top": 360.28125,
+            "bottom": 448.4375,
+            "sheetTop": 134.375,
+            "sheetBottom": 449.375
+          },
+          {
+            "legend": "Audiência",
+            "top": 266.625,
+            "bottom": 354.78125,
+            "sheetTop": 134.375,
+            "sheetBottom": 449.375
+          }
+        ],
+        "closeAndEscapeFocusReturn": true
+      }
+    },
+    {
+      "name": "modes desktop short / 130% text",
+      "status": "PASS_WITH_OBSERVATION",
+      "evidence": {
+        "width": 720,
+        "height": 450,
+        "fontSize": 20.8,
+        "touch": false,
+        "initial": {
+          "focus": "modes-title",
+          "open": true,
+          "viewport": {
+            "width": 720,
+            "height": 450
+          },
+          "scrollWidth": 722,
+          "sheet": {
+            "top": 189.265625,
+            "bottom": 504.265625,
+            "left": 44,
+            "right": 722.390625,
+            "height": 315
+          },
+          "head": {
+            "top": 190.265625,
+            "bottom": 286.859375
+          },
+          "close": {
+            "width": 78.359375,
+            "height": 44
+          }
+        },
+        "settledSheet": {
+          "top": 134.265625,
+          "bottom": 449.265625
+        },
+        "horizontalOverflow": 2,
+        "groups": [
+          {
+            "legend": "Estilo",
+            "top": 246.40625,
+            "bottom": 401.0625,
+            "sheetTop": 134.265625,
+            "sheetBottom": 449.265625
+          },
+          {
+            "legend": "Privacidade",
+            "top": 246.40625,
+            "bottom": 401.0625,
+            "sheetTop": 134.265625,
+            "sheetBottom": 449.265625
+          },
+          {
+            "legend": "Saída",
+            "top": 293.609375,
+            "bottom": 448.265625,
+            "sheetTop": 134.265625,
+            "sheetBottom": 449.265625
+          },
+          {
+            "legend": "Interrupções",
+            "top": 293.609375,
+            "bottom": 448.265625,
+            "sheetTop": 134.265625,
+            "sheetBottom": 449.265625
+          },
+          {
+            "legend": "Audiência",
+            "top": 240.8125,
+            "bottom": 343.15625,
+            "sheetTop": 134.265625,
+            "sheetBottom": 449.265625
+          }
+        ],
+        "closeAndEscapeFocusReturn": true
+      }
+    },
+    {
+      "name": "modes 320x568 touch",
+      "status": "PASS",
+      "evidence": {
+        "width": 320,
+        "height": 568,
+        "fontSize": 16,
+        "touch": true,
+        "initial": {
+          "focus": "modes-title",
+          "open": true,
+          "viewport": {
+            "width": 320,
+            "height": 568
+          },
+          "scrollWidth": 320,
+          "sheet": {
+            "top": 68.171875,
+            "bottom": 568,
+            "left": 0,
+            "right": 320,
+            "height": 499.828125
+          },
+          "head": {
+            "top": 69.171875,
+            "bottom": 146.171875
+          },
+          "close": {
+            "width": 60.75,
+            "height": 44
+          }
+        },
+        "settledSheet": {
+          "top": 68.171875,
+          "bottom": 568
+        },
+        "horizontalOverflow": 0,
+        "groups": [
+          {
+            "legend": "Estilo",
+            "top": 157.359375,
+            "bottom": 295.890625,
+            "sheetTop": 68.171875,
+            "sheetBottom": 568
+          },
+          {
+            "legend": "Privacidade",
+            "top": 307.078125,
+            "bottom": 395.234375,
+            "sheetTop": 68.171875,
+            "sheetBottom": 568
+          },
+          {
+            "legend": "Saída",
+            "top": 406.421875,
+            "bottom": 494.578125,
+            "sheetTop": 68.171875,
+            "sheetBottom": 568
+          },
+          {
+            "legend": "Interrupções",
+            "top": 478.765625,
+            "bottom": 566.921875,
+            "sheetTop": 68.171875,
+            "sheetBottom": 568
+          },
+          {
+            "legend": "Audiência",
+            "top": 348.109375,
+            "bottom": 436.265625,
+            "sheetTop": 68.171875,
+            "sheetBottom": 568
+          }
+        ],
+        "closeAndEscapeFocusReturn": true
+      }
+    },
+    {
+      "name": "modes 390x844 touch",
+      "status": "PASS",
+      "evidence": {
+        "width": 390,
+        "height": 844,
+        "fontSize": 16,
+        "touch": true,
+        "initial": {
+          "focus": "modes-title",
+          "open": true,
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "scrollWidth": 390,
+          "sheet": {
+            "top": 172,
+            "bottom": 844,
+            "left": 0,
+            "right": 390,
+            "height": 672
+          },
+          "head": {
+            "top": 173,
+            "bottom": 250
+          },
+          "close": {
+            "width": 60.75,
+            "height": 44
+          }
+        },
+        "settledSheet": {
+          "top": 172,
+          "bottom": 844
+        },
+        "horizontalOverflow": 0,
+        "groups": [
+          {
+            "legend": "Estilo",
+            "top": 261.1875,
+            "bottom": 399.71875,
+            "sheetTop": 172,
+            "sheetBottom": 844
+          },
+          {
+            "legend": "Privacidade",
+            "top": 410.90625,
+            "bottom": 499.0625,
+            "sheetTop": 172,
+            "sheetBottom": 844
+          },
+          {
+            "legend": "Saída",
+            "top": 510.25,
+            "bottom": 598.40625,
+            "sheetTop": 172,
+            "sheetBottom": 844
+          },
+          {
+            "legend": "Interrupções",
+            "top": 609.59375,
+            "bottom": 697.75,
+            "sheetTop": 172,
+            "sheetBottom": 844
+          },
+          {
+            "legend": "Audiência",
+            "top": 708.9375,
+            "bottom": 797.09375,
+            "sheetTop": 172,
+            "sheetBottom": 844
+          }
+        ],
+        "closeAndEscapeFocusReturn": true
+      }
+    },
+    {
+      "name": "modes 844x390 touch",
+      "status": "PASS",
+      "evidence": {
+        "width": 844,
+        "height": 390,
+        "fontSize": 16,
+        "touch": true,
+        "initial": {
+          "focus": "modes-title",
+          "open": true,
+          "viewport": {
+            "width": 844,
+            "height": 390
+          },
+          "scrollWidth": 844,
+          "sheet": {
+            "top": 167.578125,
+            "bottom": 440.578125,
+            "left": 44,
+            "right": 652,
+            "height": 273
+          },
+          "head": {
+            "top": 168.578125,
+            "bottom": 245.578125
+          },
+          "close": {
+            "width": 60.75,
+            "height": 44
+          }
+        },
+        "settledSheet": {
+          "top": 115.578125,
+          "bottom": 388.578125
+        },
+        "horizontalOverflow": 0,
+        "groups": [
+          {
+            "legend": "Estilo",
+            "top": 204.765625,
+            "bottom": 343.296875,
+            "sheetTop": 115.578125,
+            "sheetBottom": 388.578125
+          },
+          {
+            "legend": "Privacidade",
+            "top": 204.765625,
+            "bottom": 343.296875,
+            "sheetTop": 115.578125,
+            "sheetBottom": 388.578125
+          },
+          {
+            "legend": "Saída",
+            "top": 299.484375,
+            "bottom": 387.640625,
+            "sheetTop": 115.578125,
+            "sheetBottom": 388.578125
+          },
+          {
+            "legend": "Interrupções",
+            "top": 299.484375,
+            "bottom": 387.640625,
+            "sheetTop": 115.578125,
+            "sheetBottom": 388.578125
+          },
+          {
+            "legend": "Audiência",
+            "top": 207.828125,
+            "bottom": 295.984375,
+            "sheetTop": 115.578125,
+            "sheetBottom": 388.578125
+          }
+        ],
+        "closeAndEscapeFocusReturn": true
+      }
+    },
+    {
+      "name": "single authoritative chat and voice failure announcements",
+      "status": "PASS",
+      "chatAnnouncements": [
+        {
+          "id": "live-status",
+          "text": "Analisando"
+        },
+        {
+          "id": "urgent-status",
+          "text": "Erro simulado tratado com segurança."
+        }
+      ],
+      "voiceAnnouncements": [
+        {
+          "id": "urgent-status",
+          "text": "Falha de voz simulada."
+        }
+      ],
+      "focusPreserved": true
+    },
+    {
+      "name": "playback stops before recognition and stale audio stays inert",
+      "status": "PASS",
+      "evidence": {
+        "pauseCalls": 1,
+        "disconnectCalls": 2,
+        "lastVoiceLevel": 0,
+        "state": "idle"
+      }
+    },
+    {
+      "name": "reduced motion and no-WebGL preserve Modes operation",
+      "status": "PASS"
+    }
+  ]
+}

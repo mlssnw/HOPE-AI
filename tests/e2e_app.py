@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import asyncio
+import io
 import re
+import wave
 from datetime import datetime, timezone
 
 from backend.main import create_app
@@ -37,7 +39,14 @@ class BrowserMockServices:
         )
 
     async def synthesize_speech(self, text: str) -> tuple[bytes, str]:
-        raise ExternalServiceError("Voz simulada sem chamada externa.", 503)
+        output = io.BytesIO()
+        with wave.open(output, "wb") as audio:
+            audio.setnchannels(1)
+            audio.setsampwidth(2)
+            audio.setframerate(8000)
+            # Deterministic local PCM fixture; it never leaves the disposable harness.
+            audio.writeframes((b"\x00\x18\x00\xe8" * 800))
+        return output.getvalue(), "audio/wav"
 
 
 NOW = datetime.now(timezone.utc)

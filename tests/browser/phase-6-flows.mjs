@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
 const {chromium}=await import(process.env.HOPE_PLAYWRIGHT_MODULE || 'playwright');
 const browser=await chromium.launch({headless:true,executablePath:process.env.HOPE_CHROME_PATH});
-const base='http://127.0.0.1:8766', output='docs/evidence/phase-6';
+const base='http://127.0.0.1:8766', output=process.env.HOPE_EVIDENCE_DIR||'docs/evidence/phase-6';
 const id='20000000-0000-4000-8000-000000000001';
 const results=[];
 await mkdir(output,{recursive:true});
@@ -50,7 +50,11 @@ try {
     assert.equal(requests[1].memory_enabled,true);
     assert.equal(await page.locator('.message.assistant .message-context').count(),2);
     assert.ok(await page.locator('.message-context button').count());
-    await page.reload();await ready(page);assert.equal(await page.locator('.message').count(),4);
+    await page.reload();await ready(page);assert.equal(await page.locator('.message').count(),2);
+    assert.deepEqual(await page.locator('.message .message-body').allTextContents(),[
+      'O que você sabe sobre a arquitetura da HOPE?',
+      'Resposta simulada e segura. <img src=x onerror=alert(1)> permanece texto.',
+    ]);
     await page.locator('#persist-history').uncheck();assert.equal(await page.locator('#memory-enabled').isChecked(),true);
     assert.equal(await page.evaluate(()=>localStorage.getItem('hope.history.v1')),null);
     await page.locator('#clear-history').click();assert.equal(await page.locator('.message').count(),0);
