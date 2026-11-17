@@ -22,9 +22,15 @@ export class ModeController {
     this.root = root;
     this.onChange = onChange;
     this.summary = root.querySelector("summary");
+    this.heading = root.querySelector("#modes-title");
+    this.closeButton = root.querySelector("#modes-close");
     this.active = root.querySelector("[data-mode-active]");
     this.resolution = root.querySelector("[data-mode-resolution]");
     root.addEventListener("change", () => this.update(true));
+    root.addEventListener("toggle", () => {
+      if (root.open) queueMicrotask(() => this.heading?.focus());
+    });
+    this.closeButton?.addEventListener("click", () => this.close());
     root.addEventListener("keydown", event => {
       if (event.key !== "Escape" || !root.open) return;
       event.preventDefault(); event.stopPropagation(); this.close();
@@ -56,5 +62,8 @@ export class ModeController {
     return modes;
   }
 
-  close() { this.root.open = false; this.summary.focus(); }
+  close() {
+    this.root.open = false;
+    this.summary.focus();
+  }
 }

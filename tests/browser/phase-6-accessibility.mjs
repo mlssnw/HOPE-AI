@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {writeFile} from 'node:fs/promises';
 const {chromium}=await import(process.env.HOPE_PLAYWRIGHT_MODULE || 'playwright');
+const output=process.env.HOPE_EVIDENCE_DIR||'docs/evidence/phase-6';
 const browser=await chromium.launch({headless:true,executablePath:process.env.HOPE_CHROME_PATH});
 const report={browser:browser.version(),viewports:[],contrast:[],focus:[]};
 try {
@@ -17,7 +18,7 @@ try {
     await page.locator('#send-button').scrollIntoViewIfNeeded();
     const send=await page.locator('#send-button').boundingBox();assert.ok(send.y>=0&&send.y+send.height<=height);
     await page.evaluate(()=>{const el=document.createElement('small');el.textContent='Implementação em andamento · dados de teste';el.style.cssText='position:fixed;bottom:0;right:0;z-index:9999;background:#030609;color:#fff8e9;padding:3px 6px;font:11px sans-serif';document.body.append(el);});
-    await page.screenshot({path:`docs/evidence/phase-6/accessibility-${name}.png`,fullPage:true});
+    await page.screenshot({path:`${output}/accessibility-${name}.png`,fullPage:true});
     if(name==='text-130') {
       report.accessibilityTree=await page.locator('body').ariaSnapshot();
       report.focus=await page.evaluate(()=>[...document.querySelectorAll('button,input,textarea,select,summary,a[href],[tabindex="0"]')].filter(el=>!el.disabled&&el.getClientRects().length).map(el=>el.id||el.textContent.trim()));
@@ -31,6 +32,6 @@ try {
     }
     await context.close();
   }
-  await writeFile('docs/evidence/phase-6/accessibility-results.json',JSON.stringify(report,null,2));
+  await writeFile(`${output}/accessibility-results.json`,JSON.stringify(report,null,2));
   console.log('PASS accessible bounds, 200% reflow equivalent, 130% text, landscape reachability, contrast and focus');
 } finally {await browser.close();}

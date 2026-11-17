@@ -60,7 +60,7 @@ export class ChatController {
   presentVoiceState(state) {
     const source = ["recognition", "playback"].includes(state.source) ? "voice" : "chat";
     signalOperation(source, state.state.toLowerCase());
-    if (state.state !== "IDLE") announce(VOICE_STATE_LABELS[state.state]);
+    if (!["IDLE", "ERROR"].includes(state.state)) announce(VOICE_STATE_LABELS[state.state]);
   }
 
   bind() {
@@ -102,6 +102,7 @@ export class ChatController {
       },
       (message, error) => announce(message, error),
       {
+        beforeStart: () => this.stopSpeech(),
         begin: () => this.turns.begin(),
         isCurrent: reference => this.turns.isCurrent(reference),
         invalidate: reference => this.turns.cancel(reference),
@@ -211,10 +212,14 @@ export class ChatController {
     });
     const turn = Object.freeze({ reference, modes, policy });
     this.activeTurn = turn;
-    const previousHistory = this.sessionHistory.recent(20);
+    const previousHistory = this.sessionHistory.recentFor(policy, 20);
+    const publicTurn = policy.modes.audience === "PUBLIC" && policy.modes.privacy === "STANDARD";
     elements.prompt.value = "";
     addMessage("user", message);
-    this.sessionHistory.append("user", message, policy);
+    this.sessionHistory.append("user", message, policy, {
+      trust: publicTurn ? "PUBLIC_SAFE" : "PRIVATE",
+      audience: policy.modes.audience,
+    });
     this.savePreferences();
     const controller = new AbortController();
     this.abortController = controller; setBusy(true); this.applyModes(this.currentModes, false);
@@ -235,7 +240,11 @@ export class ChatController {
       this.states.reset("chat", reference);
       dispatchUiEvents(result.ui_events);
       dispatchMemoryDeleteConfirmation(result.memory_delete_confirmation);
-      this.sessionHistory.append("assistant", display.text, policy);
+      this.sessionHistory.append("assistant", display.text, policy, {
+        trust: publicTurn && display.memoriesUsed.length === 0 ? "PUBLIC_SAFE" : "PRIVATE",
+        audience: policy.modes.audience,
+        memoryDerived: display.memoriesUsed.length > 0,
+      });
       this.savePreferences();
       addSpeechAction(article, {
         enabled: policy.speechEnabled && !elements.voice.disabled,

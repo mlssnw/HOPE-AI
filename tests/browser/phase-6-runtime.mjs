@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {writeFile} from 'node:fs/promises';
 const {chromium}=await import(process.env.HOPE_PLAYWRIGHT_MODULE || 'playwright');
 const browser=await chromium.launch({headless:true,executablePath:process.env.HOPE_CHROME_PATH,args:['--autoplay-policy=no-user-gesture-required']});
-const base='http://127.0.0.1:8766',output='docs/evidence/phase-6';
+const base='http://127.0.0.1:8766',output=process.env.HOPE_EVIDENCE_DIR||'docs/evidence/phase-6';
 const report={browser:browser.version(),tests:[],performance:[]};
 async function setup(options={}) {
   const context=await browser.newContext({viewport:{width:1440,height:900},...options});
@@ -45,8 +45,10 @@ try {
     send('MEMORY_DELETED',{memory_id:node.id});
     await page.waitForFunction(()=>document.querySelector('#memory-inspector').hidden);
     assert.equal(graphRequests,originalRequestCount,'Incremental events must not reload graph HTTP');
+    const localState=(await page.locator('#hope-state').getAttribute('data-state'))||'idle';
     for(const state of ['thinking','searching','speaking','error','idle']) {
-      send('AI_STATE_CHANGED',{state});await page.waitForFunction(value=>document.querySelector('#hope-state').dataset.state===value,state);
+      send('AI_STATE_CHANGED',{state});await page.waitForTimeout(30);
+      assert.equal(await page.locator('#hope-state').getAttribute('data-state'),localState,'Uncorrelated realtime state must not control the local turn');
     }
     let pong=false;socket.onMessage(message=>{if(JSON.parse(message).type==='PONG')pong=true;});
     send('PING',{});await page.waitForTimeout(100);assert.equal(pong,true);
@@ -127,8 +129,10 @@ try {
     await page.locator('#prompt').fill('Resposta mais recente');await page.locator('#send-button').click();
     await page.waitForFunction(()=>document.querySelector('#hope-state').dataset.state==='speaking');
     await page.locator('#speech-stop').click();
-    await page.unroute('**/api/tts');await page.locator('#prompt').fill('Leitura com falha');await page.locator('#send-button').click();
-    await page.waitForFunction(()=>document.querySelector('#live-status').textContent.includes('Voz simulada'));
+    await page.unroute('**/api/tts');
+    await page.route('**/api/tts',route=>route.fulfill({status:503,json:{detail:'Voz simulada indisponível.'}}));
+    await page.locator('#prompt').fill('Leitura com falha');await page.locator('#send-button').click();
+    await page.waitForFunction(()=>document.querySelector('#urgent-status').textContent.includes('Voz simulada'));
     assert.equal(await page.locator('#speech-stop').isVisible(),false);assert.deepEqual(errors,[]);report.tests.push('real audio playing/stop with local PCM; TTS error retains text and exits speaking');await context.close();
   }
   await writeFile(`${output}/runtime-results.json`,JSON.stringify(report,null,2));

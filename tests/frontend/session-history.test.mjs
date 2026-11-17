@@ -31,3 +31,52 @@ test("switching to private preserves records saved before the switch", () => {
     { role: "assistant", content: "já salva" },
   ]);
 });
+
+test("public history projection fails closed for legacy, private and memory-derived records", () => {
+  const history = new SessionHistory([
+    { role: "user", content: "legacy sem proveniência" },
+    { role: "assistant", content: "resposta legacy" },
+  ]);
+  const privatePolicy = { modes: { audience: "PRIVATE", privacy: "STANDARD" } };
+  const publicPolicy = { modes: { audience: "PUBLIC", privacy: "STANDARD" } };
+
+  history.append("user", "segredo atual", privatePolicy, {
+    trust: "PRIVATE",
+    audience: "PRIVATE",
+  });
+  history.append("assistant", "resposta derivada de memória", privatePolicy, {
+    trust: "PRIVATE",
+    audience: "PRIVATE",
+    memoryDerived: true,
+  });
+  history.append("user", "pergunta pública", publicPolicy, {
+    trust: "PUBLIC_SAFE",
+    audience: "PUBLIC",
+  });
+  history.append("assistant", "resposta pública", publicPolicy, {
+    trust: "PUBLIC_SAFE",
+    audience: "PUBLIC",
+  });
+
+  assert.deepEqual(history.recentFor(publicPolicy, 20), [
+    { role: "user", content: "pergunta pública" },
+    { role: "assistant", content: "resposta pública" },
+  ]);
+  assert.equal(history.visible.length, 6);
+  assert.equal(history.persistable.length, 6);
+  assert.deepEqual(Object.keys(history.persistable[0]).sort(), ["content", "role"]);
+});
+
+test("public projection never trusts a public label without explicit safe provenance", () => {
+  const publicPolicy = { modes: { audience: "PUBLIC", privacy: "STANDARD" } };
+  const history = new SessionHistory();
+  history.append("user", "sem marca confiável", publicPolicy);
+  history.append("assistant", "contaminada", publicPolicy, {
+    trust: "PUBLIC_SAFE",
+    audience: "PUBLIC",
+    memoryDerived: true,
+  });
+
+  assert.deepEqual(history.recentFor(publicPolicy), []);
+  assert.deepEqual(history.recentFor({ modes: { audience: "PUBLIC", privacy: "PRIVATE" } }), []);
+});

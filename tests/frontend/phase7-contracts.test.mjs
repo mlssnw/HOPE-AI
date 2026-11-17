@@ -86,6 +86,18 @@ test("voice state rejects executing, stale events and expired transitions", () =
   assert.equal(states.current.state, "ALERT");
 });
 
+test("voice state announces an accepted transition only once", () => {
+  const turns = new TurnManager({ sessionId: "voice-session" });
+  const turn = turns.begin();
+  const changes = [];
+  const states = new VoiceStateManager(turns, { onChange: event => changes.push(event.state) });
+  const event = { state: "THINKING", source: "chat", ...turn, timestamp: 100 };
+
+  assert.equal(states.transition(event), true);
+  assert.equal(states.transition({ ...event, timestamp: 101 }), false);
+  assert.deepEqual(changes, ["THINKING"]);
+});
+
 test("mode resolution is deterministic and restrictions beat style", () => {
   const resolved = resolveModes({
     style: "PRESENTATION",

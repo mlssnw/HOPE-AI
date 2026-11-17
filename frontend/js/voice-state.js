@@ -34,6 +34,7 @@ export class VoiceStateManager {
     if (event.state !== "IDLE" && !this.turnManager.isCurrent(event)) return false;
     if (event.state === "SPEAKING" && event.source !== "playback") return false;
     if (event.state === "LISTENING" && event.source !== "recognition") return false;
+    if (event.state === this.current.state && sameReference(this.current, event)) return false;
     if (sameReference(this.current, event)
       && PRECEDENCE[event.state] < PRECEDENCE[this.current.state]) return false;
     this.current = Object.freeze({ ...event });
@@ -43,6 +44,7 @@ export class VoiceStateManager {
 
   reset(source = "system", reference = null) {
     if (reference && !this.turnManager.isCurrent(reference)) return false;
+    if (this.current.state === "IDLE") return false;
     this.current = Object.freeze({ state: "IDLE", source, timestamp: this.now() });
     this.onChange(this.current);
     return true;

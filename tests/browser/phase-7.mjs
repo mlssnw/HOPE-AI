@@ -14,6 +14,8 @@ await mkdir(output, { recursive: true });
 
 const installSyntheticVoice = async page => page.addInitScript(() => {
   window.__voiceLevels = [];
+  window.__pauseCalls = 0;
+  window.__disconnectCalls = 0;
   addEventListener("hope:voice-level", event => window.__voiceLevels.push(event.detail.value));
   class FixtureAudio extends EventTarget {
     constructor(url) { super(); this.url = url; window.fixtureAudio = this; }
@@ -21,9 +23,9 @@ const installSyntheticVoice = async page => page.addInitScript(() => {
       if (window.__failNextPlay) { window.__failNextPlay = false; throw new DOMException("autoplay denied", "NotAllowedError"); }
       this.dispatchEvent(new Event("playing"));
     }
-    pause() { this.dispatchEvent(new Event("pause")); }
+    pause() { window.__pauseCalls += 1; this.dispatchEvent(new Event("pause")); }
   }
-  class Node { connect() { return this; } disconnect() {} }
+  class Node { connect() { return this; } disconnect() { window.__disconnectCalls += 1; } }
   class FixtureAnalyser extends Node {
     constructor() { super(); this.fftSize = 256; }
     getFloatTimeDomainData(samples) {
@@ -143,6 +145,58 @@ try {
     assert.equal(storage.some(value => /FOCUS|DO_NOT_DISTURB|presentation_mode/.test(value)), false);
   });
 
+  await scenario("public history projection excludes legacy, private and delayed private responses", async page => {
+    await page.addInitScript(() => {
+      localStorage.setItem("hope.preferences.v1", JSON.stringify({ persist: true, memoryEnabled: true }));
+      localStorage.setItem("hope.history.v1", JSON.stringify([
+        { role: "user", content: "legacy privado sem proveniência" },
+        { role: "assistant", content: "resposta legacy privada" },
+      ]));
+    });
+    const requests = [];
+    page.on("request", request => {
+      if (request.url().endsWith("/api/chat")) requests.push(request.postDataJSON());
+    });
+    await page.goto(base); await ready(page);
+    await page.locator("#modes-control summary").click();
+    await page.locator('input[name="mode-audience"][value="PUBLIC"]').check();
+    await page.locator("#modes-close").click();
+    await page.locator("#prompt").fill("primeira pergunta pública");
+    await page.locator("#prompt").press("Enter");
+    await page.waitForFunction(() => document.querySelectorAll(".message.assistant").length === 2);
+    assert.equal(requests[0].memory_enabled, false);
+    assert.deepEqual(requests[0].history, []);
+
+    await page.locator("#prompt").fill("segunda pergunta pública");
+    await page.locator("#prompt").press("Enter");
+    await page.waitForFunction(() => document.querySelectorAll(".message.assistant").length === 3);
+    assert.deepEqual(requests[1].history.map(item => item.content), [
+      "primeira pergunta pública",
+      "Resposta **simulada** e segura. `<img src=x onerror=alert(1)>` permanece texto.",
+    ]);
+
+    await page.locator("#modes-control summary").click();
+    await page.locator('input[name="mode-audience"][value="PRIVATE"]').check();
+    await page.locator("#modes-close").click();
+    await page.locator("#prompt").fill("aguarde segredo privado");
+    await page.locator("#prompt").press("Enter");
+    await page.locator("#modes-control summary").click();
+    await page.locator('input[name="mode-audience"][value="PUBLIC"]').check();
+    await page.locator("#modes-close").click();
+    await page.waitForFunction(() => document.querySelectorAll(".message.assistant").length === 4);
+
+    await page.locator("#prompt").fill("terceira pergunta pública");
+    await page.locator("#prompt").press("Enter");
+    await page.waitForFunction(() => document.querySelectorAll(".message.assistant").length === 5);
+    const publicHistory = requests.at(-1).history;
+    assert.equal(publicHistory.some(item => /legacy|segredo privado/i.test(item.content)), false);
+    assert.equal(publicHistory.filter(item => item.role === "assistant").length, 2);
+    assert.deepEqual(publicHistory.filter(item => item.role === "user").map(item => item.content), [
+      "primeira pergunta pública", "segunda pergunta pública",
+    ]);
+    assert.equal(await page.locator(".message").count(), 10, "visible history must remain intact");
+  });
+
   await scenario("display survives TTS failure and playback uses local amplitude", async page => {
     await installSyntheticVoice(page);
     await page.goto(base); await ready(page);
@@ -176,6 +230,28 @@ try {
     await page.evaluate(() => window.fixtureAudio.dispatchEvent(new Event("ended")));
   });
 
+  await scenario("actionable failures use one alert channel without a generic duplicate", async page => {
+    await page.goto(base); await ready(page);
+    await page.evaluate(() => {
+      window.__announcements = [];
+      for (const id of ["live-status", "urgent-status"]) {
+        const node = document.querySelector(`#${id}`);
+        new MutationObserver(() => {
+          const text = node.textContent.trim();
+          if (text) window.__announcements.push({ id, text });
+        }).observe(node, { childList: true, characterData: true, subtree: true });
+      }
+    });
+    await page.locator("#prompt").fill("erro controlado");
+    await page.locator("#prompt").press("Enter");
+    await page.waitForFunction(() => document.querySelector("#urgent-status").textContent.includes("Erro simulado"));
+    const announcements = await page.evaluate(() => window.__announcements);
+    assert.deepEqual(announcements.filter(item => item.text.includes("Erro simulado")), [
+      { id: "urgent-status", text: "Erro simulado tratado com segurança." },
+    ]);
+    assert.equal(announcements.some(item => /Falha — verifique/.test(item.text)), false);
+  });
+
   await scenario("recognition truth, Escape priority, cancel and stale guards", async page => {
     await page.addInitScript(() => {
       window.SpeechRecognition = class {
@@ -192,22 +268,40 @@ try {
     assert.equal(await page.locator("#modes-control").getAttribute("open"), null);
     assert.equal(await page.locator("#modes-control summary").evaluate(node => node === document.activeElement), true);
 
+    await page.locator("#prompt").fill("voz antes do ditado");
+    await page.locator("#prompt").press("Enter");
+    await page.waitForFunction(() => document.querySelector(".message-speech"));
+    await page.locator(".message-speech").click();
+    await page.waitForFunction(() => document.querySelector("#hope-state").dataset.state === "speaking");
+    await page.waitForFunction(() => window.__voiceLevels.some(value => value > 0));
     await page.locator("#mic-button").click();
+    assert.equal(await page.evaluate(() => window.__pauseCalls), 1);
+    assert.ok(await page.evaluate(() => window.__disconnectCalls > 0));
+    assert.equal(await page.evaluate(() => window.__voiceLevels.at(-1)), 0);
     assert.notEqual(await page.locator("#hope-state").getAttribute("data-state"), "listening");
+    await page.evaluate(() => window.fixtureAudio.dispatchEvent(new Event("playing")));
+    assert.notEqual(await page.locator("#hope-state").getAttribute("data-state"), "speaking");
     await page.evaluate(() => window.fixtureRecognition.onstart());
     assert.equal(await page.locator("#hope-state").getAttribute("data-state"), "listening");
+    await page.evaluate(() => window.fixtureAudio.dispatchEvent(new Event("playing")));
+    assert.equal(await page.locator("#hope-state").getAttribute("data-state"), "listening");
+    await page.locator("#mic-button").click();
+    assert.equal(await page.locator("#hope-state").getAttribute("data-state"), "idle");
+    await page.locator("#mic-button").click();
+    await page.evaluate(() => window.fixtureRecognition.onstart());
     await page.keyboard.press("Escape");
     assert.equal(await page.locator("#hope-state").getAttribute("data-state"), "idle");
     await page.evaluate(() => window.fixtureRecognition.onresult({ results: [[{ transcript: "stale" }]] }));
     assert.equal(await page.locator("#prompt").inputValue(), "");
 
+    const completedCount = await page.locator(".message.assistant").count();
     await page.locator("#prompt").fill("aguarde");
     await page.locator("#prompt").press("Enter");
     await page.waitForFunction(() => !document.querySelector("#cancel-button").hidden);
     await page.keyboard.press("Escape");
     await page.waitForFunction(() => document.querySelector("#hope-state").dataset.state === "idle");
     await page.waitForTimeout(3200);
-    assert.equal(await page.locator(".message.assistant").count(), 0);
+    assert.equal(await page.locator(".message.assistant").count(), completedCount);
     assert.match(await page.locator("#live-status").textContent(), /cancelada/i);
   });
 
@@ -251,9 +345,21 @@ try {
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
     await page.locator("#modes-control summary").click();
     assert.equal(await page.locator(".modes-sheet").isVisible(), true);
+    assert.equal(await page.locator("#modes-title").evaluate(node => node === document.activeElement), true);
+    assert.equal(await page.locator("#modes-close").isVisible(), true);
+    assert.equal(await page.locator(".modes-sheet fieldset").count(), 5);
+    await page.locator('fieldset:has(legend:text-is("Audiência"))').scrollIntoViewIfNeeded();
+    const reachable = await page.locator('fieldset:has(legend:text-is("Audiência"))').evaluate(node => {
+      const field = node.getBoundingClientRect();
+      const sheet = node.closest(".modes-sheet").getBoundingClientRect();
+      return field.top >= sheet.top && field.bottom <= sheet.bottom;
+    });
+    assert.equal(reachable, true);
     const snapshot = await page.locator("body").ariaSnapshot();
     assert.match(snapshot, /Modos da sessão/);
     await screenshot(page, "text-130-modes");
+    await page.locator("#modes-close").click();
+    assert.equal(await page.locator("#modes-control summary").evaluate(node => node === document.activeElement), true);
   }, { reducedMotion: "reduce" });
 
   await writeFile(

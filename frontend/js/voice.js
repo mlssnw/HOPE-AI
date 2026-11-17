@@ -47,8 +47,11 @@ export class VoiceInput {
     };
     button.addEventListener("click", () => {
       if (this.isListening()) { this.stop(); return; }
-      this.reference = this.lifecycle.begin?.() ?? null;
-      try { this.recognition.start(); }
+      try {
+        this.lifecycle.beforeStart?.();
+        this.reference = this.lifecycle.begin?.() ?? null;
+        this.recognition.start();
+      }
       catch {
         if (this.reference) this.lifecycle.invalidate?.(this.reference);
         this.reference = null;

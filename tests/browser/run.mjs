@@ -1,11 +1,15 @@
 // Own one disposable harness process. Refuse an occupied port rather than testing
 // an unknown application. No reload worker, real DB, or external provider calls.
 import {spawn} from 'node:child_process';
-import {resolve} from 'node:path';
+import {mkdtemp,rm} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {join,resolve} from 'node:path';
 import {createServer} from 'node:net';
 const port=8766;
 await new Promise((accept,reject)=>{const probe=createServer();probe.once('error',reject);probe.listen(port,'127.0.0.1',()=>probe.close(accept));});
 const python=process.env.HOPE_PYTHON || resolve(process.platform==='win32'?'.venv/Scripts/python.exe':'.venv/bin/python');
+const ownsEvidence=!process.env.HOPE_EVIDENCE_DIR;
+const evidence=process.env.HOPE_EVIDENCE_DIR || await mkdtemp(join(tmpdir(),'hope-phase-6-browser-'));
 const server=spawn(python,['-m','uvicorn','tests.e2e_app:app','--host','127.0.0.1','--port',String(port)],{
   windowsHide:true,stdio:['ignore','pipe','pipe'],
   env:{...process.env,DATABASE_URL:'',ANTHROPIC_API_KEY:'',ELEVENLABS_API_KEY:'',TAVILY_API_KEY:''},
@@ -20,9 +24,14 @@ try {
   });
   for(const script of ['globe-compositing','phase-6','phase-6-runtime','phase-6-accessibility','phase-6-flows']) {
     await new Promise((accept,reject)=>{
-      const test=spawn(process.execPath,[`tests/browser/${script}.mjs`],{windowsHide:true,stdio:'inherit'});
+      const test=spawn(process.execPath,[`tests/browser/${script}.mjs`],{
+        windowsHide:true,stdio:'inherit',env:{...process.env,HOPE_EVIDENCE_DIR:evidence},
+      });
       test.once('error',reject);test.once('exit',code=>code===0?accept():reject(new Error(`${script}: exit ${code}`)));
     });
   }
   console.log('PASS complete Phase 6 browser package; disposable state only.');
-} finally {server.kill();}
+} finally {
+  server.kill();
+  if(ownsEvidence)await rm(evidence,{recursive:true,force:true});
+}

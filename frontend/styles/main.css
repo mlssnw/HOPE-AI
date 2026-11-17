@@ -136,6 +136,7 @@ input[type="checkbox"] { accent-color:var(--gold); width:16px; height:16px; flex
 #composer-help,.auxiliary-status,.live-status { font-size:.6875rem; color:var(--muted); line-height:1.4; margin:6px 0 0 }
 .live-status { min-height:16px; flex:none }
 .live-status.error { color:var(--danger) }
+#urgent-status:empty { display:none }
 .confirmation-dialog { width:min(480px,calc(100% - 24px)); max-height:90dvh; padding:24px; background:var(--raised); color:var(--text); border:1px solid var(--control); border-radius:12px; overflow:auto }
 .confirmation-dialog::backdrop { background:#000c }
 .confirmation-dialog p { font-size:.9375rem; line-height:1.5; overflow-wrap:anywhere }
@@ -227,10 +228,10 @@ body[data-reduced-motion="true"] * { animation:none!important; transition-durati
 .modes-control>summary{display:flex;gap:.55rem;align-items:center;min-height:44px;cursor:pointer;color:var(--ink,#f3ede2);border:1px solid rgba(222,168,70,.34);border-radius:999px;padding:.45rem .75rem;list-style:none}
 .modes-control>summary::-webkit-details-marker{display:none}
 .modes-control>summary span{color:var(--muted,#b7ad9c);font-size:.78rem}
-.modes-sheet{position:absolute;z-index:30;left:0;bottom:calc(100% + .6rem);width:min(38rem,calc(100vw - 2rem));display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem;padding:1rem;background:rgba(4,12,14,.98);border:1px solid rgba(222,168,70,.4);border-radius:1rem;box-shadow:0 1.25rem 3rem rgba(0,0,0,.48)}
+.modes-sheet{position:absolute;z-index:30;left:0;bottom:calc(100% + .6rem);width:min(38rem,calc(100vw - 2rem));max-height:min(70dvh,42rem);overflow-y:auto;overscroll-behavior:contain;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem;padding:1rem;background:rgba(4,12,14,.98);border:1px solid rgba(222,168,70,.4);border-radius:1rem;box-shadow:0 1.25rem 3rem rgba(0,0,0,.48)}
 .modes-head,.mode-resolution,.mode-boundary{grid-column:1/-1}
-.modes-head{display:flex;justify-content:space-between;gap:1rem}.modes-head span,.mode-boundary{color:var(--muted,#b7ad9c);font-size:.82rem}
+.modes-head{position:sticky;top:-1rem;z-index:1;display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin:-1rem -1rem 0;padding:1rem;background:#040c0e;border-bottom:1px solid rgba(255,255,255,.1)}.modes-head h3{margin:0;font:inherit;font-weight:650}.modes-head span,.mode-boundary{color:var(--muted,#b7ad9c);font-size:.82rem}.modes-close{min-width:44px;min-height:44px;padding:.45rem .75rem}
 .modes-sheet fieldset{min-width:0;margin:0;padding:.65rem;border:1px solid rgba(255,255,255,.12);border-radius:.7rem}.modes-sheet legend{padding:0 .3rem;color:#e9c676;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em}.modes-sheet label{display:inline-flex;align-items:center;min-height:44px;gap:.35rem;margin:.2rem .65rem .2rem 0}
 .mode-resolution,.mode-boundary{margin:0}.mode-resolution{color:#f0d89a}
 .self-knowledge{position:relative}.self-knowledge>summary{display:flex;align-items:center;min-height:44px;cursor:pointer;color:var(--muted,#b7ad9c);font-size:.82rem}.self-knowledge>div{position:absolute;z-index:40;right:0;top:calc(100% + .5rem);width:min(28rem,calc(100vw - 2rem));padding:1rem;background:#071013;border:1px solid rgba(222,168,70,.34);border-radius:.8rem;box-shadow:0 1rem 2.5rem rgba(0,0,0,.45)}.self-knowledge dl{display:grid;grid-template-columns:1fr auto;gap:.25rem .8rem}.self-knowledge dt,.self-knowledge dd{margin:0}.self-knowledge dd{color:#e9c676}.self-knowledge li{margin:.25rem 0}
-@media(max-width:680px){.modes-sheet{position:fixed;left:0;right:0;bottom:0;width:auto;max-height:min(78vh,42rem);overflow:auto;border-radius:1rem 1rem 0 0;grid-template-columns:1fr;padding:1rem max(1rem,env(safe-area-inset-right)) max(1rem,env(safe-area-inset-bottom)) max(1rem,env(safe-area-inset-left))}.modes-head,.mode-resolution,.mode-boundary{grid-column:1}}
+@media(max-width:680px){.modes-sheet{position:fixed;left:0;right:0;bottom:0;width:auto;max-height:min(88dvh,42rem);border-radius:1rem 1rem 0 0;grid-template-columns:1fr;padding:1rem max(1rem,env(safe-area-inset-right)) max(1rem,env(safe-area-inset-bottom)) max(1rem,env(safe-area-inset-left))}.modes-head,.mode-resolution,.mode-boundary{grid-column:1}}

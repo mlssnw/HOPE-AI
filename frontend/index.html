@@ -75,8 +75,8 @@
 <p class="memory-consent-note" id="memory-consent-help">Memória no chat permite recuperar e salvar memórias e enviar trechos ao provedor de IA. Histórico local guarda a conversa neste navegador.</p>
 <details class="modes-control" id="modes-control">
 <summary>Modos <span data-mode-active>Padrão</span></summary>
-<div class="modes-sheet" aria-label="Modos desta sessão">
-<div class="modes-head"><strong>Modos da sessão</strong><span>Aplicados somente a novos turnos.</span></div>
+<div class="modes-sheet" aria-labelledby="modes-title">
+<div class="modes-head"><div><h3 id="modes-title" tabindex="-1">Modos da sessão</h3><span>Aplicados somente a novos turnos.</span></div><button id="modes-close" class="modes-close" type="button" aria-label="Fechar modos">Fechar</button></div>
 <fieldset><legend>Estilo</legend>
 <label><input type="radio" name="mode-style" value="NORMAL" checked> Normal</label>
 <label><input type="radio" name="mode-style" value="FOCUS"> Foco</label>
@@ -96,7 +96,7 @@
 <div class="send-controls"><button class="cancel-button" id="cancel-button" type="button" hidden>Cancelar</button><button class="send-button" id="send-button" type="submit">Enviar <span aria-hidden="true">↗</span></button></div>
 </div><p id="composer-help">Enter envia · Shift+Enter quebra a linha</p>
 </form>
-<p id="voice-status" class="auxiliary-status">Verificando voz…</p><p class="live-status" id="live-status" role="status" aria-live="polite"></p><p class="sr-only" id="urgent-status" role="alert"></p>
+<p id="voice-status" class="auxiliary-status">Verificando voz…</p><p class="live-status" id="live-status" role="status" aria-live="polite"></p><p class="live-status error" id="urgent-status" role="alert"></p>
 </section>
 <div class="surface-switcher" id="surface-switcher" aria-label="Superfície principal"><button type="button" id="show-conversation" aria-pressed="true" aria-controls="conversation">Conversa</button><button type="button" id="show-memory" aria-pressed="false" aria-controls="memory-globe-shell">Memória <span id="mobile-count"></span></button></div>
 </main>
