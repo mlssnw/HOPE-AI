@@ -7,8 +7,8 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 ## Current Phase
 
 - Phase: 7 — Conversational Presence Foundation
-- Phase status: WAITING_FOR_REVIEW — QA and Security approved the corrected target with warnings; UI/UX and Planner consolidation remain pending
-- Feature status: READY_FOR_REVIEW — Functional Commit `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5` is not approved yet
+- Phase status: WAITING_FOR_REVIEW — all required technical reviewers approved the corrected target with warnings; final Planner consolidation is pending
+- Feature status: READY_FOR_REVIEW — matching QA, Security and UI/UX verdicts are persisted for `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`; phase consolidation remains separate
 - Production readiness: BLOCKED — Phase 7 does not authorize public deployment or resolve the inherited production blockers
 - Baseline: `ce2bde4` on `main`, with Phase 6 complete and integrated through PR #1
 - Runtime API version: `6.0.0-phase.5` — frozen legacy metadata from the approved Phase 6 artifact; Phase 7 has not changed it
@@ -108,7 +108,7 @@ Required Reviews — Integration Candidate:
 | QA | YES | APPROVED_WITH_WARNINGS | `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5` |
 | DATABASE | NO | N/A | — |
 | SECURITY | YES | APPROVED_WITH_WARNINGS | `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5` |
-| UI/UX | YES | WAITING_FOR_REVIEW — POST-IMPLEMENTATION | `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`; pre-implementation spec remains approved |
+| UI/UX | YES | APPROVED_WITH_WARNINGS — POST-IMPLEMENTATION | `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5` |
 | PLANNER | YES | WAITING_FOR_REVIEW — FINAL CONSOLIDATION | `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`; planning approval `11eb4f7` preserved |
 
 ## Development
@@ -222,22 +222,21 @@ Required Reviews — Integration Candidate:
 
 - Autonomy level: 2.5
 - Status: WAITING_FOR_REVIEW
-- Operational conclusion: QA approved `af2aa66` with warnings in `7a5a446`, independently passing 60 Python, 67 frontend and both complete browser packages (HIGH 58.85 FPS/2,500 nodes). Security approved the same target with warnings in `a2b5739`, closing SEC-021. QA-P7-001/002 are closed. UI/UX still needs current-target interaction evidence; no final phase approval is inferred.
+- Operational conclusion: all mandatory reviewers approved exact `af2aa66` with warnings: QA `7a5a446`, Security `a2b5739`, UI/UX `eb9a550`. All five feature findings are closed by their domain owners. QA verified the complete test/browser packages; UI/UX independently verified eight targeted Chrome scenarios and persisted current-target measurements/screenshots. Final Planner consolidation remains pending.
 - Final Integration Candidate: `cb8dc774cc396f3aff0ef40e79753761fbf3b49b`
 - Main integration commit: `ce2bde4`
-- Routing: LEVEL 1 — UI/UX owns the current-target browser window after QA's release. Its initial full-run attempt did not complete reliably; targeted independent interaction checks must provide evidence before its verdict. UI/UX writes only its report and new synthetic evidence; shared handoff/index/commit writes remain closed until serialization. Planner consolidates after the final matching verdict. Draft [PR #2](https://github.com/mlssnw/HOPE-AI/pull/2) remains unmerged; no HIGH risk acceptance or production action is authorized.
+- Routing: LEVEL 1 — route final documentation-only consolidation to Planner. It owns architecture/phase/vision/roadmap/backlog and its own handoff section; technical reports and their findings remain unchanged. All implementation/reviewer write windows are closed. Draft [PR #2](https://github.com/mlssnw/HOPE-AI/pull/2) remains unmerged; no HIGH risk acceptance, production or next-phase action is authorized.
 - Boundary: COORDINATOR atualizou somente Current Phase, Current Functional Commit, Review Matrix, blockers, warnings, Next Action e histórico; não concedeu aprovação técnica nem alterou seções ou relatórios de ownership dos reviewers
 
 ## Current Blockers
 
 ### Feature Blockers
 
-- Findings originated on rejected `c649a90`. QA closed QA-P7-001/002 on `af2aa66` in `7a5a446`; Security closed SEC-021 on that same target in `a2b5739`. Neither role has a remaining Phase 7 feature blocker. UI/UX's two previous findings await its independent closure evidence below.
+- No Phase 7 feature blocker remains in the mandatory domain reports for `af2aa66`.
+- Findings originated on rejected `c649a90`: QA closed QA-P7-001/002 in `7a5a446`; Security closed SEC-021 in `a2b5739`; UI/UX closed UIUX-P7-POST-001/002 in `eb9a550`. All closures apply to the same corrected Functional Commit.
 - No technical blocker remains in the pre-implementation UI/UX specification.
 - No authorization blocker remains for the approved Phase 7 implementation. The prior generation-boundary blocker was resolved by `ARCH-2026-11-14-001`; its exact enum/static-section boundary remains binding.
-- `UIUX-P7-POST-001` — HIGH, blocking: Modes lacks reliable touch close, focus entry/return and vertically reachable controls at short heights/enlarged text.
-- `UIUX-P7-POST-002` — MEDIUM, blocking: actionable errors are duplicated across live announcement regions.
-- Remaining gates: corrected exact Functional Commit; proportional QA, Security and UI/UX re-reviews; Planner consolidation. No domain approval is inferred from green Development tests or from pre-implementation approval.
+- Remaining gate: Planner consolidation of exact-target reviews, accepted non-blocking warnings and active architecture/roadmap state. This operational summary grants no independent domain approval.
 - No paid validation, new provider, budget setting, real-database operation, production or later phase is authorized.
 - Eight optional exact alternatives (`P7-PHRASE-021` through `P7-PHRASE-028`) remain `PENDING_OWNER_APPROVAL`; they are excluded from implementation by default and do not block Development.
 
@@ -249,7 +248,7 @@ Required Reviews — Integration Candidate:
 
 ## Warnings
 
-- Historical Phase 6 UI/UX approval does not approve Phase 7. Current UI/UX limits `UIUX-P7-W01`/`UIUX-P7-W02` cover live-provider fidelity and unexecuted manual assistive-technology/physical-device checks; current blocking findings are listed above. `UIUX-F5-W01`, `UIUX-F5-W02` and `UIUX-F5-W03` remain closed.
+- Current Phase 7 UI/UX warnings `UIUX-P7-W01`/`W02`/`W03` are INFO/non-blocking limits for provider fidelity, manual/physical-device validation and no fresh UI/UX Python run. `UIUX-P7-W04` is LOW/non-blocking: 2 px horizontal overflow at 720×450 plus 130% text, without inaccessible content or controls. Planner must preserve these and assign follow-up in the backlog. Historical `UIUX-F5-W01`/`W02`/`W03` remain closed.
 - `QA-003` foi encerrado; `QA-ENV-002` e `QA-WARN-HTTPX` permanecem INFO/non-blocking.
 - `SEC-018` permanece LOW/non-blocking e deve seguir para o backlog de hardening do harness.
 - `SEC-017` permanece MEDIUM e não bloqueante: o gate depende do lifespan e o harness sintético não valida schema, autenticação ou isolamento.
@@ -269,9 +268,9 @@ Required Reviews — Integration Candidate:
 
 ## Next Action
 
-- Role: UI/UX
+- Role: Planner
 - Status: WAITING_FOR_REVIEW
-- Task: finish independent current-target interaction evidence, issue the post-implementation verdict and explicitly close or retain UIUX-P7-POST-001/002 without changing code
+- Task: consolidate all matching mandatory verdicts, reconcile active implemented-state documentation and register non-blocking warnings without starting another phase or approving production
 - Target Functional Commit: `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`; documentation/evidence `5f125a0`; previous rejected target `c649a90`; branch `codex/phase-7-completion`
 - Required inputs:
   - [`docs/phase-7.md`](phase-7.md)
@@ -282,11 +281,11 @@ Required Reviews — Integration Candidate:
   - [`docs/reviews/qa-latest.md`](reviews/qa-latest.md)
   - [`docs/reviews/security-review-latest.md`](reviews/security-review-latest.md)
 - Expected output:
-  - exact-target UI/UX verdict with evidence of Modes focus/close/vertical reachability, single accessible announcement, affected UIUX-P7 criteria and synthetic screenshots/measurements
-  - explicit finding closure or remaining severity/blocking status, honest environment/provider-fidelity limits and own latest report; old screenshots do not prove corrected interactions
-  - own handoff section and documentation commit only when the Coordinator opens the serialized window; no code changes
-- Blocking dependencies: none; QA has released the browser ports, and the current UI/UX process is active
-- Parallel work: none requiring shared writes; QA/Security are complete and no functional writer is active
+  - exact-target final consolidation in architecture-latest.md, current phase record and Planner handoff section; no substitution for technical reviewers
+  - narrow reconciliation of active architecture/product vision/roadmap/future architecture statements, distinguishing the approved branch candidate from integrated main
+  - warnings in backlog with source, severity, treatment and future gate; preserve production blockers and the original approved roadmap, persona and phrase limits
+- Blocking dependencies: none; all required role reports and own handoff sections are committed
+- Parallel work: none; Planner has the exclusive documentation/handoff/index window and all functional writes remain frozen
 - Escalation: NONE
 
 ## Recent History
@@ -339,3 +338,4 @@ Required Reviews — Integration Candidate:
 - 2026-11-15 — QA (`8d85e21`), UI/UX (`768ddfd`) and Security (`d60a402`) rejected `c649a90` with five blocking findings. COORDINATOR persisted `CHANGES_REQUESTED`, corrected the public README status and returned one scoped fix round to Development. Production blockers, owner-approved phrases and isolated-worktree boundaries remain unchanged.
 - 2026-11-16 — Development delivered correction `af2aa66` and documentation `5f125a0`, with 60 Python, 67 frontend, seven Phase 7 Chrome scenarios and the full legacy browser package passing. COORDINATOR froze that new target and reopened required QA, Security and UI/UX reviews; the prior rejection remains historical and Production Readiness stays blocked.
 - 2026-11-17 — QA persisted APPROVED_WITH_WARNINGS in `7a5a446`, closing QA-P7-001/002; Security persisted APPROVED_WITH_WARNINGS in `a2b5739`, closing SEC-021, both for `af2aa66`. COORDINATOR released the browser window to UI/UX; its independent affected-surface evidence and final verdict remain pending.
+- 2026-11-17 — UI/UX persisted APPROVED_WITH_WARNINGS in `eb9a550`, closing UIUX-P7-POST-001/002 on `af2aa66`, with eight independent targeted Chrome scenarios and new synthetic evidence. COORDINATOR routed final documentation-only consolidation to Planner; no feature blocker remains in required domain reports, and production/later phases remain unauthorized.
