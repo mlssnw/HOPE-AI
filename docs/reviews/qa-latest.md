@@ -1,3 +1,111 @@
+# QA Re-review — Phase 7 Conversational Presence Foundation
+
+## QA Status
+
+`APPROVED_WITH_WARNINGS`
+
+The corrected Phase 7 Functional Commit closes both previously blocking QA findings. Independent clean-export execution passed the complete Python, frontend, Phase 7 browser and legacy Phase 6 browser packages. The playback-to-recognition transition now stops active audio, releases the local meter, resets amplitude and rejects stale playback callbacks before Listening is accepted. The Public history projection fails closed for legacy, private, memory-derived and delayed private records. No new functional regression or QA blocker was found.
+
+## Commit Tested
+
+- Functional Commit: `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`
+- Phase 6 baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`
+- Previously rejected Phase 7 candidate: `c649a903693d5fedf631d760880b80ed881dc138`
+- Repository HEAD observed: `b0f9b7f9fe1dd689f7de2d49756e69791eaf249b`
+- Branch: `codex/phase-7-completion`
+- Review date: 2026-11-16
+
+The Functional Commit is an ancestor of the observed HEAD. A targeted comparison from the Functional Commit to HEAD found no later drift in backend, frontend, tests, migrations or dependency manifests. Testing used a fresh `git archive` export of the exact Functional Commit. Database and provider environment variables were cleared; no `.env`, real database, migration, paid provider or production service was used.
+
+## Test Summary
+
+| Area | Result | Evidence |
+|---|---|---|
+| Backend / Python | PASSED | `60 passed`, one known Starlette/TestClient deprecation warning |
+| Frontend / JavaScript | PASSED | `67 passed`, `0 failed` |
+| Syntax | PASSED | Python AST parsing for 51 files; `node --check` for 49 JavaScript files |
+| API / chat / memory | PASSED | Full Python suite covered typed E2E models, isolated mock state, memory-aware chat, exact-UUID forget confirmation, HTTP 428 negative cases, deletion and relation removal |
+| Phase 7 browser | PASSED | 7/7 Chrome scenarios; console/page errors and frontend asset failures clean |
+| Legacy Phase 6 browser | PASSED | Complete official package ran through all runtime, accessibility, chat, Memory Globe, realtime, voice and safe-forgetting scenarios |
+| Voice / cancellation | PASSED | Active playback paused before recognition; meter disconnected; amplitude reset to zero; stale audio events could not overwrite Listening |
+| Public history security | PASSED | Legacy/unknown, private, memory-derived and delayed private response records excluded; PUBLIC+PRIVATE remained fail-closed |
+| Modes / accessibility | PASSED | Escape, close control, focus return, 130% text, 200% reflow equivalent, seven viewport sizes and single announcement channel |
+| Realtime | PASSED | Incremental events, heartbeat PONG, disconnected HTTP sync, reconnect and rejection of uncorrelated remote AI state |
+| Memory Globe / WebGL | PASSED | Incremental graph behavior, no-WebGL fallback, context-loss recovery and quality tiers; HIGH rendered 2,500 nodes at 58.85 FPS in this run |
+| Basic security | PASSED within local scope | Inert hostile HTML, executable-protocol rejection, exact destructive target, no secret-material match in the functional diff; only `.env.example` is tracked |
+
+## Commands and Evidence Executed
+
+- Git state, branch, HEAD, target identity, ancestry, functional-drift inventory and `git diff --check`.
+- Clean export: `git archive --format=zip af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5` into a disposable directory.
+- Python: `python -m pytest -q -p no:cacheprovider` with database/provider variables cleared.
+- Frontend: `node --test tests/frontend/*.test.mjs`.
+- Syntax: AST parsing of all Python files and `node --check` for frontend/test JavaScript.
+- Phase 7 browser: `node tests/browser/run-phase-7.mjs` on exclusive port 8767 with synthetic media and disposable evidence.
+- Full legacy browser regression: `node tests/browser/run.mjs` on exclusive port 8766 with disposable evidence.
+- Static security checks: tracked sensitive-file inventory, known secret-pattern scan of the functional delta, schema/dependency boundary review and whitespace validation.
+
+## Blocker Closure
+
+### QA-P7-001 — Closed
+
+- Severity: `MEDIUM` (previously blocking)
+- Evidence: the Chrome recognition scenario reached real synthetic playback, observed one `pause()` call, observed meter disconnection, observed the final voice level at zero, confirmed Listening only after the recognition `onstart` callback, and confirmed late playback events could not restore Speaking.
+- Impact after correction: the UI and actual media lifecycle no longer diverge when the microphone is activated during playback.
+- Disposition: `CLOSED`.
+
+### QA-P7-002 — Closed
+
+- Severity: `MEDIUM` (previously blocking)
+- Evidence: the complete official Phase 6 browser runner exited successfully. Updated assertions prove that uncorrelated realtime state cannot control the local turn and that only history-eligible records survive reload; all remaining legacy scenarios executed and passed.
+- Impact after correction: the repository's advertised complete regression package is reproducibly green on the exact Functional Commit.
+- Disposition: `CLOSED`.
+
+## Regressions Found
+
+None in the executed scope.
+
+## Bugs
+
+No new reproducible bug was found.
+
+## Blockers
+
+None. `QA-P7-001` and `QA-P7-002` are closed.
+
+## Non-blocking Issues
+
+### QA-P7-W01 — Real-provider and physical-device fidelity remain untested
+
+- Severity: `INFO`
+- Evidence: voice, recognition and provider behavior used deterministic mocks, fake playback and synthetic PCM; no physical microphone/speaker or paid provider was invoked.
+- Impact: this review proves lifecycle, contract and fallback behavior, not live prosody, acoustic quality or provider style fidelity.
+- Recommendation: retain as a separate authorized live-device/provider validation gate.
+
+### QA-P7-W02 — Production data and infrastructure remain outside scope
+
+- Severity: `INFO`
+- Evidence: no real PostgreSQL/pgvector database, migration, credentials, deployment or production environment was accessed.
+- Impact: Feature Status is approved with warnings; Production Readiness is not established by this review.
+- Recommendation: preserve the existing Database, Security and production gates.
+
+### QA-WARN-HTTPX — Deprecated TestClient integration
+
+- Severity: `INFO`
+- Evidence: the Python suite emitted the known `StarletteDeprecationWarning` for the current TestClient/httpx integration.
+- Impact: no current test failure; future dependency maintenance is required.
+- Recommendation: track outside the Phase 7 acceptance gate.
+
+## Recommendation
+
+`APPROVED_WITH_WARNINGS`
+
+QA recommends advancing the exact Functional Commit `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5` through the remaining required review gates. Do not interpret this result as production approval or authorization for Phase 8, migrations, real-provider use or deployment.
+
+---
+
+## Historical QA Record — Rejected Phase 7 Candidate `c649a903`
+
 # QA Review — Phase 7 Conversational Presence Foundation
 
 ## QA Status

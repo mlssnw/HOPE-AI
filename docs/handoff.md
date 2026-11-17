@@ -126,21 +126,20 @@ Required Reviews — Integration Candidate:
 
 ## QA
 
-- Coordination status: `REJECTED`
+- Coordination status: `APPROVED_WITH_WARNINGS`
 - Phase: 7 — Conversational Presence Foundation
-- Functional Commit reviewed: `c649a903693d5fedf631d760880b80ed881dc138`
-- Functional baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`; documentation/evidence descendant `6919c967c66f728471b5c195079dabda33a3e3ed` introduced no functional drift.
+- Functional Commit reviewed: `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`
+- Functional baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`; previously rejected candidate `c649a903693d5fedf631d760880b80ed881dc138`.
 - Exact-target isolation: clean `git archive` export, no `.env`, database URLs or provider credentials; no real database, migration, paid provider or production action.
-- Passing evidence: Python `60 passed`; frontend `62 passed`; Python/JavaScript syntax passed; new Phase 7 Chrome harness passed five scenarios with clean console/assets; isolated accessibility browser regression passed 200% reflow equivalent, 130% text, landscape, contrast and focus.
-- API and mode contracts: strict presentation enum, exact omitted/`NORMAL` prompt, one bounded static overlay, unchanged provider keys/call count, five mode axes, prospective privacy/history restrictions, exact phrase allowlist, public-safe SelfKnowledge and no-WebGL/viewport coverage passed within the mocked/synthetic environment.
-- Memory and API regressions: passing automated coverage includes `memory_enabled=true` retrieval, exact-UUID forget confirmation, missing/mismatched confirmation HTTP `428`, confirmed deletion and relation removal. Incremental Memory Globe behavior passed unit coverage; the complete legacy browser package remains blocked by `QA-P7-002`.
-- `QA-P7-001` — `MEDIUM`, Blocking `YES`: starting microphone recognition during active HOPE playback changes the visible state to Listening but does not pause the actual audio or terminate/reset its meter. Targeted Chrome evidence returned `pauseCalls=0`, `state=listening`, `micPressed=true`.
-- `QA-P7-001` acceptance: stop and invalidate current playback before real recognition starts; release playback/meter resources; reset `voiceLevel` to zero; reject late audio events; add idempotent browser regression coverage.
-- `QA-P7-002` — `MEDIUM`, Blocking `YES`: the complete repository Phase 6 browser runner is red on the exact target. `phase-6-runtime.mjs:49` still expects uncorrelated remote AI states to control the current UI, and `phase-6-flows.mjs:53` still expects history-ineligible messages to become persisted later.
-- `QA-P7-002` acceptance: reconcile both assertions with the authorized Phase 7 contracts without weakening coverage, then pass the full Phase 6 and Phase 7 browser packages from a clean exact-target export so all legacy memory/realtime/delete scenarios execute.
-- UI/UX evidence result: `UIUX-P7-001`, `002`, `006`–`011`, `013`–`021` passed within the executed limits; `UIUX-P7-003`, `004`, `005` and `012` are not approved because of the active-playback-to-recognition defect.
-- Non-blocking limits: mocked providers do not prove live Focus/Supportive/Presentation adherence or audio fidelity; no physical microphone/speaker, manual screen reader, real PostgreSQL/pgvector, deployment or production environment was exercised; the known Starlette/TestClient deprecation warning remains.
-- Recommendation: return the two exact blockers to Development and require a new Functional Commit before QA re-review. Production, Phase 8, migrations and real-provider work remain outside this review.
+- Passing evidence: Python `60 passed`; frontend `67 passed`; Python syntax passed for 51 files; JavaScript syntax passed for 49 files; the Phase 7 Chrome harness passed 7/7 scenarios with clean console/assets; the complete official Phase 6 browser regression package passed.
+- API, memory and realtime: typed E2E models, isolated mock state, `memory_enabled=true` retrieval, exact-UUID forget confirmation, missing/mismatched confirmation HTTP `428`, confirmed deletion with relations removed, incremental events, heartbeat, reconnect and HTTP fallback passed.
+- Public history boundary: legacy/unknown, private, memory-derived and delayed private response records are excluded from Public requests; PUBLIC+PRIVATE remains fail-closed while the visible and persisted public message shape stays unchanged.
+- `QA-P7-001`: `CLOSED` — activating recognition during playback pauses audio, disconnects the meter, resets amplitude to zero, waits for the real recognition callback before Listening and rejects late playback callbacks.
+- `QA-P7-002`: `CLOSED` — the full Phase 6 browser package passes with assertions that preserve uncorrelated-state rejection and history-eligibility coverage; all legacy scenarios execute.
+- Modes, accessibility and WebGL: explicit close/Escape/focus return, one announcement channel, 130% text, 200% reflow equivalent, seven viewport sizes, no-WebGL fallback, context recovery and Memory Globe quality tiers passed. HIGH rendered 2,500 nodes at 58.85 FPS in this run.
+- QA blockers: `NONE`.
+- Non-blocking limits: mocked providers do not prove live Focus/Supportive/Presentation adherence, prosody or audio fidelity; no physical microphone/speaker, manual screen reader, real PostgreSQL/pgvector, deployment or production environment was exercised; the known Starlette/TestClient deprecation warning remains.
+- Recommendation: advance exact Functional Commit `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5` through the remaining required review gates. This does not approve production, migrations, real-provider use or Phase 8.
 - Historical record: the Phase 6 final-integration `APPROVED_WITH_WARNINGS` result and closed `QA-IC-001`/`QA-IC-002` remain preserved in the historical section of the QA report; they are not the current Phase 7 result.
 - Report: [`qa-latest.md`](reviews/qa-latest.md)
 
