@@ -175,26 +175,28 @@ Required Reviews — Integration Candidate:
 
 ## UI/UX
 
-- Coordination status: `REJECTED` — Phase 7 post-implementation UI/UX review found two accessibility/interaction blockers
-- Review type: `PHASE 7 POST-IMPLEMENTATION UI/UX REVIEW`
-- Review date: 2026-11-15
-- Target Functional Commit: `c649a903693d5fedf631d760880b80ed881dc138`
+- Coordination status: `APPROVED_WITH_WARNINGS`
+- Review type: `PHASE 7 POST-IMPLEMENTATION UI/UX RE-REVIEW`
+- Review date: 2026-11-17
+- Target Functional Commit: `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`
 - Functional baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`
+- Previous rejected candidate: `c649a903693d5fedf631d760880b80ed881dc138`
 - Architecture decision: `ARCH-2026-11-14-001`
-- Development documentation/evidence: `6919c967c66f728471b5c195079dabda33a3e3ed`
-- Functional delta after target: none; later workspace commits inspected by UI/UX were documentation/evidence only
-- `UIUX-P7-POST-001`: `HIGH`, `Blocking: YES` — the Modes surface has no required visible touch-close action or focus entry and can clip its heading/first controls above the viewport under short-height/enlarged-text conditions
-- `UIUX-P7-POST-002`: `MEDIUM`, `Blocking: YES` — actionable voice/chat failures are copied into polite and assertive live regions and may also receive a redundant generic error announcement
-- Blocking criteria: `UIUX-P7-006`, `UIUX-P7-007` and `UIUX-P7-010`; the complete `UIUX-P7-001` through `UIUX-P7-021` matrix is in the report
-- Non-blocking limits: `UIUX-P7-W01` real-provider style/physical voice fidelity untested; `UIUX-P7-W02` physical touch, manual screen reader and actual 200% zoom not independently exercised in this review window
-- Independent validation: frontend `62 passed`; focused backend presentation suite `15 passed`; no UI/UX browser runner was started while QA owned the fixed port
-- Approved areas: canonical Display/optional Spoken separation, truthful local voice/Core Orb state, distinct stop/cancel scopes, stale-event guards, prospective privacy/history behavior, five mode axes, reduced motion, no-WebGL conversation, public-safe SelfKnowledge and negative future-capability claims
-- Historical pre-implementation specification: remains `APPROVED`; this rejection applies only to implementation fidelity on the target Functional Commit
+- Development documentation/evidence: `5f125a04e989274e3d90cc7a69876cbb582c9526`
+- Functional delta after target: none under backend, frontend, tests or scripts; later commits through `058a4a0` are documentation/review coordination only
+- `UIUX-P7-POST-001`: previous `HIGH`, now `CLOSED`, `Blocking: NO` — visible 44 px touch close, heading focus entry, close/Escape focus return, sticky heading and all five groups were independently reachable across short-height, reflow-equivalent, 130% text, mobile and landscape cases
+- `UIUX-P7-POST-002`: previous `MEDIUM`, now `CLOSED`, `Blocking: NO` — controlled chat and TTS failures each used one authoritative alert mutation with no polite duplicate or preceding generic `ERROR` copy
+- Result matrix: all `UIUX-P7-001` through `UIUX-P7-021` pass within recorded limits; `UIUX-P7-010` and `UIUX-P7-020` carry non-blocking `UIUX-P7-W04`, and `UIUX-P7-017` retains the live-provider limit
+- Independent validation: frontend `67 passed`; eight focused Chrome scenarios passed with synthetic media and disposable state; playback-to-recognition paused audio, disconnected analyzer resources, reset amplitude and rejected stale playback events
+- Evidence: three synthetic Modes captures plus `uiux-browser-results.json` under [`docs/evidence/phase-7/review-af2aa66/`](evidence/phase-7/review-af2aa66/); frozen historical evidence was not overwritten
+- Non-blocking warnings: `UIUX-P7-W01` real-provider style/physical voice fidelity; `UIUX-P7-W02` manual assistive technology/physical devices/actual zoom control; `UIUX-P7-W03` no fresh Python rerun in the UI/UX runtime for unchanged backend paths; `UIUX-P7-W04` two-pixel horizontal overflow only under combined `720×450` and 130% root text, with no clipped or unreachable content
+- Environment cleanup: the browser and disposable harness were closed; ports `8766`/`8767` have zero listeners and no related processes remain
+- Approved areas: canonical Display/optional Spoken separation, truthful local voice/Core Orb state, distinct stop/cancel scopes, stale-event guards, prospective privacy/history behavior, five mode axes, accessible Modes interaction, one-channel failures, reduced motion, no-WebGL conversation, public-safe SelfKnowledge and negative future-capability claims
+- Historical pre-implementation specification remains `APPROVED`; the prior post-implementation rejection remains preserved as history in the report
 - Phrase gate preserved: only exact `P7-PHRASE-006` through `P7-PHRASE-018` remain approved; rejected/withdrawn records stay excluded; `P7-PHRASE-021` through `P7-PHRASE-028` remain `PENDING_OWNER_APPROVAL`, excluded and non-blocking
 - Personality boundary preserved: substantive-answer personality, zero-phrase default, no automatic mode phrase, no frontend prefix/suffix and no new phrase or variant approved by this review
-- Required correction: return both blockers to Development for the smallest accessibility/Modes/live-region correction and create a new Functional Commit for proportional QA, Security and UI/UX re-review
 - Production Readiness: `BLOCKED`
-- Recommendation: return to the Coordinator; do not start Phase 8, merge or production
+- Recommendation: return to the Coordinator for alignment with QA/Security and Planner consolidation; do not start Phase 8, deploy or treat this UI/UX result as production authorization
 - Report: [`uiux-latest.md`](reviews/uiux-latest.md)
 
 ## Planner
