@@ -1,84 +1,80 @@
 # Security Review
 
-Commit reviewed: `c649a903693d5fedf631d760880b80ed881dc138`
+Commit reviewed: `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`
 
 Functional baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2`
 
-Functional sequence reviewed: `2647794ea806b20117c7cce531602911da98ca97`, `744bec0`, `4b91818`, `c649a903693d5fedf631d760880b80ed881dc138`
+Rejected candidate used as correction baseline: `c649a903693d5fedf631d760880b80ed881dc138`
 
-Documentation/evidence descendant observed: `6919c967c66f728471b5c195079dabda33a3e3ed`
-
-Coordination descendant observed: `08e3984986798dfee0500f6af6cd3f695e57a910`
-
-Current documentation-only branch tip observed at final verification: `768ddfd3beb6e31624d7535edf065c7848805bc5`
+Documentation descendants observed: `5f125a0` and `b0f9b7f9fe1dd689f7de2d49756e69791eaf249b`
 
 Branch: `codex/phase-7-completion`
 
 Phase: 7 — Conversational Presence Foundation
 
-Date: 2026-11-15
+Date: 2026-11-16
 
 ## Result
 
-REJECTED
+APPROVED_WITH_WARNINGS
 
-Security rejects the exact Phase 7 Functional Commit because `SEC-021` breaks the `PUBLIC` audience privacy boundary. Selecting `PUBLIC` forces `memory_enabled=false`, but the frontend still forwards the complete recent session history to `/api/chat`, including records that were marked ineligible for persistence and earlier responses that may contain private memory-derived content. A clean-export directed test reproduced the contradiction: memory was disabled while a private sentinel remained in the outbound `history` array.
+Security approves the exact Phase 7 Functional Commit for feature integration. The correction closes `SEC-021`: outbound history for a `PUBLIC` turn now includes only records that carry explicit, ephemeral `PUBLIC_SAFE` provenance, a `PUBLIC` audience, and no memory-derived marker. Legacy restored records, unlabelled records, private records, memory-derived records, `PUBLIC+PRIVATE` turns and responses completed after a mode switch all fail closed.
 
-No other new HIGH or CRITICAL issue was identified in the Phase 7 delta. The bounded presentation enum, static server-owned prompt overlay, voice correlation, speech limit, exact UUID deletion confirmation, safe DOM rendering and public manifest allowlist otherwise preserve the reviewed security boundaries. This rejection does not accept any HIGH risk, authorize a fix, approve the phase, start Phase 8 or authorize production.
-
-Feature Status is `REJECTED` for this candidate. Production Readiness remains independently `REJECTED / BLOCKED` by the historical production findings carried forward below.
+This approval is limited to Phase 7 Feature Status. It does not approve public deployment, accept any inherited HIGH or CRITICAL risk, authorize Phase 8, or change Production Readiness. Production Readiness remains `REJECTED / BLOCKED` by the inherited production findings listed below.
 
 ## Scope and Commit Boundary
 
-- Reviewed the complete functional delta `ce2bde4..c649a90`, not only the last commit.
-- Reviewed the partial TTS checkpoint `2647794`, bounded backend presentation commit `744bec0`, local conversational-presence commit `4b91818` and public homage-boundary correction `c649a90`.
-- Confirmed that `c649a90..6919c96`, `c649a90..08e3984` and the final observed descendant `c649a90..768ddfd` change only documentation, evidence images and review/coordination records. They introduce no backend, frontend, test, schema, migration, query, persistence, dependency or provider-runtime delta.
-- Database review remains `N/A` for this Phase 7 package because no database, memory repository, schema, migration, query or persistence implementation path changed.
-- The working tree was clean when Security began. During the parallel review window, QA and UI/UX began modifying only their own latest reports. Security preserved those concurrent changes and did not edit `docs/handoff.md`.
+- Reviewed the security-relevant correction delta `c649a90..af2aa66`, with the complete Phase 7 functional baseline retained as context.
+- Confirmed that `af2aa66..5f125a0` and `af2aa66..b0f9b7f` contain documentation only. No functional drift exists after the reviewed target.
+- The correction changes frontend history provenance/projection, accessibility and voice behavior plus tests. It changes no backend endpoint, request/response field, provider adapter, database path, query, schema, migration, dependency manifest or CDN.
+- Database review remains `N/A` for this correction because no database behavior changed.
+- The worktree was clean at review start. Security did not edit `docs/handoff.md` because the delegated review window authorized only the owned report and deferred coordination writes.
 
 ## Independent Validation
 
-- Exact clean export of `c649a903693d5fedf631d760880b80ed881dc138`; no `.env` was present or read.
-- Directed Python security/Phase 7 set: `32 passed`.
+- Created an exact clean export of `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`; no local `.env` was copied or read.
 - Complete Python suite: `60 passed`, with one known Starlette/TestClient deprecation warning.
-- Complete frontend suite: `62 passed`.
-- Python compilation: passed.
-- JavaScript syntax validation: passed.
-- `git diff --check ce2bde4..c649a90`: passed.
-- Delta secret-pattern scan: no private-key marker, AWS key, GitHub token, Anthropic key, JWT-like value or generic quoted secret assignment detected.
-- Exact `.env` tracked at the target: none. Exact `.env` commit history: none. One `.env.example` remains tracked as expected.
-- Phase 7 PNG evidence at the exact Functional Commit was visually inspected and contains synthetic/local labels only; no PNG text, international-text, compressed-text or EXIF metadata chunks were present.
-- Directed `PUBLIC` history test: `memory_enabled=false` and `history_contains_private=true` for the same outbound payload.
-- No browser runner, uvicorn, microphone, real audio device, paid provider, real PostgreSQL, migration, production service or external integration was executed by Security.
+- Complete frontend suite: `67 passed`.
+- Independent adversarial projection test: passed for legacy, private, unknown, memory-derived, explicitly public-safe, `PUBLIC+PRIVATE` and delayed-private records; also confirmed `memory_enabled=false` and the unchanged outbound payload key set.
+- Python compilation and JavaScript syntax validation: passed (`49` JavaScript/module files checked).
+- `git diff --check c649a90..af2aa66`: passed.
+- Delta secret-pattern scan: no credential, private-key, token, password, authenticated database URL or generic quoted-secret assignment detected.
+- No exact `.env` is tracked at the target. `.env.example` remains tracked as expected.
+- No browser runner, uvicorn service, microphone, real audio device, provider, real PostgreSQL, migration, production system or external integration was executed by Security.
+- Development's seven Chrome scenarios, complete Phase 6 browser package and `59.91 FPS` result were read as Development evidence, not adopted as independent Security execution.
 
 ## Findings
 
-### SEC-021
+No new Security finding was identified in the correction delta.
+
+### SEC-021 — CLOSED
 
 ID: SEC-021
 
-Severity: HIGH
+Severity: HIGH (original finding)
 
-Title: `PUBLIC` audience mode forwards unfiltered private and memory-derived session history
+Title: `PUBLIC` audience history could include private and memory-derived records
 
-Description: Phase 7 resolves `PUBLIC` by disabling current-turn persistent memory, but it does not create a public-safe history view. `SessionHistory.recent()` returns every visible record, including records with `historyEligible=false`. `ChatController.submit()` snapshots that unfiltered view and `buildChatPayload()` transmits it unchanged as `history`. Therefore a later `PUBLIC` turn can send prior private-turn content or an earlier assistant response containing private memory context back to the model. The generated public-facing answer can then repeat that content even though the interface says the turn is using no private memory.
+Description: The rejected candidate disabled current-turn memory for `PUBLIC` but transmitted unfiltered recent session history. The corrected candidate introduces per-record, ephemeral provenance and a public-only history projection that requires affirmative public-safe evidence.
 
-Impact: Private owner data can be disclosed in an answer intended for a public audience. The issue defeats an explicit privacy control, creates a misleading fail-closed signal and violates the Phase 7 contract that `PUBLIC` blocks private memory context for new turns. Exploitation requires relevant content already present in the same browser session, so this is not a cross-user authentication bypass; however, the security feature itself is materially broken.
+Impact: The prior Phase 7 privacy-control bypass is no longer reproducible in the reviewed code path. Private, legacy, unknown and memory-derived records do not enter a later outbound `PUBLIC` history payload.
 
 Evidence:
 
-- `frontend/js/modes.js:27-35` restricts current-turn memory and optional phrases for `PUBLIC`, but defines no history filtering policy.
-- `frontend/js/session-history.js:22-26` filters `historyEligible` only for local persistence; `recent()` returns the unfiltered visible history.
-- `frontend/js/chat.js:214` snapshots `this.sessionHistory.recent(20)` and `frontend/js/chat.js:225` passes it to the request.
-- `frontend/js/turn-request.js:3-20` transmits the supplied `history` unchanged while setting `memory_enabled` from the mode policy.
-- Independent clean-export reproduction returned `{ "memory_enabled": false, "history_contains_private": true }` after adding a `historyEligible=false` private sentinel and building a `PUBLIC` payload.
-- `tests/browser/phase-7.mjs:128-131` asserts the request keys and `memory_enabled=false`, while the storage assertions verify only local persistence; no assertion proves that private or memory-derived records are absent from the outbound public history.
+- `frontend/js/session-history.js:8-25` grants `PUBLIC_SAFE` only when the snapshotted turn is `PUBLIC+STANDARD`, the caller explicitly supplies `PUBLIC_SAFE` and `PUBLIC`, and the record is not memory-derived.
+- `frontend/js/session-history.js:28-33` assigns restored/legacy records `UNKNOWN` provenance.
+- `frontend/js/session-history.js:56-61` filters public history to the exact public-safe predicate and strips provenance from the wire representation.
+- `frontend/js/chat.js:207-222` snapshots the policy before asynchronous work, projects history with `recentFor()`, and marks only a `PUBLIC+STANDARD` user turn public-safe.
+- `frontend/js/chat.js:237-247` uses the same snapshotted policy for the completed response and refuses public-safe provenance when `memoriesUsed` is non-empty.
+- `tests/frontend/session-history.test.mjs` covers legacy, private, unlabelled and memory-derived exclusion, as well as `PUBLIC+PRIVATE` fail-closed behavior.
+- `tests/browser/phase-7.mjs` asserts an empty first public history, allows only proven public-safe context later, excludes legacy/private/delayed-private content and preserves visible history.
+- Security's clean-export adversarial test independently confirmed the projection and unchanged request shape.
 
-Affected component: Phase 7 audience/privacy mode resolution, session history and `/api/chat` request construction
+Affected component: Phase 7 session history, audience/privacy policy and `/api/chat` request construction
 
-Recommendation: Build a trusted per-turn history projection for `PUBLIC` requests and fail closed to an empty history when a record cannot be proven public-safe. Preserve provenance for private turns and memory-derived assistant responses so they cannot enter a later public payload. Add unit and browser assertions that private, memory-derived and delayed private responses are absent from outbound `PUBLIC` history after mode restoration. Keep the correction within the authorized local boundary unless Planner explicitly authorizes a wire-contract change.
+Recommendation: Keep provenance ephemeral and fail closed. Any future source type or history restoration format must remain excluded from `PUBLIC` until its public-safe status is proven by a server-authoritative design and independently reviewed.
 
-Blocking: YES
+Blocking: NO — CLOSED for `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`
 
 ## Historical Findings Carried Forward
 
@@ -92,56 +88,48 @@ Blocking: YES
 - `SEC-009`, `SEC-010`, `SEC-011`, `SEC-013`, `SEC-014` — MEDIUM, Blocking: NO — prompt/memory poisoning, declared provenance, environment-dependent embedding safeguards, deployment trust contracts and supply-chain hardening remain open.
 - `SEC-015`, `SEC-016` — LOW, Blocking: NO — public health detail and optional plaintext browser history remain open.
 - `SEC-017` — MEDIUM, Blocking: NO — schema activation evidence still depends on lifespan and non-standard managers can bypass that evidence.
-- `SEC-018` — LOW, Blocking: NO — browser harnesses still inherit a broad process environment and use a fixed port without a mandatory destructive-flow sentinel.
-- `SEC-019`, `SEC-020` remain closed.
+- `SEC-018` — LOW, Blocking: NO — browser harnesses still inherit a broad process environment and use fixed ports without a mandatory destructive-flow sentinel.
+- `SEC-019`, `SEC-020` and `SEC-021` remain closed.
 
 ## Controls Confirmed
 
-### Bounded generation presentation
+### Public-history trust boundary
 
-- `PresentationMode` is a closed `StrEnum`; null, wrong type, case variants, whitespace variants, unknown values and arbitrary instruction text are rejected.
-- Invalid values return `422` before service/source/model work.
-- Omitted and `NORMAL` presentation preserve the prior effective system prompt exactly.
-- Non-default modes append one immutable server-owned `[TURN PRESENTATION]` section below 1,000 Unicode characters.
-- No user message, history, memory, web/Obsidian content, model output, identifier, phrase record or private-mode metadata is interpolated into that section.
-- Provider endpoint, request keys, model, `max_tokens=1400`, response schema and single-call behavior remain unchanged.
-- Core identity, safety, context trust, tool and uncertainty sections remain unchanged; presentation text explicitly subordinates style to safety, truth, uncertainty and confirmations.
+- A `PUBLIC` request filters before payload construction and sends only explicitly proven public-safe records.
+- Legacy/restored records and records without provenance default to `UNKNOWN` and are excluded.
+- Private turns, `PUBLIC+PRIVATE` turns and memory-derived assistant responses cannot receive public-safe provenance.
+- The policy is captured before the asynchronous request, so a delayed private response cannot become public-safe after the UI mode changes.
+- A contaminated record cannot make a later chain public-safe; each record must independently meet the exact predicate.
+- Proven public-safe context remains usable in later `PUBLIC+STANDARD` turns.
+- Visible history and the consent-based persistable subset remain intact. Provenance is not written to local storage or sent over the wire; restored records therefore return as unknown and fail closed.
+- The existing request/storage shape is unchanged; no new field, endpoint, schema or migration was introduced.
 
 ### Memory and destructive actions
 
-- `memory_enabled=false` returns before memory context construction and before capture.
-- Memory correction/forget commands with memory disabled return without lookup, mutation or deletion confirmation.
-- A missing/unavailable manager degrades without claiming a memory mutation.
-- `SEC-006` remains effective for retrieval, capture and command gating in the reviewed functional path.
+- `PRIVATE` and `PUBLIC` continue to resolve `memory_enabled=false` before submission.
+- `memory_enabled=false` returns before retrieval/context construction and capture, and memory correction/forget commands do not look up, mutate or create deletion confirmations.
+- `SEC-006` remains effective for retrieval, capture, commands and deletion gating in the reviewed path.
 - `SEC-007` remains effective: deletion requires the exact route UUID in `X-Hope-Confirm-Memory-Id`, and repository operations remain scoped by the current user UUID. The UUID is still not authentication.
-- Phase 7 changes no memory repository, query, model, schema, migration or cross-user isolation implementation.
+- Disabled memory does not fall back to the prior manager/service path; the Phase 7 correction does not modify those backend boundaries.
 
-### Voice, realtime and local state
+### Presentation, voice and public surfaces
 
-- Session, turn, attempt and response-version identity guard state, synthesis completion, playback and amplitude callbacks.
-- `SPEAKING` requires a current local playback event; `LISTENING` requires a current recognition callback.
-- Uncorrelated `AI_STATE_CHANGED` events are ignored for current local-turn presentation.
-- Stop/cancel resets playback, object URLs and amplitude; stale synthesis cannot create or play audio.
-- Speech over 5,000 Unicode code points is rejected before the TTS request instead of silently truncating material content.
-- WebAudio analyzes only the current local playback element. No new microphone capture, raw audio upload, transcript retention, background listening or amplitude transmission/persistence path was added.
-
-### Public surfaces and untrusted content
-
-- `SelfKnowledge` is a static allowlist rendered with `textContent`; it exposes capability status and limitations without system prompt, chain-of-thought, credentials, owner identifiers or internal paths.
-- The homage boundary is original, brief, request-gated and explicitly non-imitative.
-- Only exact `P7-PHRASE-006` through `P7-PHRASE-018` exist in the active library. Pending `021` through `028` and rejected/withdrawn records are absent from product code.
-- Phrase selection is null by default, requires a module-private trusted marker plus validated evidence, enforces cooldown/suppression and has no mode-entry consumer.
-- Assistant Markdown, source titles, public manifest text and memory labels use safe DOM construction; executable URL schemes and active HTML remain rejected/inert.
-- Existing CSP, clickjacking protection, MIME sniffing protection, no-store policy and same-origin resource boundaries remain unchanged.
+- The presentation mode remains a closed enum with a static server-owned overlay; arbitrary prompt text cannot enter that overlay.
+- Voice state continues to require correlated local playback/recognition events; stale callbacks and duplicate same-state transitions are rejected.
+- Starting recognition stops active playback and releases local audio analysis state before listening begins.
+- Assistant Markdown and source text remain rendered through safe DOM construction; executable protocols and active HTML remain inert/rejected.
+- `SelfKnowledge` remains a versioned public allowlist without secrets, system prompt, owner identifiers, chain-of-thought or internal paths.
+- Exact UUID deletion confirmation, enum validation, phrase allowlisting and the prior XSS/CSP/header controls are unchanged by this correction.
 
 ## Security Status
 
-- Phase 7 Feature Status: REJECTED.
-- Exact Functional Commit: `c649a903693d5fedf631d760880b80ed881dc138`.
-- New findings: one — `SEC-021` HIGH, Blocking: YES.
-- New CRITICAL findings: none.
+- Phase 7 Feature Status: `APPROVED_WITH_WARNINGS`.
+- Exact Functional Commit: `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`.
+- `SEC-021`: CLOSED.
+- New findings: none.
+- New CRITICAL or HIGH findings: none.
 - Historical production blockers closed or accepted: none.
-- Production Readiness: REJECTED / BLOCKED.
+- Production Readiness: `REJECTED / BLOCKED`.
 
 ## Critical Issues
 
@@ -149,8 +137,7 @@ No new CRITICAL issue. Historical `SEC-001`, `SEC-002` and `SEC-003` remain prod
 
 ## High
 
-- `SEC-021` is a Phase 7 feature blocker.
-- Historical `SEC-004`, `SEC-005` and `SEC-008` remain production blockers.
+No new HIGH issue. `SEC-021` is closed. Historical `SEC-004`, `SEC-005` and `SEC-008` remain production blockers.
 
 ## Medium
 
@@ -162,9 +149,7 @@ No new LOW finding. Historical `SEC-015`, `SEC-016` and `SEC-018` remain open wa
 
 ## Deploy Blockers
 
-Phase 7 feature blocker:
-
-- `SEC-021` — prevent private and memory-derived history from entering a later `PUBLIC` turn.
+Phase 7 feature blockers: none from Security for the reviewed Functional Commit.
 
 Historical Production Readiness blockers:
 
@@ -176,49 +161,46 @@ Historical Production Readiness blockers:
 - `SEC-008` — PostgreSQL TLS certificate and hostname verification.
 - `SEC-012` — attributable audit for sensitive actions.
 
-No historical production blocker is accepted, closed or reclassified by this review.
+No inherited production blocker is accepted, closed or reclassified by this review.
 
 ## Warnings
 
-- The Phase 7 browser runner spreads the parent process environment into both child processes and clears only selected variables. This confirms that historical `SEC-018` remains applicable; the harness should run from an explicit allowlist before it is used around sensitive environments.
-- Mocked generation proves payload shape and invariants, not real-provider presentation adherence.
-- Synthetic PCM and fake recognition/playback prove local state transitions, not microphone, audio quality, autoplay diversity or paid-provider behavior.
+- The Phase 7 browser runner still spreads the parent process environment into child processes and clears only selected variables. Historical `SEC-018` remains applicable; use an explicit environment allowlist before running the harness around sensitive environments.
+- Browser, physical microphone, screen-reader, provider and performance claims were not independently executed by Security.
 - The known Starlette/TestClient deprecation warning remains.
-- Public-mode history confidentiality is not covered by the reported five browser scenarios; storage exclusion is not equivalent to outbound-context exclusion.
+- Public-safe provenance is intentionally ephemeral. After a page reload, previously public-safe history becomes unknown and is excluded from later public requests. This is privacy-safe but may reduce continuity.
 
 ## Good Practices Found
 
-- Strict server-side enum validation prevents arbitrary prompt text from entering the system overlay.
-- `NORMAL` prompt equality and provider payload/call-count invariants have direct regression coverage.
-- Memory, web and Obsidian content remain explicitly delimited as untrusted data.
-- Current-turn privacy policy is snapshotted, so delayed private responses remain excluded from local persistence after mode restoration.
-- Display content remains canonical when speech is disabled, fails or is stopped.
-- Safe rendering keeps an explicit HTML/XSS sentinel inert in browser evidence.
-- Voice state and amplitude are derived from current local callbacks instead of backend claims or fabricated microphone data.
-- Pending and rejected phrases are excluded, and no phrase is the valid default.
-- Evidence is labeled as synthetic/local and contains no visible credential, private path or real owner data.
-- Phase 7 introduces no dependency, CDN, schema, migration, query, persistent setting, provider or endpoint.
+- The correction uses affirmative, per-record trust rather than inferring safety from the current UI mode.
+- Unknown and restored content fails closed.
+- The asynchronous response retains the original turn policy instead of consulting mutable current state.
+- Wire and storage formats strip security metadata, preventing a client-restored label from becoming trusted automatically.
+- Public-safe history remains useful without weakening private-record exclusion.
+- Exact outbound-payload tests now distinguish local persistence from transmission to the model.
+- The correction introduces no backend, provider, database, dependency, CDN or Phase 8 surface.
+- Secrets were absent from the correction delta, fixtures and diagnostic output reviewed by Security.
 
 ## Environmental Limits
 
-- Security did not run the browser harness because QA owns the shared `8767` browser window and because the committed Development evidence was sufficient for static inspection. Development browser results were reviewed but not treated as independent Security execution.
 - No real PostgreSQL/pgvector, runtime role, TLS chain, migration, backup/restore or production data was validated.
 - No Anthropic, Tavily, ElevenLabs or Obsidian request was made.
-- No microphone, speaker, physical device, manual screen reader, public deployment or production infrastructure was exercised.
-- Dependency vulnerability databases were not queried; the Phase 7 delta changes no dependency manifest or CDN.
+- No browser, microphone, speaker, physical device, manual screen reader, public deployment or production infrastructure was exercised.
+- Dependency vulnerability databases were not queried because the correction changes no dependency manifest or CDN.
+- Development browser evidence is not equivalent to independent Security execution.
 
 ## Recommendation
 
-Return the candidate to Development for a narrowly scoped correction of `SEC-021`. The correction must prevent private, non-public or memory-derived history from entering `PUBLIC` requests and add deterministic outbound-payload tests, including delayed private responses and mode restoration. Development must produce a new Functional Commit; Security and affected reviewers must re-review that exact hash.
+The Coordinator may treat Security's Phase 7 re-review as `APPROVED_WITH_WARNINGS` for Functional Commit `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5` and mark `SEC-021` closed. Continue the remaining required reviews on that exact hash before phase integration.
 
-Do not merge or declare Phase 7 approved. Preserve Database as `N/A` only if the correction still changes no persistence/query/schema behavior. Preserve Production Readiness as `BLOCKED` and do not start Phase 8 or deployment.
+Keep Production Readiness `BLOCKED` by `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-008` and `SEC-012`. Do not represent this feature approval as public-deployment approval, do not accept any inherited HIGH/CRITICAL risk, and do not start Phase 8 through this review.
 
 Next Action:
 
-Role: Development
+Role: Coordinator
 
-Status: CHANGES_REQUESTED
+Status: SECURITY_REVIEW_COMPLETE
 
-Task: Correct `SEC-021` without expanding the authorized Phase 7 boundary, add regression evidence and produce a new Functional Commit.
+Task: Record Security `APPROVED_WITH_WARNINGS`, close `SEC-021`, preserve inherited production blockers, and continue review consolidation for the exact Functional Commit.
 
-Target commit: `c649a903693d5fedf631d760880b80ed881dc138`
+Target commit: `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`

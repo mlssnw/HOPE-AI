@@ -160,18 +160,17 @@ Required Reviews — Integration Candidate:
 
 ## Security Review
 
-- Coordination status: `REJECTED`
-- Functional Commit reviewed: `c649a903693d5fedf631d760880b80ed881dc138`
-- Security result: `REJECTED` — `SEC-021` is HIGH and blocking
-- Finding: `PUBLIC` disables current-turn persistent memory but forwards unfiltered recent session history, including private-turn records and potentially memory-derived assistant content, to `/api/chat`
-- Impact: private owner data can re-enter a generated answer intended for a public audience; this breaks the explicit Phase 7 audience/privacy boundary
-- Independent reproduction: the same outbound payload reported `memory_enabled=false` and `history_contains_private=true`
-- Validation: directed Python `32 passed`; complete Python `60 passed` with one known warning; frontend `62 passed`; Python compilation, JavaScript syntax and diff checks passed
-- Controls confirmed: strict presentation enum and pre-service `422`; exact `NORMAL` prompt preservation; static bounded server-owned overlay; unchanged provider shape/call count; `SEC-006` and `SEC-007`; exact UUID deletion confirmation; stale voice/realtime guards; local-playback-only amplitude; approved phrase allowlist; safe DOM rendering
-- Scope: no database, schema, migration, query, persistence, dependency, provider or endpoint delta; Database remains `N/A` for this package
-- Environmental limits: no real provider, microphone, PostgreSQL, migration, deployment or production action; Development browser evidence was inspected but not rerun by Security
+- Coordination status: `APPROVED_WITH_WARNINGS`
+- Functional Commit reviewed: `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`
+- Security result: `APPROVED_WITH_WARNINGS` — `SEC-021` is `CLOSED`; no new Phase 7 Security blocker was identified
+- Closure evidence: outbound `PUBLIC` history now requires explicit ephemeral `PUBLIC_SAFE` provenance, `PUBLIC` audience and no memory-derived marker; legacy, unknown, private, memory-derived, `PUBLIC+PRIVATE` and delayed-private records fail closed
+- Preserved behavior: provably public-safe context remains available; visible and consent-based saved history remain intact; provenance is absent from the wire/storage shape, so restored records become unknown and fail closed
+- Independent validation: complete Python `60 passed` with one known warning; frontend `67 passed`; adversarial public-history/wire-shape test passed; Python compilation, JavaScript syntax, secret-pattern and diff checks passed
+- Controls confirmed: `SEC-006` and `SEC-007`; `memory_enabled=false` retrieval/capture/command gating; exact UUID deletion confirmation; snapshotted delayed-response policy; strict presentation enum and bounded overlay; stale voice/realtime guards; safe DOM rendering and public `SelfKnowledge` allowlist
+- Scope: correction delta changes no backend endpoint, request/response field, database, schema, migration, query, provider, dependency, CDN or Phase 8 surface; post-target descendants are documentation-only
+- Environmental limits: Security did not run browser, real provider, microphone, PostgreSQL, migration, deployment or production actions; Development's seven Chrome scenarios, legacy browser package and `59.91 FPS` result were not adopted as independent Security execution
 - Production Readiness: `REJECTED / BLOCKED`; historical blockers `SEC-001`, `SEC-002`, `SEC-003`, `SEC-004`, `SEC-005`, `SEC-008` and `SEC-012` remain open and unchanged
-- Recommendation to Coordinator: route a narrowly scoped `SEC-021` correction to Development, require a new Functional Commit and applicable re-reviews, and do not merge, start Phase 8 or deploy
+- Recommendation to Coordinator: record Security `APPROVED_WITH_WARNINGS`, close `SEC-021`, preserve inherited production blockers and continue consolidation on this exact Functional Commit; this feature approval does not authorize Phase 8 or deployment
 - Report: [`security-review-latest.md`](reviews/security-review-latest.md)
 
 ## UI/UX
