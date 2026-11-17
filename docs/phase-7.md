@@ -8,9 +8,9 @@
 - Completion authorization reconciliation: `ARCH-2026-11-14-001`
 - Approved parent direction: `ARCH-2026-09-20-001` — owner approval on 2026-09-20
 - Implementation authorization: `APPROVED` by the owner on 2026-09-25, recorded by the Coordinator in `cdb40098489d28dd476a2b9c211cd6289a325888`
-- Implementation status: `READY_FOR_REVIEW` — Development delivered the complete candidate; independent review is pending
+- Implementation status: `READY_FOR_REVIEW` — Development delivered the corrected candidate; independent re-review is pending
 - Feature status: `READY_FOR_REVIEW`
-- Phase 7 Functional Commit: `c649a903693d5fedf631d760880b80ed881dc138`
+- Phase 7 Functional Commit: `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`
 - Functional baseline: `ce2bde4a0792fa6a8c0a79e56781add162bff2d2` on `main`
 - Production Readiness: `BLOCKED`
 - Environment boundary: local/controlled
@@ -37,9 +37,9 @@ The owner approved this exact plan and authorized implementation strictly within
 
 ## Development completion — 2026-11-14
 
-- Status: `READY_FOR_REVIEW`; Development does not approve the phase.
-- Complete Functional Commit: `c649a903693d5fedf631d760880b80ed881dc138`.
-- Functional sequence: `744bec0` adds the bounded generation presentation contract; `4b91818` completes the local conversational-presence package and Phase 7 browser evidence; `c649a90` closes the explicit public homage-boundary evidence. Reviewers must use the complete final hash, not an intermediate commit.
+- Status: `SUPERSEDED_BY_REVIEW_CORRECTION`; Development did not approve the phase.
+- Original complete Functional Commit: `c649a903693d5fedf631d760880b80ed881dc138`.
+- Functional sequence: `744bec0` adds the bounded generation presentation contract; `4b91818` completes the local conversational-presence package and Phase 7 browser evidence; `c649a90` closes the explicit public homage-boundary evidence. This was the complete target for the original delivery; current reviewers must use the corrected Functional Commit above.
 - Backend: exact `PresentationMode` enum validation on existing `POST /api/chat`; omitted/`NORMAL` preserves the prior effective prompt; each non-default value appends one static server-owned `[TURN PRESENTATION]` section under 1,000 Unicode characters. Provider endpoint, JSON keys, model, `max_tokens=1400`, call count and response schema remain unchanged.
 - Local response and voice contracts: separate canonical `DisplayResponse` and conservative `SpokenResponse`; no unsafe truncation; session/turn/attempt/response-version guards; correlated state transitions; distinct stop/cancel; synthetic/local playback amplitude only; uncorrelated realtime AI state cannot control the current local turn.
 - Modes and privacy: five session-local axes with explicit controls only; no natural-language parser and no mode persistence. `PRIVATE` and `PUBLIC` fail memory closed for new turns, `PRIVATE` keeps both sides of that turn out of later local-history writes, `SILENT` prevents TTS, and prior stored history remains intact.
@@ -78,6 +78,46 @@ The owner approved this exact plan and authorized implementation strictly within
 - Python dependencies were borrowed from the existing isolated development virtual environment while every command ran with this worktree as the current directory and external-service variables cleared.
 - The legacy Phase 6 browser runner was not executed because several historical scripts hard-code the Phase 6 evidence directory. Phase 6 evidence was preserved; regression coverage came from the complete Python/frontend suites and the new non-overwriting Phase 7 harness.
 - Production Readiness remains `BLOCKED`; Phase 8 is not started.
+
+## Review correction delivery — 2026-11-16
+
+- Status: `READY_FOR_REVIEW`; Development does not approve the phase.
+- Corrected Functional Commit: `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`.
+- Corrected baseline: rejected candidate `c649a903693d5fedf631d760880b80ed881dc138`; coordination baseline `2b81852` introduced no functional delta.
+- Scope remained limited to `SEC-021`, `QA-P7-001`, `QA-P7-002`, `UIUX-P7-POST-001` and `UIUX-P7-POST-002`. No phrase, provider, endpoint, backend request/response field, persistence format, database path or Phase 8 capability changed.
+
+### Corrections
+
+| Finding | Correction and regression evidence |
+|---|---|
+| `SEC-021` | Session history now carries ephemeral per-record trust/audience/memory-derivation provenance. Public requests send only explicitly `PUBLIC_SAFE` records; restored legacy records, private turns, memory-derived records, delayed private responses and downstream private responses fail closed. Visible history, persisted message shape and the existing chat wire contract remain unchanged. Unit and browser regressions cover legacy restore, public/private combinations and delayed mode changes. |
+| `QA-P7-001` | Starting recognition synchronously stops current playback before creating the new recognition reference. Playback, analyser nodes and object URLs are released; amplitude resets to zero; Listening still waits for the real recognition callback; late playback callbacks and repeated start/stop remain inert. Synthetic browser evidence checks pause, disconnect, zero level and stale events. |
+| `QA-P7-002` | Phase 6 browser expectations now enforce the Phase 7 contracts: uncorrelated realtime AI state is ignored, and history-ineligible messages never become persistable later. The intentional TTS failure fixture is explicit, and all Phase 6 evidence paths accept a disposable override. The runner creates and removes its own system-temporary evidence directory by default. |
+| `UIUX-P7-POST-001` | Modes now has a visible 44 px close control, focus entry on the named heading, focus return to the trigger, bounded vertical scrolling, a sticky heading/close row and reachability for all five groups on mobile, short-height, 130% text and 200% reflow-equivalent layouts. Escape remains supported without being the only close path. |
+| `UIUX-P7-POST-002` | Routine updates target only the polite region; actionable failures target only the visible alert region. Generic `ERROR` state copy is no longer announced before the actionable detail, and duplicate same-state transitions are rejected. Unit and browser mutation evidence verify one non-empty announcement path. |
+
+### Validation executed
+
+- Python: `60 passed`; one known Starlette/TestClient deprecation warning.
+- Frontend: `67 passed`.
+- Phase 7 browser package: seven Chrome scenarios passed with synthetic audio/fake recognition, covering public-history isolation, delayed private response, playback-to-recognition interruption, stale callbacks, one-channel failure announcements, Modes focus/touch/scroll behavior, no-WebGL, reduced motion and required viewport/text reflow.
+- Complete Phase 6 browser package: passed all compositing, responsive, realtime, performance, accessibility, memory state, fallback, voice, history, destructive confirmation and relation-removal scenarios. Final HIGH measurement: `59.91 FPS` with 2,500 rendered nodes, preserving the `45 FPS` floor.
+- Python `compileall`, JavaScript syntax checks, `git diff --check`, staged-path inspection and disposable-output cleanup passed.
+
+### Environmental limits
+
+- No real microphone, physical touch device, manual screen reader, paid provider, real PostgreSQL, migration, credential, infrastructure, deployment or production action was used.
+- Browser voice evidence uses synthetic PCM, fake recognition and fake playback; it does not establish provider-specific voice quality or physical-device fidelity.
+- Python dependencies were borrowed from the existing isolated Phase 7 development virtual environment while commands ran with this worktree as the current directory and external-service variables cleared.
+- Browser evidence was written only to disposable temporary directories and removed after validation; frozen Phase 6/Phase 7 historical evidence was not overwritten.
+- Production Readiness remains `BLOCKED`; Phase 8 is not started.
+
+### Required re-reviews
+
+- QA: `YES` — all five findings affect browser, history, voice and regression contracts.
+- Security: `YES` — `SEC-021` changes the Public outbound-history trust boundary.
+- UI/UX: `YES` — Modes interaction/focus/reflow and live-region behavior changed.
+- Database: `NO` — no persistence format, query, schema, migration or database behavior changed.
 
 ## Historical generation-boundary gate — 2026-11-06
 
