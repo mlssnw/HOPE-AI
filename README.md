@@ -42,7 +42,7 @@ Assistentes tradicionais dependem principalmente do contexto imediato da convers
 - A personalidade aparece na resposta; mudar de modo não dispara frases prontas.
 - Cancelamento e identificação de turno protegem contra eventos antigos de chat, ditado e reprodução.
 - O Core Orb acompanha somente a amplitude do áudio local em reprodução; informações públicas da HOPE podem ser consultadas na interface.
-- Os reviews independentes de QA, Security e UI/UX solicitaram correções de privacidade, voz e acessibilidade antes da aprovação.
+- As correções de privacidade, voz e acessibilidade foram entregues e aguardam novos reviews independentes de QA, Security e UI/UX.
 
 [📖 Ver detalhes técnicos da Fase 7](docs/phase-7.md)
 
@@ -60,7 +60,7 @@ Os recursos desta branch foram entregues para revisão. A aprovação da fase e 
 | Voz | Ditado pela Web Speech API e TTS por ElevenLabs quando disponíveis, com texto/fala separados, controle de turno e cancelamento. Conteúdo acima do limite seguro de fala permanece completo na tela. |
 | Presença conversacional | Modos locais e combináveis; estilos Normal, Foco, Acolhedor e Apresentação; biblioteca opcional de frases aprovadas; informações públicas e verificáveis da HOPE. |
 | Integrações | Adapters opcionais para Anthropic, Tavily, ElevenLabs e Obsidian Local REST API. As credenciais permanecem no backend, mas os endpoints ainda exigem autenticação do owner antes de qualquer exposição pública. |
-| Qualidade | 60 testes Python, 62 frontend e cinco cenários Chrome aprovados com mídia sintética. Os reviews independentes encontraram falhas adicionais; a regressão completa e as correções ainda precisam ser aprovadas. |
+| Qualidade | Development registrou 60 testes Python, 67 frontend, sete cenários Chrome da Fase 7 e a regressão completa da Fase 6 aprovados. A entrega corrigida aguarda re-reviews independentes. |
 | Segurança | Segredos no backend, CSP restrita, conteúdo externo tratado como não confiável, consentimento de memória e confirmação destrutiva. Autenticação e hardening de produção permanecem pendentes. |
 
 ## 🚦 Status do projeto
@@ -68,8 +68,8 @@ Os recursos desta branch foram entregues para revisão. A aprovação da fase e 
 | Campo | Estado |
 |---|---|
 | Fase atual | Fase 7 — Conversational Presence Foundation |
-| Estado técnico | `CHANGES_REQUESTED` — QA, Security e UI/UX exigiram correções; fase ainda não aprovada |
-| Functional Commit | `c649a903693d5fedf631d760880b80ed881dc138` |
+| Estado técnico | `READY_FOR_REVIEW` — correções entregues; novos reviews independentes pendentes |
+| Functional Commit | `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5` |
 | Integração | [PR #2 em rascunho](https://github.com/mlssnw/HOPE-AI/pull/2), ainda sem merge em `main` |
 | Deploy público | Ainda não habilitado — autenticação, autorização e hardening de produção pendentes |
 
@@ -183,7 +183,7 @@ Durante o desenvolvimento, `X-Hope-User-Id` separa dados por UUID, mas **não é
 A HOPE trata qualidade como parte da arquitetura do produto:
 
 - **60 testes Python** na entrega do Development;
-- **62 testes frontend** na entrega do Development;
+- **67 testes frontend** na entrega corrigida do Development;
 - cinco cenários Chrome com voz sintética, sete tamanhos de tela, modos, privacidade, cancelamento, acessibilidade e uso sem WebGL;
 - cenários de memória, consentimento, correção e esquecimento;
 - WebSocket, heartbeat, reconexão e eventos incrementais;

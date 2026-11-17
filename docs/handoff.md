@@ -7,8 +7,8 @@ Commits exclusivamente documentais não substituem o Functional Commit. Resultad
 ## Current Phase
 
 - Phase: 7 — Conversational Presence Foundation
-- Phase status: CHANGES_REQUESTED — QA, Security and UI/UX rejected the candidate; one scoped Development correction round is required
-- Feature status: CHANGES_REQUESTED — Functional Commit `c649a903693d5fedf631d760880b80ed881dc138` is not approved
+- Phase status: WAITING_FOR_REVIEW — Development delivered the correction round; affected QA, Security and UI/UX re-reviews are required
+- Feature status: READY_FOR_REVIEW — Functional Commit `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5` is not approved yet
 - Production readiness: BLOCKED — Phase 7 does not authorize public deployment or resolve the inherited production blockers
 - Baseline: `ce2bde4` on `main`, with Phase 6 complete and integrated through PR #1
 - Runtime API version: `6.0.0-phase.5` — frozen legacy metadata from the approved Phase 6 artifact; Phase 7 has not changed it
@@ -91,24 +91,25 @@ Required Reviews — Integration Candidate:
 
 ## Current Functional Commit
 
-- Complete Phase 7 delivery commit: `c649a903693d5fedf631d760880b80ed881dc138`
-- Documentation/evidence record: `6919c967c66f728471b5c195079dabda33a3e3ed`; no functional delta from the target
+- Complete Phase 7 correction commit: `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`
+- Documentation/evidence record: `5f125a04e989274e3d90cc7a69876cbb582c9526`; no functional delta from the target
+- Previous rejected candidate: `c649a903693d5fedf631d760880b80ed881dc138`; its reports remain historical evidence, not verdicts on the new target
 - Latest partial functional checkpoint: `2647794ea806b20117c7cce531602911da98ca97` — overlength TTS rejection, not complete Phase 7
 - Phase: 7
 - Target baseline: `ce2bde4` on `main`
 - Previous phase evidence: Phase 6 implementation `0912e9492370f6bce8c51762d1a8a87b5bd16aa8`, isolated test correction `4d76f2433363a47a9d8fe29fef337de1dc79ac50`, integrated through `ce2bde4`
-- Status: CHANGES_REQUESTED — mandatory reviews rejected this exact candidate; the approved specification, phrase gate and generation boundary remain binding
+- Status: READY_FOR_REVIEW — correction delivery is persisted; the approved specification, phrase gate and generation boundary remain binding
 
 ## Review Matrix
 
 | Work | Required | Status | Commit |
 |---|---|---|---|
-| DEV | YES | READY_FOR_REVIEW | `c649a903693d5fedf631d760880b80ed881dc138` |
-| QA | YES | REJECTED | `c649a903693d5fedf631d760880b80ed881dc138` |
+| DEV | YES | READY_FOR_REVIEW | `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5` |
+| QA | YES | WAITING_FOR_REVIEW | `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5` |
 | DATABASE | NO | N/A | — |
-| SECURITY | YES | REJECTED | `c649a903693d5fedf631d760880b80ed881dc138` |
-| UI/UX | YES | REJECTED — POST-IMPLEMENTATION | `c649a903693d5fedf631d760880b80ed881dc138`; pre-implementation spec remains approved |
-| PLANNER | YES | WAITING_FOR_REVIEW — FINAL CONSOLIDATION | `c649a903693d5fedf631d760880b80ed881dc138`; planning approval `11eb4f7` preserved |
+| SECURITY | YES | WAITING_FOR_REVIEW | `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5` |
+| UI/UX | YES | WAITING_FOR_REVIEW — POST-IMPLEMENTATION | `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`; pre-implementation spec remains approved |
+| PLANNER | YES | WAITING_FOR_REVIEW — FINAL CONSOLIDATION | `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`; planning approval `11eb4f7` preserved |
 
 ## Development
 
@@ -220,17 +221,18 @@ Required Reviews — Integration Candidate:
 ## Coordinator
 
 - Autonomy level: 2.5
-- Status: CHANGES_REQUESTED
-- Operational conclusion: QA (`8d85e21`), UI/UX (`768ddfd`) and Security (`d60a402`) independently rejected Functional Commit `c649a90`. Their official reports and own handoff sections are persisted. Passing unit/new-browser suites do not close the five blocking findings listed below.
+- Status: WAITING_FOR_REVIEW
+- Operational conclusion: Development delivered correction `af2aa66` and documentation `5f125a0`, reporting 60 Python, 67 frontend and both complete browser packages passing (seven Phase 7 scenarios; HIGH 59.91 FPS/2,500 nodes with the 45 FPS floor preserved). The previous candidate `c649a90` remains rejected; only the required reviewers can close its five findings on the new target.
 - Final Integration Candidate: `cb8dc774cc396f3aff0ef40e79753761fbf3b49b`
 - Main integration commit: `ce2bde4`
-- Routing: LEVEL 1 — return the five existing-scope findings to Development as one correction round. Development is the only functional writer; reviewers are idle until a new exact Functional Commit is frozen. Then require affected QA, Security and UI/UX re-reviews before Planner consolidation. Draft [PR #2](https://github.com/mlssnw/HOPE-AI/pull/2) remains unmerged; no HIGH risk acceptance or production action is authorized.
+- Routing: LEVEL 1 — QA and Security re-review frozen `af2aa66`; UI/UX prepares independently and uses the fixed-port browser only after QA releases it. Each role owns its report; shared handoff/index/commit writes are serialized. Planner consolidates after matching verdicts. Draft [PR #2](https://github.com/mlssnw/HOPE-AI/pull/2) remains unmerged; no HIGH risk acceptance or production action is authorized.
 - Boundary: COORDINATOR atualizou somente Current Phase, Current Functional Commit, Review Matrix, blockers, warnings, Next Action e histórico; não concedeu aprovação técnica nem alterou seções ou relatórios de ownership dos reviewers
 
 ## Current Blockers
 
 ### Feature Blockers
 
+- The five findings below describe rejected `c649a90`. Development reports corrections in `af2aa66`; their closure is awaiting independent re-review and is not granted by this panel.
 - No technical blocker remains in the pre-implementation UI/UX specification.
 - No authorization blocker remains for the approved Phase 7 implementation. The prior generation-boundary blocker was resolved by `ARCH-2026-11-14-001`; its exact enum/static-section boundary remains binding.
 - `SEC-021` — HIGH, blocking: Public requests can forward earlier private or memory-derived session history despite disabling current-turn memory. Preserve visible/stored history and enforce the outbound Public boundary within the approved local scope.
@@ -270,10 +272,10 @@ Required Reviews — Integration Candidate:
 
 ## Next Action
 
-- Role: Development
-- Status: CHANGES_REQUESTED
-- Task: correct SEC-021, QA-P7-001, QA-P7-002, UIUX-P7-POST-001 and UIUX-P7-POST-002 within the existing Phase 7 scope; verify each regression and deliver one new exact Functional Commit
-- Target Functional Commit: `c649a903693d5fedf631d760880b80ed881dc138`; documentation/evidence `6919c96`; branch `codex/phase-7-completion`
+- Role: QA
+- Status: WAITING_FOR_REVIEW
+- Task: independently re-review corrected Phase 7, explicitly resolve QA-P7-001/002 and check the cross-domain privacy/accessibility regressions without changing code
+- Target Functional Commit: `af2aa66d13a1f0c3a8ccd31f52943da602fc4aa5`; documentation/evidence `5f125a0`; previous rejected target `c649a90`; branch `codex/phase-7-completion`
 - Required inputs:
   - [`docs/phase-7.md`](phase-7.md)
   - [`docs/design/phase-7-conversational-presence-spec.md`](design/phase-7-conversational-presence-spec.md)
@@ -283,11 +285,11 @@ Required Reviews — Integration Candidate:
   - [`docs/reviews/qa-latest.md`](reviews/qa-latest.md)
   - [`docs/reviews/security-review-latest.md`](reviews/security-review-latest.md)
 - Expected output:
-  - focused fixes and meaningful negative regression coverage, plus the complete Python/frontend and both legacy/Phase 7 browser suites executed successfully
-  - updated Phase 7 delivery/evidence and Development handoff; exact new target and limitations, without changing reviewer verdicts or historical Phase 6 evidence
-  - READY_FOR_REVIEW delivery for mandatory affected re-reviews; no self-approval
-- Blocking dependencies: none for in-scope Development correction; no owner approval is needed to repair the already-authorized boundaries
-- Parallel work: none on functional files or shared handoff; reviewers resume on the frozen corrected hash with distinct reports and serialized shared writes
+  - exact-target QA verdict with evidence for both complete browser packages, Python/frontend suites and directed negative regressions; preserve historical evidence and test floors
+  - explicit finding closure or remaining severity/blocking status, honest environment/provider-fidelity limits and own latest report
+  - own handoff section and documentation commit only when the Coordinator opens the serialized window; no code changes
+- Blocking dependencies: none for QA or Security; UI/UX browser waits for QA to release the fixed ports
+- Parallel work: Security on the same frozen target and own report; UI/UX static/unit/evidence preparation, followed by independent browser inspection after QA; no functional writer
 - Escalation: NONE
 
 ## Recent History
@@ -338,3 +340,4 @@ Required Reviews — Integration Candidate:
 - 2026-11-14 — The owner retained HOPE, requested completion of all Phase 7 using the predefined Works, continued Git commits and notification of changes. The isolated completion branch starts from `dde8186`; the previous dirty worktree and real data remain preserved. Visible PLANNER persisted `ARCH-2026-11-14-001` in `11eb4f7`, reconciling the exact bounded generation amendment. COORDINATOR routed complete implementation to the visible DEV task; no implementation/review approval or production authorization is inferred.
 - 2026-11-14 — Development completed the package through backend `744bec0`, voice/UI `4b91818` and public-boundary correction `c649a90`; the last hash is the shared Functional Commit. Delivery documentation/evidence `6919c96` records 60 Python, 62 frontend and five Chrome scenarios passing. COORDINATOR opened the required independent reviews on that target, preserving Production Readiness `BLOCKED` and the draft PR #2.
 - 2026-11-15 — QA (`8d85e21`), UI/UX (`768ddfd`) and Security (`d60a402`) rejected `c649a90` with five blocking findings. COORDINATOR persisted `CHANGES_REQUESTED`, corrected the public README status and returned one scoped fix round to Development. Production blockers, owner-approved phrases and isolated-worktree boundaries remain unchanged.
+- 2026-11-16 — Development delivered correction `af2aa66` and documentation `5f125a0`, with 60 Python, 67 frontend, seven Phase 7 Chrome scenarios and the full legacy browser package passing. COORDINATOR froze that new target and reopened required QA, Security and UI/UX reviews; the prior rejection remains historical and Production Readiness stays blocked.
